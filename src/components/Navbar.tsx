@@ -121,10 +121,10 @@ const Navbar = () => {
           </Link>
 
           <div
-            className="cursor-pointer block lg:hidden z-20"
+            className="cursor-pointer lg:hidden z-20 size-10 flex items-center justify-center"
             onClick={toggleShowMenu}
           >
-            <CgMenuRight size={40} />
+            <CgMenuRight size={32} />
           </div>
         </div>
       </div>
