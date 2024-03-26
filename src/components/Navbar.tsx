@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ThemeSwitcher } from "./ThemeSwitcher";
-import { FaFacebookF, FaXTwitter, FaInstagram } from "react-icons/fa6";
-import { CgMenuRight } from "react-icons/cg";
 import { useState } from "react";
+import { CgMenuRight } from "react-icons/cg";
+import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
+import { ThemeSwitcher } from "./ThemeSwitcher";
+import { MdClose } from "react-icons/md";
 
 interface Menu {
   name: string;
@@ -37,7 +38,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full font-dmsans">
+    <div className="w-full font-dmsans relative">
       {/* top header */}
       <div className="w-full h-20 hidden lg:flex">
         <div className="grid lg:grid-cols-12 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
@@ -121,7 +122,7 @@ const Navbar = () => {
           </Link>
 
           <div
-            className="cursor-pointer lg:hidden z-20 size-10 flex items-center justify-center"
+            className="cursor-pointer lg:hidden size-10 flex items-center justify-center"
             onClick={toggleShowMenu}
           >
             <CgMenuRight size={32} />
@@ -131,25 +132,38 @@ const Navbar = () => {
 
       {/* mobile menu */}
       <div
-        className={`absolute top-0 h-full w-full z-10 bg-[#1c1d21] items-center ${
-          showMenu ? "flex" : "hidden"
+        className={`mob-nav-list lg:hidden ${
+          showMenu && "open"
         }`}
       >
-        <ul className="flex items-center justify-center space-y-6 flex-col h-full w-full">
-          {navlist.map(({ href, name }, i) => {
-            return (
-              <li key={i} className="">
-                <Link
-                  href={href}
-                  className={` ${isActive(href) ? "text-primary" : ""}`}
-                  onClick={toggleShowMenu}
-                >
-                  {name}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        <div className="mob-nav-inner light bg-white dark:bg-[#222327]">
+          <div
+            onClick={toggleShowMenu}
+            className="cursor-pointer ml-auto mx-2 my-2"
+          >
+            <MdClose size={32} />
+          </div>
+
+          <ul className="flex items-center justify-center space-y-6 flex-col w-full">
+            {navlist.map(({ href, name }, i) => {
+              return (
+                <li key={i} className="">
+                  <Link
+                    href={href}
+                    className={` ${isActive(href) ? "text-primary" : ""}`}
+                    onClick={toggleShowMenu}
+                  >
+                    {name}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="flex justify-center w-full my-4">
+            <ThemeSwitcher />
+          </div>
+        </div>
       </div>
     </div>
   );
