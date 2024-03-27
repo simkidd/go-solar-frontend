@@ -1,5 +1,6 @@
 import BlogCard from "@/components/BlogCard";
-import { BiSolidQuoteAltRight } from "react-icons/bi";
+import Review from "@/components/Review";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const page = () => {
   return (
@@ -68,9 +69,9 @@ const page = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="w-full">
               <h2 className="text-primary text-2xl font-bold mb-4">
-                About Energize
+                About GoSolar
               </h2>
-              <h2 className="text-5xl font-bold leading-snug mb-4">
+              <h2 className="text-3xl lg:text-5xl font-bold leading-normal mb-4">
                 We are experts in the world of solar and renewable energy
               </h2>
               <p>
@@ -87,11 +88,11 @@ const page = () => {
       <section className="w-full">
         <div className="container mx-auto px-2 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-4">
-            <div className="w-full p-2 flex flex-col items-center border-r-gray-400 border-r">
+            <div className="w-full p-2 flex flex-col items-center lg:border-r-gray-400 lg:border-r ">
               <span className="text-5xl leading-normal">48+</span>
               <p className="text-lg text-primary">Years Experience</p>
             </div>
-            <div className="w-full p-2 flex flex-col items-center border-r-gray-400 border-r">
+            <div className="w-full p-2 flex flex-col items-center lg:border-r-gray-400 lg:border-r ">
               <span className="text-5xl leading-normal">2886+</span>
               <p className="text-lg text-primary">Projects Completed</p>
             </div>
@@ -109,37 +110,15 @@ const page = () => {
           <h2 className="text-5xl font-bold">What they say</h2>
         </div>
         <div className="container mx-auto px-2 py-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 w-full">
-            <div className="col-span-1 relative">
-              <div className="w-full h-full relative">
-                <img src="" alt="author image" />
-              </div>
-              <div className="absolute top-0 right-0 w-1/2 h-full light bg-[#f1f1f1] dark:bg-[#2a2b2f]"></div>
-            </div>
-            <div className="col-span-2 px-12 py-8 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
-              <div className="mb-4 text-primary">
-                <BiSolidQuoteAltRight size={50} />
-              </div>
-              <div className="mb-4 pl-4 border-l-4 border-l-primary">
-                <h4 className="text-2xl">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Molestias, doloremque.
-                </h4>
-              </div>
-              <p className="mb-8">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
-                aliquam eveniet veniam nihil fugit molestias sit ex, maiores
-                eius fuga hic dolorum aspernatur! Totam repudiandae esse,
-                veritatis doloremque impedit vitae?
-              </p>
-              <div>
-                <h6 className="text-lg text-primary leading-snug font-semibold">
-                  Adrian Javier
-                </h6>
-                <p className="text-sm">Project Manager</p>
-              </div>
-            </div>
+          <div className="flex items-center justify-end gap-2 w-full mb-4">
+            <button className="size-10 flex items-center justify-center border border-gray-500 hover:text-primary">
+              <ArrowLeft />
+            </button>
+            <button className="size-10 flex items-center justify-center border border-gray-500 hover:text-primary">
+              <ArrowRight />
+            </button>
           </div>
+          <Review />
         </div>
       </section>
       {/* blog section */}
@@ -156,8 +135,7 @@ const page = () => {
             Laboriosam, aspernatur!
           </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 py-4">
-            <BlogCard />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
             <BlogCard />
             <BlogCard />
             <BlogCard />

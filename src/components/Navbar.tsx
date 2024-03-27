@@ -38,7 +38,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full font-dmsans relative">
+    <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327]">
       {/* top header */}
       <div className="w-full h-20 hidden lg:flex">
         <div className="grid lg:grid-cols-12 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
@@ -84,7 +84,7 @@ const Navbar = () => {
         </div>
       </div>
       {/* bottom header */}
-      <div className="sticky top-0 left-0 w-full h-16 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
+      <div className=" w-full h-16 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
         <div className="flex items-center justify-between container mx-auto px-2 w-full h-full">
           {/* <div className="">
             <input type="text" placeholder="Search..." />
