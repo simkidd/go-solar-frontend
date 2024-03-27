@@ -84,7 +84,7 @@ const Navbar = () => {
         </div>
       </div>
       {/* bottom header */}
-      <div className="w-full h-16 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
+      <div className="sticky top-0 left-0 w-full h-16 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
         <div className="flex items-center justify-between container mx-auto px-2 w-full h-full">
           {/* <div className="">
             <input type="text" placeholder="Search..." />

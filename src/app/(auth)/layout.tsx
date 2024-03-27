@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "../globals.scss"
+import "../globals.scss";
+import AuthLayout from "@/layouts/AuthLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <div className="auth-wrapper bg-red-400 w-full h-screen">
+          <div className="auth-content">
+            <div className="auth-bg">
+              <span className="r"></span>
+              <span className="r s"></span>
+              <span className="r s"></span>
+              <span className="r"></span>
+            </div>
+            <div className="card">
+              <div className="card-body text-center">
+                <div className="mb-4">
+                  <i className="feather icon-unlock auth-icon"></i>
+                </div>
+                {children}
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
     </html>
   );
 }

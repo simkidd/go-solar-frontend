@@ -15,12 +15,15 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#006da4",
+          DEFAULT: "#9dc900",
           // 100: "",
           // 200: "",
           // 300: "",
         },
         background: "red",
+      },
+      backgroundImage: {
+        "auth-bg": "red",
       },
     },
   },
@@ -33,11 +36,11 @@ const config: Config = {
             background: "white",
           },
         },
-        dark:{
+        dark: {
           colors: {
             background: "#222327",
-          }
-        }
+          },
+        },
       },
     }),
   ],
