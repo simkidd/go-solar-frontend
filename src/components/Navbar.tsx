@@ -40,19 +40,14 @@ const Navbar = () => {
   return (
     <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327]">
       {/* top header */}
-      <div className="w-full h-20 hidden lg:flex">
-        <div className="grid lg:grid-cols-12 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
-          <div className="flex items-center gap-4 lg:col-span-5 col-span-12 mr-auto text-sm">
+      <div className="w-full h-14 hidden lg:flex">
+        <div className="grid lg:grid-cols-2 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
+          <div className="flex items-center gap-4 mr-auto text-sm">
             <span>example@gmail.com</span>
             <span>(123) 456 789</span>
           </div>
-          <div className="lg:col-span-2 col-span-12 flex items-center justify-center">
-            <Link href="/" className="text-3xl">
-              GoSolar.
-            </Link>
-          </div>
 
-          <div className="lg:col-span-5 col-span-12 ml-auto flex gap-8">
+          <div className=" ml-auto flex gap-8">
             <ThemeSwitcher />
             <ul className="flex items-center gap-4 ">
               <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
@@ -84,14 +79,14 @@ const Navbar = () => {
         </div>
       </div>
       {/* bottom header */}
-      <div className=" w-full h-16 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
+      <div className=" w-full h-20 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
         <div className="flex items-center justify-between container mx-auto px-2 w-full h-full">
           {/* <div className="">
             <input type="text" placeholder="Search..." />
           </div> */}
 
-          {/* mobile logo */}
-          <div className="flex lg:hidden items-center justify-center">
+          {/* logo */}
+          <div className="flex items-center justify-center">
             <Link href="/" className="text-3xl">
               GoSolar.
             </Link>
@@ -103,8 +98,8 @@ const Navbar = () => {
                 <li key={i} className="h-full ">
                   <Link
                     href={href}
-                    className={`h-full flex justify-center items-center border-b-4 border-b-transparent ${
-                      isActive(href) ? "!border-b-primary" : ""
+                    className={`h-full flex justify-center items-center border-b-4 border-b-transparent hover:text-primary transition-all duration-300 ease-in-out ${
+                      isActive(href) ? "!border-b-primary text-primary" : ""
                     }`}
                   >
                     {name}

@@ -11,6 +11,7 @@ const config: Config = {
     fontFamily: {
       dmsans: ['"DM Sans", sans-serif'],
       inter: ['"Inter", sans-serif'],
+      roboto: ['"Roboto", sans-serif'],
     },
     extend: {
       colors: {
