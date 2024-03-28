@@ -4,6 +4,8 @@ import "../globals.scss";
 import { Providers } from "../providers";
 import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
+import Footer from "@/components/Footer";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,8 +33,11 @@ export default function RootLayout({
           speed={200}
         />
         <Providers>
-          <Navbar />
-          <main>{children}</main>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+          </Suspense>
         </Providers>
       </body>
     </html>

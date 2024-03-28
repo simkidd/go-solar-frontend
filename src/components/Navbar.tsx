@@ -4,37 +4,31 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { CgMenuRight } from "react-icons/cg";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
-import { ThemeSwitcher } from "./ThemeSwitcher";
 import { MdClose } from "react-icons/md";
-import { config } from "@/utils/config";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 interface Menu {
   name: string;
   href: string;
-  show: boolean;
 }
 
-const navlink: Menu[] = [
-  { name: "About Us", href: "/about-us", show: config.showAbout },
-  { name: "Services", href: "/services", show: config.showServices },
-  { name: "Projects", href: "/projects", show: config.showProjects },
-  { name: "GoShop", href: "/products", show: config.showGoShop },
-  { name: "Blogs", href: "/blogs", show: config.showBlogs },
-  { name: "Contact Us", href: "/contact-us", show: config.showContact },
+const navlist: Menu[] = [
+  { name: "About Us", href: "/about-us" },
+  // { name: "Services", href: "/services" },
+  // { name: "Projects", href: "/projects" },
+  // { name: "GoShop", href: "/products" },
+  // { name: "Blogs", href: "/blogs" },
+  // { name: "Contact Us", href: "/contact-us" },
 ];
-
 
 const Navbar = () => {
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
 
-  const navlist = navlink?.filter((nav) => nav.show);
-  
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
   };
-  
-  
+
   const isActive = (href: string) => {
     return (
       href === pathname ||
