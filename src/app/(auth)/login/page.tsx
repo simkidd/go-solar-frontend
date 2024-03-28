@@ -1,3 +1,5 @@
+import LoginForm from "@/components/LoginForm";
+import AuthLayout from "@/layouts/AuthLayout";
 import { Metadata } from "next";
 import React from "react";
 
@@ -10,7 +12,12 @@ export const metadata: Metadata = {
 };
 
 const LoginPage = () => {
-  return <div>LoginPage</div>;
+  return (
+    <div>
+      <h3 className="mb-4">Login</h3>
+      <LoginForm />
+    </div>
+  );
 };
 
 export default LoginPage;

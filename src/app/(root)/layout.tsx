@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "../globals.scss";
 import { Providers } from "../providers";
 import Navbar from "@/components/Navbar";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +18,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light">
+    <html lang="en" className="light" suppressHydrationWarning={true}>
       <body className={inter.className}>
+        <NextTopLoader
+          color="#9dc900"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+        />
         <Providers>
           <Navbar />
           <main>{children}</main>

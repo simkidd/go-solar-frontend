@@ -18,7 +18,7 @@ export function ThemeSwitcher() {
     <div className="space-x-2 flex items-center">
       <button
         className={`rounded-full size-8 bg-transparent flex items-center justify-center ${
-          theme === "light" && "bg-[#ececec]"
+          theme === "light" && "!bg-primary"
         }`}
         onClick={() => setTheme("light")}
       >
@@ -26,7 +26,7 @@ export function ThemeSwitcher() {
       </button>
       <button
         className={`rounded-full size-8 bg-transparent flex items-center justify-center ${
-          theme === "dark" && "bg-[#2a2b2f]"
+          theme === "dark" && "!bg-primary"
         }`}
         onClick={() => setTheme("dark")}
       >
