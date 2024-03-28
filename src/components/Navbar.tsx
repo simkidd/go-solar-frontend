@@ -10,6 +10,7 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 interface Menu {
   name: string;
   href: string;
+  show: boolean;
 }
 
 const navlist: Menu[] = [
@@ -21,14 +22,18 @@ const navlist: Menu[] = [
   // { name: "Contact Us", href: "/contact-us" },
 ];
 
+
 const Navbar = () => {
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
 
+  const navlist = navlink?.filter((nav) => nav.show);
+  
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
   };
-
+  
+  
   const isActive = (href: string) => {
     return (
       href === pathname ||
