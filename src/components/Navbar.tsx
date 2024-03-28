@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { CgMenuRight } from "react-icons/cg";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
-import { ThemeSwitcher } from "./ThemeSwitcher";
 import { MdClose } from "react-icons/md";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 interface Menu {
   name: string;
@@ -14,11 +14,11 @@ interface Menu {
 
 const navlist: Menu[] = [
   { name: "About Us", href: "/about-us" },
-  { name: "Services", href: "/services" },
-  { name: "Projects", href: "/projects" },
-  { name: "GoShop", href: "/products" },
-  { name: "Blogs", href: "/blogs" },
-  { name: "Contact Us", href: "/contact-us" },
+  // { name: "Services", href: "/services" },
+  // { name: "Projects", href: "/projects" },
+  // { name: "GoShop", href: "/products" },
+  // { name: "Blogs", href: "/blogs" },
+  // { name: "Contact Us", href: "/contact-us" },
 ];
 
 const Navbar = () => {
@@ -126,11 +126,7 @@ const Navbar = () => {
       </div>
 
       {/* mobile menu */}
-      <div
-        className={`mob-nav-list lg:hidden ${
-          showMenu && "open"
-        }`}
-      >
+      <div className={`mob-nav-list lg:hidden ${showMenu && "open"}`}>
         <div className="mob-nav-inner light bg-white dark:bg-[#222327]">
           <div
             onClick={toggleShowMenu}
