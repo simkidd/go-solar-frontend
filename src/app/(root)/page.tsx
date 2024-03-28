@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 import BlogCard from "@/components/BlogCard";
 import Footer from "@/components/Footer";
 import MarqueeComp from "@/components/MarqueeComp";

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 import { BiSolidQuoteAltRight } from "react-icons/bi";
 
@@ -6,7 +7,7 @@ const Review = () => {
     <div className="grid grid-cols-1 lg:grid-cols-3 w-full">
       <div className="col-span-1 relative">
         <div className="w-full h-full relative">
-          <img src="" alt="author image" />
+          <Image src="" alt="author image" />
         </div>
         <div className="absolute top-0 right-0 w-1/2 h-full light bg-[#f1f1f1] dark:bg-[#2a2b2f]"></div>
       </div>

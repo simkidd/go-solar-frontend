@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -6,7 +7,7 @@ const BlogCard = () => {
     <div className="w-full">
       <Link href="">
         <div className="w-full h-[200px]">
-          <img src="" alt="post image" />
+          <Image src="" alt="post image" />
         </div>
       </Link>
       <div className="p-4 w-full">
@@ -19,7 +20,8 @@ const BlogCard = () => {
           <span>March 23, 2024</span>
         </div>
         <p className="my-4 w-full">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ipsa, fugiat.
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ipsa,
+          fugiat.
         </p>
 
         <Link href="" className="text-primary">
