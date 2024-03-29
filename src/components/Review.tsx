@@ -5,13 +5,14 @@ import { BiSolidQuoteAltRight } from "react-icons/bi";
 const Review = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 w-full">
-      <div className="col-span-1 relative">
-        <div className="w-full h-full relative">
+      <div className="col-span-1 relative hidden lg:flex">
+        <div className="w-[80%] h-[90%] absolute bottom-0 right-8 bg-gray-500">
           <Image src="" alt="author image" />
         </div>
-        <div className="absolute top-0 right-0 w-1/2 h-full light bg-[#f1f1f1] dark:bg-[#2a2b2f]"></div>
+        <div className="absolute top-0 right-0 w-1/2 h-full light bg-[#f1f1f1] dark:bg-[#2a2b2f] z-[-1]"></div>
       </div>
-      <div className="col-span-2 px-12 py-8 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
+
+      <div className="col-span-2 lg:px-12 px-2 py-8 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
         <div className="mb-4 text-primary">
           <BiSolidQuoteAltRight size={50} />
         </div>
@@ -27,11 +28,16 @@ const Review = () => {
           dolorum aspernatur! Totam repudiandae esse, veritatis doloremque
           impedit vitae?
         </p>
-        <div>
-          <h6 className="text-lg text-primary leading-snug font-semibold">
-            Adrian Javier
-          </h6>
-          <p className="text-sm">Project Manager</p>
+        <div className="flex items-center">
+          <div className="rounded-full size-12 bg-gray-500 mr-4 lg:hidden">
+            <Image src="" alt="author image" />
+          </div>
+          <div className="flex flex-col">
+            <h6 className="text-lg text-primary leading-snug font-semibold">
+              Adrian Javier
+            </h6>
+            <p className="text-sm">Project Manager</p>
+          </div>
         </div>
       </div>
     </div>

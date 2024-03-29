@@ -6,7 +6,7 @@ const BlogCard = () => {
   return (
     <div className="w-full">
       <Link href="">
-        <div className="w-full h-[200px]">
+        <div className="w-full h-[200px] bg-gray-500">
           <Image src="" alt="post image" />
         </div>
       </Link>
@@ -16,8 +16,9 @@ const BlogCard = () => {
             Solar Panels have a good impact on the environment
           </Link>
         </div>
-        <div className="text-sm">
-          <span>March 23, 2024</span>
+        <div className="text-sm flex items-center">
+          <span className="mr-2">March 23, 2024</span> | 
+          <span className="ml-2">Category</span>
         </div>
         <p className="my-4 w-full">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ipsa,

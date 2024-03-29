@@ -117,8 +117,8 @@ const page = () => {
       <section className="w-full py-16">
         <div className="container mx-auto px-2 mb-8 relative">
           <h2 className="text-primary text-2xl font-bold mb-4">Testimonial</h2>
-          <h2 className="text-5xl font-bold">What they say</h2>
-          <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
+          <h2 className="lg:text-5xl text-4xl font-bold">What they say</h2>
+          <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-[5.7rem] absolute lg:-top-20 -top-14 left-0 -z-[1] font-bold">
             Reviews
           </div>
         </div>
@@ -141,7 +141,7 @@ const page = () => {
             <h2 className="text-primary text-2xl font-bold mb-4 text-center">
               Latest Post
             </h2>
-            <h2 className="text-5xl font-bold text-center mb-4">
+            <h2 className="lg:text-5xl text-4xl font-bold text-center mb-4">
               What's Going on in our Blog?
             </h2>
             <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-1/2 -z-[1] font-bold -translate-x-1/2">
@@ -165,9 +165,9 @@ const page = () => {
               <h2 className="capitalize mb-4 text-2xl text-primary">
                 we are here to help you
               </h2>
-              <h2 className="text-5xl font-bold">Any Questions? Let's Talk</h2>
+              <h2 className="lg:text-5xl text-4xl font-bold">Any Questions? Let's Talk</h2>
             </div>
-            <div className="col-span-1 flex items-center justify-end">
+            <div className="col-span-1 flex items-center lg:justify-end justify-center mt-6 lg:mt-0">
               <Link href="">
                 <button className="bg-primary py-4 px-8">Get In Touch</button>
               </Link>
