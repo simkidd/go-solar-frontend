@@ -1,0 +1,14 @@
+.moving-div {
+  position: relative;
+  animation: moveLeftAndRight 2s ease-in-out infinite alternate;
+}
+
+@keyframes moveLeftAndRight {
+  0% {
+    right: 0;
+  }
+
+  100% {
+    right: 40px;
+  }
+}

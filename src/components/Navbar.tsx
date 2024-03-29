@@ -38,7 +38,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327]">
+    <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327] shadow">
       {/* top header */}
       <div className="w-full h-14 hidden lg:flex">
         <div className="grid lg:grid-cols-2 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
@@ -151,7 +151,35 @@ const Navbar = () => {
             })}
           </ul>
 
-          <div className="flex justify-center w-full my-4">
+
+          <div className="flex justify-center items-center flex-col w-full my-4 space-y-4">
+          <ul className="flex items-center gap-4 ">
+            <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
+              <Link
+                href=""
+                className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
+              >
+                <FaFacebookF />
+              </Link>
+            </li>
+            <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
+              <Link
+                href=""
+                className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
+              >
+                <FaXTwitter />
+              </Link>
+            </li>
+            <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
+              <Link
+                href=""
+                className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
+              >
+                <FaInstagram />
+              </Link>
+            </li>
+          </ul>
+
             <ThemeSwitcher />
           </div>
         </div>
