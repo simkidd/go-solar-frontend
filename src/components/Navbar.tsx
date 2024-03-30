@@ -1,5 +1,5 @@
 "use client";
-import { Menu } from "lucide-react";
+import { Mail, Menu, Phone } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -43,8 +43,14 @@ const Navbar = () => {
       <div className="w-full h-14 hidden lg:flex">
         <div className="grid lg:grid-cols-2 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
           <div className="flex items-center gap-4 mr-auto text-sm">
-            <span>example@gmail.com</span>
-            <span>(123) 456 789</span>
+            <span className="flex items-center">
+              <Mail className="text-primary mr-2" size={18} />
+              gosolardotng@gmail.com
+            </span>
+            <span className="flex items-center">
+              <Phone className="text-primary mr-2" size={18} />
+              0706 276 2879
+            </span>
           </div>
 
           <div className=" ml-auto flex gap-8">
