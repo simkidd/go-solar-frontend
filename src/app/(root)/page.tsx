@@ -3,7 +3,6 @@
 import BlogCard from "@/components/BlogCard";
 import MarqueeComp from "@/components/MarqueeComp";
 import Review from "@/components/Review";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const page = () => {
@@ -118,19 +117,11 @@ const page = () => {
         <div className="container mx-auto px-2 mb-8 relative">
           <h2 className="text-primary text-2xl font-bold mb-4">Testimonial</h2>
           <h2 className="lg:text-5xl text-4xl font-bold">What they say</h2>
-          <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-[5.7rem] absolute lg:-top-20 -top-14 left-0 -z-[1] font-bold">
+          <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-[5.7rem] absolute lg:-top-24 -top-14 left-0 -z-[1] font-bold">
             Reviews
           </div>
         </div>
         <div className="container mx-auto px-2 py-4">
-          <div className="flex items-center justify-end gap-2 w-full mb-4">
-            <button className="size-10 flex items-center justify-center border border-gray-500 hover:text-primary">
-              <ArrowLeft />
-            </button>
-            <button className="size-10 flex items-center justify-center border border-gray-500 hover:text-primary">
-              <ArrowRight />
-            </button>
-          </div>
           <Review />
         </div>
       </section>
@@ -165,7 +156,9 @@ const page = () => {
               <h2 className="capitalize mb-4 text-2xl text-primary">
                 we are here to help you
               </h2>
-              <h2 className="lg:text-5xl text-4xl font-bold">Any Questions? Let's Talk</h2>
+              <h2 className="lg:text-5xl text-4xl font-bold">
+                Any Questions? Let's Talk
+              </h2>
             </div>
             <div className="col-span-1 flex items-center lg:justify-end justify-center mt-6 lg:mt-0">
               <Link href="">
