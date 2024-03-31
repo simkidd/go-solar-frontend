@@ -18,7 +18,7 @@ const navlist: Menu[] = [
   // { name: "Projects", href: "/projects" },
   // { name: "GoShop", href: "/products" },
   { name: "Blog", href: "/blog" },
-  // { name: "Contact Us", href: "/contact-us" },
+  { name: "Contact Us", href: "/contact-us" },
 ];
 
 const Navbar = () => {
@@ -58,7 +58,7 @@ const Navbar = () => {
             <ul className="flex items-center gap-4 ">
               <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
                 <Link
-                  href=""
+                  href="https://www.facebook.com/Gosolar.ng"
                   className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
                 >
                   <FaFacebookF />
@@ -66,7 +66,7 @@ const Navbar = () => {
               </li>
               <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
                 <Link
-                  href=""
+                  href="https://twitter.com/Gosolarng"
                   className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
                 >
                   <FaXTwitter />
@@ -74,7 +74,7 @@ const Navbar = () => {
               </li>
               <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
                 <Link
-                  href=""
+                  href="#"
                   className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
                 >
                   <FaInstagram />
