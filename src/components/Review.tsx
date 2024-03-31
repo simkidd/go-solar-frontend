@@ -26,7 +26,7 @@ const Review = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [reviewLength]);
 
   return (
     <div>

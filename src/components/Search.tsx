@@ -2,7 +2,7 @@
 import React from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
-const Search = async ({ placeholder }: { placeholder: string }) => {
+const Search = ({ placeholder }: { placeholder: string }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();

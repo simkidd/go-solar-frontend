@@ -1,9 +1,9 @@
 import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
+import { Post } from "@/interfaces/post.interface";
 import { getPosts } from "@/lib/data";
 import { CalendarCheck } from "lucide-react";
 import Image from "next/image";
-import { Post } from "../page";
 
 export const generateStaticParams = async () => {
   try {

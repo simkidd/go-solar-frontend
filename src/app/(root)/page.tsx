@@ -3,9 +3,12 @@
 import BlogCard from "@/components/BlogCard";
 import MarqueeComp from "@/components/MarqueeComp";
 import Review from "@/components/Review";
+import { Post } from "@/interfaces/post.interface";
+import { getPosts } from "@/lib/data";
 import Link from "next/link";
 
-const page = () => {
+const page = async () => {
+  const posts: Post[] = await getPosts();
   return (
     <div className="w-full font-inter">
       {/* hero section */}
@@ -141,15 +144,17 @@ const page = () => {
               </div>
             </div>
 
-            <Link href="/blogs" className="ml-auto mt-auto">
-              <button className="bg-primary text-white py-4 px-8">All Articles</button>
+            <Link href="/blog" className="ml-auto mt-auto">
+              <button className="bg-primary text-white py-4 px-8">
+                All Articles
+              </button>
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
-            <BlogCard />
-            <BlogCard />
-            <BlogCard />
+            {posts?.slice(0, 3).map((post) => (
+              <BlogCard key={post?.id} post={post} />
+            ))}
           </div>
           <div></div>
         </div>
@@ -168,7 +173,9 @@ const page = () => {
             </div>
             <div className="col-span-1 flex items-center lg:justify-end justify-center mt-6 lg:mt-0">
               <Link href="">
-                <button className="bg-primary text-white py-4 px-8">Get In Touch</button>
+                <button className="bg-primary text-white py-4 px-8">
+                  Get In Touch
+                </button>
               </Link>
             </div>
           </div>

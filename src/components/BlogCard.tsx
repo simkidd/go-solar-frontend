@@ -1,4 +1,4 @@
-import { Post } from "@/app/(root)/blog/page";
+import { Post } from "@/interfaces/post.interface";
 import { CalendarCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

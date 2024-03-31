@@ -1,17 +1,8 @@
 import BlogCard from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
+import { Post } from "@/interfaces/post.interface";
 import { getPosts } from "@/lib/data";
 import { Metadata } from "next";
-
-export interface Post {
-  id: number;
-  title: string;
-  // slug: string;
-  body: string;
-  userId: number;
-  tags: string[];
-  reactions: number;
-}
 
 const pageTitle = "Blogs";
 
