@@ -17,7 +17,7 @@ const navlist: Menu[] = [
   // { name: "Services", href: "/services" },
   // { name: "Projects", href: "/projects" },
   // { name: "GoShop", href: "/products" },
-  // { name: "Blogs", href: "/blogs" },
+  { name: "Blog", href: "/blog" },
   // { name: "Contact Us", href: "/contact-us" },
 ];
 
@@ -87,10 +87,6 @@ const Navbar = () => {
       {/* bottom header */}
       <div className=" w-full h-20 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
         <div className="flex items-center justify-between container mx-auto px-2 w-full h-full">
-          {/* <div className="">
-            <input type="text" placeholder="Search..." />
-          </div> */}
-
           <div
             className="cursor-pointer lg:hidden size-10 flex items-center justify-center mr-2"
             onClick={toggleShowMenu}
