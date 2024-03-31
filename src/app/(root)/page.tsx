@@ -3,10 +3,12 @@
 import BlogCard from "@/components/BlogCard";
 import MarqueeComp from "@/components/MarqueeComp";
 import Review from "@/components/Review";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Post } from "@/interfaces/post.interface";
+import { getPosts } from "@/lib/data";
 import Link from "next/link";
 
-const page = () => {
+const page = async () => {
+  const posts: Post[] = await getPosts();
   return (
     <div className="w-full font-inter">
       {/* hero section */}
@@ -117,42 +119,42 @@ const page = () => {
       <section className="w-full py-16">
         <div className="container mx-auto px-2 mb-8 relative">
           <h2 className="text-primary text-2xl font-bold mb-4">Testimonial</h2>
-          <h2 className="text-5xl font-bold">What they say</h2>
-          <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
+          <h2 className="lg:text-5xl text-4xl font-bold">What they say</h2>
+          <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-[5.7rem] absolute lg:-top-24 -top-14 left-0 -z-[1] font-bold">
             Reviews
           </div>
         </div>
         <div className="container mx-auto px-2 py-4">
-          <div className="flex items-center justify-end gap-2 w-full mb-4">
-            <button className="size-10 flex items-center justify-center border border-gray-500 hover:text-primary">
-              <ArrowLeft />
-            </button>
-            <button className="size-10 flex items-center justify-center border border-gray-500 hover:text-primary">
-              <ArrowRight />
-            </button>
-          </div>
           <Review />
         </div>
       </section>
       {/* blog section */}
       <section className="w-full py-16">
         <div className="container mx-auto px-2">
-          <div className="relative mb-8">
-            <h2 className="text-primary text-2xl font-bold mb-4 text-center">
-              Latest Post
-            </h2>
-            <h2 className="text-5xl font-bold text-center mb-4">
-              What's Going on in our Blog?
-            </h2>
-            <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-1/2 -z-[1] font-bold -translate-x-1/2">
-              Blog
+          <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
+            <div className="relative">
+              <h2 className="text-primary text-2xl font-bold mb-4">
+                Latest Post
+              </h2>
+              <h2 className="lg:text-5xl text-4xl font-bold mb-4">
+                What's Going on in our Blog?
+              </h2>
+              <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
+                Blog
+              </div>
             </div>
+
+            <Link href="/blog" className="ml-auto mt-auto">
+              <button className="bg-primary text-white py-4 px-8">
+                All Articles
+              </button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
-            <BlogCard />
-            <BlogCard />
-            <BlogCard />
+            {posts?.slice(0, 3).map((post) => (
+              <BlogCard key={post?.id} post={post} />
+            ))}
           </div>
           <div></div>
         </div>
@@ -165,11 +167,15 @@ const page = () => {
               <h2 className="capitalize mb-4 text-2xl text-primary">
                 we are here to help you
               </h2>
-              <h2 className="text-5xl font-bold">Any Questions? Let's Talk</h2>
+              <h2 className="lg:text-5xl text-4xl font-bold">
+                Any Questions? Let's Talk
+              </h2>
             </div>
-            <div className="col-span-1 flex items-center justify-end">
+            <div className="col-span-1 flex items-center lg:justify-end justify-center mt-6 lg:mt-0">
               <Link href="">
-                <button className="bg-primary py-4 px-8">Get In Touch</button>
+                <button className="bg-primary text-white py-4 px-8">
+                  Get In Touch
+                </button>
               </Link>
             </div>
           </div>
