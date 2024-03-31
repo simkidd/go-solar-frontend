@@ -128,16 +128,22 @@ const page = () => {
       {/* blog section */}
       <section className="w-full py-16">
         <div className="container mx-auto px-2">
-          <div className="relative mb-8">
-            <h2 className="text-primary text-2xl font-bold mb-4 text-center">
-              Latest Post
-            </h2>
-            <h2 className="lg:text-5xl text-4xl font-bold text-center mb-4">
-              What's Going on in our Blog?
-            </h2>
-            <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-1/2 -z-[1] font-bold -translate-x-1/2">
-              Blog
+          <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
+            <div className="relative">
+              <h2 className="text-primary text-2xl font-bold mb-4">
+                Latest Post
+              </h2>
+              <h2 className="lg:text-5xl text-4xl font-bold mb-4">
+                What's Going on in our Blog?
+              </h2>
+              <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
+                Blog
+              </div>
             </div>
+
+            <Link href="/blogs" className="ml-auto mt-auto">
+              <button className="bg-primary text-white py-4 px-8">All Articles</button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
@@ -162,7 +168,7 @@ const page = () => {
             </div>
             <div className="col-span-1 flex items-center lg:justify-end justify-center mt-6 lg:mt-0">
               <Link href="">
-                <button className="bg-primary py-4 px-8">Get In Touch</button>
+                <button className="bg-primary text-white py-4 px-8">Get In Touch</button>
               </Link>
             </div>
           </div>
