@@ -7,7 +7,7 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_PROPERTY_ID,
   },
   images: {
-    domains: ["i.pravatar.cc", "cdn.dummyjson.com"],
+    domains: ["i.pravatar.cc", "cdn.dummyjson.com", "fakeimg.pl"],
   },
 };
 

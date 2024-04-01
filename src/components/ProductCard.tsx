@@ -11,7 +11,7 @@ const ProductCard: React.FC<{
       <div className="w-full lg:h-64 md:h-56 h-44 overflow-hidden relative group">
         <div className="absolute top-0 left-0 w-full h-full">
           <Image
-            src={item?.images[0]}
+            src={item?.images[0] || "https://fakeimg.pl/300x300?font=noto"}
             alt="product image"
             width={300}
             height={300}
