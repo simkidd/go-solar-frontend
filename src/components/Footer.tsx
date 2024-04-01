@@ -21,11 +21,11 @@ const Footer = () => {
           </div>
           <div className="lg:p-4 px-2 py-4 ">
             <h6 className="text-lg mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
-              Company
+              Quick Links
             </h6>
             <ul className="space-y-2">
               <li className="flex items-center">
-                <Link href="#" className="hover:text-primary">
+                <Link href="/about-us" className="hover:text-primary">
                   About Us
                 </Link>
               </li>
@@ -35,17 +35,17 @@ const Footer = () => {
                 </Link>
               </li>
               <li className="flex items-center">
-                <Link href="#" className="hover:text-primary">
+                <Link href="/blog" className="hover:text-primary">
                   Blog
                 </Link>
               </li>
               <li className="flex items-center">
-                <Link href="#" className="hover:text-primary">
-                  Faq
+                <Link href="/shop" className="hover:text-primary">
+                  Shop
                 </Link>
               </li>
               <li className="flex items-center">
-                <Link href="#" className="hover:text-primary">
+                <Link href="/contact-us" className="hover:text-primary">
                   Contact
                 </Link>
               </li>

@@ -116,7 +116,7 @@ const page = async () => {
         </div>
       </section>
       {/* testimonial section */}
-      <section className="w-full py-16">
+      <section className="w-full py-16 overflow-x-hidden">
         <div className="container mx-auto px-2 mb-8 relative">
           <h2 className="text-primary text-2xl font-bold mb-4">Testimonial</h2>
           <h2 className="lg:text-5xl text-4xl font-bold">What they say</h2>

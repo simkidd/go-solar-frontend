@@ -1,27 +1,15 @@
 "use client";
-import { Mail, Menu, Phone } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
-import { MdClose } from "react-icons/md";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { Mail, Menu, Phone } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { navlist } from "./Navbar";
+import { HiOutlineShoppingBag, HiOutlineUser } from "react-icons/hi2";
+import {Badge} from "@nextui-org/react";
 
-interface Menu {
-  name: string;
-  href: string;
-}
-
-export const navlist: Menu[] = [
-  { name: "About Us", href: "/about-us" },
-  // { name: "Services", href: "/services" },
-  // { name: "Projects", href: "/projects" },
-  { name: "Shop", href: "/shop" },
-  { name: "Blog", href: "/blog" },
-  { name: "Contact Us", href: "/contact-us" },
-];
-
-const Navbar = () => {
+const HeaderShop = () => {
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
 
@@ -36,7 +24,6 @@ const Navbar = () => {
       pathname.startsWith(href + "/")
     );
   };
-
   return (
     <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327] shadow">
       {/* top header */}
@@ -118,70 +105,15 @@ const Navbar = () => {
             })}
           </ul>
 
-          <Link
-            href="/get-quote"
-            className="bg-primary text-white lg:h-full justify-center items-center px-4 py-2 flex"
-          >
-            Get A Quote
-          </Link>
-        </div>
-      </div>
-
-      {/* mobile menu */}
-      <div className={`mob-nav-list lg:hidden ${showMenu && "open"}`}>
-        <div className="mob-nav-inner light bg-white dark:bg-[#222327]">
-          <div
-            onClick={toggleShowMenu}
-            className="cursor-pointer ml-auto mx-2 my-2"
-          >
-            <MdClose size={32} />
-          </div>
-
-          <ul className="flex items-center justify-center space-y-6 flex-col w-full">
-            {navlist.map(({ href, name }, i) => {
-              return (
-                <li key={i} className="">
-                  <Link
-                    href={href}
-                    className={` ${isActive(href) ? "text-primary" : ""}`}
-                    onClick={toggleShowMenu}
-                  >
-                    {name}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-
-          <div className="flex justify-center items-center flex-col w-full my-4 space-y-4">
-            <ul className="flex items-center gap-4 ">
-              <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
-                <Link
-                  href=""
-                  className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
-                >
-                  <FaFacebookF />
-                </Link>
-              </li>
-              <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
-                <Link
-                  href=""
-                  className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
-                >
-                  <FaXTwitter />
-                </Link>
-              </li>
-              <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
-                <Link
-                  href=""
-                  className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
-                >
-                  <FaInstagram />
-                </Link>
-              </li>
-            </ul>
-
-            <ThemeSwitcher />
+          <div className="flex h-full">
+            <button className="w-20 h-full justify-center items-center px-4 py-2 flex">
+              <HiOutlineUser size={24} />
+            </button>
+            <button className="bg-primary text-white w-20 h-full justify-center items-center px-4 py-2 flex">
+            <Badge content="5" color="danger" size="sm">
+              <HiOutlineShoppingBag size={24} />
+            </Badge>
+            </button>
           </div>
         </div>
       </div>
@@ -189,4 +121,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default HeaderShop;
