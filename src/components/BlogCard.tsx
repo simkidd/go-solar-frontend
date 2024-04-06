@@ -44,9 +44,6 @@ const BlogCard: React.FC<{
           </div>
         </Link>
         <div className="p-4 w-full">
-          <div className="text-sm flex mb-1">
-            <span className="">Category</span>
-          </div>
           <div className="text-primary text-xl mb-4">
             <Link href={`/blog/${post?.id}`}>{post?.title}</Link>
           </div>
