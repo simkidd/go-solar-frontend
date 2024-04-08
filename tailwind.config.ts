@@ -22,7 +22,7 @@ const config: Config = {
           // 200: "",
           // 300: "",
         },
-        background: "red",
+        background: "transparent",
       },
       backgroundImage: {
         "auth-bg": "red",

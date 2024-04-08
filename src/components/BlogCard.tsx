@@ -53,14 +53,6 @@ const BlogCard: React.FC<{
           <div className="text-sm flex">
             <span className="">March 23, 2024</span>
           </div>
-          <p className="my-4 w-full">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ipsa,
-            fugiat.
-          </p>
-
-          <Link href="" className="text-primary">
-            Read More
-          </Link>
         </div>
       </div>
     </Suspense>

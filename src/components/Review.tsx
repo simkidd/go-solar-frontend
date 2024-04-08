@@ -72,8 +72,7 @@ const Review = () => {
           </div>
           <div className="mb-4 pl-4 border-l-4 border-l-primary">
             <h4 className="text-2xl">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-              Molestias, doloremque.
+              Be part of the green energy movement with GoSolar.
             </h4>
           </div>
           <motion.p

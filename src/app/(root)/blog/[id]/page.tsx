@@ -1,7 +1,7 @@
 import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
 import { Post } from "@/interfaces/post.interface";
-import { getPosts } from "@/lib/data";
+import { getPost, getPosts } from "@/lib/data";
 import { CalendarCheck } from "lucide-react";
 import Image from "next/image";
 
@@ -15,17 +15,6 @@ export const generateStaticParams = async () => {
     return posts.map((post: Post) => ({
       id: post.id?.toString(),
     }));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const getPost = async (id: number) => {
-  try {
-    const res = await fetch(`https://dummyjson.com/posts/` + id);
-    const data = await res.json();
-
-    return data;
   } catch (error) {
     console.log(error);
   }

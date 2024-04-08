@@ -1,18 +1,17 @@
+import Footer from "@/components/Footer";
+import HeaderShop from "@/components/HeaderShop";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
+import { Suspense } from "react";
 import "../globals.scss";
 import { Providers } from "../providers";
-import Navbar from "@/components/Navbar";
-import NextTopLoader from "nextjs-toploader";
-import Footer from "@/components/Footer";
-import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Go Solar | Affordable Solar Panels and Renewable Energy Solutions",
-  description:
-    "Discover affordable solar panels, installation services, and renewable energy solutions tailored to your needs. Go solar today for sustainable energy and savings",
+  title: "Shop | GoSolar",
+  description: "Affordable Solar products and services",
 };
 
 export default function RootLayout({
@@ -21,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <NextTopLoader
           color="#9dc900"
@@ -35,7 +34,7 @@ export default function RootLayout({
         />
         <Providers>
           <Suspense fallback={<div>Loading...</div>}>
-            <Navbar />
+            <HeaderShop />
             <main>{children}</main>
             <Footer />
           </Suspense>
