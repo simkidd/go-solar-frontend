@@ -3,7 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import { CalendarDays, Mail, MapPin, Phone } from "lucide-react";
 import { Metadata } from "next";
 
-const pageTitle = "Contact Us";
+const pageTitle = "Contact GoSolar Today | Renewable Energy Solutions Provider";
 
 export const metadata: Metadata = {
   title: {

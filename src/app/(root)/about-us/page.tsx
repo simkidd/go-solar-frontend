@@ -9,7 +9,8 @@ import { Metadata } from "next";
 import Image from "next/image";
 import { GiCheckMark } from "react-icons/gi";
 
-const pageTitle = "Who we are";
+const pageTitle =
+  "About Us | GoSolar: Leading Sustainable Solar Energy Solutions";
 
 export const metadata: Metadata = {
   title: {
@@ -43,16 +44,17 @@ const AboutUsPage = () => {
             <div className="lg:p-5 p-2 mt-10 lg:mt-0">
               <div className="border-l-primary border-l-4 pl-4 mb-6">
                 <h4 className="lg:text-xl text-lg font-bold text-primary">
-                  Why Choose Us
+                  Who We Are
                 </h4>
               </div>
               <h2 className="font-bold lg:text-5xl text-4xl leading-snug capitalize">
                 Powering tomorrow with today's sun
               </h2>
               <p className="py-8 leading-relaxed">
-                Rays of Progress & Solar Success serves as a powerful beacon,
-                embodying the transformative journey toward a future powered by
-                the boundless Energy of the sun. It's a vision where each
+                Rays of Progress & Solar Success is dedicated to being a leader
+                in the renewable energy industry. Our vision is to provide
+                sustainable and affordable solar energy solutions that empower
+                individuals and businesses to embrace a greener future.
               </p>
               <ul className="flex flex-col space-y-2">
                 <li className="flex items-center font-semibold">
@@ -96,7 +98,7 @@ const AboutUsPage = () => {
             Our Team
           </h2>
           <h2 className="text-3xl lg:text-4xl font-bold leading-normal mb-8 text-center">
-            Our Specialists Leadership Team
+            Meet Our Specialists Leadership Team
           </h2>
           <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-8 my-8">
             {TeamMember.map((member, i) => (
@@ -142,8 +144,8 @@ const AboutUsPage = () => {
                 </AvatarGroup>
 
                 <p className="text-lg font-semibold leading-snug">
-                  <span className="text-primary">25,500</span> Customer
-                  Satisfaction Services
+                  <span className="text-primary">25,500</span> Satisfied
+                  Customers and Counting
                 </p>
               </div>
             </div>
@@ -154,17 +156,19 @@ const AboutUsPage = () => {
                 </h4>
               </div>
               <h2 className="font-bold lg:text-5xl text-4xl leading-snug capitalize">
-                High Quality Solar Energy Solutions
+                High-Quality Solar Energy Solutions
               </h2>
               <p className="py-8 leading-relaxed">
-                Solar Powering Your Sustainable Scene is a vibrant and
-                compelling phrase that conveys the idea of integrating solar
-                energy into various aspects of life to create a sustainable
+                At "Solar Powering Your Sustainable Scene," we believe in
+                empowering individuals and businesses to embrace solar energy
+                solutions that drive environmental stewardship and financial
+                savings. Our consultancy services aim to guide you in maximizing
+                the potential of renewable energy investments.
               </p>
               <ul className="flex flex-col space-y-2">
                 <li className="flex items-center font-semibold">
                   <GiCheckMark className="text-primary mr-3" />
-                  The Environmental Benefits of Solar Energy
+                  Environmental Benefits of Solar Energy
                 </li>
                 <li className="flex items-center font-semibold">
                   <GiCheckMark className="text-primary mr-3" />

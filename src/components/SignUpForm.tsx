@@ -2,9 +2,10 @@
 import { LoginInput } from "@/interfaces/auth.interface";
 import { Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { ChangeEvent, useMemo, useState } from "react";
 
-const LoginForm = () => {
+const SignUpForm = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [input, setInput] = useState<LoginInput>({
     email: "",
@@ -32,10 +33,10 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // if (!input.email || !input.password) {
-    //   alert("All fields are required");
-    //   return;
-    // }
+    if (!input.email || !input.password) {
+      alert("All fields are required");
+      return;
+    }
 
     alert("Form submitted");
   };
@@ -96,10 +97,10 @@ const LoginForm = () => {
         />
       </div>
       <button className="w-full bg-primary text-white py-2 px-8 mt-8">
-        Login
+        Sign Up
       </button>
     </form>
   );
 };
 
-export default LoginForm;
+export default SignUpForm;
