@@ -10,8 +10,9 @@ import { Suspense } from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Go Solar",
-  description: "Affordable Solar products and services",
+  title: "Go Solar | Affordable Solar Panels and Renewable Energy Solutions",
+  description:
+    "Discover affordable solar panels, installation services, and renewable energy solutions tailored to your needs. Go solar today for sustainable energy and savings",
 };
 
 export default function RootLayout({
