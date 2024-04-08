@@ -5,9 +5,10 @@ import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { Mail, Menu, Phone } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { navlist } from "./Navbar";
 import { HiOutlineShoppingBag, HiOutlineUser } from "react-icons/hi2";
-import {Badge} from "@nextui-org/react";
+import { Badge } from "@nextui-org/react";
+import { navlist } from "@/data/menuData";
+import MenuItem from "./MenuItem";
 
 const HeaderShop = () => {
   const pathname = usePathname();
@@ -25,7 +26,7 @@ const HeaderShop = () => {
     );
   };
   return (
-    <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327] shadow">
+    <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327] shadow nav__container">
       {/* top header */}
       <div className="w-full h-14 hidden lg:flex">
         <div className="grid lg:grid-cols-2 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
@@ -72,7 +73,7 @@ const HeaderShop = () => {
         </div>
       </div>
       {/* bottom header */}
-      <div className=" w-full h-20 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
+      <div className="w-full h-20 light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
         <div className="flex items-center justify-between container mx-auto px-2 w-full h-full">
           <div
             className="cursor-pointer lg:hidden size-10 flex items-center justify-center mr-2"
@@ -88,31 +89,43 @@ const HeaderShop = () => {
             </Link>
           </div>
 
-          <ul className="lg:flex hidden items-center space-x-8 h-full">
-            {navlist.map(({ href, name }, i) => {
-              return (
-                <li key={i} className="h-full ">
-                  <Link
-                    href={href}
-                    className={`h-full flex justify-center items-center border-b-4 border-b-transparent hover:text-primary transition-all duration-300 ease-in-out ${
-                      isActive(href) ? "!border-b-primary text-primary" : ""
-                    }`}
-                  >
-                    {name}
-                  </Link>
-                </li>
-              );
-            })}
+          <ul className="bottom__nav lg:flex hidden items-center space-x-8 h-full">
+            {navlist.map((item, i) => (
+              <MenuItem key={i} item={item} isActive={isActive} />
+            ))}
           </ul>
 
           <div className="flex h-full">
-            <button className="w-20 h-full justify-center items-center px-4 py-2 flex">
-              <HiOutlineUser size={24} />
-            </button>
+            <div className="relative">
+              <button className="w-20 h-full justify-center items-center px-4 py-2 flex user-button">
+                <HiOutlineUser size={24} />
+              </button>
+              <ul
+                className="dropdown-menu"
+                // onMouseLeave={handleUserButtonLeave}
+              >
+                <li>
+                  <a className="dropdown-item" href="#">
+                    Action
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item" href="#">
+                    Another action
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item" href="#">
+                    Something else here
+                  </a>
+                </li>
+              </ul>
+            </div>
+
             <button className="bg-primary text-white w-20 h-full justify-center items-center px-4 py-2 flex">
-            <Badge content="5" color="danger" size="sm">
-              <HiOutlineShoppingBag size={24} />
-            </Badge>
+              <Badge content="5" color="danger" size="sm">
+                <HiOutlineShoppingBag size={24} />
+              </Badge>
             </button>
           </div>
         </div>

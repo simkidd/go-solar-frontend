@@ -11,12 +11,12 @@ const Footer = () => {
       <div className="container mx-auto px-2 mb-8">
         <div className="grid lg:grid-cols-4 grid-cols-1">
           <div className="lg:p-4 px-2 py-4 ">
-            <div>
+            <div className="mb-4">
               <h3 className="text-3xl font-bold">GoSolar</h3>
             </div>
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat,
-              voluptas.
+              Leading provider of sustainable solar energy solutions in Port
+              Harcourt, Nigeria.
             </p>
           </div>
           <div className="lg:p-4 px-2 py-4 ">
@@ -85,6 +85,7 @@ const Footer = () => {
               <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
                 <Link
                   href="https://www.facebook.com/Gosolar.ng"
+                  target="_blank"
                   className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
                 >
                   <FaFacebookF />
@@ -93,6 +94,7 @@ const Footer = () => {
               <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
                 <Link
                   href="https://twitter.com/Gosolarng"
+                  target="_blank"
                   className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
                 >
                   <FaXTwitter />

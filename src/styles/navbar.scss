@@ -1,3 +1,20 @@
+.nav__container {
+  .bottom__nav {
+    li {
+      &:hover {
+        .dropdown {
+          visibility: visible;
+        }
+      }
+
+      .dropdown {
+        position: absolute;
+        visibility: hidden;
+      }
+    }
+  }
+}
+
 .mob-nav-list {
 
   @media screen and (max-width: 1024px) {
