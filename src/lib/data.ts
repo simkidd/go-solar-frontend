@@ -1,6 +1,8 @@
+export const API_URL = process.env.API_URL;
+
 export const getPosts = async () => {
   try {
-    const res = await fetch("https://dummyjson.com/posts");
+    const res = await fetch(`${API_URL}/posts`);
 
     const data = await res.json();
     const posts = data.posts;
@@ -12,7 +14,7 @@ export const getPosts = async () => {
 
 export const getPost = async (id: number) => {
   try {
-    const res = await fetch(`https://dummyjson.com/posts/` + id);
+    const res = await fetch(`${API_URL}/posts/` + id);
     const data = await res.json();
 
     return data;
@@ -23,7 +25,7 @@ export const getPost = async (id: number) => {
 
 export const getProducts = async () => {
   try {
-    const res = await fetch("https://dummyjson.com/products");
+    const res = await fetch(`${API_URL}/products`);
 
     const data = await res.json();
     const products = data.products;
@@ -35,7 +37,7 @@ export const getProducts = async () => {
 
 export const getProduct = async (id: number) => {
   try {
-    const res = await fetch(`https://dummyjson.com/products/` + id);
+    const res = await fetch(`${API_URL}/products/` + id);
     const data = await res.json();
 
     return data;

@@ -7,7 +7,11 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_PROPERTY_ID,
   },
   images: {
-    domains: ["i.pravatar.cc", "cdn.dummyjson.com", "fakeimg.pl"],
+    remotePatterns: [
+      { protocol: "https", hostname: "i.pravatar.cc" },
+      { protocol: "https", hostname: "cdn.dummyjson.com" },
+      { protocol: "https", hostname: "fakeimg.pl" },
+    ],
   },
 };
 
