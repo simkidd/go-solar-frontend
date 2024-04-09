@@ -14,7 +14,7 @@ interface IPost {
 export const generateMetadata = async ({
   params,
 }: IPost): Promise<Metadata> => {
-  const res = await fetch(`${API_URL}/posts/` + params.id);
+  const res = await fetch(`${API_URL}/posts/` + +params.id);
   const post: Post = await res.json();
   return {
     title: post.title,

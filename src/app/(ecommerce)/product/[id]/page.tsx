@@ -14,7 +14,7 @@ interface IProduct {
 export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
-  const res = await fetch(`${API_URL}/products/` + params.id);
+  const res = await fetch(`${API_URL}/products/` + +params.id);
   const product: Product = await res.json();
 
   return {
