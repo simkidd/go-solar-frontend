@@ -4,7 +4,29 @@ import RelatedProducts from "@/components/RelatedProducts";
 import { Product } from "@/interfaces/product.interface";
 import { API_URL, getProduct } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+interface IProduct {
+  params: { id: string };
+}
+
+export const generateMetadata = async ({
+  params,
+}: IProduct): Promise<Metadata> => {
+  const res = await fetch(`${API_URL}/products/` + params.id);
+  const product: Product = await res.json();
+
+  return {
+    title: product.title,
+    description: product.description,
+    openGraph: {
+      images: {
+        url: product.images[0],
+      },
+    },
+  };
+};
 
 export const generateStaticParams = async () => {
   try {
@@ -21,7 +43,7 @@ export const generateStaticParams = async () => {
   }
 };
 
-const ProductPage = async ({ params }: { params: { id: string } }) => {
+const ProductPage = async ({ params }: IProduct) => {
   const product: Product = await getProduct(+params.id);
 
   if (!product) {

@@ -2,7 +2,6 @@ import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
 import { Post } from "@/interfaces/post.interface";
 import { API_URL, getPost, getPosts } from "@/lib/data";
-import { url } from "inspector";
 import { CalendarCheck } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -21,16 +20,16 @@ export const generateMetadata = async ({
     title: post.title,
     description: post.body,
     // openGraph:{
-    //   images:[
-    //     url: post?.imageUrl
-    //   ]
+    //   images:{
+    //     url: post.image
+    //   }
     // }
   };
 };
 
 export const generateStaticParams = async () => {
   try {
-    const res = await fetch(`https://dummyjson.com/posts`);
+    const res = await fetch(`${API_URL}/posts`);
 
     const data = await res.json();
     const posts = data.posts;
