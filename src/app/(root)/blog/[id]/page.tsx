@@ -1,9 +1,32 @@
 import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
 import { Post } from "@/interfaces/post.interface";
-import { getPost, getPosts } from "@/lib/data";
+import { API_URL, getPost, getPosts } from "@/lib/data";
+import { url } from "inspector";
 import { CalendarCheck } from "lucide-react";
+import { Metadata } from "next";
 import Image from "next/image";
+import { notFound } from "next/navigation";
+
+interface IPost {
+  params: { id: string };
+}
+
+export const generateMetadata = async ({
+  params,
+}: IPost): Promise<Metadata> => {
+  const res = await fetch(`${API_URL}/posts/` + params.id);
+  const post: Post = await res.json();
+  return {
+    title: post.title,
+    description: post.body,
+    // openGraph:{
+    //   images:[
+    //     url: post?.imageUrl
+    //   ]
+    // }
+  };
+};
 
 export const generateStaticParams = async () => {
   try {
@@ -20,9 +43,13 @@ export const generateStaticParams = async () => {
   }
 };
 
-const SingleBlogPage = async ({ params }: { params: { id: string } }) => {
+const SingleBlogPage = async ({ params }: IPost) => {
   const post: Post = await getPost(+params.id);
   const posts: Post[] = await getPosts();
+
+  if (!post) {
+    notFound();
+  }
 
   return (
     <div className="w-full">

@@ -2,12 +2,13 @@ import ProductDesc from "@/components/ProductDesc";
 import ProductImages from "@/components/ProductImages";
 import RelatedProducts from "@/components/RelatedProducts";
 import { Product } from "@/interfaces/product.interface";
-import { getProduct } from "@/lib/data";
+import { API_URL, getProduct } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
+import { notFound } from "next/navigation";
 
 export const generateStaticParams = async () => {
   try {
-    const res = await fetch(`https://dummyjson.com/products`);
+    const res = await fetch(`${API_URL}/products`);
 
     const data = await res.json();
     const products = data.products;
@@ -22,6 +23,10 @@ export const generateStaticParams = async () => {
 
 const ProductPage = async ({ params }: { params: { id: string } }) => {
   const product: Product = await getProduct(+params.id);
+
+  if (!product) {
+    notFound();
+  }
 
   return (
     <div className="w-full font-inter py-20">
@@ -52,7 +57,9 @@ const ProductPage = async ({ params }: { params: { id: string } }) => {
       </section>
       <section className="w-full">
         <div className="container mx-auto px-2">
-          <h3 className="font-bold capitalize lg:text-3xl text-2xl mb-6">You may also like</h3>
+          <h3 className="font-bold capitalize lg:text-3xl text-2xl mb-6">
+            You may also like
+          </h3>
           <div>
             <RelatedProducts product={product} />
           </div>

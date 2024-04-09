@@ -20,8 +20,8 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
         },
       }}
     >
-      {[...Array(6)].map((item) => (
-        <SwiperSlide key={item}>
+      {[...Array(6)].map((item, i) => (
+        <SwiperSlide key={i}>
           <ProductCard item={item} />
         </SwiperSlide>
       ))}
