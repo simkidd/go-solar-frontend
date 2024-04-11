@@ -1,5 +1,6 @@
 import BlogCard from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
+import Search from "@/components/Search";
 import { Post } from "@/interfaces/post.interface";
 import { getPosts } from "@/lib/data";
 import { Metadata } from "next";
@@ -12,8 +13,16 @@ export const metadata: Metadata = {
   },
 };
 
-const BlogsPage = async () => {
+const BlogsPage = async ({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) => {
   const posts: Post[] = await getPosts();
+  const query = searchParams?.query || "";
 
   return (
     <div className="w-full font-inter">

@@ -1,3 +1,4 @@
+import Breadcrumb from "@/components/Breadcrumb";
 import ProductDesc from "@/components/ProductDesc";
 import ProductImages from "@/components/ProductImages";
 import RelatedProducts from "@/components/RelatedProducts";
@@ -33,9 +34,9 @@ export const generateStaticParams = async () => {
     const res = await fetch(`${API_URL}/products`);
 
     const data = await res.json();
-    const products = data.products;
+    const products: Product[] = data.products;
 
-    return products.map((product: Product) => ({
+    return products.map((product) => ({
       id: product?.id.toString(),
     }));
   } catch (error) {
@@ -51,13 +52,18 @@ const ProductPage = async ({ params }: IProduct) => {
   }
 
   return (
-    <div className="w-full font-inter py-20">
+    <div className="w-full font-inter py-20 pt-10">
+      <div className="container mx-auto px-2 mb-8">
+        <div className="max-w-[1100px] mx-auto px-2">
+          <Breadcrumb name={product?.title} />
+        </div>
+      </div>
       <section className="w-full">
         <div className="container mx-auto px-2">
           <div className="max-w-[1100px] mx-auto px-2">
             <div className="grid lg:grid-cols-2 grid-cols-1">
               <div className="w-full p-4">
-                <ProductImages product={product} />
+                <ProductImages images={product?.images} />
               </div>
               <div className="w-full flex flex-col p-4">
                 <h2 className="font-bold text-4xl mb-8">{product?.title}</h2>
@@ -65,6 +71,10 @@ const ProductPage = async ({ params }: IProduct) => {
                 <h3 className="font-bold text-2xl">
                   {formatCurrency(product?.price, "NGN")}
                 </h3>
+
+                <button className="bg-primary text-white py-4 px-8 mt-8">
+                  Buy Now
+                </button>
               </div>
             </div>
           </div>

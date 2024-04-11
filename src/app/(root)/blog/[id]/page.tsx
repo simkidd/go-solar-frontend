@@ -32,9 +32,9 @@ export const generateStaticParams = async () => {
     const res = await fetch(`${API_URL}/posts`);
 
     const data = await res.json();
-    const posts = data.posts;
+    const posts: Post[] = data.posts;
 
-    return posts.map((post: Post) => ({
+    return posts.map((post) => ({
       id: post.id?.toString(),
     }));
   } catch (error) {
