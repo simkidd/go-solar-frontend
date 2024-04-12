@@ -1,6 +1,6 @@
 import BlogCard from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
-import Search from "@/components/Search";
+// import Search from "@/components/Search";
 import { Post } from "@/interfaces/post.interface";
 import { getPosts } from "@/lib/data";
 import { Metadata } from "next";
