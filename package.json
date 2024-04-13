@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@nextui-org/react": "^2.2.10",
+    "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.0.20",
     "js-cookie": "^3.0.5",
@@ -26,6 +27,7 @@
     "swiper": "^11.0.7"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
