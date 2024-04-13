@@ -1,6 +1,9 @@
 "use client";
 import { LoginInput } from "@/interfaces/auth.interface";
+import { axiosInstance } from "@/lib/axios";
+import { TOKEN_NAME, USER_DETAILS } from "@/utils/constants";
 import { Input } from "@nextui-org/react";
+import Cookies from "js-cookie";
 import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -10,6 +13,7 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const validateEmail = (input: string) =>
     input.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -32,12 +36,25 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // if (!input.email || !input.password) {
-    //   alert("All fields are required");
-    //   return;
-    // }
+    setLoading(true);
+    try {
+      const { data } = await axiosInstance.post("/auth/login", input);
 
-    alert("Form submitted");
+      const user = data.data.user;
+
+      const userToken = JSON.stringify(user);
+      if (userToken) {
+        alert(data.message);
+        Cookies.set(USER_DETAILS, userToken);
+        Cookies.set(TOKEN_NAME, data.data.user.token);
+      }
+    } catch (error) {
+      const errorMsg = error as any;
+      alert(errorMsg?.response.data.message);
+      console.log(errorMsg?.response.data.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -96,7 +113,7 @@ const LoginForm = () => {
         />
       </div>
       <button className="w-full bg-primary text-white py-2 px-8 mt-8">
-        Login
+        {loading ? "Loading..." : "Login"}
       </button>
     </form>
   );
