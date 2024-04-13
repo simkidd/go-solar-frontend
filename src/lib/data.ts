@@ -1,12 +1,12 @@
+import { axiosInstance } from "./axios";
+
 export const API_URL = process.env.API_URL;
 
 export const getPosts = async () => {
   try {
-    const res = await fetch(`${API_URL}/posts`);
-
-    const data = await res.json();
-    const posts = data.posts;
-    return posts;
+    const res = await axiosInstance.get("/posts");
+    
+    return res.data.post
   } catch (error) {
     console.log(error);
   }
@@ -25,11 +25,9 @@ export const getPost = async (id: number) => {
 
 export const getProducts = async () => {
   try {
-    const res = await fetch(`${API_URL}/products`);
-
-    const data = await res.json();
-    const products = data.products;
-    return products;
+    const res = await axiosInstance.get("/products");
+    
+    return res.data.products
   } catch (error) {
     console.log(error);
   }

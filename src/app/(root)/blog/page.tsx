@@ -32,11 +32,15 @@ const BlogsPage = async ({
       </div> */}
       <section className="py-28 w-full">
         <div className="container mx-auto px-2">
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 py-4">
-            {posts?.map((post) => (
-              <BlogCard key={post.id} post={post} />
-            ))}
-          </div>
+          {posts?.length < 1 ? (
+            <p>No post found</p>
+          ) : (
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 py-4">
+              {posts?.map((post) => (
+                <BlogCard key={post.id} post={post} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>
