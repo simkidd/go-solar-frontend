@@ -11,3 +11,16 @@ export interface Product {
   thumbnail: string;
   images: string[];
 }
+
+export interface CreateProductInput {
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  additionalInfo: string;
+  quantityInStock: number;
+  images: string[];
+  brand: string;
+  outsideLocationDeliveryFee: number;
+  withinLocationDeliveryFee: number;
+}

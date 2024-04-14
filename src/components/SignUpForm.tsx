@@ -61,7 +61,7 @@ const SignUpForm = () => {
 
       if (data.data.user) {
         alert(data.message);
-        router.push("/account/login");
+        router.push("/account/verify?to=" + input?.email);
       }
     } catch (error) {
       const errorMsg = error as any;

@@ -6,7 +6,7 @@ export const getPosts = async () => {
   try {
     const res = await axiosInstance.get("/posts");
     
-    return res.data.post
+    return res.data.posts
   } catch (error) {
     console.log(error);
   }
