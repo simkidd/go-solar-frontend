@@ -1,11 +1,13 @@
 "use client";
-import { CreateProductInput } from "@/interfaces/product.interface";
+import { Category, CreateProductInput } from "@/interfaces/product.interface";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { GrCloudUpload } from "react-icons/gr";
 
-const CreateProductForm = () => {
+const CreateProductForm: React.FC<{ categories: Category[] }> = ({
+  categories,
+}) => {
   const [input, setInput] = useState<CreateProductInput>({
     name: "",
     description: "",
@@ -61,8 +63,12 @@ const CreateProductForm = () => {
                   setInput({ ...input, category: e.target.value })
                 }
               >
-                <option value="">Batteries</option>
-                <option value="">Inverters</option>
+                <option value="" hidden></option>
+                {categories?.map(({ id, name }) => (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="">

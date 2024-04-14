@@ -24,3 +24,11 @@ export interface CreateProductInput {
   outsideLocationDeliveryFee: number;
   withinLocationDeliveryFee: number;
 }
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+}
