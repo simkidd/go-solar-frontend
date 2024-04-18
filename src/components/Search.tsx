@@ -18,7 +18,7 @@ const Search = ({ placeholder }: { placeholder: string }) => {
   };
 
   return (
-    <div className="">
+    <div className="mb-6">
       <input
         type="text"
         placeholder={placeholder}
@@ -26,6 +26,7 @@ const Search = ({ placeholder }: { placeholder: string }) => {
           handleSearch(e.target.value);
         }}
         defaultValue={searchParams.get("query")?.toString()}
+        className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
       />
     </div>
   );

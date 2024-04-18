@@ -32,8 +32,8 @@ const ProductCard: React.FC<{
         </div>
       </div>
       <div className="w-full px-2">
-        <Link href={`/product/${item?.id}`} className="mb-4 text-ellipsis line-clamp-2" title={item?.title}>
-          {item?.title}
+        <Link href={`/product/${item?._id}`} className="mb-4 text-ellipsis line-clamp-2" title={item?.name}>
+          {item?.name}
         </Link>
       </div>
       <p>{item?.price}</p>

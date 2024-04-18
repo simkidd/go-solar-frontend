@@ -24,7 +24,7 @@ const ShopPage = async () => {
           </div>
           <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
             {products?.slice(0, 6).map((item) => (
-              <ProductCard key={item?.id} item={item} />
+              <ProductCard key={item?._id} item={item} />
             ))}
           </div>
           {/* inverters */}
@@ -36,7 +36,7 @@ const ShopPage = async () => {
           </div>
           <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
             {products?.slice(0, 6).map((item) => (
-              <ProductCard key={item?.id} item={item} />
+              <ProductCard key={item?._id} item={item} />
             ))}
           </div>
           <div className="mb-6">
@@ -51,7 +51,7 @@ const ShopPage = async () => {
           </div>
           <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
             {products?.slice(0, 6).map((item) => (
-              <ProductCard key={item?.id} item={item} />
+              <ProductCard key={item?._id} item={item} />
             ))}
           </div>
           {/* brands */}
@@ -63,7 +63,7 @@ const ShopPage = async () => {
           </div>
           <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
             {products?.slice(0, 12).map((item) => (
-              <ProductCard key={item?.id} item={item} />
+              <ProductCard key={item?._id} item={item} />
             ))}
           </div>
           <div className="mb-6">

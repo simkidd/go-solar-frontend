@@ -12,7 +12,7 @@ export const BlogCardList: React.FC<{ item: Post }> = ({ item }) => {
       </div>
       <div className="flex flex-col w-[calc(100%-5rem)] px-2">
         <Link
-          href={`/blog/${item?.id}`}
+          href={`/blog/${item?._id}`}
           className="mb-2 hover:underline"
           title={item?.title}
         >
@@ -33,7 +33,7 @@ const BlogCard: React.FC<{
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="w-full">
-        <Link href={`/blog/${post?.id}`}>
+        <Link href={`/blog/${post?._id}`}>
           <div className="w-full h-[200px] bg-gray-500 overflow-hidden">
             <Image
               src=""
@@ -48,7 +48,7 @@ const BlogCard: React.FC<{
             <span className="">Category</span>
           </div>
           <div className="text-primary text-xl mb-4">
-            <Link href={`/blog/${post?.id}`}>{post?.title}</Link>
+            <Link href={`/blog/${post?._id}`}>{post?.title}</Link>
           </div>
           <div className="text-sm flex">
             <span className="">March 23, 2024</span>

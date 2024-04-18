@@ -4,7 +4,7 @@ import ProductImages from "@/components/ProductImages";
 import RelatedProducts from "@/components/RelatedProducts";
 import { Product } from "@/interfaces/product.interface";
 import { axiosInstance } from "@/lib/axios";
-import { API_URL, getProduct } from "@/lib/data";
+import { getProduct } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -17,7 +17,7 @@ export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
   const { data } = await axiosInstance.get(`/products/${params.id}`);
-  const product: Product = data.data.product;
+  const product: Product = data.product;
 
   return {
     title: product.name,
@@ -30,19 +30,19 @@ export const generateMetadata = async ({
   };
 };
 
-export const generateStaticParams = async () => {
-  try {
-    const { data } = await axiosInstance.get("/products");
+// export const generateStaticParams = async () => {
+//   try {
+//     const { data } = await axiosInstance.get("/products");
 
-    const products: Product[] = data.data.products;
+//     const products: Product[] = data.products;
 
-    return products.map((product) => ({
-      id: product?.id,
-    }));
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     return products.map((product) => ({
+//       id: product?._id,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 const ProductPage = async ({ params }: IProduct) => {
   const product: Product = await getProduct(params.id);

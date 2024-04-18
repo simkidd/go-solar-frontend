@@ -6,6 +6,7 @@ import AdminSidebar from "@/app/(dashboard)/components/AdminSidebar";
 import { Providers } from "../providers";
 import { Suspense } from "react";
 import NextTopLoader from "nextjs-toploader";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,7 +34,7 @@ export default function RootLayout({
           speed={200}
         />
         <Providers>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <div className="min-h-screen light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
               <div className="w-full relative">
                 <AdminSidebar />

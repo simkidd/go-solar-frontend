@@ -2,7 +2,7 @@ import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
 import { Post } from "@/interfaces/post.interface";
 import { axiosInstance } from "@/lib/axios";
-import { API_URL, getPost, getPosts } from "@/lib/data";
+import { getPost, getPosts } from "@/lib/data";
 import { CalendarCheck } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -16,7 +16,7 @@ export const generateMetadata = async ({
   params,
 }: IPost): Promise<Metadata> => {
   const { data } = await axiosInstance.get(`/blogs/${params.id}`);
-  const post: Post = data.data.blog;
+  const post: Post = data.blog;
   return {
     title: post.title,
     description: post.content,
@@ -28,19 +28,19 @@ export const generateMetadata = async ({
   };
 };
 
-export const generateStaticParams = async () => {
-  try {
-    const { data } = await axiosInstance.get("/blogs");
+// export const generateStaticParams = async () => {
+//   try {
+//     const { data } = await axiosInstance.get("/blogs");
 
-    const posts: Post[] = data.data.blogs;
+//     const posts: Post[] = data.blogs;
 
-    return posts.map((post) => ({
-      id: post.id,
-    }));
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     return posts.map((post) => ({
+//       id: post._id,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 const SingleBlogPage = async ({ params }: IPost) => {
   const post: Post = await getPost(params.id);
@@ -80,7 +80,7 @@ const SingleBlogPage = async ({ params }: IPost) => {
 
                 <div className="w-full flex flex-col space-y-2">
                   {posts?.slice(0, 3).map((item) => (
-                    <BlogCardList key={item?.id} item={item} />
+                    <BlogCardList key={item?._id} item={item} />
                   ))}
                 </div>
               </div>
