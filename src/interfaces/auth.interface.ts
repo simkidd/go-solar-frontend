@@ -22,10 +22,18 @@ export interface User {
   updatedAt: Date;
 }
 
-export interface loginResponse {
+export interface LoginResponse {
   _id: string;
   email: string;
   token: string;
   is_verified: boolean;
   isSuperAdmin: boolean;
+}
+
+export interface EmailInput {
+  email: string;
+}
+
+export interface ChangePasswordInput {
+  password: string;
 }

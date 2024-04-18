@@ -1,6 +1,12 @@
 // "use client";
 import React, { createContext, useContext, useState } from "react";
-import { LoginInput, SignUpInput, User } from "@/interfaces/auth.interface";
+import {
+  ChangePasswordInput,
+  EmailInput,
+  LoginInput,
+  SignUpInput,
+  User,
+} from "@/interfaces/auth.interface";
 import { TOKEN_NAME, USER_DETAILS } from "@/utils/constants";
 import Cookies from "js-cookie";
 import { axiosInstance } from "@/lib/axios";
@@ -11,6 +17,9 @@ interface IAuth {
   currentUser: User | null;
   login: (input: LoginInput) => Promise<void>;
   signup: (input: SignUpInput) => Promise<void>;
+  resendVerification: (input: EmailInput) => Promise<void>;
+  forgotPassword: (input: EmailInput) => Promise<void>;
+  resetPassword: (input: ChangePasswordInput, token: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<IAuth>({} as IAuth);
@@ -71,8 +80,73 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const resendVerification = async (input: EmailInput) => {
+    try {
+      setLoading(true);
+      const { data } = await axiosInstance.post(
+        "/auth/request-verification",
+        input
+      );
+
+      console.log(data);
+    } catch (error) {
+      const errorMsg = error as any;
+      alert(errorMsg?.response.data.message);
+      console.log(errorMsg?.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const forgotPassword = async (input: EmailInput) => {
+    try {
+      setLoading(true);
+      const { data } = await axiosInstance.post("/auth/forgotpassword", input);
+
+      if (data) {
+        alert(data.data);
+      }
+    } catch (error) {
+      const errorMsg = error as any;
+      alert(errorMsg?.response.data.message);
+      console.log(errorMsg?.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetPassword = async (input: ChangePasswordInput, token: string) => {
+    try {
+      setLoading(true);
+      const { data } = await axiosInstance.put(
+        `/auth/resetpassword/${token}`,
+        input
+      );
+
+      if (data) {
+        alert(data.message);
+      }
+    } catch (error) {
+      const errorMsg = error as any;
+      alert(errorMsg?.response.data.message);
+      console.log(errorMsg?.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ loading, currentUser, login, signup }}>
+    <AuthContext.Provider
+      value={{
+        loading,
+        currentUser,
+        login,
+        signup,
+        resendVerification,
+        forgotPassword,
+        resetPassword,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

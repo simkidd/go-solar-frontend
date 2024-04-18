@@ -1,6 +1,7 @@
 import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
 import { Post } from "@/interfaces/post.interface";
+import { axiosInstance } from "@/lib/axios";
 import { API_URL, getPost, getPosts } from "@/lib/data";
 import { CalendarCheck } from "lucide-react";
 import { Metadata } from "next";
@@ -14,11 +15,11 @@ interface IPost {
 export const generateMetadata = async ({
   params,
 }: IPost): Promise<Metadata> => {
-  const res = await fetch(`${API_URL}/posts/${params.id}`);
-  const post: Post = await res.json();
+  const { data } = await axiosInstance.get(`/blogs/${params.id}`);
+  const post: Post = data.data.blog;
   return {
     title: post.title,
-    description: post.body,
+    description: post.content,
     // openGraph:{
     //   images:{
     //     url: post.image
@@ -29,13 +30,12 @@ export const generateMetadata = async ({
 
 export const generateStaticParams = async () => {
   try {
-    const res = await fetch(`${API_URL}/posts`);
+    const { data } = await axiosInstance.get("/blogs");
 
-    const data = await res.json();
-    const posts: Post[] = data.posts;
+    const posts: Post[] = data.data.blogs;
 
     return posts.map((post) => ({
-      id: post.id?.toString(),
+      id: post.id,
     }));
   } catch (error) {
     console.log(error);
@@ -43,7 +43,7 @@ export const generateStaticParams = async () => {
 };
 
 const SingleBlogPage = async ({ params }: IPost) => {
-  const post: Post = await getPost(+params.id);
+  const post: Post = await getPost(params.id);
   const posts: Post[] = await getPosts();
 
   if (!post) {
@@ -65,7 +65,7 @@ const SingleBlogPage = async ({ params }: IPost) => {
                 <Image src="" alt="" className="w-full h-full object-cover" />
               </div>
 
-              <article className="">{post?.body}</article>
+              <article className="">{post?.content}</article>
             </div>
             <div className="col-span-1 lg:px-4 mt-8 lg:mt-0">
               <div>

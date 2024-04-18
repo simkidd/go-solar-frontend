@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import React from "react";
-import SignUpForm from "@/components/SignUpForm";
+import SignUpForm from "@/app/(auth)/components/SignUpForm";
 import Link from "next/link";
 
 const pageTitle = "Create an account";

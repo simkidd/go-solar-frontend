@@ -4,20 +4,19 @@ export const API_URL = process.env.API_URL;
 
 export const getPosts = async () => {
   try {
-    const res = await axiosInstance.get("/posts");
+    const { data } = await axiosInstance.get("/blogs");
 
-    return res.data.posts;
+    return data.data.blogs;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getPost = async (id: number) => {
+export const getPost = async (id: string) => {
   try {
-    const res = await fetch(`${API_URL}/posts/` + id);
-    const data = await res.json();
+    const { data } = await axiosInstance.get(`/blogs/${id}`);
 
-    return data;
+    return data.data.blog;
   } catch (error) {
     console.log(error);
   }
@@ -25,20 +24,19 @@ export const getPost = async (id: number) => {
 
 export const getProducts = async () => {
   try {
-    const res = await axiosInstance.get("/products");
+    const { data } = await axiosInstance.get("/products");
 
-    return res.data.products;
+    return data.data.products;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getProduct = async (id: number) => {
+export const getProduct = async (id: string) => {
   try {
-    const res = await fetch(`${API_URL}/products/` + id);
-    const data = await res.json();
+    const { data } = await axiosInstance.get(`/products/${id}`);
 
-    return data;
+    return data.data.product;
   } catch (error) {
     console.log(error);
   }
@@ -46,8 +44,9 @@ export const getProduct = async (id: number) => {
 
 export const getCategories = async () => {
   try {
-    const res = await axiosInstance.get("/categories");
-    return res.data.categories;
+    const { data } = await axiosInstance.get("/categories");
+
+    return data.data.categories;
   } catch (error) {
     console.log(error);
   }

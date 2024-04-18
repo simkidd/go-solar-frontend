@@ -1,5 +1,14 @@
-import VerifyForm from "@/components/VerifyForm";
+import VerifyForm from "@/app/(auth)/components/VerifyForm";
+import { Metadata } from "next";
 import React from "react";
+
+const pageTitle = "Verify account";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: pageTitle,
+  },
+};
 
 const VerifyEmailToken = ({
   params: { token },

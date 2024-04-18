@@ -3,6 +3,7 @@ import ProductDesc from "@/components/ProductDesc";
 import ProductImages from "@/components/ProductImages";
 import RelatedProducts from "@/components/RelatedProducts";
 import { Product } from "@/interfaces/product.interface";
+import { axiosInstance } from "@/lib/axios";
 import { API_URL, getProduct } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
 import { Metadata } from "next";
@@ -15,11 +16,11 @@ interface IProduct {
 export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
-  const res = await fetch(`${API_URL}/products/${params.id}`);
-  const product: Product = await res.json();
+  const { data } = await axiosInstance.get(`/products/${params.id}`);
+  const product: Product = data.data.product;
 
   return {
-    title: product.title,
+    title: product.name,
     description: product.description,
     openGraph: {
       images: {
@@ -31,13 +32,12 @@ export const generateMetadata = async ({
 
 export const generateStaticParams = async () => {
   try {
-    const res = await fetch(`${API_URL}/products`);
+    const { data } = await axiosInstance.get("/products");
 
-    const data = await res.json();
-    const products: Product[] = data.products;
+    const products: Product[] = data.data.products;
 
     return products.map((product) => ({
-      id: product?.id.toString(),
+      id: product?.id,
     }));
   } catch (error) {
     console.log(error);
@@ -45,7 +45,7 @@ export const generateStaticParams = async () => {
 };
 
 const ProductPage = async ({ params }: IProduct) => {
-  const product: Product = await getProduct(+params.id);
+  const product: Product = await getProduct(params.id);
 
   if (!product) {
     notFound();
@@ -55,7 +55,7 @@ const ProductPage = async ({ params }: IProduct) => {
     <div className="w-full font-inter py-20 pt-10">
       <div className="container mx-auto px-2 mb-8">
         <div className="max-w-[1100px] mx-auto px-2">
-          <Breadcrumb name={product?.title} />
+          <Breadcrumb name={product?.name} />
         </div>
       </div>
       <section className="w-full">
@@ -66,7 +66,7 @@ const ProductPage = async ({ params }: IProduct) => {
                 <ProductImages images={product?.images} />
               </div>
               <div className="w-full flex flex-col p-4">
-                <h2 className="font-bold text-4xl mb-8">{product?.title}</h2>
+                <h2 className="font-bold text-4xl mb-8">{product?.name}</h2>
                 <div className="flex">rating stars</div>
                 <h3 className="font-bold text-2xl">
                   {formatCurrency(product?.price, "NGN")}

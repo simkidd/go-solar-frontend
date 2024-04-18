@@ -152,7 +152,7 @@ const SignUpForm = () => {
           onChange={(e) => setInput({ ...input, phonenumber: e.target.value })}
         />
       </div>
-      <button className="w-full bg-primary text-white py-2 px-8 mt-8">
+      <button className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:bg-gray-400" disabled={!input.password || isPasswordInvalid}>
         {loading ? "Loading..." : "Sign Up"}
       </button>
     </form>

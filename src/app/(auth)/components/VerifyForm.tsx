@@ -1,25 +1,26 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
+import { useAuth } from "@/contexts/auth.context";
 import { axiosInstance } from "@/lib/axios";
 import { Input } from "@nextui-org/react";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 
 const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
+  const { loading, resendVerification } = useAuth();
   const [input, setInput] = useState({
     email: "",
   });
-  const [loading, setLoading] = useState(true);
+  const [loadingVerify, setLoadingVerify] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [resend, setResend] = useState(false);
-  const [loadingOtp, setLoadingOtp] = useState(false);
   const [showInput, setShowInput] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true);
+        setLoadingVerify(true);
         const { data } = await axiosInstance.post(`/auth/verify-user/${token}`);
         if (data) {
           setSuccess(true);
@@ -29,7 +30,7 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
         setError(true);
         console.log(errorMsg?.response.data.message);
       } finally {
-        setLoading(false);
+        setLoadingVerify(false);
       }
     })();
   }, [token]);
@@ -45,29 +46,12 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      setLoadingOtp(true);
-      const { data } = await axiosInstance.post(
-        "/auth/request-verification",
-        input
-      );
-      console.log(data);
-      // const res = data;
-      // if (res) {
-      //   setInput({ email: "" });
-      //   setResend(true);
-      // } else {
-      //   setResend(false);
-      // }
-    } catch (error) {
-      const errorMsg = error as any;
-      console.log(errorMsg?.response.data.message);
-    } finally {
-      setLoadingOtp(false);
-    }
+
+    await resendVerification(input);
+    setInput({ email: "" });
   };
 
-  if (loading) {
+  if (loadingVerify) {
     return (
       <div className="text-center">
         <h3 className="font-medium text-xl">Verifying...</h3>
@@ -119,7 +103,7 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
                   </div>
 
                   <button className="w-full bg-primary text-white py-2 px-8 mt-8">
-                    {loadingOtp ? "Sending..." : "Resend"}
+                    {loading ? "Sending..." : "Resend"}
                   </button>
                 </form>
               </>
