@@ -1,5 +1,14 @@
-import ForgetPswForm from "@/components/ForgetPswForm";
+import ForgetPswForm from "@/app/(auth)/components/ForgetPswForm";
+import { Metadata } from "next";
 import Link from "next/link";
+
+const pageTitle = "Forgot your password";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: pageTitle,
+  },
+};
 
 const ForgotPassword = () => {
   return (

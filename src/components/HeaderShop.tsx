@@ -96,30 +96,36 @@ const HeaderShop = () => {
           </ul>
 
           <div className="flex h-full">
-            <div className="relative">
-              <button className="w-20 h-full justify-center items-center px-4 py-2 flex user-button">
+            <div className="user relative">
+              <button className="w-20 h-full justify-center items-center px-4 py-2 flex user__button">
                 <HiOutlineUser size={24} />
               </button>
-              <ul
-                className="dropdown-menu"
-                // onMouseLeave={handleUserButtonLeave}
-              >
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Action
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Another action
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Something else here
-                  </a>
-                </li>
-              </ul>
+              <div className="user__menu light bg-white dark:bg-[#2a2b2f] shadow-md w-[206px]">
+                <div className="p-4">
+                  <Link href="/account/login" className="block">
+                    <button className="bg-primary w-full text-white py-2 px-8">
+                      Sign In
+                    </button>
+                  </Link>
+                </div>
+                <ul>
+                  <li>
+                    <Link className="block p-2 hover:text-primary" href="#">
+                      Action
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="block p-2 hover:text-primary" href="#">
+                      Another action
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="block p-2 hover:text-primary" href="#">
+                      Something else here
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <button className="bg-primary text-white w-20 h-full justify-center items-center px-4 py-2 flex">

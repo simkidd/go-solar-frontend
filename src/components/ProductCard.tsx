@@ -8,7 +8,7 @@ const ProductCard: React.FC<{
 }> = ({ item }) => {
   return (
     <div className="w-full">
-      <div className="w-full lg:h-64 md:h-56 h-44 overflow-hidden relative group">
+      <div className="w-full lg:h-44 md:h-56 h-44 overflow-hidden relative group">
         <div className="absolute top-0 left-0 w-full h-full">
           <Image
             src={item?.images[0] || "https://fakeimg.pl/300x300?font=noto"}
@@ -32,8 +32,8 @@ const ProductCard: React.FC<{
         </div>
       </div>
       <div className="w-full px-2">
-        <Link href={`/product/${item?.id}`} className="mb-4 text-ellipsis line-clamp-2" title={item?.title}>
-          {item?.title}
+        <Link href={`/product/${item?._id}`} className="mb-4 text-ellipsis line-clamp-2" title={item?.name}>
+          {item?.name}
         </Link>
       </div>
       <p>{item?.price}</p>

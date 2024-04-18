@@ -1,9 +1,14 @@
-import React from 'react'
-
 const VerifyEmail = () => {
   return (
-    <div>VerifyEmail</div>
-  )
-}
+    <div className="w-full">
+      <div className="">
+        <p className="text-sm text-center">
+          Registration successful. Please check your inbox for a verification
+          code, and verify your account.
+        </p>
+      </div>
+    </div>
+  );
+};
 
-export default VerifyEmail
+export default VerifyEmail;
