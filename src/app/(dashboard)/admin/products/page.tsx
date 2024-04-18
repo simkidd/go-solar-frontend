@@ -10,7 +10,7 @@ const ProductsListPage = () => {
         <h3 className="text-2xl font-medium">Products</h3>
         <div>
           <Link href="/admin/products/create">
-            <button className="bg-primary text-white px-6 py-2 text-sm flex items-center">
+            <button className="bg-primary text-white px-4 py-2 text-sm flex items-center">
               <Plus className="mr-2" size={16} />
               Create New
             </button>

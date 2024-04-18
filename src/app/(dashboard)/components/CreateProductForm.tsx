@@ -1,5 +1,6 @@
 "use client";
 import { Category, CreateProductInput } from "@/interfaces/product.interface";
+import { axiosInstance } from "@/lib/axios";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -20,10 +21,38 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
     outsideLocationDeliveryFee: 0,
     withinLocationDeliveryFee: 0,
   });
+  const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState([]);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {};
+
+  const removeImage = (index: number) => {
+    const updatedImages = [...input.images];
+    updatedImages.splice(index, 1);
+    setInput({ ...input, images: updatedImages });
+    setImagePreview((oldArray) => {
+      const newArray = [...oldArray];
+      newArray.splice(index, 1);
+      return newArray;
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("input", input);
+    setLoading(true);
+    try {
+      console.log("Submitting form with input:", input);
+      const res = await axiosInstance.post("/admin/add-product", input);
+
+      console.log("input", res);
+      alert("product added");
+    } catch (error) {
+      const errorMsg = error as any;
+      alert(errorMsg?.response.data.message);
+      console.log(errorMsg?.response.data.message);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <form className="w-full" onSubmit={handleSubmit}>
@@ -64,8 +93,12 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                 }
               >
                 <option value="" hidden></option>
-                {categories?.map(({ id, name }) => (
-                  <option key={id} value={id}>
+                {categories?.map(({ _id, name }) => (
+                  <option
+                    key={_id}
+                    value={_id}
+                    className="bg-white dark:bg-[#222327]"
+                  >
                     {name}
                   </option>
                 ))}
@@ -80,8 +113,9 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                 value={input?.brand}
                 onChange={(e) => setInput({ ...input, brand: e.target.value })}
               >
-                <option value="">Brand 1</option>
-                <option value="">Brand 2</option>
+                <option value="" className="bg-white dark:bg-[#222327]">
+                  Brand 1
+                </option>
               </select>
             </div>
           </div>
@@ -125,20 +159,35 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
             </label>
             <div className="flex gap-2 flex-wrap mt-1">
               {/* selected images */}
-              <div className="size-20 overflow-hidden rounded relative group">
-                <Image src="" alt="" className="w-full h-full object-cover" />
+              {imagePreview.map((preview, i) => (
                 <div
-                  className="bg-[#2424243a] w-full h-full absolute top-0 left-0 flex group-hover:opacity-100 opacity-0"
-                  style={{ transition: "opacity .3s ease" }}
+                  key={i}
+                  className="size-20 overflow-hidden rounded relative group"
                 >
-                  <button className="mt-auto ml-[50%] -translate-x-1/2 mb-1 text-white bg-danger p-1 rounded">
-                    <Trash2 size={18} />
-                  </button>
+                  <Image
+                    src={preview}
+                    alt=""
+                    className="w-full h-full object-cover"
+                    width={80}
+                    height={80}
+                  />
+                  <div
+                    className="bg-[#2424243a] w-full h-full absolute top-0 left-0 flex group-hover:opacity-100 opacity-0"
+                    style={{ transition: "opacity .3s ease" }}
+                  >
+                    <button
+                      className="mt-auto ml-[50%] -translate-x-1/2 mb-1 text-white bg-danger p-1 rounded"
+                      onClick={() => removeImage(i)}
+                      type="button"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ))}
               {/* upload button */}
               <div
-                className="size-20 overflow-hidden rounded border hover:bg-gray-400"
+                className="size-20 overflow-hidden rounded border hover:bg-gray-400 "
                 style={{ transition: "background .3s ease" }}
               >
                 <label htmlFor="image" className="cursor-pointer">
@@ -147,7 +196,13 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                     <span className="text-sm">Upload</span>
                   </div>
                 </label>
-                <input type="file" id="image" className="hidden" />
+                <input
+                  type="file"
+                  id="image"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                  multiple
+                />
               </div>
             </div>
           </div>
@@ -209,7 +264,9 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
             Publish on site
           </label>
         </div>
-        <button className="bg-primary text-white px-6 py-2">Add Product</button>
+        <button className="bg-primary text-white px-6 py-2">
+          {loading ? "Loading..." : "Add product"}
+        </button>
       </div>
     </form>
   );
