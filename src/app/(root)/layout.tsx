@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
 import Footer from "@/components/Footer";
 import { Suspense } from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,7 +42,7 @@ export default function RootLayout({
           speed={200}
         />
         <Providers>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <Navbar />
             <main>{children}</main>
             <Footer />

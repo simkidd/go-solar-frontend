@@ -21,7 +21,7 @@ const MenuItem: React.FC<{
           </Link>
         </div>
         {children && (
-          <div className="dropdown light bg-[#f2f2f2] dark:bg-[#2a2b2f] shadow-md">
+          <div className="dropdown light bg-white dark:bg-[#2a2b2f] shadow-md">
             {children.map(({ heading, submenu }, i) => (
               <div key={i}>
                 <section className="w-full grid grid-cols-3">

@@ -1,23 +1,22 @@
-export const API_URL = process.env.API_URL;
+import { axiosInstance } from "./axios";
+
+// export const API_URL = process.env.API_URL;
 
 export const getPosts = async () => {
   try {
-    const res = await fetch(`${API_URL}/posts`);
+    const { data } = await axiosInstance.get("/blogs");
 
-    const data = await res.json();
-    const posts = data.posts;
-    return posts;
+    return data.blogs;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getPost = async (id: number) => {
+export const getPost = async (id: string) => {
   try {
-    const res = await fetch(`${API_URL}/posts/` + id);
-    const data = await res.json();
+    const { data } = await axiosInstance.get(`/blogs/${id}`);
 
-    return data;
+    return data.blog;
   } catch (error) {
     console.log(error);
   }
@@ -25,22 +24,29 @@ export const getPost = async (id: number) => {
 
 export const getProducts = async () => {
   try {
-    const res = await fetch(`${API_URL}/products`);
+    const { data } = await axiosInstance.get("/products");
 
-    const data = await res.json();
-    const products = data.products;
-    return products;
+    return data.products;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getProduct = async (id: number) => {
+export const getProduct = async (id: string) => {
   try {
-    const res = await fetch(`${API_URL}/products/` + id);
-    const data = await res.json();
+    const { data } = await axiosInstance.get(`/products/${id}`);
 
-    return data;
+    return data.product;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getCategories = async () => {
+  try {
+    const { data } = await axiosInstance.get("/categories");
+
+    return data.categories;
   } catch (error) {
     console.log(error);
   }

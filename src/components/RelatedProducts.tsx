@@ -11,16 +11,17 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
     <Swiper
       slidesPerView={2}
       spaceBetween={10}
+      slidesPerGroup={1}
       breakpoints={{
         768: {
           slidesPerView: 3,
         },
         1024: {
-          slidesPerView: 4,
+          slidesPerView: 6,
         },
       }}
     >
-      {[...Array(6)].map((item, i) => (
+      {[...Array(10)].map((item, i) => (
         <SwiperSlide key={i}>
           <ProductCard item={item} />
         </SwiperSlide>
