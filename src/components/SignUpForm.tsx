@@ -1,12 +1,12 @@
 "use client";
+import { useAuth } from "@/contexts/auth.context";
 import { SignUpInput } from "@/interfaces/auth.interface";
-import { axiosInstance } from "@/lib/axios";
 import { Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 const SignUpForm = () => {
+  const { loading, signup } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [input, setInput] = useState<SignUpInput>({
     email: "",
@@ -14,8 +14,6 @@ const SignUpForm = () => {
     fullname: "",
     phonenumber: "",
   });
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const validateEmail = (input: string) =>
     input.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -55,21 +53,14 @@ const SignUpForm = () => {
       alert("All fields are required");
       return;
     }
-    setLoading(true);
-    try {
-      const { data } = await axiosInstance.post("/auth/signup", input);
 
-      if (data.data.user) {
-        alert(data.message);
-        router.push("/account/verify?to=" + input?.email);
-      }
-    } catch (error) {
-      const errorMsg = error as any;
-      alert(errorMsg?.response.data.message);
-      console.log(errorMsg?.response.data.message);
-    } finally {
-      setLoading(false);
-    }
+    await signup(input);
+    setInput({
+      email: "",
+      password: "",
+      fullname: "",
+      phonenumber: "",
+    });
   };
 
   return (
@@ -79,6 +70,7 @@ const SignUpForm = () => {
           type="text"
           variant="underlined"
           label="Fullname"
+          name="name"
           size="lg"
           className="w-full"
           classNames={{
@@ -94,6 +86,7 @@ const SignUpForm = () => {
           type="email"
           variant="underlined"
           label="Email"
+          name="email"
           size="lg"
           className="w-full"
           classNames={{
@@ -110,6 +103,7 @@ const SignUpForm = () => {
           type={isVisible ? "text" : "password"}
           variant="underlined"
           label="Password"
+          name="password"
           size="lg"
           className="w-full"
           classNames={{
@@ -147,6 +141,7 @@ const SignUpForm = () => {
           type="text"
           variant="underlined"
           label="Phone"
+          name="phone"
           size="lg"
           className="w-full"
           classNames={{

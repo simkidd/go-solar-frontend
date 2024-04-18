@@ -34,7 +34,7 @@ export default function RootLayout({
           speed={200}
         />
         <Providers>
-          <div className="w-full min-h-screen light bg-[#f2f2f2] dark:bg-[#2a2b2f] relative flex items-center justify-center flex-col font-inter">
+          <div className="w-full min-h-screen light bg-[#f2f2f2] dark:bg-[#2a2b2f] relative flex items-center justify-center flex-col font-inter py-10">
             <Link href="/">
               <h3 className="text-3xl">GoSolar.ng</h3>
             </Link>
