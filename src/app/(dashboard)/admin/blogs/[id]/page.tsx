@@ -1,0 +1,70 @@
+import { CalendarCheck, Pen, User } from "lucide-react";
+import Link from "next/link";
+import { getPost, getPosts } from "@/lib/data";
+import { Post } from "@/interfaces/post.interface";
+import { notFound } from "next/navigation";
+import Image from "next/image";
+
+export const generateStaticParams = async () => {
+  try {
+    const posts: Post[] = await getPosts();
+
+    return posts.map((post) => ({
+      id: post._id,
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const SinglePostPage = async ({ params }: { params: { id: string } }) => {
+  const post: Post = await getPost(params.id);
+
+  if (!post) {
+    notFound();
+  }
+
+  return (
+    <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
+      <div className="flex items-center justify-between mb-4">
+        <Link href={`/admin/blogs/edit/${post._id}`} className="ml-auto">
+          <button className="bg-primary text-white px-4 py-2 text-sm flex items-center">
+            <Pen className="mr-2" size={16} />
+            Edit
+          </button>
+        </Link>
+      </div>
+      <div className="w-full bg-white dark:bg-[#222327] py-8 px-6 shadow rounded">
+        <div className="w-full max-w-[860px] mx-auto flex flex-col items-center mb-8">
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center text-sm mb-4">
+              <CalendarCheck size={18} />
+              <span className="ml-1">March 2, 2024</span>
+            </div>
+            <div className="flex items-center text-sm mb-4 before:content-['•']">
+              <User size={18} className="ml-2" />
+              <span className="ml-1">{post?.author}</span>
+            </div>
+          </div>
+          <h1 className="font-bold lg:text-4xl text-3xl text-center">
+            {post?.title}
+          </h1>
+        </div>
+        <div className="w-full max-w-[860px] mx-auto lg:h-96 md:h-96 h-72 bg-gray-400 mb-8 overflow-hidden">
+          <Image
+            src={post?.image}
+            alt={post?.title}
+            className="w-full h-full object-cover"
+            width={500}
+            height={500}
+          />
+        </div>
+        <article className="w-full max-w-[750px] mx-auto text-justify">
+          {post?.content}
+        </article>
+      </div>
+    </div>
+  );
+};
+
+export default SinglePostPage;

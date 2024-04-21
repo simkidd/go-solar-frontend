@@ -51,6 +51,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         Cookies.set(USER_DETAILS, userToken);
         Cookies.set(TOKEN_NAME, data.data.user.token);
       }
+      if(user?.isAdmin){
+        router.push('/admin')
+      }
     } catch (error) {
       const errorMsg = error as any;
       alert(errorMsg?.response.data.message);

@@ -9,3 +9,20 @@ export interface Post {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface CreatePostInput {
+  title: string;
+  content: string;
+  tags: string[];
+  author: string;
+  image: string | File;
+}
+
+export interface UpdatePostInput {
+  id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  author: string;
+  image: string | File;
+}

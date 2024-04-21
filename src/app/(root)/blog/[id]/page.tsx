@@ -20,11 +20,11 @@ export const generateMetadata = async ({
   return {
     title: post.title,
     description: post.content,
-    // openGraph:{
-    //   images:{
-    //     url: post.image
-    //   }
-    // }
+    openGraph: {
+      images: {
+        url: post.image,
+      },
+    },
   };
 };
 
@@ -62,7 +62,13 @@ const SingleBlogPage = async ({ params }: IPost) => {
                 <span className="ml-2">March 2, 2024</span>
               </div>
               <div className="w-full lg:h-96 md:h-96 h-72 bg-gray-400 mb-8 overflow-hidden">
-                <Image src="" alt="" className="w-full h-full object-cover" />
+                <Image
+                  src={post?.image}
+                  alt={post?.title}
+                  className="w-full h-full object-cover"
+                  width={500}
+                  height={500}
+                />
               </div>
 
               <article className="">{post?.content}</article>

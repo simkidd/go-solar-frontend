@@ -21,7 +21,7 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div className="-left-full flex md:left-0 flex-col h-screen fixed top-0 z-50 lg:w-[220px] md:w-[80px] w-[220px] transition-all duration-500 ease-linear shadow-md bg-white dark:bg-[#222327]">
+    <div className="-left-full flex md:left-0 flex-col h-screen fixed top-0 bottom-0 z-50 lg:w-[220px] md:w-[80px] w-[220px] transition-all duration-500 ease-linear shadow-md bg-white dark:bg-[#222327]">
       <div className="h-14 md:h-16 flex items-center lg:justify-center px-3">
         GoSolar
       </div>
@@ -33,8 +33,10 @@ const AdminSidebar = () => {
                 isActive(item.href) ? "!bg-primary" : ""
               }`}
             >
-              <Link href={item.href} className="w-full">
-                <span>{item?.icon as any}</span>
+              <Link href={item.href} className="w-full flex items-center space-x-2">
+                <span>
+                  <item.icon size={18} />
+                </span>
                 <span className="md:hidden lg:block">{item.label}</span>
               </Link>
 

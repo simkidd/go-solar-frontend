@@ -1,6 +1,6 @@
 import { IconType } from "react-icons";
 import { BiCart, BiMoney } from "react-icons/bi";
-import { BsPeople } from "react-icons/bs";
+import { BsNewspaper, BsPeople } from "react-icons/bs";
 import { FaProductHunt } from "react-icons/fa6";
 import { GiCarDoor } from "react-icons/gi";
 import { MdDashboard } from "react-icons/md";
@@ -38,4 +38,5 @@ export const sidelist: Menu[] = [
   },
   { label: "Reviews", href: "/admin/reviews", icon: GiCarDoor },
   { label: "Transactions", href: "/admin/transactions", icon: BiMoney },
+  { label: "Blog posts", href: "/admin/blogs", icon: BsNewspaper },
 ];
