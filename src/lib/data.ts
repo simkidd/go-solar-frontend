@@ -51,3 +51,26 @@ export const getCategories = async () => {
     console.log(error);
   }
 };
+
+export const getUsers = async () => {
+  try {
+    const { data } = await axiosInstance.get("/admin/users");
+
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getUser = async (id: string) => {
+  try {
+    const { data } = await axiosInstance.get(`/admin/users/${id}`);
+
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

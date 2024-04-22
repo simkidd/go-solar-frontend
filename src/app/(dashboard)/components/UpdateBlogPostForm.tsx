@@ -9,7 +9,6 @@ import { GrCloudUpload } from "react-icons/gr";
 import { HiXMark } from "react-icons/hi2";
 
 const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
-  console.log("update", post);
   const { loading, updatePost } = useBlog();
   const [input, setInput] = useState<UpdatePostInput>({
     id: post?._id,
