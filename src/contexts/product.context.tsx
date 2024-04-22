@@ -1,9 +1,9 @@
+"use client"
 import {
-  CreateCategoryInput,
-  CreateProductInput,
+  CreateCategoryInput
 } from "@/interfaces/product.interface";
-import { createContext, useContext, useState } from "react";
 import { axiosInstance } from "@/lib/axios";
+import { createContext, useContext, useState } from "react";
 
 interface IProduct {
   loading: boolean;

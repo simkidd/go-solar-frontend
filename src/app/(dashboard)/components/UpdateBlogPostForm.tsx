@@ -29,9 +29,7 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
         .map((t) => t.trim())
         .filter((t) => t !== "");
       const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
-      // const stringifiedTags = JSON.stringify(updatedTags);
-      // setStringifiedTags(stringifiedTags); // Save the stringified tags
-
+      
       setInput({
         ...input,
         tags: updatedTags,
@@ -95,7 +93,6 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
     // };
     // reader.readAsDataURL(file);
   };
-  console.log("first", input.image);
 
   const removeImage = () => {
     setInput({

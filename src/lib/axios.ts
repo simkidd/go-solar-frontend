@@ -9,6 +9,7 @@ const TOKEN = Cookies.get(TOKEN_NAME);
 export const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
-    Authorization: `Bearer ${TOKEN}`,
+    // "Content-Type": "application/json",
+    Authorization: `Bearer ${TOKEN}` || "",
   },
 });
