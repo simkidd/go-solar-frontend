@@ -14,7 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <NextUIProvider>
         <ProductProvider>
           <BlogProvider>
-            <NextThemesProvider attribute="class" defaultTheme="dark">
+            <NextThemesProvider attribute="class" defaultTheme="light">
               {children}
               <ToastContainer
                 autoClose={2000}
