@@ -6,17 +6,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export const generateStaticParams = async () => {
-  try {
-    const posts: Post[] = await getPosts();
+// export const generateStaticParams = async () => {
+//   try {
+//     const posts: Post[] = await getPosts();
 
-    return posts.map((post) => ({
-      id: post._id,
-    }));
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     return posts.map((post) => ({
+//       id: post._id,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 const SinglePostPage = async ({ params }: { params: { id: string } }) => {
   const post: Post = await getPost(params.id);

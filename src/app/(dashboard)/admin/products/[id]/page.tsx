@@ -7,17 +7,17 @@ import { ArrowLeft, Pen } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export const generateStaticParams = async () => {
-  try {
-    const products: Product[] = await getProducts();
+// export const generateStaticParams = async () => {
+//   try {
+//     const products: Product[] = await getProducts();
 
-    return products.map((product) => ({
-      id: product._id,
-    }));
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     return products.map((product) => ({
+//       id: product._id,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 const SingleProductPage = async ({ params }: { params: { id: string } }) => {
   const product: Product = await getProduct(params.id);

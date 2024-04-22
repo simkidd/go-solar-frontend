@@ -169,7 +169,13 @@ const ProductListTable: React.FC<{ products: Product[] }> = ({ products }) => {
         </div>
       </div>
     );
-  }, [search, products.length, onSearchChange, onRowsPerPageChange]);
+  }, [
+    search,
+    searchParams,
+    filteredProducts.length,
+    onSearchChange,
+    onRowsPerPageChange,
+  ]);
 
   const bottomContent = useMemo(() => {
     return (
@@ -188,7 +194,7 @@ const ProductListTable: React.FC<{ products: Product[] }> = ({ products }) => {
         />
       </div>
     );
-  }, [items.length, page, pages, search]);
+  }, [page, pages, search]);
 
   const classNames = useMemo(
     () => ({

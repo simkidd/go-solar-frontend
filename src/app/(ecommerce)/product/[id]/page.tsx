@@ -29,17 +29,17 @@ export const generateMetadata = async ({
   };
 };
 
-export const generateStaticParams = async () => {
-  try {
-    const products: Product[] = await getProducts();
+// export const generateStaticParams = async () => {
+//   try {
+//     const products: Product[] = await getProducts();
 
-    return products.map((product) => ({
-      id: product?._id,
-    }));
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     return products.map((product) => ({
+//       id: product?._id,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 const ProductPage = async ({ params }: IProduct) => {
   const product: Product = await getProduct(params.id);

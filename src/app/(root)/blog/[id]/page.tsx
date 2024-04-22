@@ -28,17 +28,21 @@ export const generateMetadata = async ({
   };
 };
 
-export const generateStaticParams = async () => {
-  try {
-    const posts: Post[] = await getPosts();
+// export const generateStaticParams = async (): Promise<{ id: string }[]> => {
+//   try {
+//     // const posts: Post[] = await getPosts();
+//     const { data } = await axiosInstance.get("/blogs");
 
-    return posts.map((post) => ({
-      id: post._id,
-    }));
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     const posts: Post[] = data.blogs;
+
+//     return posts.map((post) => ({
+//       id: post?._id,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//     return [];
+//   }
+// };
 
 const SingleBlogPage = async ({ params }: IPost) => {
   const postData: Post = await getPost(params.id);
