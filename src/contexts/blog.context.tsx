@@ -1,11 +1,13 @@
-import { CreatePostInput } from "@/interfaces/post.interface";
+"use client"
 import { axiosInstance } from "@/lib/axios";
 import { createContext, useContext, useState } from "react";
+import { toast } from "react-toastify";
 
 interface IBlog {
   loading: boolean;
   createPost: (formData: FormData, config: any) => Promise<void>;
   updatePost: (formData: FormData) => Promise<void>;
+  deletePost: (id: string) => Promise<void>;
 }
 
 export const BlogContext = createContext<IBlog>({} as IBlog);
@@ -25,11 +27,11 @@ const BlogProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
       if (data) {
-        alert(data.message);
+        toast.success(data.message);
       }
     } catch (error) {
       const errorMsg = error as any;
-      alert(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response.data.message);
       console.log(error);
     } finally {
       setLoading(false);
@@ -45,18 +47,37 @@ const BlogProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
       if (data) {
-        alert(data.message);
+        toast.success(data.message);
       }
     } catch (error) {
       const errorMsg = error as any;
-      alert(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response.data.message);
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deletePost = async (id: string) => {
+    try {
+      setLoading(true);
+      const { data } = await axiosInstance.delete(`/blogs/${id}`);
+
+      if (data) {
+        toast.success(data.message);
+      }
+    } catch (error) {
+      const errorMsg = error as any;
+      toast.error(errorMsg?.response.data.message);
       console.log(error);
     } finally {
       setLoading(false);
     }
   };
   return (
-    <BlogContext.Provider value={{ loading, createPost, updatePost }}>
+    <BlogContext.Provider
+      value={{ loading, createPost, updatePost, deletePost }}
+    >
       {children}
     </BlogContext.Provider>
   );

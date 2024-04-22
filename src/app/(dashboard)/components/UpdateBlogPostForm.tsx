@@ -224,10 +224,10 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
             </div>
 
             {/* selected image */}
-            {imagePreview && (
+            {input?.image && (
               <div className="size-20 overflow-hidden rounded relative group">
                 <Image
-                  src={URL.createObjectURL(imagePreview as Blob)}
+                  src={input?.image as string || imagePreview as string}
                   alt=""
                   className="w-full h-full object-cover"
                   width={80}

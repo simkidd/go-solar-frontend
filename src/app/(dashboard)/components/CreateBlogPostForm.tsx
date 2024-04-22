@@ -3,9 +3,11 @@ import { useBlog } from "@/contexts/blog.context";
 import { CreatePostInput } from "@/interfaces/post.interface";
 import { Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { GrCloudUpload } from "react-icons/gr";
 import { HiXMark } from "react-icons/hi2";
+import { revalidatePath } from "next/cache";
 
 const CreateBlogPostForm: React.FC = () => {
   const { loading, createPost } = useBlog();
@@ -18,7 +20,7 @@ const CreateBlogPostForm: React.FC = () => {
   });
   const [imagePreview, setImagePreview] = useState<string | File>("");
   const [newTag, setNewTag] = useState("");
-  // const [stringifiedTags, setStringifiedTags] = useState<string>("");
+  const router = useRouter();
 
   const handleAddTag = () => {
     if (newTag.trim() !== "") {
@@ -27,7 +29,7 @@ const CreateBlogPostForm: React.FC = () => {
         .map((t) => t.trim())
         .filter((t) => t !== "");
       const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
-      
+
       setInput({
         ...input,
         tags: updatedTags,
@@ -111,12 +113,19 @@ const CreateBlogPostForm: React.FC = () => {
     formData.append("content", input.content);
     formData.append("author", input.author);
     formData.append("tags", JSON.stringify(input.tags));
-    formData.append("blogImage", input.image);
+    formData.append(
+      "blogImage",
+      input.image as Blob,
+      "hbl-optimus-blogimg1.jpeg"
+    );
 
     const config = { headers: { "Content-Type": "multipart/form-data" } };
 
     await createPost(formData, config);
-    console.log("blog input", input);
+    setTimeout(() => {
+      revalidatePath("admin/blogs");
+      router.push("/admin/blogs");
+    }, 300);
   };
 
   return (

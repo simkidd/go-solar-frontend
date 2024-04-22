@@ -1,9 +1,10 @@
-import { CalendarCheck, Pen, User } from "lucide-react";
-import Link from "next/link";
-import { getPost, getPosts } from "@/lib/data";
+import DeleteButton from "@/app/(dashboard)/components/DeleteButton";
 import { Post } from "@/interfaces/post.interface";
-import { notFound } from "next/navigation";
+import { getPost, getPosts } from "@/lib/data";
+import { ArrowLeft, CalendarCheck, Pen, User } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export const generateStaticParams = async () => {
   try {
@@ -27,14 +28,24 @@ const SinglePostPage = async ({ params }: { params: { id: string } }) => {
   return (
     <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
       <div className="flex items-center justify-between mb-4">
-        <Link href={`/admin/blogs/edit/${post._id}`} className="ml-auto">
-          <button className="bg-primary text-white px-4 py-2 text-sm flex items-center">
-            <Pen className="mr-2" size={16} />
-            Edit
+        <Link href="/admin/blogs">
+          <button className="px-4 py-2 text-sm flex items-center">
+            <ArrowLeft className="mr-2" size={16} />
+            Go back
           </button>
         </Link>
+        <div className="flex items-center gap-2">
+          <DeleteButton post={post} />
+
+          <Link href={`/admin/blogs/${post._id}/edit`}>
+            <button className="bg-primary text-white px-4 py-2 text-sm flex items-center">
+              <Pen className="mr-2" size={16} />
+              Edit
+            </button>
+          </Link>
+        </div>
       </div>
-      <div className="w-full bg-white dark:bg-[#222327] py-8 px-6 shadow rounded">
+      <div className="w-full bg-white dark:bg-[#222327] py-16 px-6 shadow rounded">
         <div className="w-full max-w-[860px] mx-auto flex flex-col items-center mb-8">
           <div className="flex items-center space-x-2">
             <div className="flex items-center text-sm mb-4">
@@ -46,7 +57,7 @@ const SinglePostPage = async ({ params }: { params: { id: string } }) => {
               <span className="ml-1">{post?.author}</span>
             </div>
           </div>
-          <h1 className="font-bold lg:text-4xl text-3xl text-center">
+          <h1 className="font-bold lg:text-4xl text-3xl text-center leading-relaxed">
             {post?.title}
           </h1>
         </div>

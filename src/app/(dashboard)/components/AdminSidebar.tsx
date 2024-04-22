@@ -9,10 +9,7 @@ const AdminSidebar = () => {
   const pathname = usePathname();
   const [expandedItem, setExpandedItem] = useState("");
 
-  console.log("pathname:", pathname);
-
   const isActive = (href: string) => {
-    console.log("href:", href);
     return href === pathname || href === pathname.replace(/\/$/, "");
   };
 

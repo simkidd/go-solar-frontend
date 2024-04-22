@@ -15,7 +15,7 @@ export interface CreatePostInput {
   content: string;
   tags: string[];
   author: string;
-  image: string | File;
+  image: string | File | Blob;
 }
 
 export interface UpdatePostInput {

@@ -8,8 +8,6 @@ import React, { Suspense } from "react";
 const BloglistPage = async () => {
   const posts: Post[] = await getPosts();
 
-  console.log("post admin:", posts);
-
   return (
     <div className="w-full py-4">
       <div className="flex items-center justify-between mb-4">

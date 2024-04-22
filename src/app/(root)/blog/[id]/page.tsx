@@ -28,23 +28,23 @@ export const generateMetadata = async ({
   };
 };
 
-// export const generateStaticParams = async () => {
-//   try {
-//     const { data } = await axiosInstance.get("/blogs");
+export const generateStaticParams = async () => {
+  try {
+    const posts: Post[] = await getPosts();
 
-//     const posts: Post[] = data.blogs;
-
-//     return posts.map((post) => ({
-//       id: post._id,
-//     }));
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+    return posts.map((post) => ({
+      id: post._id,
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const SingleBlogPage = async ({ params }: IPost) => {
-  const post: Post = await getPost(params.id);
-  const posts: Post[] = await getPosts();
+  const postData: Post = await getPost(params.id);
+  const postsData: Post[] = await getPosts();
+
+  const [post, posts] = await Promise.all([postData, postsData]);
 
   if (!post) {
     notFound();

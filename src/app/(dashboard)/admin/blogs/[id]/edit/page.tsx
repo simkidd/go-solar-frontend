@@ -17,7 +17,7 @@ const EditBlogPage = async ({ params }: { params: { id: string } }) => {
           </button>
         </Link> */}
       </div>
-      <div className="w-full bg-white dark:bg-[#222327] py-8 px-6 shadow rounded">
+      <div className="w-full bg-white dark:bg-[#222327] py-16 px-6 shadow rounded">
         <UpdateBlogPostForm post={post} />
       </div>
     </div>
