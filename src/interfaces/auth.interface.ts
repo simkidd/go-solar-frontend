@@ -17,6 +17,7 @@ export interface User {
   phoneNumber: string;
   email: string;
   isSuperAdmin: boolean;
+  isAdmin: boolean;
   is_verified: boolean;
   createdAt: Date;
   updatedAt: Date;

@@ -1,11 +1,12 @@
 "use client";
+import { IImage } from "@/interfaces/product.interface";
 import Image from "next/image";
 import React, { useState } from "react";
 
 const ProductImages: React.FC<{
-  images: string[];
+  images: IImage[];
 }> = ({ images }) => {
-  const [selectedImage, setSelectedImage] = useState(images?.[0]);
+  const [selectedImage, setSelectedImage] = useState(images?.[0].url);
 
   const handleSelected = (img: string) => {
     setSelectedImage(img);
@@ -18,10 +19,10 @@ const ProductImages: React.FC<{
           <div
             key={i}
             className="size-20 overflow-hidden"
-            onClick={() => handleSelected(img)}
+            onClick={() => handleSelected(img.url)}
           >
             <Image
-              src={img}
+              src={img.url}
               alt=""
               width={300}
               height={300}

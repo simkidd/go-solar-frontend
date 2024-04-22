@@ -1,16 +1,25 @@
+export interface IImage {
+  url: string;
+  public_id: string;
+}
+
 export interface Product {
   _id: string;
   name: string;
   slug: string;
   description: string;
   price: number;
-  category: string;
+  category: Category;
   additionalInfo: string;
   quantityInStock: number;
-  images: string[];
+  images: IImage[];
   brand: string;
   outsideLocationDeliveryFee: number;
   withinLocationDeliveryFee: number;
+  createdAt: string;
+  updatedAt: string;
+  isPublished: boolean;
+  isDeleted: boolean;
 }
 
 export interface CreateProductInput {
@@ -20,7 +29,7 @@ export interface CreateProductInput {
   category: string;
   additionalInfo: string;
   quantityInStock: number;
-  images: string[];
+  images: string[] | File[];
   brand: string;
   outsideLocationDeliveryFee: number;
   withinLocationDeliveryFee: number;
@@ -30,6 +39,12 @@ export interface Category {
   _id: string;
   name: string;
   slug: string;
+  decription: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CreateCategoryInput {
+  name: string;
+  description: string;
 }

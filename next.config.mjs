@@ -11,6 +11,7 @@ const nextConfig = {
       { protocol: "https", hostname: "i.pravatar.cc" },
       { protocol: "https", hostname: "cdn.dummyjson.com" },
       { protocol: "https", hostname: "fakeimg.pl" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
     ],
   },
 };
