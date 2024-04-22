@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   ChangePasswordInput,
   EmailInput,
@@ -21,6 +21,7 @@ interface IAuth {
   resendVerification: (input: EmailInput) => Promise<void>;
   forgotPassword: (input: EmailInput) => Promise<void>;
   resetPassword: (input: ChangePasswordInput, token: string) => Promise<void>;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<IAuth>({} as IAuth);
@@ -28,10 +29,11 @@ export const AuthContext = createContext<IAuth>({} as IAuth);
 export const useAuth = () => useContext(AuthContext);
 
 const token = Cookies.get(TOKEN_NAME);
+const userDetails = Cookies.get(USER_DETAILS);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const router = useRouter();
 
   const login = async (input: LoginInput) => {
@@ -42,18 +44,17 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const user: User = data.data.user;
 
       if (!user?.is_verified) {
-        alert("Please verify your email to login");
+        toast.success("Please verify your email to login");
         return;
       }
 
       const userToken = JSON.stringify(user);
       if (userToken) {
-        toast.success(data.message)
+        toast.success(data.message);
         Cookies.set(USER_DETAILS, userToken);
         Cookies.set(TOKEN_NAME, data.data.user.token);
+        setCurrentUser(JSON.parse(userToken));
       }
-
-      // setCurrentUser(user)
 
       setTimeout(() => {
         if (user?.isAdmin || user?.isSuperAdmin) {
@@ -64,7 +65,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }, 300);
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message)
+      toast.error(errorMsg?.response.data.message);
       console.log(errorMsg?.response.data.message);
     } finally {
       setLoading(false);
@@ -77,7 +78,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { data } = await axiosInstance.post("/auth/signup", input);
 
       if (data) {
-        alert(data.message);
+        toast.success(data.message);
         // setTimeout(() => {
         //   router.push("/account/verify");
         // }, 300);
@@ -146,6 +147,26 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const logout = () => {
+    window.location.href = "/account/login";
+    Cookies.remove(TOKEN_NAME);
+    Cookies.remove(USER_DETAILS);
+    setCurrentUser(null);
+  };
+
+  useEffect(() => {
+    const getMe = () => {
+      if (token && userDetails) {
+        const authUser: User = JSON.parse(userDetails);
+        setCurrentUser(authUser);
+      } else {
+        return;
+      }
+    };
+
+    getMe();
+  }, [token, userDetails]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -156,6 +177,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         resendVerification,
         forgotPassword,
         resetPassword,
+        logout,
       }}
     >
       {children}

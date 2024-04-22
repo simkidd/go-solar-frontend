@@ -6,7 +6,6 @@ import React from "react";
 const ProductCard: React.FC<{
   item: Product;
 }> = ({ item }) => {
-  console.log("item", item)
   return (
     <div className="w-full">
       <div className="w-full lg:h-44 md:h-56 h-44 overflow-hidden relative group">
