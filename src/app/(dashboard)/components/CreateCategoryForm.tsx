@@ -1,24 +1,19 @@
 "use client";
+import { useProduct } from "@/contexts/product.context";
 import React, { useState } from "react";
+import { CreateCategoryInput } from "@/interfaces/product.interface";
 
 const CreateCategoryForm = () => {
-  const [input, setInput] = useState({
+  const { loading, createCategory } = useProduct();
+  const [input, setInput] = useState<CreateCategoryInput>({
     name: "",
     description: "",
   });
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      console.log("input", input);
-      alert("product added");
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+
+    await createCategory(input);
   };
   return (
     <form className="w-full" onSubmit={handleSubmit}>

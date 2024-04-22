@@ -6,12 +6,13 @@ import React from "react";
 const ProductCard: React.FC<{
   item: Product;
 }> = ({ item }) => {
+  console.log("item", item)
   return (
     <div className="w-full">
       <div className="w-full lg:h-44 md:h-56 h-44 overflow-hidden relative group">
         <div className="absolute top-0 left-0 w-full h-full">
           <Image
-            src={item?.images[0] || "https://fakeimg.pl/300x300?font=noto"}
+            src={item?.images[0].url || "https://fakeimg.pl/300x300?font=noto"}
             alt="product image"
             width={300}
             height={300}
@@ -23,7 +24,7 @@ const ProductCard: React.FC<{
           style={{ transition: "opacity .5s ease-in-out" }}
         >
           <Image
-            src={item?.images[2]}
+            src={item?.images[1].url}
             alt="product image"
             width={300}
             height={300}

@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 import React, { createContext, useContext, useState } from "react";
 import {
   ChangePasswordInput,
@@ -11,6 +11,7 @@ import { TOKEN_NAME, USER_DETAILS } from "@/utils/constants";
 import Cookies from "js-cookie";
 import { axiosInstance } from "@/lib/axios";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 interface IAuth {
   loading: boolean;
@@ -47,13 +48,23 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const userToken = JSON.stringify(user);
       if (userToken) {
-        alert(data.message);
+        toast.success(data.message)
         Cookies.set(USER_DETAILS, userToken);
         Cookies.set(TOKEN_NAME, data.data.user.token);
       }
+
+      // setCurrentUser(user)
+
+      setTimeout(() => {
+        if (user?.isAdmin || user?.isSuperAdmin) {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/";
+        }
+      }, 300);
     } catch (error) {
       const errorMsg = error as any;
-      alert(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response.data.message)
       console.log(errorMsg?.response.data.message);
     } finally {
       setLoading(false);

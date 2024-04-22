@@ -1,6 +1,6 @@
 "use client";
+import { useProduct } from "@/contexts/product.context";
 import { Category, CreateProductInput } from "@/interfaces/product.interface";
-import { axiosInstance } from "@/lib/axios";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { GrCloudUpload } from "react-icons/gr";
 const CreateProductForm: React.FC<{ categories: Category[] }> = ({
   categories,
 }) => {
+  const { loading, createProduct } = useProduct();
   const [input, setInput] = useState<CreateProductInput>({
     name: "",
     description: "",
@@ -21,39 +22,66 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
     outsideLocationDeliveryFee: 0,
     withinLocationDeliveryFee: 0,
   });
-  const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState([]);
+  const [imagePreview, setImagePreview] = useState<string[] | File[]>([]);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const selectedImages: File[] = Array.from(files);
+    const newPreview = selectedImages.map(image => URL.createObjectURL(image));
+    setImagePreview(prevPreviews => [...prevPreviews, ...newPreview as any]);
+    setInput(prevInput => ({
+      ...prevInput,
+      images: [...prevInput.images, ...selectedImages as any]
+    }));
+  };
 
   const removeImage = (index: number) => {
+    const updatedPreviews = [...imagePreview];
+    updatedPreviews.splice(index, 1);
+    setImagePreview(updatedPreviews as any);
+
     const updatedImages = [...input.images];
     updatedImages.splice(index, 1);
-    setInput({ ...input, images: updatedImages });
-    setImagePreview((oldArray) => {
-      const newArray = [...oldArray];
-      newArray.splice(index, 1);
-      return newArray;
-    });
+    setInput(prevInput => ({ ...prevInput, images: updatedImages as any }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      console.log("Submitting form with input:", input);
-      const res = await axiosInstance.post("/admin/add-product", input);
 
-      console.log("input", res);
-      alert("product added");
-    } catch (error) {
-      const errorMsg = error as any;
-      alert(errorMsg?.response.data.message);
-      console.log(errorMsg?.response.data.message);
-    } finally {
-      setLoading(false);
+    if (input.category === "") {
+      alert("Please select a category");
+      return;
     }
+    console.log("Submitting form with input:", input);
+
+    const formData = new FormData();
+    formData.append("category", input.category);
+    formData.append("name", input.name);
+    formData.append("brand", input.brand);
+    formData.append("price", input.price.toString());
+    formData.append("description", input.description);
+    formData.append("additionalInfo", input.additionalInfo);
+    formData.append("quantityInStock", input.quantityInStock.toString());
+    formData.append(
+      "outsideLocationDeliveryFee",
+      input.outsideLocationDeliveryFee.toString()
+    );
+    formData.append(
+      "withinLocationDeliveryFee",
+      input.withinLocationDeliveryFee.toString()
+    );
+    input.images.forEach((image) => {
+      formData.append("images", image);
+    });
+
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
+
+    await createProduct(formData, config);
   };
+
+  console.log("input", input);
   return (
     <form className="w-full" onSubmit={handleSubmit}>
       <div className="w-full grid lg:grid-cols-2 grid-cols-1">
@@ -64,7 +92,6 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
               type="text"
               id="title"
               className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-              value={input?.name}
               onChange={(e) => setInput({ ...input, name: e.target.value })}
             />
           </div>
@@ -87,36 +114,30 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                 name=""
                 id="category"
                 className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent cursor-pointer mt-1"
-                value={input?.category}
                 onChange={(e) =>
                   setInput({ ...input, category: e.target.value })
                 }
               >
                 <option value="" hidden></option>
-                {categories?.map(({ _id, name }) => (
+                {categories?.map((cat) => (
                   <option
-                    key={_id}
-                    value={_id}
+                    key={cat._id}
+                    value={cat._id}
                     className="bg-white dark:bg-[#222327]"
                   >
-                    {name}
+                    {cat.name}
                   </option>
                 ))}
               </select>
             </div>
             <div className="">
               <label htmlFor="brand">Brand</label>
-              <select
-                name=""
-                id="brand"
+              <input
+                type="text"
+                id="title"
                 className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent cursor-pointer mt-1"
-                value={input?.brand}
                 onChange={(e) => setInput({ ...input, brand: e.target.value })}
-              >
-                <option value="" className="bg-white dark:bg-[#222327]">
-                  Brand 1
-                </option>
-              </select>
+              />
             </div>
           </div>
           <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
@@ -126,7 +147,6 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                 type="number"
                 id="price"
                 className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                value={input?.price}
                 onChange={(e) => {
                   const newValue = e.target.valueAsNumber;
                   if (!isNaN(newValue) && newValue > 0) {
@@ -141,7 +161,6 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                 type="number"
                 id="stock"
                 className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                value={input?.quantityInStock}
                 onChange={(e) => {
                   const newValue = e.target.valueAsNumber;
                   if (!isNaN(newValue) && newValue > 0) {
@@ -154,37 +173,10 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
         </div>
         <div className="col-span-1 lg:pl-4">
           <div className="mb-3">
-            <label htmlFor="" className="">
+            <label htmlFor="image" className="">
               Images
             </label>
             <div className="flex gap-2 flex-wrap mt-1">
-              {/* selected images */}
-              {imagePreview.map((preview, i) => (
-                <div
-                  key={i}
-                  className="size-20 overflow-hidden rounded relative group"
-                >
-                  <Image
-                    src={preview}
-                    alt=""
-                    className="w-full h-full object-cover"
-                    width={80}
-                    height={80}
-                  />
-                  <div
-                    className="bg-[#2424243a] w-full h-full absolute top-0 left-0 flex group-hover:opacity-100 opacity-0"
-                    style={{ transition: "opacity .3s ease" }}
-                  >
-                    <button
-                      className="mt-auto ml-[50%] -translate-x-1/2 mb-1 text-white bg-danger p-1 rounded"
-                      onClick={() => removeImage(i)}
-                      type="button"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
-              ))}
               {/* upload button */}
               <div
                 className="size-20 overflow-hidden rounded border hover:bg-gray-400 "
@@ -202,8 +194,42 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                   className="hidden"
                   onChange={handleImageUpload}
                   multiple
+                  accept="image/*"
                 />
               </div>
+              {/* selected images */}
+              {imagePreview.map((image, i) => {
+                const src =
+                  typeof image === "string"
+                    ? image
+                    : URL.createObjectURL(image);
+                return (
+                  <div
+                    key={i}
+                    className="size-20 overflow-hidden rounded relative group"
+                  >
+                    <Image
+                      src={src}
+                      alt={`preview image${i}`}
+                      className="w-full h-full object-cover"
+                      width={80}
+                      height={80}
+                    />
+                    <div
+                      className="bg-[#2424243a] w-full h-full absolute top-0 left-0 flex group-hover:opacity-100 opacity-0"
+                      style={{ transition: "opacity .3s ease" }}
+                    >
+                      <button
+                        className="mt-auto ml-[50%] -translate-x-1/2 mb-1 text-white bg-danger p-1 rounded"
+                        onClick={() => removeImage(i)}
+                        type="button"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div className="mb-3">
@@ -222,7 +248,6 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                 type="number"
                 id="within"
                 className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                value={input?.withinLocationDeliveryFee}
                 onChange={(e) => {
                   const newValue = e.target.valueAsNumber;
                   if (!isNaN(newValue) && newValue > 0) {
@@ -237,7 +262,6 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                 type="number"
                 id="outside"
                 className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                value={input?.outsideLocationDeliveryFee}
                 onChange={(e) => {
                   const newValue = e.target.valueAsNumber;
                   if (!isNaN(newValue) && newValue > 0) {

@@ -1,4 +1,4 @@
-export const formatDate = (date: number | Date) => {
+export const formatDate = (date: number | Date | string) => {
   return new Date(date).toLocaleDateString("en-US", {
     timeZone: "UTC",
     year: "numeric",

@@ -1,4 +1,5 @@
 import { Post } from "@/interfaces/post.interface";
+import { formatDate } from "@/utils/helpers";
 import { CalendarCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,29 +30,32 @@ export const BlogCardList: React.FC<{ item: Post }> = ({ item }) => {
 
 const BlogCard: React.FC<{
   post: Post;
-}> = ({ post }) => {
+  path: string;
+}> = ({ post, path }) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="w-full">
-        <Link href={`/blog/${post?._id}`}>
+        <Link href={`/${path}/${post?._id}`}>
           <div className="w-full h-[200px] bg-gray-500 overflow-hidden">
             <Image
-              src=""
+              src={post?.image}
               alt="post image"
               className="h-full w-full object-cover hover:scale-105"
               style={{ transition: "transform 0.3s ease-in-out" }}
+              width={300}
+              height={300}
             />
           </div>
         </Link>
         <div className="p-4 w-full">
           <div className="text-sm flex mb-1">
-            <span className="">Category</span>
+            {/* <span className="">Category</span> */}
           </div>
           <div className="text-primary text-xl mb-4">
-            <Link href={`/blog/${post?._id}`}>{post?.title}</Link>
+            <Link href={`/${path}/${post?._id}`}>{post?.title}</Link>
           </div>
           <div className="text-sm flex">
-            <span className="">March 23, 2024</span>
+            <span className="">{formatDate(post?.createdAt)}</span>
           </div>
         </div>
       </div>

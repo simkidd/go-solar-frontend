@@ -1,10 +1,10 @@
 import Breadcrumb from "@/components/Breadcrumb";
-import ProductDesc from "@/components/ProductDesc";
-import ProductImages from "@/components/ProductImages";
-import RelatedProducts from "@/components/RelatedProducts";
+import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
+import ProductImages from "@/app/(ecommerce)/components/ProductImages";
+import RelatedProducts from "@/app/(ecommerce)/components/RelatedProducts";
 import { Product } from "@/interfaces/product.interface";
 import { axiosInstance } from "@/lib/axios";
-import { getProduct } from "@/lib/data";
+import { getProduct, getProducts } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -16,15 +16,14 @@ interface IProduct {
 export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
-  const { data } = await axiosInstance.get(`/products/${params.id}`);
-  const product: Product = data.product;
+  const product: Product = await getProduct(params.id);
 
   return {
-    title: product.name,
-    description: product.description,
+    title: product?.name,
+    description: product?.description,
     openGraph: {
       images: {
-        url: product.images[0],
+        url: product?.images[0].url,
       },
     },
   };
@@ -32,9 +31,7 @@ export const generateMetadata = async ({
 
 // export const generateStaticParams = async () => {
 //   try {
-//     const { data } = await axiosInstance.get("/products");
-
-//     const products: Product[] = data.products;
+//     const products: Product[] = await getProducts();
 
 //     return products.map((product) => ({
 //       id: product?._id,

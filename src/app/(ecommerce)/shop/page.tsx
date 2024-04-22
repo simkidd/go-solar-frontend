@@ -1,6 +1,6 @@
-import Banner from "@/components/Banner";
-import Cta from "@/components/Cta";
-import ProductCard from "@/components/ProductCard";
+import Banner from "@/app/(ecommerce)/components/Banner";
+import Cta from "@/app/(ecommerce)/components/Cta";
+import ProductCard from "@/app/(ecommerce)/components/ProductCard";
 import { Product } from "@/interfaces/product.interface";
 import { getProducts } from "@/lib/data";
 import Link from "next/link";

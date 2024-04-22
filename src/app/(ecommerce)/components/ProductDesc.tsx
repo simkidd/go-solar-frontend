@@ -48,7 +48,7 @@ const ProductDesc: React.FC<{
         {selectedTab === 1 && (
           <div className="py-4">
             {/* Additional information content */}
-            <p>Additional information about the product...</p>
+            <p>{product?.additionalInfo}</p>
           </div>
         )}
         {selectedTab === 2 && (

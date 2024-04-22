@@ -1,4 +1,4 @@
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/app/(ecommerce)/components/ProductCard";
 import { Product } from "@/interfaces/product.interface";
 import { getProducts } from "@/lib/data";
 
@@ -12,7 +12,7 @@ const ProductListPage = async () => {
           {products?.length < 1 ? (
             <p>No product yet</p>
           ) : (
-            <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4">
+            <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-4">
               {products?.map((item) => (
                 <ProductCard key={item?._id} item={item} />
               ))}
