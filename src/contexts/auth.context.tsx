@@ -28,8 +28,7 @@ export const AuthContext = createContext<IAuth>({} as IAuth);
 
 export const useAuth = () => useContext(AuthContext);
 
-const token = Cookies.get(TOKEN_NAME);
-const userDetails = Cookies.get(USER_DETAILS);
+const userDetails = Cookies.get(USER_DETAILS) || "";
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(false);
@@ -50,17 +49,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const userToken = JSON.stringify(user);
       if (userToken) {
-        toast.success(data.message);
         Cookies.set(USER_DETAILS, userToken);
         Cookies.set(TOKEN_NAME, data.data.user.token);
-        setCurrentUser(JSON.parse(userToken));
+        toast.success(data.message);
       }
 
       setTimeout(() => {
         if (user?.isAdmin || user?.isSuperAdmin) {
-          window.location.href = "/admin";
+          router.push("/admin");
         } else {
-          window.location.href = "/";
+          router.push("/");
         }
       }, 300);
     } catch (error) {
@@ -149,23 +147,17 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = () => {
     window.location.href = "/account/login";
+    setCurrentUser(null);
     Cookies.remove(TOKEN_NAME);
     Cookies.remove(USER_DETAILS);
-    setCurrentUser(null);
   };
 
   useEffect(() => {
-    const getMe = () => {
-      if (token && userDetails) {
-        const authUser: User = JSON.parse(userDetails);
-        setCurrentUser(authUser);
-      } else {
-        return;
-      }
-    };
-
-    getMe();
-  }, [token, userDetails]);
+    if (userDetails) {
+      const authUser = JSON.parse(userDetails);
+      setCurrentUser(authUser);
+    }
+  }, [userDetails]);
 
   return (
     <AuthContext.Provider
