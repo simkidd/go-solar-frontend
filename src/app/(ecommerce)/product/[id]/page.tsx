@@ -41,6 +41,8 @@ export const generateMetadata = async ({
 //   }
 // };
 
+export const revalidate = 60;
+
 const ProductPage = async ({ params }: IProduct) => {
   const product: Product = await getProduct(params.id);
 
