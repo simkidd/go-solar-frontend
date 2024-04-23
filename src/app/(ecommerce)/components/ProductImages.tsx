@@ -13,25 +13,8 @@ const ProductImages: React.FC<{
   };
 
   return (
-    <div className="w-full grid grid-cols-5 items-center h-[344px] overflow-hidden">
-      <div className="col-span-1 flex flex-col items-center gap-2 flex-grow-[0] h-full">
-        {images.map((img, i) => (
-          <div
-            key={i}
-            className="size-20 overflow-hidden"
-            onClick={() => handleSelected(img.url)}
-          >
-            <Image
-              src={img.url}
-              alt=""
-              width={300}
-              height={300}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
-      </div>
-      <div className="w-full h-full col-span-4 ">
+    <div className="flex flex-col gap-3 ">
+      <div className="w-[384px] h-[384px] rounded-lg shadow-xl border">
         <Image
           src={selectedImage}
           alt=""
@@ -39,6 +22,25 @@ const ProductImages: React.FC<{
           height={300}
           className="w-full h-full object-cover"
         />
+      </div>
+      <div className="flex gap-2 overflow-auto tailwind-scrollbar-hide">
+        {images.map((img, i) => (
+          <div
+            key={i}
+            className={`size-20 overflow-hidden rounded-lg cursor-pointer ${
+              selectedImage === img.url ? "border-2 border-black" : ""
+            }`}
+            onClick={() => handleSelected(img.url)}
+          >
+            <Image
+              src={img.url}
+              alt="product"
+              width={300}
+              height={300}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

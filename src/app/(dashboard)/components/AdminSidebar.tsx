@@ -1,11 +1,14 @@
 "use client";
+import { useAuth } from "@/contexts/auth.context";
 import { sidelist } from "@/data/sidebarData";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const AdminSidebar = () => {
+  const { currentUser, logout } = useAuth();
+  const router = useRouter();
   const pathname = usePathname();
   const [expandedItem, setExpandedItem] = useState("");
 
@@ -20,7 +23,7 @@ const AdminSidebar = () => {
   return (
     <div className="-left-full flex md:left-0 flex-col h-screen fixed top-0 bottom-0 z-50 lg:w-[220px] md:w-[80px] w-[220px] transition-all duration-500 ease-linear shadow-md bg-white dark:bg-[#222327]">
       <div className="h-14 md:h-16 flex items-center lg:justify-center px-3">
-        GoSolar
+        <Link href="/">GoSolar</Link>
       </div>
       <ul className="my-3 space-y-[0.2rem] overflow-x-hidden px-1">
         {sidelist.map((item, i) => (
@@ -30,7 +33,10 @@ const AdminSidebar = () => {
                 isActive(item.href) ? "!bg-primary" : ""
               }`}
             >
-              <Link href={item.href} className="w-full flex items-center space-x-2">
+              <Link
+                href={item.href}
+                className="w-full flex items-center space-x-2"
+              >
                 <span>
                   <item.icon size={18} />
                 </span>
@@ -65,6 +71,11 @@ const AdminSidebar = () => {
           </li>
         ))}
       </ul>
+      <div>
+        <button className="text-red-500" onClick={() => logout()}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 };

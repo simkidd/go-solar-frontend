@@ -1,7 +1,5 @@
 import { axiosInstance } from "./axios";
 
-// export const API_URL = process.env.API_URL;
-
 export const getPosts = async () => {
   try {
     const { data } = await axiosInstance.get("/blogs");
@@ -47,29 +45,6 @@ export const getCategories = async () => {
     const { data } = await axiosInstance.get("/categories");
 
     return data.categories;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const getUsers = async () => {
-  try {
-    const { data } = await axiosInstance.get("/admin/users");
-
-    console.log(data);
-
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const getUser = async (id: string) => {
-  try {
-    const { data } = await axiosInstance.get(`/admin/users/${id}`);
-
-    console.log(data);
-    return data;
   } catch (error) {
     console.log(error);
   }
