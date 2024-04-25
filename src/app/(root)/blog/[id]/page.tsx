@@ -3,6 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import { Post } from "@/interfaces/post.interface";
 import { axiosInstance } from "@/lib/axios";
 import { getPost, getPosts } from "@/lib/data";
+import { formatDate } from "@/utils/helpers";
 import { CalendarCheck } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -63,7 +64,7 @@ const SingleBlogPage = async ({ params }: IPost) => {
             <div className="lg:col-span-2 col-span-1 lg:px-4">
               <div className="flex items-center text-sm mb-4">
                 <CalendarCheck size={18} />
-                <span className="ml-2">March 2, 2024</span>
+                <span className="ml-2">{formatDate(post?.createdAt)}</span>
               </div>
               <div className="w-full lg:h-96 md:h-96 h-72 bg-gray-400 mb-8 overflow-hidden">
                 <Image
