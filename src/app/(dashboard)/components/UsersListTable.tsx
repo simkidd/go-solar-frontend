@@ -18,8 +18,8 @@ createTheme(
   "light",
   {
     text: {
-    	primary: 'inherit',
-    	// secondary: '',
+      primary: "inherit",
+      // secondary: '',
     },
     background: {
       default: "transparent",
@@ -40,7 +40,7 @@ createTheme(
     // sortFocus: {
     // 	default: '#2aa198',
     // },
-  },
+  }
   // "dark"
 );
 
@@ -181,17 +181,20 @@ const UsersListTable = () => {
     return selectedUsers;
   }, [users, searchTerm]);
 
-  const handleSearch = useCallback((value?: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (value) {
-      params.set("q", value);
-      setSearchTerm(value);
-    } else {
-      params.delete("q");
-      setSearchTerm("");
-    }
-    replace(`${pathname}?${params.toString()}`);
-  }, []);
+  const handleSearch = useCallback(
+    (value?: string) => {
+      const params = new URLSearchParams(searchParams);
+      if (value) {
+        params.set("q", value);
+        setSearchTerm(value);
+      } else {
+        params.delete("q");
+        setSearchTerm("");
+      }
+      replace(`${pathname}?${params.toString()}`);
+    },
+    [pathname, replace, searchParams]
+  );
 
   return (
     <div>

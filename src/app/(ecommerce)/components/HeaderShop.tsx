@@ -2,17 +2,22 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
-import { ThemeSwitcher } from "./ThemeSwitcher";
+import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
 import { Mail, Menu, Phone } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { HiOutlineShoppingBag, HiOutlineUser } from "react-icons/hi2";
 import { Badge } from "@nextui-org/react";
 import { navlist } from "@/data/menuData";
-import MenuItem from "./MenuItem";
+import MenuItem from "../../../components/MenuItem";
+import useCartStore from "@/lib/stores/useCart";
+import { useAuth } from "@/contexts/auth.context";
 
 const HeaderShop = () => {
+  const { cartItems } = useCartStore();
   const pathname = usePathname();
+  const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
+  const { currentUser, logout } = useAuth();
 
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
@@ -101,35 +106,51 @@ const HeaderShop = () => {
                 <HiOutlineUser size={24} />
               </button>
               <div className="user__menu light bg-white dark:bg-[#2a2b2f] shadow-md w-[206px]">
-                <div className="p-4">
-                  <Link href="/account/login" className="block">
-                    <button className="bg-primary w-full text-white py-2 px-8">
-                      Sign In
-                    </button>
-                  </Link>
-                </div>
-                <ul>
-                  <li>
-                    <Link className="block p-2 hover:text-primary" href="#">
-                      Action
+                {currentUser ? (
+                  <>
+                    <div className="p-4">
+                      <p>
+                        {currentUser?.firstname + " " + currentUser?.lastname}
+                      </p>
+                    </div>
+                    <ul>
+                      <li>
+                        <Link className="block p-2 hover:text-primary" href="#">
+                          Account
+                        </Link>
+                      </li>
+                      <li>
+                        <Link className="block p-2 hover:text-primary" href="#">
+                          Orders
+                        </Link>
+                      </li>
+                      <li>
+                        <button
+                          className="text-red-500 w-full py-2 px-8"
+                          onClick={() => logout()}
+                        >
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  </>
+                ) : (
+                  <div className="p-4">
+                    <Link href="/account/login" className="block">
+                      <button className="bg-primary w-full text-white py-2 px-8">
+                        Sign In
+                      </button>
                     </Link>
-                  </li>
-                  <li>
-                    <Link className="block p-2 hover:text-primary" href="#">
-                      Another action
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="block p-2 hover:text-primary" href="#">
-                      Something else here
-                    </Link>
-                  </li>
-                </ul>
+                  </div>
+                )}
               </div>
             </div>
 
-            <button className="bg-primary text-white w-20 h-full justify-center items-center px-4 py-2 flex">
-              <Badge content="5" color="danger" size="sm">
+            <button
+              className="bg-primary text-white w-20 h-full justify-center items-center px-4 py-2 flex"
+              onClick={() => router.push("/cart")}
+            >
+              <Badge content={cartItems.length} color="danger" size="sm">
                 <HiOutlineShoppingBag size={24} />
               </Badge>
             </button>

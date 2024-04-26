@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer";
-import HeaderShop from "@/components/HeaderShop";
+import HeaderShop from "@/app/(ecommerce)/components/HeaderShop";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";

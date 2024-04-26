@@ -14,7 +14,7 @@ const ProductImages: React.FC<{
 
   return (
     <div className="flex flex-col gap-3 ">
-      <div className="w-[384px] h-[384px] rounded-lg shadow-xl border">
+      <div className="w-[384px] h-[384px] rounded-lg shadow-xl border overflow-hidden">
         <Image
           src={selectedImage}
           alt=""

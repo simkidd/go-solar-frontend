@@ -8,6 +8,7 @@ import { getProduct, getProducts } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import ProductDetail from "../../components/ProductDetail";
 
 interface IProduct {
   params: { id: string };
@@ -64,17 +65,7 @@ const ProductPage = async ({ params }: IProduct) => {
               <div className="w-full p-4">
                 <ProductImages images={product?.images} />
               </div>
-              <div className="w-full flex flex-col p-4">
-                <h2 className="font-bold text-4xl mb-8">{product?.name}</h2>
-                <div className="flex">rating stars</div>
-                <h3 className="font-bold text-2xl">
-                  {formatCurrency(product?.price, "NGN")}
-                </h3>
-
-                <button className="bg-primary text-white py-4 px-8 mt-8">
-                  Buy Now
-                </button>
-              </div>
+              <ProductDetail product={product} />
             </div>
           </div>
         </div>
