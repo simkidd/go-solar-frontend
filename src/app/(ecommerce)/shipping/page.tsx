@@ -4,6 +4,7 @@ import useCartStore from "@/lib/stores/useCart";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import CheckoutSteps from "../components/CheckoutSteps";
+import { toast } from "react-toastify";
 
 const ShippingPage = () => {
   const { setDeliveryDetails } = useCartStore();
@@ -25,16 +26,22 @@ const ShippingPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    setDeliveryDetails(shipping);
-    router.push("/payment");
+
+    const { city, streetAddress, suiteNumber, zipCode } = shipping;
+
+    if (!streetAddress || !city || !suiteNumber || !zipCode) {
+      toast.warn("All fields are required");
+      return;
+    } else {
+      setDeliveryDetails(shipping);
+      router.push("/payment");
+    }
   };
 
   return (
     <div className="container mx-auto px-2 py-16">
       <div className="max-w-[600px] mx-auto">
-        <CheckoutSteps activeStep={1} />
-        <h2 className="text-3xl font-bold mb-8">Shipping Details</h2>
+        <CheckoutSteps activeStep={0} />
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">

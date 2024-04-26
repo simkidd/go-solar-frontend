@@ -20,6 +20,8 @@ const PlaceOrderPage = () => {
     paymentMethod,
     paymentReference,
     setPaymentData,
+    setDeliveryDetails,
+    setTotalPricePaid,
     totalPricePaid,
     paymentData,
     clearCart,
@@ -47,37 +49,44 @@ const PlaceOrderPage = () => {
     }
   }, [paymentMethod, router]);
 
+  const refParams = searchParams.get("ref")?.toString();
+  const params = new URLSearchParams(searchParams);
+
   useEffect(() => {
     (async () => {
-      if (searchParams) {
+      if (refParams) {
         try {
-          // setLoading(true);
+          setLoading(true);
           const { data } = await axiosInstance.post(
             "users/orders/create-order",
             dataInput
           );
           console.log("order confirmed", data.data);
 
-          alert("order confirmed");
-          // router.push("/");
-          // clearCart();
-          // setDeliveryDetails({} as DeliveryDetails);
-          // setTotalPricePaid(0);
+          alert(data.data.message);
+          router.push("/");
+          clearCart();
+          setDeliveryDetails({} as DeliveryDetails);
+          setTotalPricePaid(0);
         } catch (error) {
+          if(error){
+            params.delete("ref");
+          }
           const errorMsg = error as any;
-          toast.error(errorMsg?.response?.data.message)
+          toast.error(errorMsg?.response?.data.message);
           console.log(errorMsg?.response?.data.message);
+        } finally {
+          setLoading(false);
         }
       }
     })();
-  }, [searchParams]);
+  }, [refParams]);
 
   return (
     <div className="container mx-auto px-2 py-16">
       <div className="max-w-[600px] mx-auto">
-        <CheckoutSteps activeStep={3} />
-        <h2 className="text-3xl font-bold mb-8">Place Order</h2>
-        <div>
+        <CheckoutSteps activeStep={2} />
+        <div className="p-6">
           <h3 className="text-xl font-bold mb-4">Order Summary</h3>
           <ul>
             {cartItems.map((cartItem, index) => (
@@ -86,20 +95,19 @@ const PlaceOrderPage = () => {
               </li>
             ))}
           </ul>
-          <p>Total Price: {formatCurrency(totalPricePaid, "NGN")}</p>
-          <p>
+          <p className="text-lg mt-4">
+            Total Price: {formatCurrency(totalPricePaid, "NGN")}
+          </p>
+          <p className="text-lg mt-4">
             Delivery Address: {deliveryDetails.streetAddress},{" "}
             {deliveryDetails.city}, {deliveryDetails.zipCode}
           </p>
-          <p>Payment Method: {paymentMethod}</p>
-          {/* <button
-            type="submit"
-            className="bg-primary px-8 py-2 text-white rounded-md hover:bg-primary-dark transition duration-300"
-            onClick={handlePlaceOrder}
-          >
-            {loading ? "Confirming..." : "Place order"}
-          </button> */}
-          <Payment />
+          <p className="text-lg mt-4">Payment Method: {paymentMethod}</p>
+          {loading ? (
+            <p className="text-lg mt-4">Confirming order...</p>
+          ) : (
+            <Payment />
+          )}
         </div>
       </div>
     </div>

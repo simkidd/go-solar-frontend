@@ -5,14 +5,15 @@ import { User } from "./interfaces/auth.interface";
 
 // Specify protected and public routes
 const adminRoutes = ["/admin"];
-const publicRoutes = ["/account/login", "/account/register", "/"];
+const publicRoutes = ["/account", "/shop", "/product", "/blog", "/"];
 
 export default async function middleware(req: NextRequest) {
   // Check if the current route is protected or public
   const path = req.nextUrl.pathname;
   // const isProtectedRoute = protectedRoutes.includes(path);
   const isAdminRoute = adminRoutes.some((route) => path.startsWith(route));
-  const isPublicRoute = publicRoutes.includes(path);
+  // const isPublicRoute = publicRoutes.includes(path);
+  const isPublicRoute = publicRoutes.some((route) => path.startsWith(route));
 
   const cookie = cookies().get(TOKEN_NAME)?.value;
   const userCookie = cookies().get(USER_DETAILS)?.value;

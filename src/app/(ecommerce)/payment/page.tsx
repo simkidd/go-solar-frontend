@@ -11,7 +11,8 @@ const PaymentPage = () => {
 
   useEffect(() => {
     if (!deliveryDetails.streetAddress) {
-      return router.push("/shipping");
+      router.push("/shipping");
+      return;
     }
   }, [router, deliveryDetails]);
 
@@ -32,7 +33,7 @@ const PaymentPage = () => {
   return (
     <div className="container mx-auto px-2 py-16">
       <div className="max-w-[600px] mx-auto">
-        <CheckoutSteps activeStep={2} />
+        <CheckoutSteps activeStep={1} />
         <form onSubmit={handlePayment}>
           <h2 className="text-3xl font-bold mb-8">Payment Method</h2>
           {paymentType.map((payment) => (

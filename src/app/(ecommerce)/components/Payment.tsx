@@ -1,10 +1,7 @@
 "use client";
 import { useAuth } from "@/contexts/auth.context";
-import { CreateOrderInput } from "@/interfaces/product.interface";
-import { axiosInstance } from "@/lib/axios";
 import useCartStore from "@/lib/stores/useCart";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { usePaystackPayment } from "react-paystack";
 import { toast } from "react-toastify";
 
@@ -57,7 +54,7 @@ const Payment = () => {
   return (
     <div>
       <button
-        className="bg-blue-400"
+        className="bg-primary text-white px-8 py-2"
         onClick={() => initializePayment({ onSuccess, onClose })}
       >
         Pay Now

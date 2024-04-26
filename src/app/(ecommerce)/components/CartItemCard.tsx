@@ -1,5 +1,6 @@
 "use client";
 import useCartStore, { CartItem } from "@/lib/stores/useCart";
+import { formatCurrency } from "@/utils/helpers";
 import { MinusCircle, PlusCircle, Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,22 +10,27 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
   const { increaseQuantity, decreaseQuantity, removeItem } = useCartStore();
 
   return (
-    <div className="w-full p-4 grid grid-cols-[40px_auto] gap-4">
-      <div className="size-10">
+    <div className="w-full p-4 grid grid-cols-[80px_auto] gap-4">
+      <div className="size-20">
         <Image
           src={cartItem?.product?.images[0]?.url}
           alt={cartItem?.product?.name}
           className="w-full h-full object-cover"
-          width={40}
-          height={40}
+          width={70}
+          height={70}
         />
       </div>
       <div className="w-full">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4 gap-6">
           <Link href={`/product/${cartItem?.product?._id}`}>
-            <p className="w-[75%]">{cartItem?.product?.name}</p>
+            <p className="">{cartItem?.product?.name}</p>
           </Link>
-          <p className="">{cartItem?.product?.price}</p>
+          <button
+            className="self-start"
+            onClick={() => removeItem(cartItem?.product?._id)}
+          >
+            <Trash size={18} />
+          </button>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex gap-4 items-center">
@@ -42,12 +48,7 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
             />
           </div>
 
-          <button
-            className=""
-            onClick={() => removeItem(cartItem?.product?._id)}
-          >
-            <Trash size={18} />
-          </button>
+          <p className="">{formatCurrency(cartItem?.product?.price, "NGN")}</p>
         </div>
       </div>
     </div>

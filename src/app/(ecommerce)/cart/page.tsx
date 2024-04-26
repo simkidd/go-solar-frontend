@@ -68,7 +68,7 @@ const CartPage = () => {
             </div>
 
             <div className="grid lg:grid-cols-5 grid-cols-1 gap-6">
-              <div className="lg:col-span-3 col-span-1 lg:border-r-1 lg:pr-6 border-b-1 lg:border-b-0 pb-4">
+              <div className="lg:col-span-3 col-span-1 lg:border-r-1 border-r-gray-400 lg:pr-6 border-b-1 lg:border-b-0 pb-4">
                 {cartItems.map((cartItem, i) => (
                   <CartItemCard key={i} cartItem={cartItem} />
                 ))}
