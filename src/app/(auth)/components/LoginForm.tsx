@@ -4,6 +4,7 @@ import { LoginInput } from "@/interfaces/auth.interface";
 import { Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
+
 const LoginForm = () => {
   const { loading, login } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
@@ -11,7 +12,6 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
-  // const [loading, setLoading] = useState(false);
 
   const validateEmail = (input: string) =>
     input.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
