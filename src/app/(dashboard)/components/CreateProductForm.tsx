@@ -81,7 +81,6 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
     await createProduct(formData, config);
   };
 
-  console.log("input", input);
   return (
     <form className="w-full" onSubmit={handleSubmit}>
       <div className="w-full grid lg:grid-cols-2 grid-cols-1">

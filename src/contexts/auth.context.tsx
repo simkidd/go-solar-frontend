@@ -54,13 +54,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         toast.success(data.message);
       }
 
-      // setTimeout(() => {
         if (user?.isAdmin || user?.isSuperAdmin) {
           router.push("/admin");
         } else {
           router.push("/");
         }
-      // }, 300);
+
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
@@ -157,7 +156,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const authUser = JSON.parse(userDetails);
       setCurrentUser(authUser);
     }
-  }, [userDetails]);
+  }, []);
 
   return (
     <AuthContext.Provider
