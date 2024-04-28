@@ -1,17 +1,19 @@
 "use client";
-import useCartStore from "@/lib/stores/useCart";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import CheckoutSteps from "../components/CheckoutSteps";
-import { formatCurrency } from "@/utils/helpers";
-import { axiosInstance } from "@/lib/axios";
 import {
   CreateOrderInput,
   DeliveryDetails,
 } from "@/interfaces/product.interface";
-import { usePaystackPayment } from "react-paystack";
+import { axiosInstance } from "@/lib/axios";
+import useCartStore from "@/lib/stores/useCart";
+import { formatCurrency } from "@/utils/helpers";
+import { Spinner } from "@nextui-org/react";
+import { CheckCircle, CircleX } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import CheckoutSteps from "../components/CheckoutSteps";
 import Payment from "../components/Payment";
+import { FaXmark } from "react-icons/fa6";
 
 const PlaceOrderPage = () => {
   const {
@@ -29,6 +31,10 @@ const PlaceOrderPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
+  const [showCreatingOrderModal, setShowCreatingOrderModal] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const dataInput: CreateOrderInput = {
     products: cartItems.map(({ deliveryFee, product, qty }) => ({
@@ -42,6 +48,8 @@ const PlaceOrderPage = () => {
     paymentReference,
     paymentData,
   };
+  const refParams = searchParams.get("ref")?.toString();
+  const params = new URLSearchParams(searchParams);
 
   useEffect(() => {
     if (!paymentMethod) {
@@ -49,13 +57,11 @@ const PlaceOrderPage = () => {
     }
   }, [paymentMethod, router]);
 
-  const refParams = searchParams.get("ref")?.toString();
-  const params = new URLSearchParams(searchParams);
-
   useEffect(() => {
     (async () => {
       if (refParams) {
         try {
+          setShowCreatingOrderModal(true);
           setLoading(true);
           const { data } = await axiosInstance.post(
             "users/orders/create-order",
@@ -63,20 +69,28 @@ const PlaceOrderPage = () => {
           );
           console.log("order confirmed", data.data);
 
-          alert(data.data.message);
-          router.push("/");
+          setSuccessMsg(data.data.message);
           clearCart();
           setDeliveryDetails({} as DeliveryDetails);
           setTotalPricePaid(0);
+          setPaymentData("");
+
+          setOrderSuccess(true);
+          setTimeout(() => {
+            router.push("/cart");
+          }, 2000);
         } catch (error) {
-          if(error){
+          if (error) {
             params.delete("ref");
           }
           const errorMsg = error as any;
-          toast.error(errorMsg?.response?.data.message);
           console.log(errorMsg?.response?.data.message);
+          setErrorMsg(errorMsg?.response?.data.message);
         } finally {
           setLoading(false);
+          // setTimeout(() => {
+          //   setShowCreatingOrderModal(false);
+          // }, 2000);
         }
       }
     })();
@@ -103,13 +117,48 @@ const PlaceOrderPage = () => {
             {deliveryDetails.city}, {deliveryDetails.zipCode}
           </p>
           <p className="text-lg mt-4">Payment Method: {paymentMethod}</p>
-          {loading ? (
-            <p className="text-lg mt-4">Confirming order...</p>
-          ) : (
-            <Payment />
-          )}
+          <Payment />
         </div>
       </div>
+
+      {/* Creating Order Modal */}
+      {showCreatingOrderModal && (
+        <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
+          <div className="relative light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-lg p-8 max-w-[500px]">
+            {loading ? (
+              <div className="flex flex-col items-center gap-4">
+                <Spinner size="lg" />
+                <h2 className="text-lg font-semibold">Processing Order...</h2>
+              </div>
+            ) : (
+              <>
+                {orderSuccess ? (
+                  <div className="flex flex-col items-center">
+                    <CheckCircle size={60} className="text-green-600" />
+                    <h2 className="text-lg font-semibold my-4">
+                      Order Placed Successfully
+                    </h2>
+                    <p className="">Your order has been successfully placed!</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <CircleX size={60} className="text-red-600" />
+                    <p className="text-lg font-semibold my-4 text-center">
+                      {errorMsg}
+                    </p>
+                    <button
+                      className="border border-primary mt-2 text-primary px-4 py-2 rounded-md"
+                      onClick={() => setShowCreatingOrderModal(false)}
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

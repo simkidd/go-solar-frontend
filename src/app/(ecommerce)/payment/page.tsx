@@ -49,14 +49,15 @@ const PaymentPage = () => {
               />
 
               <label className="p-2" htmlFor={payment.value}>
-                {payment.value}
+                {payment.name}
               </label>
             </div>
           ))}
 
           <button
             type="submit"
-            className="bg-primary px-8 py-2 text-white rounded-md hover:bg-primary-dark transition duration-300"
+            className="bg-primary px-8 py-2 text-white rounded-md hover:bg-primary-dark transition duration-300 disabled:bg-gray-400"
+            disabled={!selectedPaymentMethod}
           >
             Next
           </button>

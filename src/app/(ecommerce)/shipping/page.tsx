@@ -95,7 +95,7 @@ const ShippingPage = () => {
             type="submit"
             className="bg-primary px-8 py-2 text-white rounded-md hover:bg-primary-dark transition duration-300"
           >
-            Submit
+            Next
           </button>
         </form>
       </div>
