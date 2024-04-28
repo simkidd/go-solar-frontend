@@ -3,7 +3,7 @@ import Search from "@/components/Search";
 import { useAuth } from "@/contexts/auth.context";
 import { navlist } from "@/data/menuData";
 import useCartStore from "@/lib/stores/useCart";
-import { ChevronDown, Mail, Menu, Phone } from "lucide-react";
+import { ChevronDown, Mail, Menu, Phone, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -95,35 +95,49 @@ const HeaderShop = () => {
                 <Search placeholder="Find a product..." />
               </div>
               <div className="flex h-full ml-auto">
-                <button
-                  className={`h-full justify-center items-center px-4 py-2 flex hover:bg-primary hover:text-white ${
-                    isActive("/cart") && "bg-primary text-white"
-                  }`}
-                  onClick={() => router.push("/cart")}
-                >
-                  <div className="size-10 mr-1">
-                    <HiOutlineShoppingBag size={40} />
-                  </div>
-                  <div className="flex flex-col text-sm">
-                    <span className="bg-primary rounded-full text-white text-xs">
-                      {cartItems?.length}
-                    </span>
-                    <span>Cart</span>
-                  </div>
-                </button>
+                <Link href="/cart">
+                  <button
+                    className={`h-full justify-center items-center px-4 py-2 flex hover:bg-primary hover:text-white ${
+                      isActive("/cart") && "bg-primary text-white"
+                    }`}
+                  >
+                    <div className="size-8 mr-1">
+                      <ShoppingCart size={32} />
+                    </div>
+                    <div className="flex flex-col text-sm">
+                      <span className="bg-primary rounded-full text-white text-xs">
+                        {cartItems?.length}
+                      </span>
+                      <span>Cart</span>
+                    </div>
+                  </button>
+                </Link>
 
                 <div className="user relative lg:block hidden">
                   <button className=" h-full items-center px-4 py-2 flex user__button hover:bg-primary hover:text-white">
-                    <div className="size-10 mr-1">
-                      <HiOutlineUser size={40} />
+                    <div className="size-8 mr-1">
+                      <HiOutlineUser size={32} />
                     </div>
                     <div className="flex flex-col text-sm">
-                      <span className="text-left">Welcome</span>
-                      <div className="flex">
-                        <span>Login</span>
-                        <span className="mx-2">/</span>
-                        <span>Register</span>
-                      </div>
+                      {!currentUser ? (
+                        <>
+                          <span className="text-left">Welcome</span>
+                          <div className="flex">
+                            <span>Login</span>
+                            <span className="mx-2">/</span>
+                            <span>Register</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex flex-col">
+                            <span className="text-left">
+                              Hi, {currentUser?.firstname}
+                            </span>
+                            <span className="font-semibold">Account</span>
+                          </div>
+                        </>
+                      )}
                     </div>
                     <ChevronDown size={16} className="ml-1" />
                   </button>
@@ -131,12 +145,10 @@ const HeaderShop = () => {
                     {currentUser ? (
                       <>
                         <div className="p-4">
-                          <p>
-                            {currentUser?.firstname +
-                              " " +
-                              currentUser?.lastname}
-                          </p>
+                          <p>Welcome back,</p>
+                          <p className="font-bold">{currentUser?.firstname}</p>
                         </div>
+                        <hr />
                         <ul>
                           <li>
                             <Link
@@ -269,11 +281,17 @@ const HeaderShop = () => {
             })}
           </ul>
 
-          <div className="flex">
-            <Link href="/account/login">Login</Link>
-            <span className="mx-2">/</span>
-            <Link href="/account/register">Register</Link>
-          </div>
+          {!currentUser ? (
+            <div className="flex">
+              <Link href="/account/login">Login</Link>
+              <span className="mx-2">/</span>
+              <Link href="/account/register">Register</Link>
+            </div>
+          ) : (
+            <div>
+              <Link href="">Account</Link>
+            </div>
+          )}
 
           <div className="flex justify-center items-center flex-col w-full my-4 space-y-4">
             <ul className="flex items-center gap-4 ">
