@@ -1,9 +1,20 @@
-import React from 'react'
+import { axiosInstance } from "@/lib/axios";
 
-const page = () => {
-  return (
-    <div>orders page</div>
-  )
-}
+// export const getOrders = async () => {
+//   try {
+//     const { data } = await axiosInstance.get("/users/orders/user-orders");
 
-export default page
+//     return data.orders;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+const OrdersPage = async () => {
+  // const orders = await getOrders();
+  // console.log("orders", orders);
+
+  return <div>orders page</div>;
+};
+
+export default OrdersPage;

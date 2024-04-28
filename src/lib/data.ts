@@ -49,3 +49,5 @@ export const getCategories = async () => {
     console.log(error);
   }
 };
+
+
