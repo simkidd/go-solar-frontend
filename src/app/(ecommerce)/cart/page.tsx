@@ -18,7 +18,7 @@ const CartPage = () => {
 
     cartItems.forEach((cartItem) => {
       subtotal += cartItem.product.price * cartItem.qty;
-      deliveryFee += cartItem.product.withinLocationDeliveryFee;
+      deliveryFee += cartItem.deliveryFee;
     });
 
     const total = subtotal + deliveryFee;
@@ -27,14 +27,6 @@ const CartPage = () => {
 
   const { total, subtotal, deliveryFee } = calculateTotals(cartItems);
 
-  // const subtotal = cartItems.reduce(
-  //   (acc, cartItem) => acc + cartItem.product.price * cartItem.quantity,
-  //   0
-  // );
-
-  // const deliveryFee =
-
-  // const totalRounded = parseFloat(total.toFixed(2));
 
   const handleCheckout = () => {
     if (!currentUser) {
