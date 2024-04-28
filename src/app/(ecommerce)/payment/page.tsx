@@ -3,6 +3,7 @@ import useCartStore from "@/lib/stores/useCart";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CheckoutSteps from "../components/CheckoutSteps";
+import PayImage from "@/assets/paystack.png";
 
 const PaymentPage = () => {
   const { deliveryDetails, setPaymentMethod } = useCartStore();
@@ -26,7 +27,7 @@ const PaymentPage = () => {
   };
 
   const paymentType = [
-    { name: "Paystack", value: "paystack" },
+    { name: "Paystack", value: "paystack", img: PayImage.src },
     // { name: "Cash on delivery", value: "cashOnDelivery" },
   ];
 
@@ -37,7 +38,7 @@ const PaymentPage = () => {
         <form onSubmit={handlePayment}>
           <h2 className="text-3xl font-bold mb-8">Payment Method</h2>
           {paymentType.map((payment) => (
-            <div key={payment.value} className="mb-4">
+            <div key={payment.value} className="mb-4 flex">
               <input
                 name="paymentMethod"
                 className="p-2 outline-none focus:ring-0"
@@ -48,8 +49,14 @@ const PaymentPage = () => {
                 onChange={() => setSelectedPaymentMethod(payment.value)}
               />
 
-              <label className="p-2" htmlFor={payment.value}>
-                {payment.name}
+              <label htmlFor={payment.value} className="ml-2">
+                <div className="px-2 h-10 w-28 cursor-pointer bg-white rounded">
+                  <img
+                    src={payment?.img}
+                    alt=""
+                    className="w-full h-full object-contain"
+                  />
+                </div>
               </label>
             </div>
           ))}
