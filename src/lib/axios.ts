@@ -1,6 +1,9 @@
 import { TOKEN_NAME } from "@/utils/constants";
 import axios from "axios";
 import Cookies from "js-cookie";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const API_URL = process.env.API_URL;
 
