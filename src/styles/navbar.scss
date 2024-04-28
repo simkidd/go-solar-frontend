@@ -28,9 +28,25 @@
     .user__menu {
       position: absolute;
       visibility: hidden;
-      right: 50%;
-      top: 80%;
-      transform: translateX(50%);
+      right: 0;
+      z-index: 10;
+    }
+  }
+  .categories {
+    &:hover {
+      .categories__menu {
+        visibility: visible;
+      }
+
+      .categories__button {
+        position: relative;
+      }
+    }
+
+    .categories__menu {
+      position: absolute;
+      visibility: hidden;
+      right: 0;
       z-index: 10;
     }
   }
