@@ -13,7 +13,6 @@ const Payment = () => {
   const { currentUser } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const [errorMsg, setErrorMsg] = useState("");
 
   const publicKey =
@@ -34,12 +33,11 @@ const Payment = () => {
     const params = new URLSearchParams(searchParams);
     setPaymentReference(reference.reference);
     setPaymentData(JSON.stringify(reference));
-    console.log(reference);
 
     if (reference) {
       params.set("ref", reference.reference);
     }
-    router.replace(`${pathname}?${params.toString()}`);
+    router.push(`/confirmation?${params.toString()}`);
   };
 
   const onClose = () => {
