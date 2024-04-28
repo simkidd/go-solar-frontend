@@ -1,9 +1,13 @@
 import React from "react";
 
-const SearchResults = async ({ params }: { params: { query: string } }) => {
-  // const searchedProducts = await getSearchedProducts(params.query)
+const SearchResults = async ({
+  searchParams,
+}: {
+  searchParams: { q: string };
+}) => {
+  // const searchedProducts = await getSearchedProducts(params.query);
 
-  const decodedQuery = decodeURIComponent(params.query);
+  const decodedQuery = decodeURIComponent(searchParams.q);
 
   return (
     <div className="px-10 py-5">
