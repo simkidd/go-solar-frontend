@@ -2,7 +2,7 @@
 import Search from "@/components/Search";
 import { useAuth } from "@/contexts/auth.context";
 import { navlist } from "@/data/menuData";
-import useCartStore from "@/lib/stores/useCart";
+import useCartStore from "@/lib/stores/cart.store";
 import { ChevronDown, Mail, Menu, Phone, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
