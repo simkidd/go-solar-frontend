@@ -1,20 +1,16 @@
-import { axiosInstance } from "@/lib/axios";
+import OrdersListTable from "../../components/OrdersListTable";
 
-// export const getOrders = async () => {
-//   try {
-//     const { data } = await axiosInstance.get("/users/orders/user-orders");
-
-//     return data.orders;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
-const OrdersPage = async () => {
-  // const orders = await getOrders();
-  // console.log("orders", orders);
-
-  return <div>orders page</div>;
+const OrdersPage = () => {
+  return (
+    <div className="w-full py-4">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-2xl font-medium">Orders</h3>
+      </div>
+      <div className="w-full bg-white dark:bg-[#222327] shadow">
+        <OrdersListTable />
+      </div>
+    </div>
+  );
 };
 
 export default OrdersPage;

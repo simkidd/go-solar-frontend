@@ -1,4 +1,4 @@
-import { CartItem } from "@/lib/stores/useCart";
+import { CartItem } from "@/lib/stores/cart.store";
 
 export interface IImage {
   url: string;
@@ -64,18 +64,6 @@ export interface CreateOrderInput {
   paymentMethod: string;
   paymentReference: string;
   paymentData: string;
-}
-
-export interface Order {
-  _id: string;
-  products: Product[];
-  deliveryDetails: DeliveryDetails;
-  totalPricePaid: number;
-  paymentMethod: string;
-  paymentReference: string;
-  paymentData: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface DeliveryDetails {
