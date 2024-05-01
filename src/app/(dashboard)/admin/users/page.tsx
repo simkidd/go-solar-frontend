@@ -1,6 +1,6 @@
 import UsersListTable from "../../components/UsersListTable";
 
-const UsersPage = async () => {
+const UsersPage = () => {
   return (
     <div className="w-full py-4">
       <div className="flex items-center justify-between mb-4">

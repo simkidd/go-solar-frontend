@@ -1,6 +1,6 @@
 "use client";
 import { Product } from "@/interfaces/product.interface";
-import useCartStore from "@/lib/stores/useCart";
+import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
 import { MinusCircle, PlusCircle } from "lucide-react";
 import React, { useState } from "react";

@@ -1,19 +1,18 @@
 "use client";
+import { useOrderStore } from "@/lib/stores/order.store";
 import { Spinner } from "@nextui-org/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DataTable, {
   TableColumn,
   createTheme,
 } from "react-data-table-component";
-import { customStyles } from "./UI/tableStyle";
-import { Product } from "@/interfaces/product.interface";
-import { Trash } from "lucide-react";
+import { Order } from "@/interfaces/order.interface";
 import { axiosInstance } from "@/lib/axios";
-import Image from "next/image";
+import { customStyles } from "./UI/tableStyle";
 import { formatCurrency, formatDate } from "@/utils/helpers";
-import { useProductStore } from "@/lib/stores/product.store";
+import { Trash } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 createTheme(
   "light",
@@ -45,54 +44,38 @@ createTheme(
   // "dark"
 );
 
-const columns: TableColumn<Product>[] = [
+const columns: TableColumn<Order>[] = [
   {
-    name: "Product",
+    name: "Order ID",
     cell: (row) => (
-      <div className="grid grid-cols-[55px_auto] gap-2 w-full py-2">
-        <div className="w-[55px] h-[55px]">
-          <Image
-            src={row?.images[0].url}
-            alt={row?.name}
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <Link href={`/admin/products/${row?._id}`}>
-          <span className="text-wrap">{row?.name}</span>
+      <div>
+        <Link href={`/admin/orders/${row?._id}`}>
+          {row?.trackingId?.tracking_id}
         </Link>
       </div>
     ),
-    minWidth: "400px",
+    width: "100px",
   },
   {
-    name: "Price",
-    cell: (row) => <div>{formatCurrency(row?.price, "NGN")}</div>,
-    minWidth: "150px",
-  },
-  {
-    name: "Quantity",
-    cell: (row) => <div>{row?.quantityInStock}</div>,
-  },
-  {
-    name: "Category",
-    cell: (row) => <div>{row?.category?.name}</div>,
-  },
-  {
-    name: "Brand",
-    cell: (row) => <div>{row?.brand}</div>,
-  },
-  {
-    name: "Published",
+    name: "Billing Name",
     cell: (row) => (
-      <div>{row?.isPublished ? <span>Yes</span> : <span>No</span>}</div>
+      <div>{row?.user?.firstname + " " + row?.user?.lastname}</div>
     ),
+    minWidth: "300px",
   },
   {
-    name: "Date added",
+    name: "Date",
     cell: (row) => <div>{formatDate(row?.createdAt)}</div>,
+  },
+  {
+    name: "Total",
+    cell: (row) => <div>{formatCurrency(row?.totalPricePaid, "NGN")}</div>,
     minWidth: "150px",
+  },
+  {
+    name: "Tracking Status",
+    cell: (row) => <div>{row?.trackingStatus}</div>,
+    width: "150px",
   },
   {
     name: "Actions",
@@ -107,8 +90,8 @@ const columns: TableColumn<Product>[] = [
   },
 ];
 
-const ProductListTable = () => {
-  const { products, setProducts } = useProductStore();
+const OrdersListTable = () => {
+  const { orders, setOrders } = useOrderStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -119,8 +102,9 @@ const ProductListTable = () => {
     (async () => {
       try {
         setLoading(true);
-        const { data } = await axiosInstance.get("/products");
-        setProducts(data.products);
+        const { data } = await axiosInstance.get("/users/orders/user-orders");
+
+        setOrders(data.orders);
       } catch (error) {
         console.log(error);
       } finally {
@@ -129,16 +113,25 @@ const ProductListTable = () => {
     })();
   }, []);
 
-  const filteredProducts = useMemo(() => {
-    let selectedProducts = [...products];
+  const filteredOrders = useMemo(() => {
+    let selectedOrders = [...orders];
 
     if (searchTerm) {
-      selectedProducts = selectedProducts.filter((product) =>
-        product?.name.toLowerCase().includes(searchTerm.toLowerCase())
+      selectedOrders = selectedOrders.filter(
+        (order) =>
+          order?.user?.firstname
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          order?.user?.lastname
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          order?.trackingId?.tracking_id
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
       );
     }
-    return selectedProducts;
-  }, [products, searchTerm]);
+    return selectedOrders;
+  }, [orders, searchTerm]);
 
   const handleSearch = useCallback(
     (value?: string) => {
@@ -171,7 +164,7 @@ const ProductListTable = () => {
       </div>
       <DataTable
         columns={columns}
-        data={filteredProducts}
+        data={filteredOrders}
         progressPending={loading}
         progressComponent={
           <div className="py-8">
@@ -192,4 +185,4 @@ const ProductListTable = () => {
   );
 };
 
-export default ProductListTable;
+export default OrdersListTable;

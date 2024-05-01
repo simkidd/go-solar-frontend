@@ -4,7 +4,7 @@ import "../globals.scss";
 import AdminHeader from "@/app/(dashboard)/components/AdminHeader";
 import AdminSidebar from "@/app/(dashboard)/components/AdminSidebar";
 import { Providers } from "../providers";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import NextTopLoader from "nextjs-toploader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <NextTopLoader
           color="#9dc900"

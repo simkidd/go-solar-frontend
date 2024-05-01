@@ -1,21 +1,26 @@
 "use client";
-import useCartStore from "@/lib/stores/useCart";
+import useCartStore from "@/lib/stores/cart.store";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CheckoutSteps from "../components/CheckoutSteps";
 import PayImage from "@/assets/paystack.png";
+import { useAuth } from "@/contexts/auth.context";
 
 const PaymentPage = () => {
+  const { currentUser } = useAuth();
   const { deliveryDetails, setPaymentMethod } = useCartStore();
   const router = useRouter();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
 
   useEffect(() => {
-    if (!deliveryDetails.streetAddress) {
+    if (!currentUser) {
+      router.push("/account/login");
+      return;
+    } else if (!deliveryDetails.streetAddress) {
       router.push("/shipping");
       return;
     }
-  }, [router, deliveryDetails]);
+  }, [router, deliveryDetails, currentUser]);
 
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();

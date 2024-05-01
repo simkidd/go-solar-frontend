@@ -1,10 +1,9 @@
 "use client";
 import { useAuth } from "@/contexts/auth.context";
-import useCartStore from "@/lib/stores/useCart";
+import useCartStore from "@/lib/stores/cart.store";
 import { CircleX } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { FaXmark } from "react-icons/fa6";
 import { usePaystackPayment } from "react-paystack";
 
 const Payment = () => {
@@ -22,7 +21,7 @@ const Payment = () => {
   console.log("key:", publicKey);
 
   const config = {
-    reference: new Date().getTime().toString(),
+    reference: Date.now().toString(),
     email: currentUser?.email,
     name: currentUser?.firstname,
     publicKey,
@@ -33,6 +32,7 @@ const Payment = () => {
     const params = new URLSearchParams(searchParams);
     setPaymentReference(reference.reference);
     setPaymentData(JSON.stringify(reference));
+    console.log(reference);
 
     if (reference) {
       params.set("ref", reference.reference);

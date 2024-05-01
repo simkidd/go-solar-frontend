@@ -1,12 +1,14 @@
 "use client";
 import { DeliveryDetails } from "@/interfaces/product.interface";
-import useCartStore from "@/lib/stores/useCart";
+import useCartStore from "@/lib/stores/cart.store";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CheckoutSteps from "../components/CheckoutSteps";
 import { toast } from "react-toastify";
+import { useAuth } from "@/contexts/auth.context";
 
 const ShippingPage = () => {
+  const { currentUser } = useAuth();
   const { setDeliveryDetails } = useCartStore();
   const [shipping, setShipping] = useState<DeliveryDetails>({
     suiteNumber: "",
@@ -15,6 +17,13 @@ const ShippingPage = () => {
     zipCode: "",
   });
   const router = useRouter();
+
+  useEffect(() => {
+    if (!currentUser) {
+      router.push("/account/login");
+      return;
+    }
+  }, [router, currentUser]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
