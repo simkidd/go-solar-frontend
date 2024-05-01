@@ -114,7 +114,7 @@ const HeaderShop = () => {
                 </Link>
 
                 <div className="user relative lg:block hidden">
-                  <button className=" h-full items-center px-4 py-2 flex user__button hover:bg-primary hover:text-white">
+                  <button className=" h-full items-center px-4 py-2 flex user__button">
                     <div className="size-8 mr-1">
                       <HiOutlineUser size={32} />
                     </div>
@@ -141,7 +141,7 @@ const HeaderShop = () => {
                     </div>
                     <ChevronDown size={16} className="ml-1" />
                   </button>
-                  <div className="user__menu light bg-white dark:bg-[#2a2b2f] shadow-md w-full">
+                  <div className="user__menu min-w-52 light bg-white dark:bg-[#2a2b2f] shadow-md">
                     {currentUser ? (
                       <>
                         <div className="p-4">
@@ -150,9 +150,20 @@ const HeaderShop = () => {
                         </div>
                         <hr />
                         <ul>
+                          {currentUser?.isAdmin ||
+                            (currentUser?.isSuperAdmin && (
+                              <li>
+                                <Link
+                                  className="block p-2 hover:text-primary text-center"
+                                  href="/admin"
+                                >
+                                  Dashboard
+                                </Link>
+                              </li>
+                            ))}
                           <li>
                             <Link
-                              className="block p-2 hover:text-primary"
+                              className="block p-2 hover:text-primary text-center"
                               href="#"
                             >
                               Account
@@ -160,7 +171,7 @@ const HeaderShop = () => {
                           </li>
                           <li>
                             <Link
-                              className="block p-2 hover:text-primary"
+                              className="block p-2 hover:text-primary text-center"
                               href="#"
                             >
                               Orders
