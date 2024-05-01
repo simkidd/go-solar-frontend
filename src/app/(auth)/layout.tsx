@@ -1,12 +1,10 @@
+import { Unlock } from "lucide-react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "../globals.scss";
-import AuthLayout from "@/layouts/AuthLayout";
-import NextTopLoader from "nextjs-toploader";
-import { Providers } from "../providers";
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
-import { Unlock } from "lucide-react";
 import Link from "next/link";
+import NextTopLoader from "nextjs-toploader";
+import "../globals.scss";
+import { Providers } from "../providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <NextTopLoader
           color="#9dc900"

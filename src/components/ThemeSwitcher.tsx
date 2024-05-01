@@ -2,7 +2,8 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Sun, MoonStar } from "lucide-react";
+import { Sun, MoonStar, Moon } from "lucide-react";
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 
 export function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false);
@@ -15,23 +16,25 @@ export function ThemeSwitcher() {
   if (!mounted) return null;
 
   return (
-    <div className="space-x-2 flex items-center">
-      <button
-        className={`rounded-full size-8 bg-transparent flex items-center justify-center ${
-          theme === "light" && "!bg-primary"
-        }`}
-        onClick={() => setTheme("light")}
-      >
-        <Sun size={18} />
-      </button>
-      <button
-        className={`rounded-full size-8 bg-transparent flex items-center justify-center ${
-          theme === "dark" && "!bg-primary"
-        }`}
-        onClick={() => setTheme("dark")}
-      >
-        <MoonStar size={18} />
-      </button>
-    </div>
+    <Dropdown>
+      <DropdownTrigger>
+        <Button variant="flat" size="sm" isIconOnly>
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 dark:text-white" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu>
+        <DropdownItem onPress={() => setTheme("light")}>
+          Light
+        </DropdownItem>
+        <DropdownItem onPress={() => setTheme("dark")}>
+          Dark
+        </DropdownItem>
+        <DropdownItem onPress={() => setTheme("system")}>
+          System
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
   );
 }
