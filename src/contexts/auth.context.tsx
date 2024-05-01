@@ -22,6 +22,8 @@ interface IAuth {
   forgotPassword: (input: EmailInput) => Promise<void>;
   resetPassword: (input: ChangePasswordInput, token: string) => Promise<void>;
   logout: () => void;
+  showSidebar: boolean;
+  setShowSidebar: (value: boolean) => void;
 }
 
 export const AuthContext = createContext<IAuth>({} as IAuth);
@@ -34,6 +36,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const router = useRouter();
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const login = async (input: LoginInput) => {
     try {
@@ -169,6 +172,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         forgotPassword,
         resetPassword,
         logout,
+        showSidebar,
+        setShowSidebar
       }}
     >
       {children}

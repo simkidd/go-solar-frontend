@@ -20,7 +20,7 @@ const ProductsListPage = async () => {
         </div>
       </div>
       <div className="w-full bg-white dark:bg-[#222327] shadow">
-        <ProductListTable products={products} />
+        <ProductListTable />
       </div>
     </div>
   );

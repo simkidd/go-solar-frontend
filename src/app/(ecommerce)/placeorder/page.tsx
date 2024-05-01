@@ -1,5 +1,5 @@
 "use client";
-import useCartStore from "@/lib/stores/useCart";
+import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

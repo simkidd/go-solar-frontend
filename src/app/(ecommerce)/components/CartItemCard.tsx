@@ -1,5 +1,5 @@
 "use client";
-import useCartStore, { CartItem } from "@/lib/stores/useCart";
+import useCartStore, { CartItem } from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
 import { MinusCircle, PlusCircle, Trash } from "lucide-react";
 import Image from "next/image";

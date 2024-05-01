@@ -4,11 +4,11 @@ import {
   DeliveryDetails,
 } from "@/interfaces/product.interface";
 import { axiosInstance } from "@/lib/axios";
-import useCartStore from "@/lib/stores/useCart";
+import useCartStore from "@/lib/stores/cart.store";
 import { Spinner } from "@nextui-org/react";
 import { CheckCircle, CircleX } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const ConfirmationComp = ({
   searchParams,
@@ -55,9 +55,9 @@ const ConfirmationComp = ({
             "users/orders/create-order",
             dataInput
           );
-          console.log("order confirmed", data.data);
+          console.log("order confirmed", data.order);
 
-          setSuccess(data.data.message);
+          setSuccess(data?.message);
           clearCart();
           setDeliveryDetails({} as DeliveryDetails);
           setTotalPricePaid(0);
@@ -65,7 +65,7 @@ const ConfirmationComp = ({
 
           setOrderSuccess(true);
           setTimeout(() => {
-            router.push("/cart");
+            router.push("/shop");
           }, 2000);
         } catch (error) {
           const errorMsg = error as any;

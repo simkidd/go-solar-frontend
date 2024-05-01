@@ -1,10 +1,10 @@
 "use client";
 
+import { ThemeProvider } from "@/components/ThemeProvider";
 import AuthProvider from "@/contexts/auth.context";
 import BlogProvider from "@/contexts/blog.context";
 import ProductProvider from "@/contexts/product.context";
 import { NextUIProvider } from "@nextui-org/react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -14,7 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <NextUIProvider>
         <ProductProvider>
           <BlogProvider>
-            <NextThemesProvider attribute="class" defaultTheme="light">
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
               {children}
               <ToastContainer
                 autoClose={2000}
@@ -23,7 +23,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 pauseOnHover
                 theme="dark"
               />
-            </NextThemesProvider>
+            </ThemeProvider>
           </BlogProvider>
         </ProductProvider>
       </NextUIProvider>
