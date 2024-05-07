@@ -52,7 +52,7 @@ const ConfirmationComp = ({
         try {
           setLoading(true);
           const { data } = await axiosInstance.post(
-            "users/orders/create-order",
+            "/users/orders/create-order",
             dataInput
           );
           console.log("order confirmed", data.order);

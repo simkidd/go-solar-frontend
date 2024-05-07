@@ -21,7 +21,7 @@ const ProductDetail: React.FC<{
       : product?.outsideLocationDeliveryFee;
 
   return (
-    <div className="w-full flex flex-col p-4">
+    <div className="w-full flex flex-col lg:p-4">
       <h2 className="font-bold text-3xl mb-8">{product?.name}</h2>
       <h3 className="font-bold text-2xl mb-6">
         {formatCurrency(product?.price, "NGN")}
