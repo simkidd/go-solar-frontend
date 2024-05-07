@@ -14,7 +14,7 @@ const ProductImages: React.FC<{
 
   return (
     <div className="flex flex-col gap-3 ">
-      <div className="w-[384px] h-[384px] rounded-lg shadow-xl border overflow-hidden">
+      <div className="lg:w-[384px] aspect-square lg:h-[384px] rounded-lg shadow-xl border overflow-hidden">
         <Image
           src={selectedImage}
           alt=""
@@ -27,8 +27,8 @@ const ProductImages: React.FC<{
         {images.map((img, i) => (
           <div
             key={i}
-            className={`size-20 overflow-hidden rounded-lg cursor-pointer ${
-              selectedImage === img.url ? "border-2 border-black" : ""
+            className={`size-14 overflow-hidden rounded-lg cursor-pointer border ${
+              selectedImage === img.url ? "border border-black" : ""
             }`}
             onClick={() => handleSelected(img.url)}
           >

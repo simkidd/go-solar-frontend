@@ -62,7 +62,7 @@ const ProductPage = async ({ params }: IProduct) => {
         <div className="container mx-auto px-2">
           <div className="max-w-[1100px] mx-auto px-2">
             <div className="grid lg:grid-cols-2 grid-cols-1">
-              <div className="w-full p-4">
+              <div className="w-full h-fit lg:p-4 mb-8">
                 <ProductImages images={product?.images} />
               </div>
               <ProductDetail product={product} />
