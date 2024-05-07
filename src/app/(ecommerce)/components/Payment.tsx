@@ -1,5 +1,6 @@
 "use client";
 import { useAuth } from "@/contexts/auth.context";
+import { CallbackResponse } from "@/interfaces/payment.interface";
 import useCartStore from "@/lib/stores/cart.store";
 import { CircleX } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -14,11 +15,7 @@ const Payment = () => {
   const searchParams = useSearchParams();
   const [errorMsg, setErrorMsg] = useState("");
 
-  const publicKey =
-    process.env.PAYSTACK_SECRET_KEY ||
-    "pk_test_09d2e45c3e030135d9544dd30f3b98c65205a60c";
-
-  console.log("key:", publicKey);
+  const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "";
 
   const config = {
     reference: Date.now().toString(),
@@ -28,16 +25,17 @@ const Payment = () => {
     amount: totalPricePaid * 100,
   };
 
-  const onSuccess = (reference: any) => {
+  const onSuccess = (response: CallbackResponse) => {
     const params = new URLSearchParams(searchParams);
-    setPaymentReference(reference.reference);
-    setPaymentData(JSON.stringify(reference));
-    console.log(reference);
+    console.log(response);
 
-    if (reference) {
-      params.set("ref", reference.reference);
+    if (response.status === "success") {
+      setPaymentReference(response.reference);
+      setPaymentData(JSON.stringify(response));
+      params.set("ref", response.reference);
+
+      router.push(`/confirmation?${params.toString()}`);
     }
-    router.push(`/confirmation?${params.toString()}`);
   };
 
   const onClose = () => {

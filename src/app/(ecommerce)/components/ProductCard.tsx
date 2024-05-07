@@ -8,7 +8,6 @@ import { TbShoppingCartPlus } from "react-icons/tb";
 const ProductCard: React.FC<{
   item: Product;
 }> = ({ item }) => {
-
   return (
     <div className="w-full border hover:border-primary">
       <Link href={`/product/${item?._id}`}>
@@ -24,18 +23,20 @@ const ProductCard: React.FC<{
               className="w-full h-full object-cover"
             />
           </div>
-          <div
-            className="absolute top-0 left-0 w-full h-full z-[1] opacity-0 group-hover:opacity-100"
-            style={{ transition: "opacity .5s ease-in-out" }}
-          >
-            <Image
-              src={item?.images[1].url}
-              alt="product image"
-              width={300}
-              height={300}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {item?.images.length > 1 && (
+            <div
+              className="absolute top-0 left-0 w-full h-full z-[1] opacity-0 group-hover:opacity-100"
+              style={{ transition: "opacity .5s ease-in-out" }}
+            >
+              <Image
+                src={item?.images[1]?.url}
+                alt="product image"
+                width={300}
+                height={300}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
         </div>
       </Link>
       <div className="w-full px-2">

@@ -6,19 +6,47 @@ import useCartStore from "@/lib/stores/cart.store";
 import { ChevronDown, Mail, Menu, Phone, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { HiOutlineShoppingBag, HiOutlineUser } from "react-icons/hi2";
 import { MdClose, MdDashboard } from "react-icons/md";
 import MenuItem from "../../../components/MenuItem";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
+import { Category } from "@/interfaces/product.interface";
+import { axiosInstance } from "@/lib/axios";
 
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
+  const { currentUser, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
-  const { currentUser, logout } = useAuth();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axiosInstance.get("/categories");
+        setCategories(data?.categories);
+      } catch (error) {
+        const errorMsg = error as any;
+        console.log(errorMsg?.response?.data.message);
+      }
+    })();
+  }, []);
+
+  const handleOutsideClick = (e: MouseEvent) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+      setShowMenu(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => document.removeEventListener("click", handleOutsideClick);
+  });
 
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
@@ -216,39 +244,23 @@ const HeaderShop = () => {
         {/* bh-bottom */}
         <div className="w-full h-10">
           <div className="flex items-center container mx-auto px-2 w-full h-full gap-4">
-            <div className="w-52 h-full relative categories">
+            <div className="md:w-52 h-full relative categories">
               <button className="w-full h-full flex items-center justify-between px-2 border-b-2 border-b-primary categories__button">
-                All Categories
+                <span className="hidden md:block">All Categories</span>
                 <Menu size={18} />
               </button>
-              <ul className="categories__menu light bg-white dark:bg-[#2a2b2f] shadow-md w-full text-sm">
-                <li>
-                  <Link
-                    href=""
-                    className="flex items-center px-4 py-2 gap-1 hover:bg-primary"
-                  >
-                    <MdDashboard size={8} />
-                    Category 1
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href=""
-                    className="flex items-center px-4 py-2 gap-1 hover:bg-primary"
-                  >
-                    <MdDashboard size={8} />
-                    Category 2
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href=""
-                    className="flex items-center px-4 py-2 gap-1 hover:bg-primary"
-                  >
-                    <MdDashboard size={8} />
-                    Category 3
-                  </Link>
-                </li>
+              <ul className="categories__menu light bg-white dark:bg-[#2a2b2f] shadow-md w-52 text-sm">
+                {categories.map((cat) => (
+                  <li key={cat?._id}>
+                    <Link
+                      href=""
+                      className="flex items-center px-4 py-2 gap-1 hover:bg-primary"
+                    >
+                      <MdDashboard size={8} />
+                      {cat?.name}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
             <ul className="bottom__nav lg:flex hidden items-center space-x-8 h-full">
@@ -268,7 +280,7 @@ const HeaderShop = () => {
       </div>
       {/* mobile menu */}
       <div className={`mob-nav-list lg:hidden ${showMenu && "open"}`}>
-        <div className="mob-nav-inner light bg-white dark:bg-[#222327]">
+        <div ref={sidebarRef} className="mob-nav-inner light bg-white dark:bg-[#222327]">
           <div
             onClick={toggleShowMenu}
             className="cursor-pointer ml-auto mx-2 my-2"

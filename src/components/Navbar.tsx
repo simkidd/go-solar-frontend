@@ -2,7 +2,7 @@
 import { Mail, Menu, Phone } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { MdClose } from "react-icons/md";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -12,6 +12,19 @@ import MenuItem from "./MenuItem";
 const Navbar = () => {
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+
+  const handleOutsideClick = (e: MouseEvent) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+      setShowMenu(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => document.removeEventListener("click", handleOutsideClick);
+  });
 
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
@@ -106,7 +119,10 @@ const Navbar = () => {
 
       {/* mobile menu */}
       <div className={`mob-nav-list lg:hidden ${showMenu && "open"}`}>
-        <div className="mob-nav-inner light bg-white dark:bg-[#222327]">
+        <div
+          ref={sidebarRef}
+          className="mob-nav-inner light bg-white dark:bg-[#222327]"
+        >
           <div
             onClick={toggleShowMenu}
             className="cursor-pointer ml-auto mx-2 my-2"

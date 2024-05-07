@@ -14,6 +14,7 @@ const PlaceOrderPage = () => {
   useEffect(() => {
     if (!paymentMethod) {
       router.push("/payment");
+      return;
     }
   }, [paymentMethod, router]);
 
