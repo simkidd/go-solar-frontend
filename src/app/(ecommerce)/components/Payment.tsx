@@ -8,8 +8,7 @@ import { useState } from "react";
 import { usePaystackPayment } from "react-paystack";
 
 const Payment = () => {
-  const { totalPricePaid, setPaymentReference, setPaymentData } =
-    useCartStore();
+  const { totalPricePaid, setPaymentData } = useCartStore();
   const { currentUser } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -18,23 +17,20 @@ const Payment = () => {
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "";
 
   const config = {
-    reference: Date.now().toString(),
+    reference: currentUser?._id + "-" + Date.now(),
     email: currentUser?.email,
-    name: currentUser?.firstname,
+    first_name: currentUser?.firstname,
+    last_name: currentUser?.lastname,
     publicKey,
     amount: totalPricePaid * 100,
   };
 
   const onSuccess = (response: CallbackResponse) => {
-    const params = new URLSearchParams(searchParams);
-    console.log(response);
-
     if (response.status === "success") {
-      setPaymentReference(response.reference);
       setPaymentData(JSON.stringify(response));
-      params.set("ref", response.reference);
-
-      router.push(`/confirmation?${params.toString()}`);
+      router.push(`/confirm-order${response.redirecturl}`);
+    } else {
+      return;
     }
   };
 
