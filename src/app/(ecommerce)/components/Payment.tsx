@@ -1,6 +1,6 @@
 "use client";
-import { useAuth } from "@/contexts/auth.context";
 import { CallbackResponse } from "@/interfaces/payment.interface";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
 import { CircleX } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,7 +9,7 @@ import { usePaystackPayment } from "react-paystack";
 
 const Payment = () => {
   const { totalPricePaid, setPaymentData } = useCartStore();
-  const { currentUser } = useAuth();
+  const { user } = useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [errorMsg, setErrorMsg] = useState("");
@@ -17,10 +17,10 @@ const Payment = () => {
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "";
 
   const config = {
-    reference: currentUser?._id + "-" + Date.now(),
-    email: currentUser?.email,
-    first_name: currentUser?.firstname,
-    last_name: currentUser?.lastname,
+    reference: user?._id + "-" + Date.now(),
+    email: user?.email,
+    first_name: user?.firstname,
+    last_name: user?.lastname,
     publicKey,
     amount: totalPricePaid * 100,
   };
