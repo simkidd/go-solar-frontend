@@ -4,6 +4,7 @@ import { getPosts } from "@/lib/data";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { Suspense } from "react";
+import BlogList from "../../components/BlogList";
 
 const BloglistPage = async () => {
   const posts: Post[] = await getPosts();
@@ -22,28 +23,7 @@ const BloglistPage = async () => {
         </div>
       </div>
       <div className="w-full bg-white dark:bg-[#222327] shadow mb-4">
-        <div className="flex items-center py-4 px-4">
-          <input
-            type="text"
-            placeholder="Search"
-            className="bg-transparent border focus:outline-none px-2 py-1 w-full max-w-md"
-          />
-        </div>
-      </div>
-      <div className="w-full bg-white dark:bg-[#222327] shadow">
-        <div className="grid grid-cols-3 gap-2 py-4 px-4">
-          {posts?.length === 0 ? (
-            <div className="col-span-4">
-              <p>No post yet</p>
-            </div>
-          ) : (
-            <Suspense fallback={<div>Loading posts...</div>}>
-              {posts?.map((post) => (
-                <BlogCard key={post._id} post={post} path="admin/blogs" />
-              ))}
-            </Suspense>
-          )}
-        </div>
+        <BlogList />
       </div>
     </div>
   );

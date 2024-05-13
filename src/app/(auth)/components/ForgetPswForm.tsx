@@ -1,10 +1,10 @@
 "use client";
-import { useAuth } from "@/contexts/auth.context";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { Input } from "@nextui-org/react";
 import React, { useMemo, useState } from "react";
 
 const ForgetPswForm = () => {
-  const { loading, forgotPassword } = useAuth();
+  const { loading, forgotPassword } = useAuthStore();
   const [input, setInput] = useState({
     email: "",
   });

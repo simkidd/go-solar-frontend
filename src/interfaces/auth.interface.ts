@@ -21,6 +21,7 @@ export interface User {
   is_verified: boolean;
   createdAt: Date;
   updatedAt: Date;
+  token?: string;
 }
 
 export interface LoginResponse {

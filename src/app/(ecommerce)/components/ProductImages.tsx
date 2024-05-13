@@ -17,9 +17,10 @@ const ProductImages: React.FC<{
       <div className="lg:w-[384px] aspect-square lg:h-[384px] rounded-lg shadow-xl border overflow-hidden">
         <Image
           src={selectedImage}
-          alt=""
+          alt="image selected"
           width={300}
           height={300}
+          priority
           className="w-full h-full object-cover"
         />
       </div>
@@ -35,8 +36,8 @@ const ProductImages: React.FC<{
             <Image
               src={img.url}
               alt="product"
-              width={300}
-              height={300}
+              width={150}
+              height={150}
               className="w-full h-full object-cover"
             />
           </div>

@@ -14,10 +14,11 @@ import MenuItem from "../../../components/MenuItem";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
 import { Category } from "@/interfaces/product.interface";
 import { axiosInstance } from "@/lib/axios";
+import { useAuthStore } from "@/lib/stores/auth.store";
 
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
-  const { currentUser, logout } = useAuth();
+  const { user, logout } = useAuthStore();
   const pathname = usePathname();
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
@@ -147,7 +148,7 @@ const HeaderShop = () => {
                       <HiOutlineUser size={32} />
                     </div>
                     <div className="flex flex-col text-sm">
-                      {!currentUser ? (
+                      {!user ? (
                         <>
                           <span className="text-left">Welcome</span>
                           <div className="flex">
@@ -160,7 +161,7 @@ const HeaderShop = () => {
                         <>
                           <div className="flex flex-col">
                             <span className="text-left">
-                              Hi, {currentUser?.firstname}
+                              Hi, {user?.firstname}
                             </span>
                             <span className="font-semibold">Account</span>
                           </div>
@@ -170,16 +171,16 @@ const HeaderShop = () => {
                     <ChevronDown size={16} className="ml-1" />
                   </button>
                   <div className="user__menu min-w-52 light bg-white dark:bg-[#2a2b2f] shadow-md">
-                    {currentUser ? (
+                    {user ? (
                       <>
                         <div className="p-4">
                           <p>Welcome back,</p>
-                          <p className="font-bold">{currentUser?.firstname}</p>
+                          <p className="font-bold">{user?.firstname}</p>
                         </div>
                         <hr />
                         <ul>
-                          {currentUser?.isAdmin ||
-                            (currentUser?.isSuperAdmin && (
+                          {user?.isAdmin ||
+                            (user?.isSuperAdmin && (
                               <li>
                                 <Link
                                   className="block p-2 hover:text-primary text-center"
@@ -304,7 +305,7 @@ const HeaderShop = () => {
             })}
           </ul>
 
-          {!currentUser ? (
+          {!user ? (
             <div className="flex">
               <Link href="/account/login">Login</Link>
               <span className="mx-2">/</span>

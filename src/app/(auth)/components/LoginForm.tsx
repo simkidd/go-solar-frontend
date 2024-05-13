@@ -1,17 +1,22 @@
 "use client";
 import { useAuth } from "@/contexts/auth.context";
 import { LoginInput } from "@/interfaces/auth.interface";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 const LoginForm = () => {
-  const { loading, login } = useAuth();
+  // const { loading, login } = useAuth();
+  const { login } = useAuthStore();
   const [isVisible, setIsVisible] = useState(false);
   const [input, setInput] = useState<LoginInput>({
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const validateEmail = (input: string) =>
     input.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -38,7 +43,16 @@ const LoginForm = () => {
       return;
     }
 
-    await login(input);
+    setLoading(true);
+    login(input)
+      .then((res) => {
+        if (!res?._id) return;
+        else if (res?.isAdmin || res?.isSuperAdmin) {
+          router.push("/admin");
+        } else router.push("/");
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   };
 
   return (

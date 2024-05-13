@@ -36,7 +36,7 @@ const BlogCard: React.FC<{
     <Suspense fallback={<div>Loading...</div>}>
       <div className="w-full">
         <Link href={`/${path}/${post?._id}`}>
-          <div className="w-full h-[200px] bg-gray-500 overflow-hidden">
+          <div className="w-full h-[142px] bg-gray-500 overflow-hidden rounded-t-lg">
             <Image
               src={post?.image}
               alt="post image"
@@ -47,15 +47,16 @@ const BlogCard: React.FC<{
             />
           </div>
         </Link>
-        <div className="p-4 w-full">
-          <div className="text-sm flex mb-1">
-            {/* <span className="">Category</span> */}
+        <div className="py-4 px-2 w-full">
+          <div className="text-primary text-xl mb-2">
+            <Link href={`/${path}/${post?._id}`}>
+              <p>{post?.title}</p>
+            </Link>
           </div>
-          <div className="text-primary text-xl mb-4">
-            <Link href={`/${path}/${post?._id}`}>{post?.title}</Link>
-          </div>
-          <div className="text-sm flex">
-            <span className="">{formatDate(post?.createdAt)}</span>
+          <p className="text-ellipsis line-clamp-2 mb-4">{post?.content}</p>
+          <div className="text-sm flex items-center">
+            <CalendarCheck size={16} />
+            <span className="ml-1">{formatDate(post?.createdAt)}</span>
           </div>
         </div>
       </div>

@@ -1,16 +1,15 @@
 "use client";
-import { useBlog } from "@/contexts/blog.context";
 import { CreatePostInput } from "@/interfaces/post.interface";
+import { useBlogStore } from "@/lib/stores/blog.store";
 import { Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { GrCloudUpload } from "react-icons/gr";
 import { HiXMark } from "react-icons/hi2";
-import { revalidatePath } from "next/cache";
 
 const CreateBlogPostForm: React.FC = () => {
-  const { loading, createPost } = useBlog();
+  const { loading, createPost } = useBlogStore();
   const [input, setInput] = useState<CreatePostInput>({
     title: "",
     content: "",
@@ -93,7 +92,6 @@ const CreateBlogPostForm: React.FC = () => {
     // };
     // reader.readAsDataURL(file);
   };
-  console.log("first", input.image);
 
   const removeImage = () => {
     setInput({
@@ -113,19 +111,13 @@ const CreateBlogPostForm: React.FC = () => {
     formData.append("content", input.content);
     formData.append("author", input.author);
     formData.append("tags", JSON.stringify(input.tags));
-    formData.append(
-      "blogImage",
-      input.image as Blob,
-      "hbl-optimus-blogimg1.jpeg"
-    );
+    formData.append("blogImage", input.image as Blob);
 
     const config = { headers: { "Content-Type": "multipart/form-data" } };
 
     await createPost(formData, config);
-    setTimeout(() => {
-      revalidatePath("admin/blogs");
-      router.push("/admin/blogs");
-    }, 300);
+
+    router.push("/admin/blogs");
   };
 
   return (

@@ -1,9 +1,10 @@
 "use client";
-
 import {
+  Button,
   Modal,
   ModalBody,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalProps,
 } from "@nextui-org/react";
@@ -15,7 +16,8 @@ interface MProps extends ModalProps {
   onOpenChange: () => void;
   title: string;
 }
-const GlobalModal: React.FC<MProps> = ({
+
+const AppModal: React.FC<MProps> = ({
   children,
   isOpen,
   onOpenChange,
@@ -34,4 +36,4 @@ const GlobalModal: React.FC<MProps> = ({
   );
 };
 
-export default GlobalModal;
+export default AppModal;
