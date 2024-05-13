@@ -1,20 +1,19 @@
 "use client";
 import Search from "@/components/Search";
-import { useAuth } from "@/contexts/auth.context";
 import { navlist } from "@/data/menuData";
+import { Category } from "@/interfaces/product.interface";
+import { axiosInstance } from "@/lib/axios";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
 import { ChevronDown, Mail, Menu, Phone, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
-import { HiOutlineShoppingBag, HiOutlineUser } from "react-icons/hi2";
+import { HiOutlineUser } from "react-icons/hi2";
 import { MdClose, MdDashboard } from "react-icons/md";
 import MenuItem from "../../../components/MenuItem";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
-import { Category } from "@/interfaces/product.interface";
-import { axiosInstance } from "@/lib/axios";
-import { useAuthStore } from "@/lib/stores/auth.store";
 
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
@@ -281,7 +280,10 @@ const HeaderShop = () => {
       </div>
       {/* mobile menu */}
       <div className={`mob-nav-list lg:hidden ${showMenu && "open"}`}>
-        <div ref={sidebarRef} className="mob-nav-inner light bg-white dark:bg-[#222327]">
+        <div
+          ref={sidebarRef}
+          className="mob-nav-inner light bg-white dark:bg-[#222327]"
+        >
           <div
             onClick={toggleShowMenu}
             className="cursor-pointer ml-auto mx-2 my-2"
