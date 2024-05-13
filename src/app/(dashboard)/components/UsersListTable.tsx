@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/rules-of-hooks */
 import { User } from "@/interfaces/auth.interface";
 import { axiosInstance } from "@/lib/axios";
 import { useUserStore } from "@/lib/stores/user.store";

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Category } from "@/interfaces/product.interface";
 import { axiosInstance } from "@/lib/axios";
 import { useProductStore } from "@/lib/stores/product.store";

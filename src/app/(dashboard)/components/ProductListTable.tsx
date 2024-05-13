@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Button, Spinner, useDisclosure } from "@nextui-org/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DataTable, {

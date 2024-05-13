@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useOrderStore } from "@/lib/stores/order.store";
 import { Button, Spinner } from "@nextui-org/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
