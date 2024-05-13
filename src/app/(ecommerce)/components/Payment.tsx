@@ -1,6 +1,6 @@
 "use client";
-import { useAuth } from "@/contexts/auth.context";
 import { CallbackResponse } from "@/interfaces/payment.interface";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
 import { CircleX } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -8,9 +8,8 @@ import { useState } from "react";
 import { usePaystackPayment } from "react-paystack";
 
 const Payment = () => {
-  const { totalPricePaid, setPaymentReference, setPaymentData } =
-    useCartStore();
-  const { currentUser } = useAuth();
+  const { totalPricePaid, setPaymentData } = useCartStore();
+  const { user } = useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [errorMsg, setErrorMsg] = useState("");
@@ -18,23 +17,20 @@ const Payment = () => {
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "";
 
   const config = {
-    reference: Date.now().toString(),
-    email: currentUser?.email,
-    name: currentUser?.firstname,
+    reference: user?._id + "-" + Date.now(),
+    email: user?.email,
+    first_name: user?.firstname,
+    last_name: user?.lastname,
     publicKey,
     amount: totalPricePaid * 100,
   };
 
   const onSuccess = (response: CallbackResponse) => {
-    const params = new URLSearchParams(searchParams);
-    console.log(response);
-
     if (response.status === "success") {
-      setPaymentReference(response.reference);
       setPaymentData(JSON.stringify(response));
-      params.set("ref", response.reference);
-
-      router.push(`/confirmation?${params.toString()}`);
+      router.push(`/confirm-order${response.redirecturl}`);
+    } else {
+      return;
     }
   };
 

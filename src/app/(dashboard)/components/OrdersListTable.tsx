@@ -1,12 +1,13 @@
 "use client";
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useOrderStore } from "@/lib/stores/order.store";
-import { Spinner } from "@nextui-org/react";
+import { Button, Spinner } from "@nextui-org/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DataTable, {
   TableColumn,
   createTheme,
 } from "react-data-table-component";
-import { Order } from "@/interfaces/order.interface";
+import { Order, TrackingStatus } from "@/interfaces/order.interface";
 import { axiosInstance } from "@/lib/axios";
 import { customStyles } from "./UI/tableStyle";
 import { formatCurrency, formatDate } from "@/utils/helpers";
@@ -74,16 +75,24 @@ const columns: TableColumn<Order>[] = [
   },
   {
     name: "Tracking Status",
-    cell: (row) => <div>{row?.trackingStatus}</div>,
+    cell: ({ trackingStatus }) => (
+      <span
+        className={`px-4 py-1 rounded-full bg-opacity-10 ${trackingStatusChip(
+          trackingStatus
+        )}`}
+      >
+        {trackingStatus}
+      </span>
+    ),
     width: "150px",
   },
   {
     name: "Actions",
     cell: (row) => (
       <div className="w-full flex items-center justify-center">
-        <button>
+        <Button isIconOnly color="danger" variant="light" size="sm">
           <Trash size={16} />
-        </button>
+        </Button>
       </div>
     ),
     width: "80px",
@@ -97,12 +106,13 @@ const OrdersListTable = () => {
   const { replace } = useRouter();
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [trackingFilter, setTrackingFilter] = useState("");
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        const { data } = await axiosInstance.get("/users/orders/user-orders");
+        const { data } = await axiosInstance.get("/admin/all-orders");
 
         setOrders(data.orders);
       } catch (error) {
@@ -130,8 +140,15 @@ const OrdersListTable = () => {
             .includes(searchTerm.toLowerCase())
       );
     }
+
+    if (trackingFilter) {
+      selectedOrders = selectedOrders.filter(
+        (order) => order?.trackingStatus === trackingFilter
+      );
+    }
+
     return selectedOrders;
-  }, [orders, searchTerm]);
+  }, [orders, searchTerm, trackingFilter]);
 
   const handleSearch = useCallback(
     (value?: string) => {
@@ -148,8 +165,65 @@ const OrdersListTable = () => {
     [pathname, replace, searchParams]
   );
 
+  const handleTrackingFilter = useCallback((status: TrackingStatus | "") => {
+    const params = new URLSearchParams(searchParams);
+
+    if (status === "") {
+      setTrackingFilter("");
+      params.delete("status");
+    } else {
+      setTrackingFilter(status);
+      params.set("status", status);
+    }
+
+    replace(`${pathname}?${params.toString()}`);
+  }, []);
+
+  const isActive = (status: TrackingStatus | "") => {
+    return trackingFilter === status ? "border-b-primary" : "";
+  };
+
   return (
     <div>
+      <div className="flex items-center justify-between flex-col-reverse md:flex-row mb-6 px-4 py-2 gap-1">
+        <div className="w-full flex items-center gap-1 overflow-x-auto scrollbar-hide">
+          <button
+            className={`px-4 py-2 border-b-2 text-opacity-5 text-nowrap ${isActive(
+              ""
+            )}`}
+            onClick={() => handleTrackingFilter("")}
+          >
+            All Orders
+          </button>
+          <button
+            className={`px-4 py-2 border-b-2 text-opacity-5 text-nowrap ${isActive(
+              TrackingStatus.Processing
+            )}`}
+            onClick={() => handleTrackingFilter(TrackingStatus.Processing)}
+          >
+            Processing
+          </button>
+          <button
+            className={`px-4 py-2 border-b-2 text-opacity-5 text-nowrap ${isActive(
+              TrackingStatus.Delivered
+            )}`}
+            onClick={() => handleTrackingFilter(TrackingStatus.Delivered)}
+          >
+            Delivered
+          </button>
+          <button
+            className={`px-4 py-2 border-b-2 text-opacity-5 text-nowrap ${isActive(
+              TrackingStatus.Received
+            )}`}
+            onClick={() => handleTrackingFilter(TrackingStatus.Received)}
+          >
+            Received
+          </button>
+        </div>
+        <button className="bg-primary text-white px-4 py-2 ms-auto text-nowrap">
+          Export CSV
+        </button>
+      </div>
       <div className="flex items-center py-4 px-4">
         <input
           type="text"
@@ -186,3 +260,16 @@ const OrdersListTable = () => {
 };
 
 export default OrdersListTable;
+
+export const trackingStatusChip = (status: TrackingStatus) => {
+  switch (status) {
+    case TrackingStatus.Processing:
+      return "text-yellow-500 bg-yellow-500";
+    case TrackingStatus.Delivered:
+      return "text-blue-500 bg-blue-500";
+    case TrackingStatus.Received:
+      return "text-green-500 bg-green-500";
+    default:
+      return "";
+  }
+};

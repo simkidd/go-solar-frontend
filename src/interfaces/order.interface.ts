@@ -10,7 +10,7 @@ export interface Order {
   paymentMethod: string;
   paymentReference: string;
   paymentData: string;
-  trackingStatus: string;
+  trackingStatus: TrackingStatus;
   trackingLevel: number;
   isCancelled: boolean;
   isCompleted: boolean;
@@ -44,7 +44,7 @@ export interface TrackingId {
 }
 
 export enum TrackingStatus {
-  Processing,
-  Delivered,
-  Received,
+  Processing = "Processing",
+  Delivered = "Delivered",
+  Received = "Received",
 }

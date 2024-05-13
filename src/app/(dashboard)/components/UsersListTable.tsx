@@ -1,6 +1,8 @@
 "use client";
+/* eslint-disable react-hooks/rules-of-hooks */
 import { User } from "@/interfaces/auth.interface";
 import { axiosInstance } from "@/lib/axios";
+import { useUserStore } from "@/lib/stores/user.store";
 import { formatDate } from "@/utils/helpers";
 import { Spinner } from "@nextui-org/react";
 import { Edit, Trash } from "lucide-react";
@@ -145,10 +147,10 @@ const columns: TableColumn<User>[] = [
 ];
 
 const UsersListTable = () => {
+  const { users, setUsers } = useUserStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 

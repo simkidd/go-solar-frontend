@@ -1,6 +1,6 @@
-import DeleteButton from "@/app/(dashboard)/components/DeleteButton";
+import DeletePost from "@/app/(dashboard)/components/DeletePost";
 import { Post } from "@/interfaces/post.interface";
-import { getPost, getPosts } from "@/lib/data";
+import { getPost } from "@/lib/data";
 import { ArrowLeft, CalendarCheck, Pen, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,7 +35,7 @@ const SinglePostPage = async ({ params }: { params: { id: string } }) => {
           </button>
         </Link>
         <div className="flex items-center gap-2">
-          <DeleteButton post={post} />
+          <DeletePost post={post} />
 
           <Link href={`/admin/blogs/${post._id}/edit`}>
             <button className="bg-primary text-white px-4 py-2 text-sm flex items-center">

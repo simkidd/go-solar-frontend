@@ -1,14 +1,13 @@
-"use client";
-import GlobalModal from "@/components/GlobalModal";
-import { useBlog } from "@/contexts/blog.context";
-import { Post } from "@/interfaces/post.interface";
-import { Button, Spinner, useDisclosure } from "@nextui-org/react";
+"use client"
+import AppModal from "@/components/AppModal";
+import { Product } from "@/interfaces/product.interface";
+import { useProductStore } from "@/lib/stores/product.store";
+import { Button, useDisclosure } from "@nextui-org/react";
 import { Trash } from "lucide-react";
-import { revalidatePath } from "next/cache";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import React from "react";
 
-const DeleteButton: React.FC<{ post: Post }> = ({ post }) => {
+const DeleteProduct: React.FC<{ product: Product }> = ({ product }) => {
   const {
     isOpen: isDeleteModalOpen,
     onOpen: onDeleteModalOpen,
@@ -18,15 +17,15 @@ const DeleteButton: React.FC<{ post: Post }> = ({ post }) => {
 
   return (
     <>
-      <GlobalModal
+      <AppModal
         isOpen={isDeleteModalOpen}
         onOpenChange={onDeleteModalOpenChange}
         title="Confirmation"
-        isDismissable={true}
+        isDismissable={false}
         hideCloseButton
       >
-        <DeletePopup onClose={onDeleteModalClose} post={post} />
-      </GlobalModal>
+        <DeletePopup onClose={onDeleteModalClose} product={product} />
+      </AppModal>
       <button
         className="text-red-500 px-4 py-2 text-sm flex items-center"
         onClick={() => onDeleteModalOpen()}
@@ -38,34 +37,30 @@ const DeleteButton: React.FC<{ post: Post }> = ({ post }) => {
   );
 };
 
-export default DeleteButton;
+export default DeleteProduct;
 
 export const DeletePopup: React.FC<{
-  post: Post;
+  product: Product;
   onClose: () => void;
-}> = ({ post, onClose }) => {
-  const { loading, deletePost } = useBlog();
+}> = ({ product, onClose }) => {
+  const { loading, deleteProduct } = useProductStore();
   const router = useRouter();
 
   const handleDelete = async () => {
-    await deletePost(post?._id);
-
-    toast.success("deleted successfully");
+    await deleteProduct(product?._id);
     onClose();
-    revalidatePath("/admin/blogs");
-    router.push("/admin/blogs");
+    router.back();
   };
 
   return (
-    <div>
+    <div className="flex flex-col">
       <p>
-        Are you sure you want to delete{" "}
-        <span className="font-bold">{`${post?.title}`}</span>?
+        Are you sure you want to delete <b>{product?.name}</b>?
       </p>
-      <div className="flex items-center justify-between gap-2 mt-8 mb-4">
+      <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
         <Button
-          variant="flat"
-          color="danger"
+          variant="light"
+          color="default"
           className="rounded-md"
           onPress={onClose}
         >
@@ -73,12 +68,14 @@ export const DeletePopup: React.FC<{
         </Button>
         <Button
           variant="solid"
-          color="primary"
+          color="danger"
           type="submit"
           className="rounded-md "
+          isDisabled={loading}
+          isLoading={loading}
           onPress={handleDelete}
         >
-          {loading ? <Spinner size="sm" /> : "Yes, delete"}
+          Delete
         </Button>
       </div>
     </div>

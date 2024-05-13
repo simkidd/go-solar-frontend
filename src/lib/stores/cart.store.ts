@@ -23,9 +23,7 @@ interface CartStore {
   setTotalPricePaid: (value: number) => void;
   paymentMethod: string;
   setPaymentMethod: (value: string) => void;
-  paymentReference: string;
   paymentData: string;
-  setPaymentReference: (reference: string) => void;
   setPaymentData: (data: string) => void;
 }
 
@@ -46,9 +44,6 @@ const useCartStore = create(
       setTotalPricePaid: (totalPricePaid: number) => set({ totalPricePaid }),
       paymentMethod: "",
       setPaymentMethod: (paymentMethod: string) => set({ paymentMethod }),
-      paymentReference: "",
-      setPaymentReference: (reference: string) =>
-        set({ paymentReference: reference }),
       paymentData: "",
       setPaymentData: (data: string) => set({ paymentData: data }),
 

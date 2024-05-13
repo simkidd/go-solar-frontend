@@ -1,18 +1,16 @@
 "use client";
-import { useAuth } from "@/contexts/auth.context";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { BsPeopleFill } from "react-icons/bs";
 import { FaBlogger, FaShopify } from "react-icons/fa6";
 import { MdDashboard, MdRateReview } from "react-icons/md";
 
 const AdminSidebar = () => {
-  const { currentUser, logout, showSidebar, setShowSidebar } = useAuth();
-  const router = useRouter();
+  const { showSidebar, setShowSidebar } = useAuthStore();
   const pathname = usePathname();
-  const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   const handleOutsideClick = (e: MouseEvent) => {
@@ -30,9 +28,6 @@ const AdminSidebar = () => {
   const isActive = (href: string) => {
     return href === pathname || href === pathname.replace(/\/$/, "");
   };
-
-  const toggleExpand = (id: string) => {
-    setExpandedItem(id);  };
 
   return (
     <div
@@ -57,9 +52,7 @@ const AdminSidebar = () => {
           </Link>
         </li>
         <li className="expand relative">
-          <div
-            className="w-full flex items-center space-x-2 px-5 py-2  expand__button"
-          >
+          <div className="w-full flex items-center space-x-2 px-5 py-2  expand__button">
             <FaShopify className="md:mx-auto text-lg md:text-2xl lg:text-lg lg:mx-0" />
             <span className="md:hidden lg:block">Shop</span>
             <ChevronDown size={16} className="!ml-auto md:hidden lg:block" />
@@ -132,9 +125,7 @@ const AdminSidebar = () => {
           </Link>
         </li>
         <li className="expand relative">
-          <div
-            className="w-full flex items-center space-x-2 px-5 py-2 expand__button"
-          >
+          <div className="w-full flex items-center space-x-2 px-5 py-2 expand__button">
             <FaBlogger className="md:mx-auto text-lg md:text-2xl lg:text-lg lg:mx-0" />
             <span className="md:hidden lg:block">Blog</span>
             <ChevronDown size={16} className="!ml-auto md:hidden lg:block" />

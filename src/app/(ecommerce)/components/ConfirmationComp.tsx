@@ -7,19 +7,14 @@ import { axiosInstance } from "@/lib/axios";
 import useCartStore from "@/lib/stores/cart.store";
 import { Spinner } from "@nextui-org/react";
 import { CheckCircle, CircleX } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const ConfirmationComp = ({
-  searchParams,
-}: {
-  searchParams: { ref: string };
-}) => {
+const ConfirmationComp = () => {
   const {
     cartItems,
     deliveryDetails,
     paymentMethod,
-    paymentReference,
     setPaymentData,
     setDeliveryDetails,
     setTotalPricePaid,
@@ -32,6 +27,7 @@ const ConfirmationComp = ({
   const [error, setError] = useState("");
   const [orderSuccess, setOrderSuccess] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const dataInput: CreateOrderInput = {
     products: cartItems.map(({ deliveryFee, product, qty }) => ({
@@ -42,20 +38,21 @@ const ConfirmationComp = ({
     deliveryDetails,
     totalPricePaid,
     paymentMethod,
-    paymentReference,
+    paymentReference: "",
     paymentData,
   };
-
   useEffect(() => {
     (async () => {
-      if (searchParams.ref) {
+      if (searchParams) {
+        const reference = searchParams.get("reference");
+        dataInput.paymentReference = reference as string;
+
         try {
           setLoading(true);
           const { data } = await axiosInstance.post(
             "/users/orders/create-order",
             dataInput
           );
-          console.log("order confirmed", data.order);
 
           setSuccess(data?.message);
           clearCart();
@@ -79,7 +76,7 @@ const ConfirmationComp = ({
         return;
       }
     })();
-  }, [searchParams.ref, router]);
+  }, [searchParams, router]);
 
   if (loading) {
     return (

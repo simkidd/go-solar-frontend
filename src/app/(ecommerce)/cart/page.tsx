@@ -1,18 +1,18 @@
 "use client";
-import { useAuth } from "@/contexts/auth.context";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { useAuthStore } from "@/lib/stores/auth.store";
+import useCartStore, { CartItem } from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import CartItemCard from "../components/CartItemCard";
 import { Suspense } from "react";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import useCartStore, { CartItem } from "@/lib/stores/cart.store";
+import CartItemCard from "../components/CartItemCard";
 
 const CartPage = () => {
+  const { user } = useAuthStore();
   const { cartItems, setTotalPricePaid } = useCartStore();
   const router = useRouter();
-  const { currentUser } = useAuth();
 
   const calculateTotals = (cartItems: CartItem[]) => {
     let subtotal = 0;
@@ -30,7 +30,7 @@ const CartPage = () => {
   const { total, subtotal, deliveryFee } = calculateTotals(cartItems);
 
   const handleCheckout = () => {
-    if (!currentUser) {
+    if (!user) {
       router.push("/account/login");
     } else {
       setTotalPricePaid(total);

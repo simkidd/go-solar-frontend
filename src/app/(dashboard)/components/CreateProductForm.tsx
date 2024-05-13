@@ -1,15 +1,17 @@
 "use client";
-import { useProduct } from "@/contexts/product.context";
 import { Category, CreateProductInput } from "@/interfaces/product.interface";
+import { useProductStore } from "@/lib/stores/product.store";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { GrCloudUpload } from "react-icons/gr";
 
 const CreateProductForm: React.FC<{ categories: Category[] }> = ({
   categories,
 }) => {
-  const { loading, createProduct } = useProduct();
+  const { loading, createProduct } = useProductStore();
+  const router = useRouter();
   const [input, setInput] = useState<CreateProductInput>({
     name: "",
     description: "",
@@ -29,11 +31,16 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
     if (!files || files.length === 0) return;
 
     const selectedImages: File[] = Array.from(files);
-    const newPreview = selectedImages.map(image => URL.createObjectURL(image));
-    setImagePreview(prevPreviews => [...prevPreviews, ...newPreview as any]);
-    setInput(prevInput => ({
+    const newPreview = selectedImages.map((image) =>
+      URL.createObjectURL(image)
+    );
+    setImagePreview((prevPreviews) => [
+      ...prevPreviews,
+      ...(newPreview as any),
+    ]);
+    setInput((prevInput) => ({
       ...prevInput,
-      images: [...prevInput.images, ...selectedImages as any]
+      images: [...prevInput.images, ...(selectedImages as any)],
     }));
   };
 
@@ -44,7 +51,7 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
 
     const updatedImages = [...input.images];
     updatedImages.splice(index, 1);
-    setInput(prevInput => ({ ...prevInput, images: updatedImages as any }));
+    setInput((prevInput) => ({ ...prevInput, images: updatedImages as any }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,7 +61,6 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
       alert("Please select a category");
       return;
     }
-    console.log("Submitting form with input:", input);
 
     const formData = new FormData();
     formData.append("category", input.category);
@@ -79,6 +85,10 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
     const config = { headers: { "Content-Type": "multipart/form-data" } };
 
     await createProduct(formData, config);
+
+    if (input.images.length > 0) {
+      router.push("/admin/products");
+    }
   };
 
   return (
@@ -194,6 +204,7 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
                   onChange={handleImageUpload}
                   multiple
                   accept="image/*"
+                  disabled={imagePreview.length > 2}
                 />
               </div>
               {/* selected images */}
@@ -237,6 +248,9 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
               name=""
               id="information"
               className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent min-h-28 mt-1 resize-none"
+              onChange={(e) =>
+                setInput({ ...input, additionalInfo: e.target.value })
+              }
             ></textarea>
           </div>
           <h4 className="text-lg font-medium mb-2">Delivery fee:</h4>

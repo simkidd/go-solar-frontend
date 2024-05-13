@@ -1,5 +1,6 @@
 "use client";
-import { Spinner } from "@nextui-org/react";
+/* eslint-disable react-hooks/rules-of-hooks */
+import { Button, Spinner, useDisclosure } from "@nextui-org/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DataTable, {
   TableColumn,
@@ -14,6 +15,7 @@ import { formatCurrency, formatDate } from "@/utils/helpers";
 import { useProductStore } from "@/lib/stores/product.store";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import AppModal from "../../../components/AppModal";
 
 createTheme(
   "light",
@@ -50,12 +52,12 @@ const columns: TableColumn<Product>[] = [
     name: "Product",
     cell: (row) => (
       <div className="grid grid-cols-[55px_auto] gap-2 w-full py-2">
-        <div className="w-[55px] h-[55px]">
+        <div className="w-10 h-10">
           <Image
             src={row?.images[0].url}
             alt={row?.name}
-            width={40}
-            height={40}
+            width={80}
+            height={80}
             className="w-full h-full object-cover"
           />
         </div>
@@ -86,7 +88,17 @@ const columns: TableColumn<Product>[] = [
   {
     name: "Published",
     cell: (row) => (
-      <div>{row?.isPublished ? <span>Yes</span> : <span>No</span>}</div>
+      <div>
+        {row?.isPublished ? (
+          <span className="px-4 py-1 rounded-full bg-opacity-10 text-green-500 bg-green-500">
+            Yes
+          </span>
+        ) : (
+          <span className="px-4 py-1 rounded-full bg-opacity-10 text-red-500 bg-red-500">
+            No
+          </span>
+        )}
+      </div>
     ),
   },
   {
@@ -96,13 +108,67 @@ const columns: TableColumn<Product>[] = [
   },
   {
     name: "Actions",
-    cell: (row) => (
-      <div className="w-full flex items-center justify-center">
-        <button>
-          <Trash size={16} />
-        </button>
-      </div>
-    ),
+    cell: (row) => {
+      const { loading, deleteProduct } = useProductStore();
+      const router = useRouter();
+      const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+      const handleDelete = async () => {
+        if (row) {
+          await deleteProduct(row?._id);
+          router.refresh();
+          onClose();
+        }
+      };
+
+      return (
+        <div className="w-full flex items-center justify-center">
+          <Button
+            isIconOnly
+            color="danger"
+            variant="light"
+            size="sm"
+            onPress={onOpen}
+          >
+            <Trash size={16} />
+          </Button>
+          <AppModal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            title="Confirmation"
+            isDismissable={false}
+            hideCloseButton
+          >
+            <div className="flex flex-col">
+              <p>
+                Are you sure you want to delete <b>{row?.name}</b>?
+              </p>
+              <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
+                <Button
+                  variant="light"
+                  color="default"
+                  className="rounded-md"
+                  onPress={onClose}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="solid"
+                  color="danger"
+                  type="submit"
+                  className="rounded-md "
+                  isDisabled={loading}
+                  isLoading={loading}
+                  onPress={handleDelete}
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
+          </AppModal>
+        </div>
+      );
+    },
     width: "80px",
   },
 ];

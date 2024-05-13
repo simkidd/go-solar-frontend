@@ -1,12 +1,12 @@
 "use client";
-import { useAuth } from "@/contexts/auth.context";
 import { SignUpInput } from "@/interfaces/auth.interface";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const SignUpForm = () => {
-  const { loading, signup } = useAuth();
+  const { loading, signup } = useAuthStore();
   const [isVisible, setIsVisible] = useState(false);
   const [input, setInput] = useState<SignUpInput>({
     email: "",
@@ -152,7 +152,10 @@ const SignUpForm = () => {
           onChange={(e) => setInput({ ...input, phonenumber: e.target.value })}
         />
       </div>
-      <button className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:bg-gray-400" disabled={!input.password || isPasswordInvalid}>
+      <button
+        className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:bg-gray-400"
+        disabled={!input.password || isPasswordInvalid}
+      >
         {loading ? "Loading..." : "Sign Up"}
       </button>
     </form>

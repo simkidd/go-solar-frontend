@@ -1,11 +1,11 @@
 "use client";
-import { useAuth } from "@/contexts/auth.context";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
 const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
-  const { loading, resetPassword } = useAuth();
+  const { loading, resetPassword } = useAuthStore();
   const [input, setInput] = useState({
     password: "",
   });
