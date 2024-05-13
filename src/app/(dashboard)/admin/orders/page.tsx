@@ -1,4 +1,13 @@
+import { Metadata } from "next";
 import OrdersListTable from "../../components/OrdersListTable";
+
+const pageTitle = "Orders";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: pageTitle,
+  },
+};
 
 const OrdersPage = () => {
   return (

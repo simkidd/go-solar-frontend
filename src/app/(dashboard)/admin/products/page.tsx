@@ -1,11 +1,8 @@
-import { Product } from "@/interfaces/product.interface";
-import { getProducts } from "@/lib/data";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import ProductListTable from "../../components/ProductListTable";
 
 const ProductsListPage = async () => {
-  const products: Product[] = await getProducts();
   return (
     <div className="w-full py-4">
       <div className="flex items-center justify-between mb-4">

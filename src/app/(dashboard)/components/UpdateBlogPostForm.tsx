@@ -1,6 +1,6 @@
 "use client";
-import { useBlog } from "@/contexts/blog.context";
 import { Post, UpdatePostInput } from "@/interfaces/post.interface";
+import { useBlogStore } from "@/lib/stores/blog.store";
 import { Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,7 @@ import { GrCloudUpload } from "react-icons/gr";
 import { HiXMark } from "react-icons/hi2";
 
 const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
-  const { loading, updatePost } = useBlog();
+  const { loading, updatePost } = useBlogStore();
   const [input, setInput] = useState<UpdatePostInput>({
     id: post?._id,
     title: post?.title,
@@ -29,7 +29,7 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
         .map((t) => t.trim())
         .filter((t) => t !== "");
       const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
-      
+
       setInput({
         ...input,
         tags: updatedTags,
@@ -118,10 +118,8 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
     // const config = { headers: { "Content-Type": "multipart/form-data" } };
 
     await updatePost(formData);
-    setTimeout(() => {
-      router.refresh();
-      router.back();
-    }, 300);
+
+    router.back();
   };
 
   return (
@@ -223,7 +221,7 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
             {input?.image && (
               <div className="size-20 overflow-hidden rounded relative group">
                 <Image
-                  src={input?.image as string || imagePreview as string}
+                  src={(input?.image as string) || (imagePreview as string)}
                   alt=""
                   className="w-full h-full object-cover"
                   width={80}
@@ -247,11 +245,8 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
         </div>
 
         <div className="flex items-center gap-4 mt-8">
-          <button
-            type="submit"
-            className="bg-primary text-white px-6 py-2 "
-          >
-            {loading ? "Loading..." : "Save Post"}
+          <button type="submit" className="bg-primary text-white px-6 py-2 ">
+            {loading ? "Loading..." : "Save"}
           </button>
           <button
             type="button"

@@ -1,13 +1,13 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
-import { useAuth } from "@/contexts/auth.context";
 import { axiosInstance } from "@/lib/axios";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { Input } from "@nextui-org/react";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 
 const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
-  const { loading, resendVerification } = useAuth();
+  const { loading, resendVerification } = useAuthStore();
   const [input, setInput] = useState({
     email: "",
   });

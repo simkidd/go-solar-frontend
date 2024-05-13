@@ -1,19 +1,15 @@
 "use client";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
-import AuthProvider from "@/contexts/auth.context";
-import BlogProvider from "@/contexts/blog.context";
-import ProductProvider from "@/contexts/product.context";
+import AuthGuard from "@/guards/AuthGuard";
 import { NextUIProvider } from "@nextui-org/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
+    <AuthGuard>
       <NextUIProvider>
-        <ProductProvider>
-          <BlogProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
               {children}
               <ToastContainer
@@ -24,9 +20,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 theme="dark"
               />
             </ThemeProvider>
-          </BlogProvider>
-        </ProductProvider>
       </NextUIProvider>
-    </AuthProvider>
+    </AuthGuard>
   );
 }

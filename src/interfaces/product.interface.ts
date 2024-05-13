@@ -37,11 +37,24 @@ export interface CreateProductInput {
   withinLocationDeliveryFee: number;
 }
 
+export interface UpdateProductInput {
+  productId: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  additionalInfo: string;
+  quantityInStock: number;
+  brand: string;
+  outsideLocationDeliveryFee: number;
+  withinLocationDeliveryFee: number;
+}
+
 export interface Category {
   _id: string;
   name: string;
   slug: string;
-  decription: string;
+  description: string;
   createdAt: string;
   updatedAt: string;
 }

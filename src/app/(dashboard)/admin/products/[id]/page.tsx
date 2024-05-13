@@ -1,7 +1,8 @@
+import DeleteProduct from "@/app/(dashboard)/components/DeleteProduct";
 import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/ProductImages";
 import { Product } from "@/interfaces/product.interface";
-import { getProduct, getProducts } from "@/lib/data";
+import { getProduct } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
 import { ArrowLeft, Pen } from "lucide-react";
 import Link from "next/link";
@@ -35,12 +36,17 @@ const SingleProductPage = async ({ params }: { params: { id: string } }) => {
             Go back
           </button>
         </Link>
-        <Link href={`/admin/products/edit/${product._id}`}>
-          <button className="bg-primary text-white px-4 py-2 text-sm flex items-center">
-            <Pen className="mr-2" size={16} />
-            Edit
-          </button>
-        </Link>
+
+        <div className="flex items-center gap-2">
+          <DeleteProduct product={product} />
+
+          <Link href={`/admin/products/${product._id}/edit`}>
+            <button className="bg-primary text-white px-4 py-2 text-sm flex items-center">
+              <Pen className="mr-2" size={16} />
+              Edit
+            </button>
+          </Link>
+        </div>
       </div>
       <div className="w-full bg-white dark:bg-[#222327] py-16 px-6 shadow rounded">
         <div className="w-full max-w-[860px] mx-auto flex flex-col items-center mb-8">
