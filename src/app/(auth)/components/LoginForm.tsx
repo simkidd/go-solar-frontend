@@ -1,5 +1,4 @@
 "use client";
-import { useAuth } from "@/contexts/auth.context";
 import { LoginInput } from "@/interfaces/auth.interface";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Input } from "@nextui-org/react";
@@ -8,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 const LoginForm = () => {
-  // const { loading, login } = useAuth();
   const { login } = useAuthStore();
   const [isVisible, setIsVisible] = useState(false);
   const [input, setInput] = useState<LoginInput>({
