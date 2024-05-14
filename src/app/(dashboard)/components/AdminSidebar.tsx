@@ -46,6 +46,7 @@ const AdminSidebar = () => {
             className={`w-full flex items-center space-x-2 px-5 py-2 hover:text-primary hover:bg-primary hover:bg-opacity-10 transition-all duration-500 ${
               isActive("/admin") ? "text-primary bg-primary bg-opacity-10" : ""
             }`}
+            onClick={() => setShowSidebar(false)}
           >
             <MdDashboard className="md:mx-auto text-lg md:text-2xl lg:text-lg lg:mx-0" />
             <span className="md:hidden lg:block">Overview</span>
@@ -68,6 +69,7 @@ const AdminSidebar = () => {
                     ? "text-primary bg-primary bg-opacity-10"
                     : ""
                 }`}
+                onClick={() => setShowSidebar(false)}
               >
                 Products
               </Link>
@@ -80,6 +82,7 @@ const AdminSidebar = () => {
                     ? "text-primary bg-primary bg-opacity-10"
                     : ""
                 }`}
+                onClick={() => setShowSidebar(false)}
               >
                 Catgories
               </Link>
@@ -92,6 +95,7 @@ const AdminSidebar = () => {
                     ? "text-primary bg-primary bg-opacity-10"
                     : ""
                 }`}
+                onClick={() => setShowSidebar(false)}
               >
                 Orders
               </Link>
@@ -106,6 +110,7 @@ const AdminSidebar = () => {
                 ? "text-primary bg-primary bg-opacity-10"
                 : ""
             }`}
+            onClick={() => setShowSidebar(false)}
           >
             <BsPeopleFill className="md:mx-auto text-lg md:text-2xl lg:text-lg lg:mx-0" />
             <span className="md:hidden lg:block">Customers</span>
@@ -119,6 +124,7 @@ const AdminSidebar = () => {
                 ? "text-primary bg-primary bg-opacity-10"
                 : ""
             }`}
+            onClick={() => setShowSidebar(false)}
           >
             <MdRateReview className="md:mx-auto text-lg md:text-2xl lg:text-lg lg:mx-0" />
             <span className="md:hidden lg:block">Reviews</span>
@@ -141,6 +147,7 @@ const AdminSidebar = () => {
                     ? "text-primary bg-primary bg-opacity-10"
                     : ""
                 }`}
+                onClick={() => setShowSidebar(false)}
               >
                 Posts
               </Link>
