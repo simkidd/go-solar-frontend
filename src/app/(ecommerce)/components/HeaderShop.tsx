@@ -1,10 +1,10 @@
 "use client";
 import Search from "@/components/Search";
 import { navlist } from "@/data/menuData";
-import { Category } from "@/interfaces/product.interface";
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
+import { useProductStore } from "@/lib/stores/product.store";
 import { ChevronDown, Mail, Menu, Phone, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -18,10 +18,10 @@ import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
   const { user, logout } = useAuthStore();
+  const { categories, setCategories } = useProductStore();
   const pathname = usePathname();
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -249,7 +249,7 @@ const HeaderShop = () => {
                 <span className="hidden md:block">All Categories</span>
                 <Menu size={18} />
               </button>
-              <ul className="categories__menu light bg-white dark:bg-[#2a2b2f] shadow-md w-52 text-sm">
+              <ul className="categories__menu light bg-white dark:bg-[#2a2b2f] shadow-md w-52 text-sm max-h-[70vh] overflow-y-auto">
                 {categories.map((cat) => (
                   <li key={cat?._id}>
                     <Link
