@@ -66,3 +66,15 @@ export const navlist: Menu[] = [
   { label: "Blog", href: "/blog" },
   { label: "Contact Us", href: "/contact-us" },
 ];
+
+export const shopNavlist: Menu[] = [
+  { label: "About Us", href: "/about-us" },
+  // { label: "Services", href: "/services" },
+  // { label: "Projects", href: "/projects" },
+  {
+    label: "Products",
+    href: "/product",
+  },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact Us", href: "/contact-us" },
+];

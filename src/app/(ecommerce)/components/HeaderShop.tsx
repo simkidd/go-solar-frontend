@@ -1,6 +1,6 @@
 "use client";
 import Search from "@/components/Search";
-import { navlist } from "@/data/menuData";
+import { shopNavlist } from "@/data/menuData";
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
@@ -264,7 +264,7 @@ const HeaderShop = () => {
               </ul>
             </div>
             <ul className="bottom__nav lg:flex hidden items-center space-x-8 h-full">
-              {navlist.map((item, i) => (
+              {shopNavlist.map((item, i) => (
                 <MenuItem key={i} item={item} isActive={isActive} />
               ))}
             </ul>
@@ -292,7 +292,7 @@ const HeaderShop = () => {
           </div>
 
           <ul className="flex items-center justify-center space-y-6 flex-col w-full">
-            {navlist.map(({ href, label }, i) => {
+            {shopNavlist.map(({ href, label }, i) => {
               return (
                 <li key={i} className="">
                   <Link

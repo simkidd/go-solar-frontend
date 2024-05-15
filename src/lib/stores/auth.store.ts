@@ -104,15 +104,13 @@ export const useAuthStore = create<IAuthStore>((set, state) => ({
       set({ loading: true });
       const { data } = await axiosInstance.post("/auth/forgotpassword", input);
 
-      if (data) {
-        alert(data.data);
-      }
+      toast.success(data.data);
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
       console.log(errorMsg?.response.data.message);
     } finally {
-      set({ loading: true });
+      set({ loading: false });
     }
   },
   resetPassword: async (input, token) => {
@@ -123,8 +121,11 @@ export const useAuthStore = create<IAuthStore>((set, state) => ({
         input
       );
 
-      if (data) {
-        alert(data.message);
+      if (data.success === true) {
+        toast.success(data.message);
+        window.location.href = "/account/login";
+      } else {
+        return;
       }
     } catch (error) {
       const errorMsg = error as any;
