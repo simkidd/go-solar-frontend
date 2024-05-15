@@ -2,28 +2,29 @@
 import { Mail, Menu, Phone } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { MdClose } from "react-icons/md";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-
-interface Menu {
-  name: string;
-  href: string;
-}
-
-export const navlist: Menu[] = [
-  { name: "About Us", href: "/about-us" },
-  // { name: "Services", href: "/services" },
-  // { name: "Projects", href: "/projects" },
-  { name: "Shop", href: "/shop" },
-  { name: "Blog", href: "/blog" },
-  { name: "Contact Us", href: "/contact-us" },
-];
+import { navlist } from "@/data/menuData";
+import MenuItem from "./MenuItem";
 
 const Navbar = () => {
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+
+  const handleOutsideClick = (e: MouseEvent) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+      setShowMenu(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => document.removeEventListener("click", handleOutsideClick);
+  });
 
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
@@ -38,7 +39,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327] shadow">
+    <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327] shadow nav__container">
       {/* top header */}
       <div className="w-full h-14 hidden lg:flex">
         <div className="grid lg:grid-cols-2 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
@@ -101,21 +102,10 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <ul className="lg:flex hidden items-center space-x-8 h-full">
-            {navlist.map(({ href, name }, i) => {
-              return (
-                <li key={i} className="h-full ">
-                  <Link
-                    href={href}
-                    className={`h-full flex justify-center items-center border-b-4 border-b-transparent hover:text-primary transition-all duration-300 ease-in-out ${
-                      isActive(href) ? "!border-b-primary text-primary" : ""
-                    }`}
-                  >
-                    {name}
-                  </Link>
-                </li>
-              );
-            })}
+          <ul className="bottom__nav lg:flex hidden items-center space-x-8 h-full">
+            {navlist.map((item, i) => (
+              <MenuItem key={i} item={item} isActive={isActive} />
+            ))}
           </ul>
 
           <Link
@@ -129,7 +119,10 @@ const Navbar = () => {
 
       {/* mobile menu */}
       <div className={`mob-nav-list lg:hidden ${showMenu && "open"}`}>
-        <div className="mob-nav-inner light bg-white dark:bg-[#222327]">
+        <div
+          ref={sidebarRef}
+          className="mob-nav-inner light bg-white dark:bg-[#222327]"
+        >
           <div
             onClick={toggleShowMenu}
             className="cursor-pointer ml-auto mx-2 my-2"
@@ -138,7 +131,7 @@ const Navbar = () => {
           </div>
 
           <ul className="flex items-center justify-center space-y-6 flex-col w-full">
-            {navlist.map(({ href, name }, i) => {
+            {navlist.map(({ href, label }, i) => {
               return (
                 <li key={i} className="">
                   <Link
@@ -146,7 +139,7 @@ const Navbar = () => {
                     className={` ${isActive(href) ? "text-primary" : ""}`}
                     onClick={toggleShowMenu}
                   >
-                    {name}
+                    {label}
                   </Link>
                 </li>
               );

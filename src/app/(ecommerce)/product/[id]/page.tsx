@@ -1,44 +1,71 @@
-import ProductDesc from "@/components/ProductDesc";
-import ProductImages from "@/components/ProductImages";
-import RelatedProducts from "@/components/RelatedProducts";
+import Breadcrumb from "@/components/Breadcrumb";
+import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
+import ProductImages from "@/app/(ecommerce)/components/ProductImages";
+import RelatedProducts from "@/app/(ecommerce)/components/RelatedProducts";
 import { Product } from "@/interfaces/product.interface";
-import { getProduct } from "@/lib/data";
+import { axiosInstance } from "@/lib/axios";
+import { getProduct, getProducts } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import ProductDetail from "../../components/ProductDetail";
 
-export const generateStaticParams = async () => {
-  try {
-    const res = await fetch(`https://dummyjson.com/products`);
+interface IProduct {
+  params: { id: string };
+}
 
-    const data = await res.json();
-    const products = data.products;
+export const generateMetadata = async ({
+  params,
+}: IProduct): Promise<Metadata> => {
+  const product: Product = await getProduct(params.id);
 
-    return products.map((product: Product) => ({
-      id: product?.id.toString(),
-    }));
-  } catch (error) {
-    console.log(error);
-  }
+  return {
+    title: product?.name,
+    description: product?.description,
+    openGraph: {
+      images: {
+        url: product?.images[0].url,
+      },
+    },
+  };
 };
 
-const ProductPage = async ({ params }: { params: { id: string } }) => {
-  const product: Product = await getProduct(+params.id);
+// export const generateStaticParams = async () => {
+//   try {
+//     const products: Product[] = await getProducts();
+
+//     return products.map((product) => ({
+//       id: product?._id,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+export const revalidate = 60;
+
+const ProductPage = async ({ params }: IProduct) => {
+  const product: Product = await getProduct(params.id);
+
+  if (!product) {
+    notFound();
+  }
 
   return (
-    <div className="w-full font-inter py-20">
+    <div className="w-full font-inter py-20 pt-10">
+      <div className="container mx-auto px-2 mb-8">
+        <div className="max-w-[1100px] mx-auto px-2">
+          <Breadcrumb name={product?.name} />
+        </div>
+      </div>
       <section className="w-full">
         <div className="container mx-auto px-2">
           <div className="max-w-[1100px] mx-auto px-2">
             <div className="grid lg:grid-cols-2 grid-cols-1">
-              <div className="w-full p-4">
-                <ProductImages product={product} />
+              <div className="w-full h-fit lg:p-4 mb-8">
+                <ProductImages images={product?.images} />
               </div>
-              <div className="w-full flex flex-col p-4">
-                <h2 className="font-bold text-4xl mb-8">{product?.title}</h2>
-                <div className="flex">rating stars</div>
-                <h3 className="font-bold text-2xl">
-                  {formatCurrency(product?.price, "NGN")}
-                </h3>
-              </div>
+              <ProductDetail product={product} />
             </div>
           </div>
         </div>
@@ -52,7 +79,9 @@ const ProductPage = async ({ params }: { params: { id: string } }) => {
       </section>
       <section className="w-full">
         <div className="container mx-auto px-2">
-          <h3 className="font-bold capitalize lg:text-3xl text-2xl mb-6">You may also like</h3>
+          <h3 className="font-bold capitalize lg:text-3xl text-2xl mb-6">
+            You may also like
+          </h3>
           <div>
             <RelatedProducts product={product} />
           </div>

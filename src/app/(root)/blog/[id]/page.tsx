@@ -1,28 +1,59 @@
 import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
 import { Post } from "@/interfaces/post.interface";
+import { axiosInstance } from "@/lib/axios";
 import { getPost, getPosts } from "@/lib/data";
+import { formatDate } from "@/utils/helpers";
 import { CalendarCheck } from "lucide-react";
+import { Metadata } from "next";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 
-export const generateStaticParams = async () => {
-  try {
-    const res = await fetch(`https://dummyjson.com/posts`);
+interface IPost {
+  params: { id: string };
+}
 
-    const data = await res.json();
-    const posts = data.posts;
-
-    return posts.map((post: Post) => ({
-      id: post.id?.toString(),
-    }));
-  } catch (error) {
-    console.log(error);
-  }
+export const generateMetadata = async ({
+  params,
+}: IPost): Promise<Metadata> => {
+  const { data } = await axiosInstance.get(`/blogs/${params.id}`);
+  const post: Post = data.blog;
+  return {
+    title: post.title,
+    description: post.content,
+    openGraph: {
+      images: {
+        url: post.image,
+      },
+    },
+  };
 };
 
-const SingleBlogPage = async ({ params }: { params: { id: string } }) => {
-  const post: Post = await getPost(+params.id);
-  const posts: Post[] = await getPosts();
+// export const generateStaticParams = async (): Promise<{ id: string }[]> => {
+//   try {
+//     // const posts: Post[] = await getPosts();
+//     const { data } = await axiosInstance.get("/blogs");
+
+//     const posts: Post[] = data.blogs;
+
+//     return posts.map((post) => ({
+//       id: post?._id,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//     return [];
+//   }
+// };
+
+const SingleBlogPage = async ({ params }: IPost) => {
+  const postData: Post = await getPost(params.id);
+  const postsData: Post[] = await getPosts();
+
+  const [post, posts] = await Promise.all([postData, postsData]);
+
+  if (!post) {
+    notFound();
+  }
 
   return (
     <div className="w-full">
@@ -33,13 +64,19 @@ const SingleBlogPage = async ({ params }: { params: { id: string } }) => {
             <div className="lg:col-span-2 col-span-1 lg:px-4">
               <div className="flex items-center text-sm mb-4">
                 <CalendarCheck size={18} />
-                <span className="ml-2">March 2, 2024</span>
+                <span className="ml-2">{formatDate(post?.createdAt)}</span>
               </div>
               <div className="w-full lg:h-96 md:h-96 h-72 bg-gray-400 mb-8 overflow-hidden">
-                <Image src="" alt="" className="w-full h-full object-cover" />
+                <Image
+                  src={post?.image}
+                  alt={post?.title}
+                  className="w-full h-full object-cover"
+                  width={500}
+                  height={500}
+                />
               </div>
 
-              <article className="">{post?.body}</article>
+              <article className="">{post?.content}</article>
             </div>
             <div className="col-span-1 lg:px-4 mt-8 lg:mt-0">
               <div>
@@ -54,7 +91,7 @@ const SingleBlogPage = async ({ params }: { params: { id: string } }) => {
 
                 <div className="w-full flex flex-col space-y-2">
                   {posts?.slice(0, 3).map((item) => (
-                    <BlogCardList key={item?.id} item={item} />
+                    <BlogCardList key={item?._id} item={item} />
                   ))}
                 </div>
               </div>

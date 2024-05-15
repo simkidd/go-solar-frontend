@@ -1,21 +1,20 @@
+import { axiosInstance } from "./axios";
+
 export const getPosts = async () => {
   try {
-    const res = await fetch("https://dummyjson.com/posts");
+    const { data } = await axiosInstance.get("/blogs");
 
-    const data = await res.json();
-    const posts = data.posts;
-    return posts;
+    return data.blogs;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getPost = async (id: number) => {
+export const getPost = async (id: string) => {
   try {
-    const res = await fetch(`https://dummyjson.com/posts/` + id);
-    const data = await res.json();
+    const { data } = await axiosInstance.get(`/blogs/${id}`);
 
-    return data;
+    return data.blog;
   } catch (error) {
     console.log(error);
   }
@@ -23,23 +22,32 @@ export const getPost = async (id: number) => {
 
 export const getProducts = async () => {
   try {
-    const res = await fetch("https://dummyjson.com/products");
+    const { data } = await axiosInstance.get("/products");
 
-    const data = await res.json();
-    const products = data.products;
-    return products;
+    return data.products;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getProduct = async (id: number) => {
+export const getProduct = async (id: string) => {
   try {
-    const res = await fetch(`https://dummyjson.com/products/` + id);
-    const data = await res.json();
+    const { data } = await axiosInstance.get(`/products/${id}`);
 
-    return data;
+    return data.product;
   } catch (error) {
     console.log(error);
   }
 };
+
+export const getCategories = async () => {
+  try {
+    const { data } = await axiosInstance.get("/categories");
+
+    return data.categories;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+

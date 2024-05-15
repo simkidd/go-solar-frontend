@@ -6,9 +6,7 @@ import { Metadata } from "next";
 const pageTitle = "Contact Us";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: pageTitle,
-  },
+  title: pageTitle,
 };
 
 const ContactUsPage = () => {

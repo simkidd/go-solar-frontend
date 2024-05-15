@@ -7,24 +7,24 @@ interface IReview {
 
 export const ReviewData: IReview[] = [
   {
-    name: "Adrian Javier",
+    name: "Sarah Thompson",
     content:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio aliquam eveniet veniam nihil fugit molestias sit ex, maiores eius fuga hic dolorum aspernatur! Totam repudiandae esse, veritatis doloremque impedit vitae?",
-    role: "Project Manager",
+      "I am extremely satisfied with the solar panel installation provided by GoSolar. The team was professional, efficient, and knowledgeable. Our energy bills have significantly decreased since going solar!",
+    role: "Residential Customer",
     image: "",
   },
   {
     name: "John Smith",
     content:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio aliquam eveniet veniam nihil fugit molestias sit ex, maiores eius fuga hic dolorum aspernatur! Totam repudiandae esse, veritatis doloremque impedit vitae?",
-    role: "Chief Officer",
+      "We decided to switch to solar energy for our business, and GoSolar made the transition seamless. Their expertise and dedication to customer satisfaction were impressive.",
+    role: "Business Owner",
     image: "",
   },
   {
-    name: "Alex Angel",
+    name: "Emily Davis",
     content:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio aliquam eveniet veniam nihil fugit molestias sit ex, maiores eius fuga hic dolorum aspernatur! Totam repudiandae esse, veritatis doloremque impedit vitae?",
-    role: "Manager",
+      "Working with GoSolar was a fantastic experience. From the initial consultation to the installation, their team was professional and attentive to our needs. We are thrilled with our decision to switch to solar energy!",
+    role: "Homeowner",
     image: "",
   },
 ];

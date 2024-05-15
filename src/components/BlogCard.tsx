@@ -1,4 +1,5 @@
 import { Post } from "@/interfaces/post.interface";
+import { formatDate } from "@/utils/helpers";
 import { CalendarCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +13,7 @@ export const BlogCardList: React.FC<{ item: Post }> = ({ item }) => {
       </div>
       <div className="flex flex-col w-[calc(100%-5rem)] px-2">
         <Link
-          href={`/blog/${item?.id}`}
+          href={`/blog/${item?._id}`}
           className="mb-2 hover:underline"
           title={item?.title}
         >
@@ -29,26 +30,33 @@ export const BlogCardList: React.FC<{ item: Post }> = ({ item }) => {
 
 const BlogCard: React.FC<{
   post: Post;
-}> = ({ post }) => {
+  path: string;
+}> = ({ post, path }) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="w-full">
-        <Link href={`/blog/${post?.id}`}>
-          <div className="w-full h-[200px] bg-gray-500 overflow-hidden">
+        <Link href={`/${path}/${post?._id}`}>
+          <div className="w-full h-[142px] bg-gray-500 overflow-hidden rounded-t-lg">
             <Image
-              src=""
+              src={post?.image}
               alt="post image"
               className="h-full w-full object-cover hover:scale-105"
               style={{ transition: "transform 0.3s ease-in-out" }}
+              width={300}
+              height={300}
             />
           </div>
         </Link>
-        <div className="p-4 w-full">
-          <div className="text-primary text-xl mb-4">
-            <Link href={`/blog/${post?.id}`}>{post?.title}</Link>
+        <div className="py-4 px-2 w-full">
+          <div className="text-primary text-xl mb-2">
+            <Link href={`/${path}/${post?._id}`}>
+              <p>{post?.title}</p>
+            </Link>
           </div>
-          <div className="text-sm flex">
-            <span className="">March 23, 2024</span>
+          <p className="text-ellipsis line-clamp-2 mb-4">{post?.content}</p>
+          <div className="text-sm flex items-center">
+            <CalendarCheck size={16} />
+            <span className="ml-1">{formatDate(post?.createdAt)}</span>
           </div>
         </div>
       </div>

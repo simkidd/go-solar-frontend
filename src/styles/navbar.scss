@@ -1,3 +1,58 @@
+.nav__container {
+  .bottom__nav {
+    li {
+      &:hover {
+        .dropdown {
+          visibility: visible;
+        }
+      }
+
+      .dropdown {
+        position: absolute;
+        visibility: hidden;
+      }
+    }
+  }
+
+  .user {
+    &:hover {
+      .user__menu {
+        visibility: visible;
+      }
+
+      .user__button {
+        position: relative;
+      }
+    }
+
+    .user__menu {
+      position: absolute;
+      visibility: hidden;
+      right: 0;
+      z-index: 10;
+    }
+  }
+
+  .categories {
+    &:hover {
+      .categories__menu {
+        visibility: visible;
+      }
+
+      .categories__button {
+        position: relative;
+      }
+    }
+
+    .categories__menu {
+      position: absolute;
+      visibility: hidden;
+      left: 0;
+      z-index: 10;
+    }
+  }
+}
+
 .mob-nav-list {
 
   @media screen and (max-width: 1024px) {
@@ -39,5 +94,38 @@
     justify-content: space-between;
     width: 70%;
     height: 100%;
+  }
+}
+
+.sidebar {
+  position: relative;
+
+  @media screen and (min-width:768px) and (max-width:1024px) {
+    .expand {
+
+      &:hover {
+        .expand__menu {
+          visibility: visible;
+        }
+
+        .expand__button {
+          position: relative;
+        }
+      }
+
+      .expand__menu {
+        position: absolute;
+        visibility: hidden;
+        left: 100%;
+        top: 0;
+        z-index: 10;
+        min-width: 150px;
+        padding-block: 0.2rem;
+
+        a{
+          padding-inline: 20px !important;
+        }
+      }
+    }
   }
 }

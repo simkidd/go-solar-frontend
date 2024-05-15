@@ -9,6 +9,7 @@ import Link from "next/link";
 
 const page = async () => {
   const posts: Post[] = await getPosts();
+
   return (
     <div className="w-full font-inter">
       {/* hero section */}
@@ -27,7 +28,7 @@ const page = async () => {
           <div className="grid lg:grid-cols-2 grid-cols-1">
             <div className="px-4">
               <h5 className="text-lg">
-                Replace carbon-transmitting items with sun oriented power.
+                Replace carbon-transmitting items with solar power solutions
               </h5>
             </div>
           </div>
@@ -48,8 +49,8 @@ const page = async () => {
                 <h4 className="text-2xl font-semibold">Our Vision</h4>
               </div>
               <p>
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Incidunt, nesciunt non aperiam dolorem maiores nisi!
+                At GoSolar, we envision a world powered by renewable energy,
+                where sustainability is at the forefront of every industry.
               </p>
             </div>
             <div className="lg:col-span-2 p-4">
@@ -57,14 +58,16 @@ const page = async () => {
                 <h4 className="text-2xl font-semibold">Our Solution</h4>
               </div>
               <p>
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Incidunt, nesciunt non aperiam dolorem maiores nisi!
+                Our solution involves providing accessible and efficient solar
+                energy solutions to individuals and businesses, reducing their
+                carbon footprint and promoting environmental stewardship.
               </p>
             </div>
             <div className="lg:col-span-4 p-4">
               <h4 className="text-primary font-bold mb-4">Main Initiative</h4>
               <h3 className="capitalize text-4xl font-bold leading-normal">
-                "Our Goal is to change the modern world become nature friendly"
+                "Our Goal is to change the modern world to become
+                nature-friendly."
               </h3>
             </div>
           </div>
@@ -79,14 +82,13 @@ const page = async () => {
                 About GoSolar
               </h2>
               <h2 className="text-3xl lg:text-5xl font-bold leading-normal mb-4">
-                We are experts in the world of solar and sustainable Energy
-                Services
+                We are experts in solar and sustainable energy services.
               </h2>
               <p>
-                The amount of energy you use will depend on the type of business
-                you run. However, there are lots of ways that you can save
-                energy no matter what you do eothermal energy is a clean and
-                reliable.
+                GoSolar specializes in providing high-quality solar energy
+                solutions tailored to meet the needs of our clients. With a
+                focus on innovation and sustainability, we strive to make a
+                positive impact on the environment and the community.
               </p>
               <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
                 About
@@ -118,8 +120,10 @@ const page = async () => {
       {/* testimonial section */}
       <section className="w-full py-16 overflow-x-hidden">
         <div className="container mx-auto px-2 mb-8 relative">
-          <h2 className="text-primary text-2xl font-bold mb-4">Testimonial</h2>
-          <h2 className="lg:text-5xl text-4xl font-bold">What they say</h2>
+          <h2 className="text-primary text-2xl font-bold mb-4">Testimonials</h2>
+          <h2 className="lg:text-5xl text-4xl font-bold">
+            What Our Customers Say
+          </h2>
           <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-[5.7rem] absolute lg:-top-24 -top-14 left-0 -z-[1] font-bold">
             Reviews
           </div>
@@ -134,10 +138,10 @@ const page = async () => {
           <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
             <div className="relative">
               <h2 className="text-primary text-2xl font-bold mb-4">
-                Latest Post
+                Latest Blog Posts
               </h2>
               <h2 className="lg:text-5xl text-4xl font-bold mb-4">
-                What's Going on in our Blog?
+                Stay Updated with Our Blog
               </h2>
               <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
                 Blog
@@ -153,7 +157,7 @@ const page = async () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
             {posts?.slice(0, 3).map((post) => (
-              <BlogCard key={post?.id} post={post} />
+              <BlogCard key={post?._id} post={post} path="blog" />
             ))}
           </div>
           <div></div>
@@ -165,10 +169,10 @@ const page = async () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 lg:px-16">
             <div className="col-span-2">
               <h2 className="capitalize mb-4 text-2xl text-primary">
-                we are here to help you
+                Need Assistance?
               </h2>
               <h2 className="lg:text-5xl text-4xl font-bold">
-                Any Questions? Let's Talk
+                Contact Us Today
               </h2>
             </div>
             <div className="col-span-1 flex items-center lg:justify-end justify-center mt-6 lg:mt-0">

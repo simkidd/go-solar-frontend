@@ -6,12 +6,21 @@ import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
 import Footer from "@/components/Footer";
 import { Suspense } from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Go Solar",
-  description: "Affordable Solar products and services",
+  title: {
+    default:
+      "Go Solar | Affordable Solar Panels and Renewable Energy Solutions",
+    template: "%s | Go Solar",
+  },
+  description:
+    "Discover affordable solar panels, installation services, and renewable energy solutions tailored to your needs. Go solar today for sustainable energy and savings",
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({
@@ -33,7 +42,7 @@ export default function RootLayout({
           speed={200}
         />
         <Providers>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <Navbar />
             <main>{children}</main>
             <Footer />

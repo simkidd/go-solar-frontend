@@ -1,9 +1,28 @@
 export interface Post {
-  id: number;
+  _id: string;
   title: string;
-  // slug: string;
-  body: string;
-  userId: number;
+  slug: string;
+  content: string;
+  author: string;
+  image: string;
   tags: string[];
-  reactions: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreatePostInput {
+  title: string;
+  content: string;
+  tags: string[];
+  author: string;
+  image: string | File | Blob;
+}
+
+export interface UpdatePostInput {
+  id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  author: string;
+  image: string | File;
 }
