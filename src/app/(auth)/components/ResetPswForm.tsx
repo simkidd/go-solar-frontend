@@ -2,6 +2,7 @@
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 
 const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
@@ -10,6 +11,7 @@ const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
     password: "",
   });
   const [isVisible, setIsVisible] = useState(false);
+  const router = useRouter();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -22,14 +24,11 @@ const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // if (!input.password) {
-    //   alert("Field is required");
-    //   return;
-    // }
-    if (token) {
-      await resetPassword(input, token);
-    }
+
+    await resetPassword(input, token);
+    setInput({ password: "" });
   };
+
   return (
     <form onSubmit={handleSubmit} className="mb-8">
       <div className="input-group mb-4">
