@@ -5,6 +5,7 @@ import {
   UpdateProductInput,
 } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
+import { Button } from "@nextui-org/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -13,9 +14,9 @@ import { GrCloudUpload } from "react-icons/gr";
 
 const UpdateProductForm: React.FC<{
   product: Product;
-  categories: Category[];
-}> = ({ product, categories }) => {
-  const { loading, updateProduct, updateImage, imageLoading } =
+  onClose: () => void;
+}> = ({ product, onClose }) => {
+  const { loading, updateProduct, updateImage, imageLoading, categories } =
     useProductStore();
   const router = useRouter();
   const [input, setInput] = useState<UpdateProductInput>({
@@ -255,9 +256,26 @@ const UpdateProductForm: React.FC<{
               Publish on site
             </label>
           </div>
-          <button className="bg-primary text-white px-6 py-2">
-            {loading ? "Loading..." : "Save"}
-          </button>
+          <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
+            <Button
+              variant="light"
+              color="default"
+              className="rounded-md"
+              onPress={onClose}
+            >
+              Close
+            </Button>
+            <Button
+              variant="solid"
+              color="primary"
+              type="submit"
+              className="rounded-md "
+              isDisabled={loading}
+              isLoading={loading}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </form>
     </>

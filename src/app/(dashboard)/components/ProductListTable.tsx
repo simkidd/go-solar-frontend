@@ -50,6 +50,7 @@ createTheme(
 const columns: TableColumn<Product>[] = [
   {
     name: "Product",
+    selector: (row) => row?.name,
     cell: (row) => (
       <div className="grid grid-cols-[55px_auto] gap-2 w-full py-2">
         <div className="w-10 h-10">
@@ -67,11 +68,14 @@ const columns: TableColumn<Product>[] = [
       </div>
     ),
     minWidth: "400px",
+    sortable: true,
   },
   {
     name: "Price",
+    selector: (row) => row?.price,
     cell: (row) => <div>{formatCurrency(row?.price, "NGN")}</div>,
     minWidth: "150px",
+    sortable: true,
   },
   {
     name: "Quantity",
@@ -87,6 +91,7 @@ const columns: TableColumn<Product>[] = [
   },
   {
     name: "Published",
+    selector: (row) => row?.isPublished,
     cell: (row) => (
       <div>
         {row?.isPublished ? (
@@ -100,11 +105,14 @@ const columns: TableColumn<Product>[] = [
         )}
       </div>
     ),
+    sortable: true,
   },
   {
     name: "Date added",
+    selector: (row) => row?.createdAt,
     cell: (row) => <div>{formatDate(row?.createdAt)}</div>,
     minWidth: "150px",
+    sortable: true,
   },
   {
     name: "Actions",
@@ -174,26 +182,12 @@ const columns: TableColumn<Product>[] = [
 ];
 
 const ProductListTable = () => {
-  const { products, setProducts } = useProductStore();
+  const { products, loading } = useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const { data } = await axiosInstance.get("/products");
-        setProducts(data.products);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filteredProducts = useMemo(() => {
     let selectedProducts = [...products];
@@ -247,7 +241,8 @@ const ProductListTable = () => {
         pagination
         selectableRows
         // actions={<button className="">Export PDF</button>}
-        // fixedHeader
+        // fixedHeader={true}
+        // fixedHeaderScrollHeight="60vh"
         selectableRowsHighlight
         highlightOnHover
         // subHeader
