@@ -18,23 +18,11 @@ import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
   const { user, logout } = useAuthStore();
-  const { categories, setCategories } = useProductStore();
+  const { categories } = useProductStore();
   const pathname = usePathname();
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axiosInstance.get("/categories");
-        setCategories(data?.categories);
-      } catch (error) {
-        const errorMsg = error as any;
-        console.log(errorMsg?.response?.data.message);
-      }
-    })();
-  }, []);
 
   const handleOutsideClick = (e: MouseEvent) => {
     if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {

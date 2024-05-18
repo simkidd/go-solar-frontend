@@ -1,13 +1,13 @@
 "use client";
+import { navlist } from "@/data/menuData";
 import { Mail, Menu, Phone } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { MdClose } from "react-icons/md";
-import { ThemeSwitcher } from "./ThemeSwitcher";
-import { navlist } from "@/data/menuData";
 import MenuItem from "./MenuItem";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -54,7 +54,9 @@ const Navbar = () => {
             </span>
           </div>
 
-          <div className=" ml-auto flex gap-8">
+          <div className=" ml-auto flex items-center gap-8">
+            <Link href="/profile" className="text-sm hover:text-primary">My Account</Link>
+
             <ThemeSwitcher />
             <ul className="flex items-center gap-4 ">
               <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
