@@ -11,15 +11,17 @@ const Search = ({ placeholder }: { placeholder: string }) => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-
     const params = new URLSearchParams(searchParams);
-    if (term) {
+
+    if (term.trim() === "") {
+      return;
+    } else if (term.trim() !== "") {
       params.set("q", term);
     } else {
       params.delete("q");
     }
     router.push(`/search?${params.toString()}`);
-    setTerm("")
+    setTerm("");
   };
 
   return (

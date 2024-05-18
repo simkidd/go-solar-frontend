@@ -2,6 +2,7 @@ import {
   Category,
   CreateCategoryInput,
   Product,
+  UpdateCategoryInput,
   UpdateProductInput,
 } from "@/interfaces/product.interface";
 import { create } from "zustand";
@@ -10,6 +11,7 @@ import { axiosInstance } from "../axios";
 
 interface IProductStore {
   loading: boolean;
+  setLoading: (value: boolean) => void;
   imageLoading: boolean;
   product: Product | undefined;
   products: Product[];
@@ -24,10 +26,13 @@ interface IProductStore {
   setCategory: (category: Category) => void;
   setCategories: (categories: Category[]) => void;
   createCategory: (input: CreateCategoryInput) => Promise<void>;
+  updateCategory: (input: UpdateCategoryInput) => Promise<void>;
+  deleteCategory: (id: string) => void;
 }
 
 export const useProductStore = create<IProductStore>((set) => ({
   loading: false,
+  setLoading: (loading: boolean) => set({ loading }),
   imageLoading: false,
   product: undefined,
   products: [],
@@ -55,7 +60,7 @@ export const useProductStore = create<IProductStore>((set) => ({
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
-      console.log(error);
+      console.log(errorMsg?.response.data.message);
     } finally {
       set({ loading: false });
     }
@@ -88,7 +93,7 @@ export const useProductStore = create<IProductStore>((set) => ({
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
-      console.log(error);
+      console.log(errorMsg?.response.data.message);
     } finally {
       set({ loading: false });
     }
@@ -105,7 +110,7 @@ export const useProductStore = create<IProductStore>((set) => ({
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
-      console.log(error);
+      console.log(errorMsg?.response.data.message);
     } finally {
       set({ loading: false });
     }
@@ -123,7 +128,7 @@ export const useProductStore = create<IProductStore>((set) => ({
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
-      console.log(error);
+      console.log(errorMsg?.response.data.message);
     } finally {
       set({ imageLoading: false });
     }
@@ -144,7 +149,56 @@ export const useProductStore = create<IProductStore>((set) => ({
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
-      console.log(error);
+      console.log(errorMsg?.response.data.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+  updateCategory: async (input) => {
+    try {
+      set({ loading: true });
+      const { data } = await axiosInstance.patch(
+        "/admin/update-category",
+        input
+      );
+
+      set((state) => ({
+        category: {
+          ...state.category,
+          ...data.category,
+        },
+      }));
+
+      set((state) => ({
+        categories: state.categories.map((category) =>
+          category._id === input.categoryId
+            ? { ...category, ...data.category }
+            : category
+        ),
+      }));
+
+      toast.success(data.message);
+    } catch (error) {
+      const errorMsg = error as any;
+      toast.error(errorMsg?.response.data.message);
+      console.log(errorMsg?.response.data.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+  deleteCategory: async (id) => {
+    try {
+      set({ loading: true });
+      const { data } = await axiosInstance.delete(`/category/${id}`);
+
+      set((state) => ({
+        categories: state.categories.filter((category) => category?._id !== id),
+      }));
+      toast.success(data.message);
+    } catch (error) {
+      const errorMsg = error as any;
+      toast.error(errorMsg?.response.data.message);
+      console.log(errorMsg?.response.data.message);
     } finally {
       set({ loading: false });
     }

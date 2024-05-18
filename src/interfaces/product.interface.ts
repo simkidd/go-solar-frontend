@@ -64,6 +64,10 @@ export interface CreateCategoryInput {
   description: string;
 }
 
+export interface UpdateCategoryInput extends CreateCategoryInput {
+  categoryId: string;
+}
+
 export interface OrderProduct {
   product: string;
   qty: number;

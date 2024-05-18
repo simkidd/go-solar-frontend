@@ -1,23 +1,20 @@
-import ProductCard from "@/app/(ecommerce)/components/ProductCard";
-import { Product } from "@/interfaces/product.interface";
-import { getProducts } from "@/lib/data";
+import { Category, Product } from "@/interfaces/product.interface";
+import { getCategories, getProducts } from "@/lib/data";
+import Cta from "../components/Cta";
+import ProductsList from "../components/ProductsList";
 
 const ProductListPage = async () => {
   const products: Product[] = await getProducts();
+  const categories: Category[] = await getCategories();
 
   return (
-    <div className="w-full">
+    <div className="w-full font-dmsans">
       <section className="w-full">
-        <div className="container mx-auto px-2 py-20">
-          {products?.length < 1 ? (
-            <p>No product yet</p>
-          ) : (
-            <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-4">
-              {products?.map((item) => (
-                <ProductCard key={item?._id} item={item} />
-              ))}
-            </div>
-          )}
+        <div className="container mx-auto px-2 py-8">
+          <div className="mb-6">
+            <Cta />
+          </div>
+          <ProductsList categories={categories} products={products} />
         </div>
       </section>
     </div>

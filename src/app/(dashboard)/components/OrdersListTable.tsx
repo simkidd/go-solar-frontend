@@ -100,28 +100,12 @@ const columns: TableColumn<Order>[] = [
 ];
 
 const OrdersListTable = () => {
-  const { orders, setOrders } = useOrderStore();
+  const { orders, loading } = useOrderStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [trackingFilter, setTrackingFilter] = useState("");
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const { data } = await axiosInstance.get("/admin/all-orders");
-
-        setOrders(data.orders);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
 
   const filteredOrders = useMemo(() => {
     let selectedOrders = [...orders];

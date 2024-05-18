@@ -11,7 +11,7 @@ const ProductCard: React.FC<{
   return (
     <div className="w-full border hover:border-primary">
       <Link href={`/product/${item?._id}`}>
-        <div className="w-full lg:h-44 md:h-56 h-44 overflow-hidden relative group">
+        <div className="w-full lg:h-56 h-44 overflow-hidden relative group">
           <div className="absolute top-0 left-0 w-full h-full">
             <Image
               src={
@@ -47,7 +47,7 @@ const ProductCard: React.FC<{
         >
           {item?.name}
         </Link>
-        <p className="mb-4 text-primary font-medium">
+        <p className=" text-primary font-medium">
           {formatCurrency(item?.price, "NGN")}
         </p>
       </div>
