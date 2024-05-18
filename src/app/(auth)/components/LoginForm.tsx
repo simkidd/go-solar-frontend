@@ -7,13 +7,12 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 const LoginForm = () => {
-  const { login } = useAuthStore();
+  const { login, loading } = useAuthStore();
   const [isVisible, setIsVisible] = useState(false);
   const [input, setInput] = useState<LoginInput>({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const validateEmail = (input: string) =>
@@ -41,16 +40,7 @@ const LoginForm = () => {
       return;
     }
 
-    setLoading(true);
-    login(input)
-      .then((res) => {
-        if (!res?._id) return;
-        else if (res?.isAdmin || res?.isSuperAdmin) {
-          router.push("/admin");
-        } else router.push("/");
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+    await login(input);
   };
 
   return (

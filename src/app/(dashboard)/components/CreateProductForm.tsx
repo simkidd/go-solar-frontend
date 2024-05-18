@@ -1,16 +1,15 @@
 "use client";
-import { Category, CreateProductInput } from "@/interfaces/product.interface";
+import { CreateProductInput } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
+import { Button } from "@nextui-org/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { GrCloudUpload } from "react-icons/gr";
 
-const CreateProductForm: React.FC<{ categories: Category[] }> = ({
-  categories,
-}) => {
-  const { loading, createProduct } = useProductStore();
+const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const { loading, createProduct, categories } = useProductStore();
   const router = useRouter();
   const [input, setInput] = useState<CreateProductInput>({
     name: "",
@@ -87,12 +86,12 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
     await createProduct(formData, config);
 
     if (input.images.length > 0) {
-      router.push("/admin/products");
+      onClose();
     }
   };
 
   return (
-    <form className="w-full" onSubmit={handleSubmit}>
+    <form className="w-full font-inter" onSubmit={handleSubmit}>
       <div className="w-full grid lg:grid-cols-2 grid-cols-1">
         <div className="col-span-1 lg:pr-4">
           <div className="mb-3">
@@ -301,9 +300,27 @@ const CreateProductForm: React.FC<{ categories: Category[] }> = ({
             Publish on site
           </label>
         </div>
-        <button className="bg-primary text-white px-6 py-2">
-          {loading ? "Loading..." : "Add product"}
-        </button>
+
+        <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
+          <Button
+            variant="light"
+            color="default"
+            className="rounded-md"
+            onPress={onClose}
+          >
+            Close
+          </Button>
+          <Button
+            variant="solid"
+            color="primary"
+            type="submit"
+            className="rounded-md "
+            isDisabled={loading}
+            isLoading={loading}
+          >
+            Add
+          </Button>
+        </div>
       </div>
     </form>
   );

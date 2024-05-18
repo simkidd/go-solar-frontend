@@ -1,9 +1,10 @@
 "use client";
 import { CreateCategoryInput } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
+import { Button } from "@nextui-org/react";
 import React, { useState } from "react";
 
-const CreateCategoryForm = () => {
+const CreateCategoryForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { loading, createCategory } = useProductStore();
   const [input, setInput] = useState<CreateCategoryInput>({
     name: "",
@@ -14,12 +15,16 @@ const CreateCategoryForm = () => {
     e.preventDefault();
 
     await createCategory(input);
+    setInput(input);
+    onClose();
   };
-  
+
   return (
     <form className="w-full" onSubmit={handleSubmit}>
       <div className="mb-3">
-        <label htmlFor="title" className="text-sm">Category name</label>
+        <label htmlFor="title" className="text-sm">
+          Category name
+        </label>
         <input
           type="text"
           id="title"
@@ -29,7 +34,9 @@ const CreateCategoryForm = () => {
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="description" className="text-sm">Category description</label>
+        <label htmlFor="description" className="text-sm">
+          Category description
+        </label>
         <textarea
           name=""
           id="description"
@@ -38,9 +45,26 @@ const CreateCategoryForm = () => {
           onChange={(e) => setInput({ ...input, description: e.target.value })}
         ></textarea>
       </div>
-      <button className="bg-primary text-white px-6 py-2">
-        {loading ? "Loading..." : "Add"}
-      </button>
+      <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
+        <Button
+          variant="light"
+          color="default"
+          className="rounded-md"
+          onPress={onClose}
+        >
+          Close
+        </Button>
+        <Button
+          variant="solid"
+          color="primary"
+          type="submit"
+          className="rounded-md "
+          isDisabled={loading}
+          isLoading={loading}
+        >
+          Add
+        </Button>
+      </div>
     </form>
   );
 };

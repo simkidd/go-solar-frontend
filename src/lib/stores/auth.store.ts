@@ -18,7 +18,7 @@ interface IAuthStore {
   setUser: (user: User) => void;
   setUsers: (users: User[]) => void;
   logout: () => void;
-  login: (input: LoginInput) => Promise<User | undefined>;
+  login: (input: LoginInput) => Promise<void>;
   signup: (input: SignUpInput) => Promise<void>;
   resendVerification: (input: EmailInput) => Promise<void>;
   forgotPassword: (input: EmailInput) => Promise<void>;
@@ -27,7 +27,7 @@ interface IAuthStore {
   setShowSidebar: (showSidebar: boolean) => void;
 }
 
-export const useAuthStore = create<IAuthStore>((set, state) => ({
+export const useAuthStore = create<IAuthStore>((set) => ({
   loading: false,
   user: undefined,
   users: [],
@@ -42,6 +42,7 @@ export const useAuthStore = create<IAuthStore>((set, state) => ({
   },
   login: async (input) => {
     try {
+      set({ loading: true });
       const { data } = await axiosInstance.post("/auth/login", input);
       const user: User = data.data.user;
 
@@ -59,11 +60,17 @@ export const useAuthStore = create<IAuthStore>((set, state) => ({
         toast.success(data.message);
       }
 
-      return user;
+      if (user?.isAdmin || user?.isSuperAdmin) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/shop";
+      }
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
       console.log(errorMsg?.response.data.message);
+    } finally {
+      set({ loading: false });
     }
   },
   signup: async (input) => {

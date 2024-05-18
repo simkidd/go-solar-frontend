@@ -1,10 +1,14 @@
 import React from "react";
+import SearchResultList from "../components/SearchResultList";
+import { getProducts } from "@/lib/data";
+import { Product } from "@/interfaces/product.interface";
 
 const SearchResults = async ({
   searchParams,
 }: {
   searchParams: { q: string };
 }) => {
+  const products: Product[] = await getProducts();
   // const searchedProducts = await getSearchedProducts(params.query);
 
   const decodedQuery = decodeURIComponent(searchParams.q);
@@ -14,15 +18,9 @@ const SearchResults = async ({
       <p className="text-heading3-bold my-10">
         Search results for {decodedQuery}
       </p>
-      {/* {!searchedProducts ||
-        (searchedProducts.length === 0 && (
-          <p className="text-body-bold my-5">No result found</p>
-        ))}
-      <div className="flex flex-wrap justify-between gap-16">
-        {searchedProducts?.map((product: ProductType) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
-      </div> */}
+      <div>
+        <SearchResultList query={decodedQuery} products={products} />
+      </div>
     </div>
   );
 };

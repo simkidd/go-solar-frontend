@@ -1,4 +1,5 @@
 import DeleteProduct from "@/app/(dashboard)/components/DeleteProduct";
+import UpdateProductButton from "@/app/(dashboard)/components/UpdateProductButton";
 import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/ProductImages";
 import { Product } from "@/interfaces/product.interface";
@@ -40,12 +41,7 @@ const SingleProductPage = async ({ params }: { params: { id: string } }) => {
         <div className="flex items-center gap-2">
           <DeleteProduct product={product} />
 
-          <Link href={`/admin/products/${product._id}/edit`}>
-            <button className="bg-primary text-white px-4 py-2 text-sm flex items-center">
-              <Pen className="mr-2" size={16} />
-              Edit
-            </button>
-          </Link>
+          <UpdateProductButton product={product} />
         </div>
       </div>
       <div className="w-full bg-white dark:bg-[#222327] py-16 px-6 shadow rounded">

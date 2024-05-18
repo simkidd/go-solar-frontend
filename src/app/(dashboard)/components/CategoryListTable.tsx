@@ -1,18 +1,19 @@
 "use client";
 /* eslint-disable react-hooks/rules-of-hooks */
+import AppModal from "@/components/AppModal";
 import { Category } from "@/interfaces/product.interface";
-import { axiosInstance } from "@/lib/axios";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatDate } from "@/utils/helpers";
-import { Button, Spinner } from "@nextui-org/react";
+import { Button, Spinner, useDisclosure } from "@nextui-org/react";
 import { Edit, Trash } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DataTable, {
   TableColumn,
   createTheme,
 } from "react-data-table-component";
 import { customStyles } from "./UI/tableStyle";
+import UpdateCategoryForm from "./UpdateCategoryForm";
 
 createTheme(
   "light",
@@ -56,46 +57,119 @@ const columns: TableColumn<Category>[] = [
     minWidth: "300px",
   },
   {
+    name: "Products",
+    cell: (row) => {
+      const { products } = useProductStore();
+
+      const categoryProducts = products.filter(
+        (product) => product?.category?._id === row?._id
+      );
+      return <div>{categoryProducts.length}</div>;
+    },
+  },
+  {
     name: "Date",
     cell: (row) => <div>{formatDate(row?.createdAt)}</div>,
   },
   {
     name: "Actions",
-    cell: (row) => (
-      <div className="w-full flex items-center justify-center">
-        <Button isIconOnly color="primary" variant="light" size="sm">
-          <Edit size={16} />
-        </Button>
-        <Button isIconOnly color="danger" variant="light" size="sm">
-          <Trash size={16} />
-        </Button>
-      </div>
-    ),
+    cell: (row) => {
+      const { loading, deleteCategory } = useProductStore();
+      const {
+        isOpen: isUpdateOpen,
+        onOpen: onUpdateOpen,
+        onOpenChange: onUpdateOpenChange,
+        onClose: onUpdateClose,
+      } = useDisclosure();
+      const {
+        isOpen: isDeleteOpen,
+        onOpen: onDeleteOpen,
+        onOpenChange: onDeleteOpenChange,
+        onClose: onDeleteClose,
+      } = useDisclosure();
+
+      const handleDelete = () => {
+        deleteCategory(row?._id);
+        onDeleteClose();
+      };
+
+      return (
+        <div className="w-full flex items-center justify-center">
+          <Button
+            isIconOnly
+            color="primary"
+            variant="light"
+            size="sm"
+            onPress={onUpdateOpen}
+          >
+            <Edit size={16} />
+          </Button>
+          <Button
+            isIconOnly
+            color="danger"
+            variant="light"
+            size="sm"
+            onPress={onDeleteOpen}
+          >
+            <Trash size={16} />
+          </Button>
+
+          <AppModal
+            isOpen={isUpdateOpen}
+            onOpenChange={onUpdateOpenChange}
+            title="Update Category"
+            isDismissable={false}
+            hideCloseButton
+          >
+            <UpdateCategoryForm category={row} onClose={onUpdateClose} />
+          </AppModal>
+          <AppModal
+            isOpen={isDeleteOpen}
+            onOpenChange={onDeleteOpenChange}
+            title="Confirmation"
+            isDismissable={false}
+            hideCloseButton
+          >
+            <div className="flex flex-col">
+              <p>
+                Are you sure you want to delete <b>{row?.name}</b>?
+              </p>
+              <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
+                <Button
+                  variant="light"
+                  color="default"
+                  className="rounded-md"
+                  onPress={onDeleteClose}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="solid"
+                  color="danger"
+                  type="submit"
+                  className="rounded-md "
+                  isDisabled={loading}
+                  isLoading={loading}
+                  onPress={handleDelete}
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>{" "}
+          </AppModal>
+        </div>
+      );
+    },
     width: "80px",
   },
 ];
 
 const CategoryListTable = () => {
-  const { categories, setCategories } = useProductStore();
-  const [loading, setLoading] = useState(false);
+  const { categories, loading } = useProductStore();
   const [searchTerm, setSearchTerm] = useState("");
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const { data } = await axiosInstance.get("/categories");
-        setCategories(data.categories);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
 
   const filteredCategories = useMemo(() => {
     let selectedCategories = [...categories];

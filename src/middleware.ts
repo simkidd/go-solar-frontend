@@ -5,7 +5,9 @@ import { User } from "./interfaces/auth.interface";
 
 // Specify protected and public routes
 const adminRoutes = ["/admin"];
-const publicRoutes = ["/account", "/shop", "/product", "/blog", "/"];
+const publicRoutes = ["/shop", "/product", "/blog", "/"];
+const privateRoutes = ["/profile"];
+const authRoutes = ["/account"];
 
 export default async function middleware(req: NextRequest) {
   // Check if the current route is protected or public
@@ -14,6 +16,8 @@ export default async function middleware(req: NextRequest) {
   const isAdminRoute = adminRoutes.some((route) => path.startsWith(route));
   // const isPublicRoute = publicRoutes.includes(path);
   const isPublicRoute = publicRoutes.some((route) => path.startsWith(route));
+  const isPrivateRoute = privateRoutes.some((route) => path.startsWith(route));
+  const isAuthRoute = authRoutes.some((route) => path.startsWith(route));
 
   const cookie = cookies().get(TOKEN_NAME)?.value;
   const userCookie = cookies().get(USER_DETAILS)?.value;
@@ -30,6 +34,15 @@ export default async function middleware(req: NextRequest) {
   // Redirect to /login if the user is not authenticated
   if (isAdminRoute && !cookie) {
     return NextResponse.redirect(new URL("/account/login", req.nextUrl));
+  }
+
+  if (isPrivateRoute && !cookie) {
+    return NextResponse.redirect(new URL("/account/login", req.nextUrl));
+  }
+
+  // Redirect to homepage if the user is authenticated and trying to access auth routes
+  if (isAuthRoute && cookie) {
+    return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
   return NextResponse.next();
