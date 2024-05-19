@@ -1,51 +1,55 @@
-import Breadcrumb from "@/components/Breadcrumb";
 import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/ProductImages";
 import RelatedProducts from "@/app/(ecommerce)/components/RelatedProducts";
+import Breadcrumb from "@/components/Breadcrumb";
 import { Product } from "@/interfaces/product.interface";
-import { axiosInstance } from "@/lib/axios";
-import { getProduct, getProducts } from "@/lib/data";
-import { formatCurrency } from "@/utils/helpers";
+import { getProducts } from "@/lib/data";
+import { getProductCodeFromSlug } from "@/utils/helpers";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetail from "../../components/ProductDetail";
 
 interface IProduct {
-  params: { id: string };
+  params: { slug: string };
 }
 
 export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
-  const product: Product = await getProduct(params.id);
+  const slug = params.slug;
+  const products: Product[] = await getProducts();
+  const product = products.find((product) => product?.slug === slug);
 
   return {
     title: product?.name,
     description: product?.description,
     openGraph: {
       images: {
-        url: product?.images[0].url,
+        url: product?.images[0].url || "",
       },
     },
   };
 };
 
-// export const generateStaticParams = async () => {
-//   try {
-//     const products: Product[] = await getProducts();
+export const generateStaticParams = async () => {
+  try {
+    const products = await getProducts();
 
-//     return products.map((product) => ({
-//       id: product?._id,
-//     }));
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
-export const revalidate = 60;
+    return products.map((product: any) => ({
+      // id: product?._id,
+      slug: product?.slug
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const ProductPage = async ({ params }: IProduct) => {
-  const product: Product = await getProduct(params.id);
+  const { slug } = params;
+  const products: Product[] = await getProducts();
+  const product = products.find((product) => product.slug === slug);
+
+  const productCode = getProductCodeFromSlug(slug);
 
   if (!product) {
     notFound();
@@ -65,7 +69,7 @@ const ProductPage = async ({ params }: IProduct) => {
               <div className="w-full h-fit lg:p-4 mb-8">
                 <ProductImages images={product?.images} />
               </div>
-              <ProductDetail product={product} />
+              <ProductDetail product={product} productCode={productCode} />
             </div>
           </div>
         </div>

@@ -41,7 +41,7 @@ const BlogsPage = async ({
                 <Suspense fallback={<div>Loading posts...</div>}>
                   <div className="grid md:grid-cols-2 grid-cols-1 gap-6 py-4 lg:pr-4">
                     {posts?.map((post) => (
-                      <BlogCard key={post._id} post={post} path="blog" />
+                      <BlogCard key={post._id} post={post} />
                     ))}
                   </div>
                 </Suspense>

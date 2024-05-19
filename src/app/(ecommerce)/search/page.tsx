@@ -1,26 +1,30 @@
-import React from "react";
-import SearchResultList from "../components/SearchResultList";
-import { getProducts } from "@/lib/data";
-import { Product } from "@/interfaces/product.interface";
+import { Category, Product } from "@/interfaces/product.interface";
+import { getCategories, getProducts } from "@/lib/data";
+import ProductsList from "../components/ProductsList";
 
 const SearchResults = async ({
   searchParams,
 }: {
   searchParams: { q: string };
 }) => {
+  const query = searchParams.q;
   const products: Product[] = await getProducts();
-  // const searchedProducts = await getSearchedProducts(params.query);
+  const categories: Category[] = await getCategories();
 
-  const decodedQuery = decodeURIComponent(searchParams.q);
+  const searchWords = query.toLowerCase().split(" ");
+
+  const filteredResults = products.filter((product) => {
+    const productName = product?.name.toLowerCase();
+    return searchWords.every((word) => productName.includes(word));
+  });
 
   return (
-    <div className="px-10 py-5">
-      <p className="text-heading3-bold my-10">
-        Search results for {decodedQuery}
-      </p>
-      <div>
-        <SearchResultList query={decodedQuery} products={products} />
-      </div>
+    <div className="w-full font-dmsans">
+      <section className="w-full">
+        <div className="container mx-auto px-2 py-8">
+          <ProductsList categories={categories} products={filteredResults} />
+        </div>
+      </section>
     </div>
   );
 };

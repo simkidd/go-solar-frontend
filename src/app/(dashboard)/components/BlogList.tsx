@@ -1,5 +1,5 @@
 "use client";
-import BlogCard from "@/components/BlogCard";
+import BlogCard, { BlogCardAdmin } from "@/components/BlogCard";
 import { axiosInstance } from "@/lib/axios";
 import { useBlogStore } from "@/lib/stores/blog.store";
 import { Pagination } from "@nextui-org/react";
@@ -101,7 +101,7 @@ const BlogList = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-8">
               <Suspense fallback={<div>Loading posts...</div>}>
                 {paginatedPosts?.map((post) => (
-                  <BlogCard key={post._id} post={post} path="admin/blogs" />
+                  <BlogCardAdmin key={post._id} post={post} />
                 ))}
               </Suspense>
             </div>

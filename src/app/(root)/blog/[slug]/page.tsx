@@ -10,46 +10,44 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 interface IPost {
-  params: { id: string };
+  params: { slug: string };
 }
 
 export const generateMetadata = async ({
   params,
 }: IPost): Promise<Metadata> => {
-  const { data } = await axiosInstance.get(`/blogs/${params.id}`);
-  const post: Post = data.blog;
+  const slug = params.slug;
+  const posts: Post[] = await getPosts();
+  const post = posts.find((post) => post?.slug === slug);
+
   return {
-    title: post.title,
-    description: post.content,
+    title: post?.title,
+    description: post?.content,
     openGraph: {
       images: {
-        url: post.image,
+        url: post?.image || "",
       },
     },
   };
 };
 
-// export const generateStaticParams = async (): Promise<{ id: string }[]> => {
-//   try {
-//     // const posts: Post[] = await getPosts();
-//     const { data } = await axiosInstance.get("/blogs");
+export const generateStaticParams = async () => {
+  try {
+    const posts= await getPosts();
 
-//     const posts: Post[] = data.blogs;
-
-//     return posts.map((post) => ({
-//       id: post?._id,
-//     }));
-//   } catch (error) {
-//     console.log(error);
-//     return [];
-//   }
-// };
+    return posts.map((post:any) => ({
+      // id: post?._id,
+      slug: post?.slug,
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const SingleBlogPage = async ({ params }: IPost) => {
-  const postData: Post = await getPost(params.id);
-  const postsData: Post[] = await getPosts();
-
-  const [post, posts] = await Promise.all([postData, postsData]);
+  const { slug } = params;
+  const posts: Post[] = await getPosts();
+  const post = posts.find((post) => post?.slug === slug);
 
   if (!post) {
     notFound();

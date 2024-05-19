@@ -233,15 +233,15 @@ const HeaderShop = () => {
         <div className="w-full h-10">
           <div className="flex items-center container mx-auto px-2 w-full h-full gap-4">
             <div className="md:w-52 h-full relative categories">
-              <button className="w-full h-full flex items-center justify-between px-2 border-b-2 border-b-primary categories__button">
-                <span className="hidden md:block">All Categories</span>
+              <button className="w-full h-full flex items-center justify-between gap-2 px-2 border-b-2 border-b-primary categories__button">
+                <span className="block">Shop By Category</span>
                 <Menu size={18} />
               </button>
               <ul className="categories__menu light bg-white dark:bg-[#2a2b2f] shadow-md w-52 text-sm max-h-[70vh] overflow-y-auto">
                 {categories.map((cat) => (
                   <li key={cat?._id}>
                     <Link
-                      href=""
+                      href={`/${cat?.slug}/products`}
                       className="flex items-center px-4 py-2 gap-1 hover:bg-primary"
                     >
                       <MdDashboard size={8} />
