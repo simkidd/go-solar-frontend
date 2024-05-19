@@ -42,8 +42,6 @@ const SinglePostPage = async ({ params }: IPost) => {
     notFound();
   }
 
-  console.log(post)
-
   return (
     <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
       <div className="flex items-center justify-between mb-4">
