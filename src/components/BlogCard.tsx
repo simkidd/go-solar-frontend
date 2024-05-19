@@ -52,12 +52,12 @@ export const BlogCardAdmin: React.FC<{
         </div>
         <div className="py-4 px-2 w-full">
           <div className="text-primary text-xl mb-2">
-            <Link href={`/admin/blogs/${post?.slug}`}>
+            <Link href={`/admin/blogs/${post?._id}`}>
               <p>{post?.title}</p>
             </Link>
           </div>
           <p className="text-ellipsis line-clamp-2 mb-4">{post?.content}</p>
-          <Link href={`/admin/blogs/${post?.slug}`} className="text-primary">
+          <Link href={`/admin/blogs/${post?._id}`} className="text-primary">
             Read More
           </Link>
         </div>

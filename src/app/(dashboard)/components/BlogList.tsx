@@ -1,43 +1,21 @@
 "use client";
-import BlogCard, { BlogCardAdmin } from "@/components/BlogCard";
-import { axiosInstance } from "@/lib/axios";
+import { BlogCardAdmin } from "@/components/BlogCard";
 import { useBlogStore } from "@/lib/stores/blog.store";
-import { Pagination } from "@nextui-org/react";
+import { Pagination, Spinner } from "@nextui-org/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 
 const BlogList = () => {
-  const { posts, setPosts } = useBlogStore();
-  const [loading, setLoading] = useState(false);
+  const { posts, loading } = useBlogStore();
   const [searchTerm, setSearchTerm] = useState("");
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
 
   const postsPerPage = 3;
 
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const { data } = await axiosInstance.get("/blogs");
-        setPosts(data.blogs);
-        setTotalPages(Math.ceil(data.blogs.length / postsPerPage));
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  const totalPages = Math.ceil(posts.length / postsPerPage);
 
   const filteredPosts = useMemo(() => {
     let selectedPosts = [...posts];
@@ -92,18 +70,20 @@ const BlogList = () => {
         />
       </div>
       <div className="py-4 px-4">
-        {paginatedPosts?.length === 0 ? (
-          <div className="col-span-4">
+        {loading ? (
+          <div className="py-4 flex justify-center">
+            <Spinner />
+          </div>
+        ) : paginatedPosts?.length === 0 ? (
+          <div className="col-span-4 text-center py-4">
             <p>No post found</p>
           </div>
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-8">
-              <Suspense fallback={<div>Loading posts...</div>}>
-                {paginatedPosts?.map((post) => (
-                  <BlogCardAdmin key={post._id} post={post} />
-                ))}
-              </Suspense>
+              {paginatedPosts?.map((post) => (
+                <BlogCardAdmin key={post._id} post={post} />
+              ))}
             </div>
 
             <div className="flex justify-center">

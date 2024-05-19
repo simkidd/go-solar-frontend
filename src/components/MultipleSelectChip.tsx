@@ -1,58 +1,78 @@
-import React, { useState, MouseEvent } from "react";
+"use client";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  MouseEvent as ReactMouseEvent,
+} from "react";
 
-const tags = [
-  "Oliver Hansen",
-  "Van Henry",
-  "April Tucker",
-  "Ralph Hubbard",
-  "Omar Alexander",
-  "Carlos Abbott",
-  "Miriam Wagner",
-  "Bradley Wilkerson",
-  "Virginia Andrews",
-  "Kelly Snyder",
-];
+interface SelectProps {
+  tags: string[];
+  label: string;
+  selectedTags: string[];
+  onTagChange: (tags: string[]) => void;
+}
 
-const MultipleSelectChip: React.FC = () => {
-  const [tagName, setTagName] = useState<string[]>([]);
+const MultipleSelectChip: React.FC<SelectProps> = ({
+  tags,
+  label,
+  selectedTags,
+  onTagChange,
+}) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = (event: MouseEvent<HTMLLIElement>) => {
+  const handleChange = (event: ReactMouseEvent<HTMLLIElement>) => {
     const value = event.currentTarget.getAttribute("data-value");
     if (value) {
-      const newSelection = [...tagName];
+      const newSelection = [...selectedTags];
       const index = newSelection.indexOf(value);
       if (index > -1) {
         newSelection.splice(index, 1);
       } else {
         newSelection.push(value);
       }
-      setTagName(newSelection);
+      onTagChange(newSelection);
     }
   };
 
+  const handleButtonClick = (e: ReactMouseEvent) => {
+    e.preventDefault();
+    setDropdownOpen((prev) => !prev);
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="m-4 w-72">
-      <label htmlFor="multiple-chip" className="block mb-2 text-gray-700">
-        Chip
-      </label>
-      <div className="relative">
+    <div className="w-full">
+      <label htmlFor="multiple-chip">{label}</label>
+      <div className="relative mt-1" ref={dropdownRef}>
         <button
-          className="w-full p-2 text-left border border-gray-300 rounded bg-white"
-          onClick={(e) => {
-            e.preventDefault();
-            const dropdown = e.currentTarget.nextSibling as HTMLElement;
-            dropdown.style.display =
-              dropdown.style.display === "block" ? "none" : "block";
-          }}
+          className="w-full p-2 text-left border rounded"
+          onClick={handleButtonClick}
         >
-          {tagName.length === 0 ? (
-            "Select..."
+          {selectedTags.length === 0 ? (
+            <span className="text-sm">Select...</span>
           ) : (
             <div className="flex flex-wrap gap-2">
-              {tagName.map((value) => (
+              {selectedTags.map((value) => (
                 <div
                   key={value}
-                  className="inline-flex items-center px-2 py-1 bg-gray-200 rounded-full"
+                  className="inline-flex items-center px-2 py-1 text-primary bg-primary bg-opacity-10 rounded-full text-sm"
                 >
                   {value}
                 </div>
@@ -60,20 +80,24 @@ const MultipleSelectChip: React.FC = () => {
             </div>
           )}
         </button>
-        <ul className="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto border border-gray-300 rounded bg-white z-10 hidden">
-          {tags.map((name) => (
-            <li
-              key={name}
-              data-value={name}
-              onClick={handleChange}
-              className={`p-2 cursor-pointer ${
-                tagName.includes(name) ? "bg-gray-200" : "hover:bg-gray-100"
-              }`}
-            >
-              {name}
-            </li>
-          ))}
-        </ul>
+        {dropdownOpen && (
+          <ul className="absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto border rounded z-10 bg-white dark:bg-[#222327]">
+            {tags.map((name) => (
+              <li
+                key={name}
+                data-value={name}
+                onClick={handleChange}
+                className={`px-2 py-1 cursor-pointer ${
+                  selectedTags.includes(name)
+                    ? "text-primary bg-primary bg-opacity-10"
+                    : "hover:text-primary hover:bg-primary hover:bg-opacity-10"
+                }`}
+              >
+                {name}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

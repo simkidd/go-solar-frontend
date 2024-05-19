@@ -9,11 +9,9 @@ const page = () => {
 
         <CreateCategoryButton />
       </div>
-      
+
       <div className="w-full bg-white dark:bg-[#222327] shadow rounded">
-        <div className="p-4">
-          <CategoryListTable />
-        </div>
+        <CategoryListTable />
       </div>
     </div>
   );

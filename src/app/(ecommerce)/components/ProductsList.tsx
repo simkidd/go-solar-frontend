@@ -1,10 +1,10 @@
 "use client";
 import { Category, Product } from "@/interfaces/product.interface";
-import { Slider } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import { Pagination, Slider } from "@nextui-org/react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ProductCard from "./ProductCard";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const ProductsList: React.FC<{
   categories: Category[];
@@ -21,7 +21,14 @@ const ProductsList: React.FC<{
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("newest");
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialPage = parseInt(searchParams.get("page") || "1", 10);
+  const [page, setPage] = useState<number>(initialPage);
 
+  const postsPerPage = 4;
+
+  const totalPages = Math.ceil(filteredProducts.length / postsPerPage);
 
   const brands = Array.from(new Set(products.map((product) => product.brand)));
 
@@ -67,6 +74,7 @@ const ProductsList: React.FC<{
         break;
     }
     setFilteredProducts(filtered);
+    setPage(1);
   }, [products, priceRange, selectedBrands, sortBy]);
 
   const handleBrandChange = (brand: string) => {
@@ -74,6 +82,10 @@ const ProductsList: React.FC<{
       prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
     );
   };
+
+  useEffect(() => {
+    setPage(initialPage);
+  }, [initialPage]);
 
   const handlePriceApply = () => {
     setPriceRange(tempPriceRange);
@@ -87,9 +99,27 @@ const ProductsList: React.FC<{
     );
   };
 
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setPage(newPage);
+      const query = { ...Object.fromEntries(searchParams.entries()), page: String(newPage) };
+      const url = `${pathname}?${new URLSearchParams(query).toString()}`;
+      router.push(url);
+      scrollTo(0, 0);
+    },
+    [pathname, router, searchParams]
+  );
+
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (page - 1) * postsPerPage;
+    const endIndex = startIndex + postsPerPage;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [page, filteredProducts]);
+
   return (
-    <div className="grid grid-cols-9 gap-8">
-      <div className="col-span-2 bg-white dark:bg-[#222327]">
+    <div className="grid lg:grid-cols-9 grid-cols-1 gap-8">
+      <div className="col-span-2 bg-white dark:bg-[#222327] hidden lg:block">
         <div className="mb-1 px-3">
           <h4 className="font-bold text-sm mb-3 uppercase">Categories</h4>
           <ul className="text-sm">
@@ -97,7 +127,10 @@ const ProductsList: React.FC<{
               <li key={category?._id}>
                 <Link
                   href={`/${category?.slug}/products`}
-                  className={`flex items-center px-4 py-2 gap-1 hover:bg-gray-300 ${isActive(`/${category?.slug}/products`) && "text-primary bg-primary bg-opacity-10"}`}
+                  className={`flex items-center px-4 py-2 gap-1 hover:bg-gray-300 ${
+                    isActive(`/${category?.slug}/products`) &&
+                    "text-primary bg-primary bg-opacity-10"
+                  }`}
                 >
                   {category?.name}
                 </Link>
@@ -136,7 +169,7 @@ const ProductsList: React.FC<{
             <h4 className="font-bold text-sm mb-3 uppercase">Brand</h4>
             <ul className="space-y-2 text-sm h-[200px] overflow-y-auto">
               {brands.map((brand) => (
-                <li key={brand} >
+                <li key={brand}>
                   <label className="flex items-center cursor-pointer">
                     <input
                       type="checkbox"
@@ -153,7 +186,7 @@ const ProductsList: React.FC<{
         )}
       </div>
 
-      <div className="col-span-7">
+      <div className="lg:col-span-7 col-span-1">
         <div className="flex flex-col border mb-4 shadow text-sm">
           <div className="px-4 py-2 flex items-center justify-between border-b">
             <p className="font-bold text-lg">
@@ -183,14 +216,25 @@ const ProductsList: React.FC<{
             <p>{filteredProducts?.length} products found</p>
           </div>
         </div>
-        {filteredProducts.length < 1 ? (
+        {paginatedProducts.length < 1 ? (
           <div>No product found</div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredProducts?.map((product) => (
-              <ProductCard key={product?._id} item={product} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {paginatedProducts?.map((product) => (
+                <ProductCard key={product?._id} item={product} />
+              ))}
+            </div>
+
+            <div className="flex justify-center mt-8">
+              <Pagination
+                showControls
+                total={totalPages}
+                page={page}
+                onChange={handlePageChange}
+              />
+            </div>
+          </>
         )}
       </div>
     </div>

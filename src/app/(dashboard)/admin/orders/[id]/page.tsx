@@ -1,7 +1,35 @@
 import OrderDetails from "@/app/(dashboard)/components/OrderDetails";
+import { Order } from "@/interfaces/order.interface";
+import { getOrder, getOrders } from "@/lib/data";
 import { ArrowLeft } from "lucide-react";
+import { Metadata } from "next";
 import Link from "next/link";
-import React from "react";
+
+interface IOrder {
+  params: { id: string };
+}
+
+export const generateMetadata = async ({
+  params,
+}: IOrder): Promise<Metadata> => {
+  const order: Order = await getOrder(params.id);
+
+  return {
+    title: `Order ${order?.trackingId?.tracking_id}`,
+  };
+};
+
+// export const generateStaticParams = async () => {
+//   try {
+//     const orders = await getOrders();
+
+//     return orders.map((order: any) => ({
+//       id: order?._id,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 const SingleOrderPage = () => {
   return (
