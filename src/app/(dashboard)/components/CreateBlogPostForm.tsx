@@ -1,6 +1,8 @@
 "use client";
+import MultipleSelectChip from "@/components/MultipleSelectChip";
 import { CreatePostInput } from "@/interfaces/post.interface";
 import { useBlogStore } from "@/lib/stores/blog.store";
+import { Button } from "@nextui-org/react";
 import { Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -8,7 +10,40 @@ import React, { useState } from "react";
 import { GrCloudUpload } from "react-icons/gr";
 import { HiXMark } from "react-icons/hi2";
 
-const CreateBlogPostForm: React.FC = () => {
+const tagsList = [
+  "HBL OPTIMUZ",
+  "200AH/12V",
+  "Inverter Battery",
+  "Power Storage",
+  "Energy Storage",
+  "Battery Technology",
+  "Lead-Acid Battery",
+  "Maintenance-Free Battery",
+  "Renewable Energy",
+  "Energy Storage Solutions",
+  "Advanced Battery Technology",
+  "Lead-Acid Battery Technology",
+  "Energy Efficiency",
+  "Smart Energy Solutions",
+  "Power Electronics",
+  "Electrical Systems",
+  "Renewable Energy Technologies",
+  "Sustainable Living",
+  "Green Technology",
+  "Environmental Sustainability",
+  "Clean Energy Solutions",
+  "Carbon Footprint Reduction",
+  "Climate Change Mitigation",
+  "Product Reviews",
+  "Technology Innovations",
+  "Industry Trends",
+  "Business Solutions",
+  "Energy Management",
+  "Cost Savings",
+  "Economic Impact",
+];
+
+const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { loading, createPost } = useBlogStore();
   const [input, setInput] = useState<CreatePostInput>({
     title: "",
@@ -18,38 +53,39 @@ const CreateBlogPostForm: React.FC = () => {
     image: "",
   });
   const [imagePreview, setImagePreview] = useState<string | File>("");
-  const [newTag, setNewTag] = useState("");
+
+  // const [newTag, setNewTag] = useState("");
   const router = useRouter();
 
-  const handleAddTag = () => {
-    if (newTag.trim() !== "") {
-      const newTags = newTag
-        .split(",")
-        .map((t) => t.trim())
-        .filter((t) => t !== "");
-      const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
+  // const handleAddTag = () => {
+  //   if (newTag.trim() !== "") {
+  //     const newTags = newTag
+  //       .split(",")
+  //       .map((t) => t.trim())
+  //       .filter((t) => t !== "");
+  //     const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
 
-      setInput({
-        ...input,
-        tags: updatedTags,
-      });
-      setNewTag("");
-    }
-  };
+  //     setInput({
+  //       ...input,
+  //       tags: updatedTags,
+  //     });
+  //     setNewTag("");
+  //   }
+  // };
 
-  const handleDeleteTag = (tagToDelete: string) => {
-    setInput((tagInput) => ({
-      ...tagInput,
-      tags: tagInput.tags.filter((tag) => tag !== tagToDelete),
-    }));
-  };
+  // const handleDeleteTag = (tagToDelete: string) => {
+  //   setInput((tagInput) => ({
+  //     ...tagInput,
+  //     tags: tagInput.tags.filter((tag) => tag !== tagToDelete),
+  //   }));
+  // };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddTag();
-    }
-  };
+  // const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter") {
+  //     e.preventDefault();
+  //     handleAddTag();
+  //   }
+  // };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
@@ -103,6 +139,13 @@ const CreateBlogPostForm: React.FC = () => {
     setImagePreview("");
   };
 
+  const handleTagChange = (tags: string[]) => {
+    setInput({
+      ...input,
+      tags,
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -117,7 +160,12 @@ const CreateBlogPostForm: React.FC = () => {
 
     await createPost(formData, config);
 
-    router.push("/admin/blogs");
+    if (!input.title || !input.content || !input.tags || !input.author) {
+      return;
+    } else {
+      onClose();
+    }
+
   };
 
   return (
@@ -142,6 +190,14 @@ const CreateBlogPostForm: React.FC = () => {
           ></textarea>
         </div>
         <div className="mb-3">
+          <MultipleSelectChip
+            tags={tagsList}
+            label="Tags"
+            selectedTags={input.tags}
+            onTagChange={handleTagChange}
+          />
+        </div>
+        {/* <div className="mb-3">
           <label htmlFor="title">Tags</label>
           <div className="relative w-full mt-1">
             <input
@@ -177,7 +233,7 @@ const CreateBlogPostForm: React.FC = () => {
               </span>
             ))}
           </div>
-        </div>
+        </div> */}
         <div className="mb-3">
           <label htmlFor="title">Author</label>
           <input
@@ -239,9 +295,26 @@ const CreateBlogPostForm: React.FC = () => {
           </div>
         </div>
 
-        <button className="bg-primary text-white px-6 py-2 mt-8">
-          {loading ? "Loading..." : "Create Post"}
-        </button>
+        <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
+          <Button
+            variant="light"
+            color="default"
+            className="rounded-md"
+            onPress={onClose}
+          >
+            Close
+          </Button>
+          <Button
+            variant="solid"
+            color="primary"
+            type="submit"
+            className="rounded-md "
+            isDisabled={loading}
+            isLoading={loading}
+          >
+            Add
+          </Button>
+        </div>
       </div>
     </form>
   );

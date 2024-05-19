@@ -1,10 +1,27 @@
 import DeletePost from "@/app/(dashboard)/components/DeletePost";
+import UpdatePostButton from "@/app/(dashboard)/components/UpdatePostButton";
 import { Post } from "@/interfaces/post.interface";
 import { getPost, getPosts } from "@/lib/data";
 import { ArrowLeft, CalendarCheck, Pen, User } from "lucide-react";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+interface IPost {
+  params: { id: string };
+}
+
+export const generateMetadata = async ({
+  params,
+}: IPost): Promise<Metadata> => {
+  const post: Post = await getPost(params.id);
+
+  return {
+    title: post?.title,
+    description: post?.content,
+  };
+};
 
 export const generateStaticParams = async () => {
   try {
@@ -18,12 +35,14 @@ export const generateStaticParams = async () => {
   }
 };
 
-const SinglePostPage = async ({ params }: { params: { id: string } }) => {
+const SinglePostPage = async ({ params }: IPost) => {
   const post: Post = await getPost(params.id);
 
   if (!post) {
     notFound();
   }
+
+  console.log(post)
 
   return (
     <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
@@ -37,12 +56,7 @@ const SinglePostPage = async ({ params }: { params: { id: string } }) => {
         <div className="flex items-center gap-2">
           <DeletePost post={post} />
 
-          <Link href={`/admin/blogs/${post._id}/edit`}>
-            <button className="bg-primary text-white px-4 py-2 text-sm flex items-center">
-              <Pen className="mr-2" size={16} />
-              Edit
-            </button>
-          </Link>
+          <UpdatePostButton post={post} />
         </div>
       </div>
       <div className="w-full bg-white dark:bg-[#222327] py-16 px-6 shadow rounded">

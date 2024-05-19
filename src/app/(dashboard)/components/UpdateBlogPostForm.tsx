@@ -1,6 +1,8 @@
 "use client";
+import MultipleSelectChip from "@/components/MultipleSelectChip";
 import { Post, UpdatePostInput } from "@/interfaces/post.interface";
 import { useBlogStore } from "@/lib/stores/blog.store";
+import { Button } from "@nextui-org/react";
 import { Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -8,7 +10,43 @@ import React, { useState } from "react";
 import { GrCloudUpload } from "react-icons/gr";
 import { HiXMark } from "react-icons/hi2";
 
-const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
+const tagsList = [
+  "HBL OPTIMUZ",
+  "200AH/12V",
+  "Inverter Battery",
+  "Power Storage",
+  "Energy Storage",
+  "Battery Technology",
+  "Lead-Acid Battery",
+  "Maintenance-Free Battery",
+  "Renewable Energy",
+  "Energy Storage Solutions",
+  "Advanced Battery Technology",
+  "Lead-Acid Battery Technology",
+  "Energy Efficiency",
+  "Smart Energy Solutions",
+  "Power Electronics",
+  "Electrical Systems",
+  "Renewable Energy Technologies",
+  "Sustainable Living",
+  "Green Technology",
+  "Environmental Sustainability",
+  "Clean Energy Solutions",
+  "Carbon Footprint Reduction",
+  "Climate Change Mitigation",
+  "Product Reviews",
+  "Technology Innovations",
+  "Industry Trends",
+  "Business Solutions",
+  "Energy Management",
+  "Cost Savings",
+  "Economic Impact",
+];
+
+const UpdateBlogPostForm: React.FC<{
+  post: Post;
+  onClose: () => void;
+}> = ({ post, onClose }) => {
   const { loading, updatePost } = useBlogStore();
   const [input, setInput] = useState<UpdatePostInput>({
     id: post?._id,
@@ -18,39 +56,48 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
     tags: post?.tags,
     image: post?.image,
   });
-  const [imagePreview, setImagePreview] = useState<string | File>("");
-  const [newTag, setNewTag] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | File>(
+    input?.image || ""
+  );
+  // const [newTag, setNewTag] = useState("");
   const router = useRouter();
 
-  const handleAddTag = () => {
-    if (newTag.trim() !== "") {
-      const newTags = newTag
-        .split(",")
-        .map((t) => t.trim())
-        .filter((t) => t !== "");
-      const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
-
-      setInput({
-        ...input,
-        tags: updatedTags,
-      });
-      setNewTag("");
-    }
+  const handleTagChange = (tags: string[]) => {
+    setInput({
+      ...input,
+      tags: tags,
+    });
   };
 
-  const handleDeleteTag = (tagToDelete: string) => {
-    setInput((tagInput) => ({
-      ...tagInput,
-      tags: tagInput.tags.filter((tag) => tag !== tagToDelete),
-    }));
-  };
+  // const handleAddTag = () => {
+  //   if (newTag.trim() !== "") {
+  //     const newTags = newTag
+  //       .split(",")
+  //       .map((t) => t.trim())
+  //       .filter((t) => t !== "");
+  //     const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddTag();
-    }
-  };
+  //     setInput({
+  //       ...input,
+  //       tags: updatedTags,
+  //     });
+  //     setNewTag("");
+  //   }
+  // };
+
+  // const handleDeleteTag = (tagToDelete: string) => {
+  //   setInput((tagInput) => ({
+  //     ...tagInput,
+  //     tags: tagInput.tags.filter((tag) => tag !== tagToDelete),
+  //   }));
+  // };
+
+  // const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter") {
+  //     e.preventDefault();
+  //     handleAddTag();
+  //   }
+  // };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
@@ -113,13 +160,13 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
     formData.append("content", input.content);
     formData.append("author", input.author);
     formData.append("tags", JSON.stringify(input.tags));
-    formData.append("blogImage", input.image);
+    formData.append("blogImage", input.image as Blob);
 
-    // const config = { headers: { "Content-Type": "multipart/form-data" } };
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
 
-    await updatePost(formData);
+    await updatePost(formData, config);
 
-    router.back();
+    onClose();
   };
 
   return (
@@ -146,6 +193,14 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
           ></textarea>
         </div>
         <div className="mb-3">
+          <MultipleSelectChip
+            tags={tagsList}
+            label="Select tags"
+            selectedTags={input.tags}
+            onTagChange={handleTagChange}
+          />
+        </div>
+        {/* <div className="mb-3">
           <label htmlFor="title">Tags</label>
           <div className="relative w-full mt-1">
             <input
@@ -181,7 +236,7 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
               </span>
             ))}
           </div>
-        </div>
+        </div> */}
         <div className="mb-3">
           <label htmlFor="title">Author</label>
           <input
@@ -218,10 +273,14 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
             </div>
 
             {/* selected image */}
-            {input?.image && (
+            {imagePreview && (
               <div className="size-20 overflow-hidden rounded relative group">
                 <Image
-                  src={(input?.image as string) || (imagePreview as string)}
+                  src={
+                    typeof imagePreview === "string"
+                      ? imagePreview
+                      : URL.createObjectURL(imagePreview)
+                  }
                   alt=""
                   className="w-full h-full object-cover"
                   width={80}
@@ -244,17 +303,25 @@ const UpdateBlogPostForm: React.FC<{ post: Post }> = ({ post }) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 mt-8">
-          <button type="submit" className="bg-primary text-white px-6 py-2 ">
-            {loading ? "Loading..." : "Save"}
-          </button>
-          <button
-            type="button"
-            className="px-6 py-2"
-            onClick={() => router.back()}
+        <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
+          <Button
+            variant="light"
+            color="default"
+            className="rounded-md"
+            onPress={onClose}
           >
-            Cancel
-          </button>
+            Close
+          </Button>
+          <Button
+            variant="solid"
+            color="primary"
+            type="submit"
+            className="rounded-md "
+            isDisabled={loading}
+            isLoading={loading}
+          >
+            Save Changes
+          </Button>
         </div>
       </div>
     </form>

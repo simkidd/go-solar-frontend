@@ -8,8 +8,10 @@ import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { MdClose } from "react-icons/md";
 import MenuItem from "./MenuItem";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { useAuthStore } from "@/lib/stores/auth.store";
 
 const Navbar = () => {
+  const { user, logout } = useAuthStore();
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
@@ -55,7 +57,23 @@ const Navbar = () => {
           </div>
 
           <div className=" ml-auto flex items-center gap-8">
-            <Link href="/profile" className="text-sm hover:text-primary">My Account</Link>
+            {user?.isAdmin ||
+              (user?.isSuperAdmin && (
+                <Link href="/admin" className="text-sm hover:text-primary">
+                  Dashboard
+                </Link>
+              ))}
+            <Link href="/profile" className="text-sm hover:text-primary">
+              My Account
+            </Link>
+            {user && (
+              <button
+                className="text-sm hover:text-red-500"
+                onClick={() => logout()}
+              >
+                Logout
+              </button>
+            )}
 
             <ThemeSwitcher />
             <ul className="flex items-center gap-4 ">

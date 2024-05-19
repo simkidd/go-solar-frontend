@@ -5,12 +5,13 @@ import { axiosInstance } from "../axios";
 
 interface IBlog {
   loading: boolean;
+  setLoading: (value: boolean) => void;
   post: Post | undefined;
   posts: Post[];
   setPost: (post: Post) => void;
   setPosts: (posts: Post[]) => void;
   createPost: (formData: FormData, config: any) => Promise<void>;
-  updatePost: (formData: FormData) => Promise<void>;
+  updatePost: (formData: FormData, config: any) => Promise<void>;
   deletePost: (id: string) => Promise<void>;
 }
 
@@ -18,6 +19,7 @@ export const useBlogStore = create<IBlog>((set) => ({
   loading: false,
   post: undefined,
   posts: [],
+  setLoading: (loading: boolean) => set({ loading }),
   setPost: (post: Post) => set({ post }),
   setPosts: (posts: Post[]) => set({ posts }),
   createPost: async (formData, config) => {
@@ -37,18 +39,19 @@ export const useBlogStore = create<IBlog>((set) => ({
       return data.blog;
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response?.data.message);
       console.log(error);
     } finally {
       set({ loading: false });
     }
   },
-  updatePost: async (formData) => {
+  updatePost: async (formData, config) => {
     try {
       set({ loading: true });
       const { data } = await axiosInstance.patch(
         "/admin/update-blog",
-        formData
+        formData,
+        config
       );
 
       set((state) => ({
@@ -60,7 +63,7 @@ export const useBlogStore = create<IBlog>((set) => ({
       return data.blog;
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response?.data.message);
       console.log(error);
     } finally {
       set({ loading: false });
@@ -81,7 +84,7 @@ export const useBlogStore = create<IBlog>((set) => ({
       return data;
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response?.data.message);
       console.log(error);
     } finally {
       set({ loading: false });
