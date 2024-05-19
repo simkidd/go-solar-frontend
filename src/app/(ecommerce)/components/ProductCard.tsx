@@ -10,7 +10,7 @@ const ProductCard: React.FC<{
 }> = ({ item }) => {
   return (
     <div className="w-full border hover:border-primary">
-      <Link href={`/product/${item?._id}`}>
+      <Link href={`/product/${item?.slug}`}>
         <div className="w-full lg:h-56 h-44 overflow-hidden relative group">
           <div className="absolute top-0 left-0 w-full h-full">
             <Image
@@ -20,6 +20,7 @@ const ProductCard: React.FC<{
               alt="product image"
               width={300}
               height={300}
+              loading="lazy"
               className="w-full h-full object-cover"
             />
           </div>
@@ -41,13 +42,13 @@ const ProductCard: React.FC<{
       </Link>
       <div className="w-full px-2">
         <Link
-          href={`/product/${item?._id}`}
+          href={`/product/${item?.slug}`}
           className="mb-2 text-sm text-ellipsis line-clamp-2"
           title={item?.name}
         >
           {item?.name}
         </Link>
-        <p className=" text-primary font-medium">
+        <p className="font-semibold">
           {formatCurrency(item?.price, "NGN")}
         </p>
       </div>

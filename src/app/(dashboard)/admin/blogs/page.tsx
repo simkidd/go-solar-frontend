@@ -1,13 +1,8 @@
-import BlogCard from "@/components/BlogCard";
-import { Post } from "@/interfaces/post.interface";
-import { getPosts } from "@/lib/data";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import React, { Suspense } from "react";
 import BlogList from "../../components/BlogList";
 
 const BloglistPage = async () => {
-  const posts: Post[] = await getPosts();
 
   return (
     <div className="w-full py-4">

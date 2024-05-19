@@ -4,11 +4,13 @@ import { Slider } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const ProductsList: React.FC<{
   categories: Category[];
   products: Product[];
-}> = ({ products, categories }) => {
+  category?: Category;
+}> = ({ products, categories, category }) => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [priceRange, setPriceRange] = useState<number | number[]>([
     250, 5000000,
@@ -18,6 +20,8 @@ const ProductsList: React.FC<{
   ]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("newest");
+  const pathname = usePathname();
+
 
   const brands = Array.from(new Set(products.map((product) => product.brand)));
 
@@ -75,26 +79,34 @@ const ProductsList: React.FC<{
     setPriceRange(tempPriceRange);
   };
 
+  const isActive = (href: string) => {
+    return (
+      href === pathname ||
+      href === pathname.replace(/\/$/, "") ||
+      pathname.startsWith(href + "/")
+    );
+  };
+
   return (
     <div className="grid grid-cols-9 gap-8">
       <div className="col-span-2 bg-white dark:bg-[#222327]">
-        <div className="mb-1">
+        <div className="mb-1 px-3">
           <h4 className="font-bold text-sm mb-3 uppercase">Categories</h4>
           <ul className="text-sm">
             {categories.map((category) => (
-              <li key={category._id}>
+              <li key={category?._id}>
                 <Link
-                  href={`/${category.slug}/products`}
-                  className="flex items-center px-4 py-2 gap-1 hover:bg-gray-300"
+                  href={`/${category?.slug}/products`}
+                  className={`flex items-center px-4 py-2 gap-1 hover:bg-gray-300 ${isActive(`/${category?.slug}/products`) && "text-primary bg-primary bg-opacity-10"}`}
                 >
-                  {category.name}
+                  {category?.name}
                 </Link>
               </li>
             ))}
           </ul>
         </div>
         <hr className="my-2" />
-        <div className="mb-1">
+        <div className="mb-1 px-3">
           <div className="flex items-center justify-between mb-3">
             <h4 className="font-bold text-sm uppercase">Price (₦)</h4>
             <button
@@ -118,43 +130,57 @@ const ProductsList: React.FC<{
           />
         </div>
         <hr className="my-2" />
-        <div>
-          <h4 className="font-bold text-sm mb-3 uppercase">Brand</h4>
-          <ul className="space-y-2 text-sm h-[200px] overflow-y-auto">
-            {brands.map((brand) => (
-              <li key={brand}>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="accent-primary h-3 w-3"
-                    checked={selectedBrands.includes(brand)}
-                    onChange={() => handleBrandChange(brand)}
-                  />
-                  <span className="ml-2">{brand}</span>
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
+
+        {brands.length > 0 && (
+          <div className=" px-3">
+            <h4 className="font-bold text-sm mb-3 uppercase">Brand</h4>
+            <ul className="space-y-2 text-sm h-[200px] overflow-y-auto">
+              {brands.map((brand) => (
+                <li key={brand} >
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="accent-primary h-3 w-3"
+                      checked={selectedBrands.includes(brand)}
+                      onChange={() => handleBrandChange(brand)}
+                    />
+                    <span className="ml-2">{brand}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="col-span-7">
-        <div className="flex px-4 py-2 items-center justify-between border mb-4 shadow text-sm">
-          <p>{filteredProducts?.length} products found</p>
+        <div className="flex flex-col border mb-4 shadow text-sm">
+          <div className="px-4 py-2 flex items-center justify-between border-b">
+            <p className="font-bold text-lg">
+              {!category ? (
+                <span>Shop Online</span>
+              ) : (
+                <span>{category?.name}</span>
+              )}
+            </p>
 
-          <div>
-            <span>Sort By</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="ml-2 border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:border-blue-500"
-            >
-              <option value="name-asc">A-Z</option>
-              <option value="name-desc">Z-A</option>
-              <option value="newest">Newest</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-            </select>
+            <div>
+              <span>Sort By</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="ml-2 border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:border-blue-500"
+              >
+                <option value="name-asc">A-Z</option>
+                <option value="name-desc">Z-A</option>
+                <option value="newest">Newest</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
+            </div>
+          </div>
+          <div className="px-4 py-2 flex items-center justify-between">
+            <p>{filteredProducts?.length} products found</p>
           </div>
         </div>
         {filteredProducts.length < 1 ? (

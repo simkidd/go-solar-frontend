@@ -17,6 +17,7 @@ export const slugify = (text: string) => {
 export const formatCurrency = (value: number, currency: string) => {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
+    maximumFractionDigits: 0,
     currency,
   }).format(value);
 };
@@ -34,4 +35,9 @@ export const formatDateTime = (isoString: number | Date | string) => {
     minute: "2-digit",
     second: "2-digit",
   }).format(date);
+};
+
+export const getProductCodeFromSlug = (slug: string) => {
+  const match = slug.match(/-(\d+)$/);
+  return match ? match[1] : null;
 };
