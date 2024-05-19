@@ -1,22 +1,22 @@
 import DeletePost from "@/app/(dashboard)/components/DeletePost";
 import { Post } from "@/interfaces/post.interface";
-import { getPost } from "@/lib/data";
+import { getPost, getPosts } from "@/lib/data";
 import { ArrowLeft, CalendarCheck, Pen, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-// export const generateStaticParams = async () => {
-//   try {
-//     const posts: Post[] = await getPosts();
+export const generateStaticParams = async () => {
+  try {
+    const posts = await getPosts();
 
-//     return posts.map((post) => ({
-//       id: post._id,
-//     }));
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+    return posts.map((post: any) => ({
+      id: post?._id,
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const SinglePostPage = async ({ params }: { params: { id: string } }) => {
   const post: Post = await getPost(params.id);
