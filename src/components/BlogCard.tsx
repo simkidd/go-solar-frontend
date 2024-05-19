@@ -13,7 +13,7 @@ export const BlogCardList: React.FC<{ item: Post }> = ({ item }) => {
       </div>
       <div className="flex flex-col w-[calc(100%-5rem)] px-2">
         <Link
-          href={`/blog/${item?._id}`}
+          href={`/blog/${item?.slug}`}
           className="mb-2 hover:underline"
           title={item?.title}
         >
@@ -28,14 +28,13 @@ export const BlogCardList: React.FC<{ item: Post }> = ({ item }) => {
   );
 };
 
-const BlogCard: React.FC<{
+export const BlogCardAdmin: React.FC<{
   post: Post;
-  path: string;
-}> = ({ post, path }) => {
+}> = ({ post }) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="w-full">
-        <Link href={`/${path}/${post?._id}`}>
+        <Link href={`/admin/blogs/${post?._id}`}>
           <div className="w-full h-[142px] bg-gray-500 overflow-hidden rounded-t-lg">
             <Image
               src={post?.image}
@@ -47,17 +46,58 @@ const BlogCard: React.FC<{
             />
           </div>
         </Link>
+        <div className="text-sm flex items-center px-2 py-2">
+          <CalendarCheck size={16} />
+          <span className="ml-1">{formatDate(post?.createdAt)}</span>
+        </div>
         <div className="py-4 px-2 w-full">
           <div className="text-primary text-xl mb-2">
-            <Link href={`/${path}/${post?._id}`}>
+            <Link href={`/admin/blogs/${post?.slug}`}>
               <p>{post?.title}</p>
             </Link>
           </div>
           <p className="text-ellipsis line-clamp-2 mb-4">{post?.content}</p>
-          <div className="text-sm flex items-center">
-            <CalendarCheck size={16} />
-            <span className="ml-1">{formatDate(post?.createdAt)}</span>
+          <Link href={`/admin/blogs/${post?.slug}`} className="text-primary">
+            Read More
+          </Link>
+        </div>
+      </div>
+    </Suspense>
+  );
+};
+
+const BlogCard: React.FC<{
+  post: Post;
+}> = ({ post }) => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="w-full">
+        <Link href={`/blog/${post?.slug}`}>
+          <div className="w-full h-[142px] bg-gray-500 overflow-hidden rounded-t-lg">
+            <Image
+              src={post?.image}
+              alt="post image"
+              className="h-full w-full object-cover hover:scale-105"
+              style={{ transition: "transform 0.3s ease-in-out" }}
+              width={300}
+              height={300}
+            />
           </div>
+        </Link>
+        <div className="text-sm flex items-center px-2 py-2">
+          <CalendarCheck size={16} />
+          <span className="ml-1">{formatDate(post?.createdAt)}</span>
+        </div>
+        <div className="py-4 px-2 w-full">
+          <div className="text-primary text-xl mb-2">
+            <Link href={`/blog/${post?.slug}`}>
+              <p>{post?.title}</p>
+            </Link>
+          </div>
+          <p className="text-ellipsis line-clamp-2 mb-4">{post?.content}</p>
+          <Link href={`/blog/${post?.slug}`} className="text-primary">
+            Read More
+          </Link>
         </div>
       </div>
     </Suspense>

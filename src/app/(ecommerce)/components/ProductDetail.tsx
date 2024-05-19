@@ -8,7 +8,8 @@ import { BsCartPlus } from "react-icons/bs";
 
 const ProductDetail: React.FC<{
   product: Product;
-}> = ({ product }) => {
+  productCode?: string | null;
+}> = ({ product, productCode }) => {
   const { addItem } = useCartStore();
   const [quantity, setQuantity] = useState<number>(1);
   const [deliveryOption, setDeliveryOption] = useState<"within" | "outside">(
@@ -22,7 +23,10 @@ const ProductDetail: React.FC<{
 
   return (
     <div className="w-full flex flex-col lg:p-4">
-      <h2 className="font-bold text-3xl mb-8">{product?.name}</h2>
+      <h2 className="font-bold text-3xl mb-4">{product?.name}</h2>
+      <p className="text-sm mb-8">
+        Product code: <span className="font-semibold">{productCode}</span>
+      </p>
       <h3 className="font-bold text-2xl mb-6">
         {formatCurrency(product?.price, "NGN")}
       </h3>

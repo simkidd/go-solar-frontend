@@ -20,7 +20,7 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
         );
 
         // Limit the number of related products
-        const limitedRelatedProducts = filteredProducts.slice(0, 4);
+        const limitedRelatedProducts = filteredProducts.slice(0, 8);
 
         setRelatedProducts(limitedRelatedProducts);
       } catch (error) {
