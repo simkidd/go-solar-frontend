@@ -3,25 +3,41 @@ import UpdateProductButton from "@/app/(dashboard)/components/UpdateProductButto
 import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/ProductImages";
 import { Product } from "@/interfaces/product.interface";
-import { getProduct } from "@/lib/data";
+import { getProduct, getProducts } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
 import { ArrowLeft, Pen } from "lucide-react";
+import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-// export const generateStaticParams = async () => {
-//   try {
-//     const products: Product[] = await getProducts();
+interface IProduct {
+  params: { id: string };
+}
 
-//     return products.map((product) => ({
-//       id: product._id,
-//     }));
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+export const generateMetadata = async ({
+  params,
+}: IProduct): Promise<Metadata> => {
+  const product: Product = await getProduct(params.id);
 
-const SingleProductPage = async ({ params }: { params: { id: string } }) => {
+  return {
+    title: product?.name,
+    description: product?.description,
+  };
+};
+
+export const generateStaticParams = async () => {
+  try {
+    const products = await getProducts();
+
+    return products.map((product: any) => ({
+      id: product._id,
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const SingleProductPage = async ({ params }: IProduct) => {
   const product: Product = await getProduct(params.id);
 
   if (!product) {

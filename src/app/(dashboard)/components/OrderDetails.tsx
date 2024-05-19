@@ -21,7 +21,7 @@ const OrderDetails = () => {
       if (id) {
         try {
           setLoading(true);
-          const { data } = await axiosInstance.get(`users/orders/${id}`);
+          const { data } = await axiosInstance.get(`/users/orders/${id}`);
           setOrder(data.order);
         } catch (error) {
           const errorMsg = error as any;

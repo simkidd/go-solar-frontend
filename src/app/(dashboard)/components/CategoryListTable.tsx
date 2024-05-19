@@ -200,39 +200,37 @@ const CategoryListTable = () => {
 
   return (
     <div>
-      <div>
-        <div className="flex items-center py-4 px-4">
-          <input
-            type="text"
-            placeholder="Search"
-            className="bg-transparent border focus:outline-none px-2 py-1 w-full max-w-md text-sm rounded-md shadow-sm"
-            value={searchTerm}
-            onChange={(e) => {
-              handleSearch(e.target.value);
-            }}
-            defaultValue={searchParams.get("q")?.toString()}
-          />
-        </div>
-        <DataTable
-          columns={columns}
-          data={filteredCategories}
-          progressPending={loading}
-          progressComponent={
-            <div className="py-8">
-              <Spinner />
-            </div>
-          }
-          pagination
-          selectableRows
-          // actions={<button className="">Export PDF</button>}
-          // fixedHeader
-          selectableRowsHighlight
-          highlightOnHover
-          // subHeader
-          customStyles={customStyles}
-          theme="light"
+      <div className="flex items-center py-4 px-4">
+        <input
+          type="text"
+          placeholder="Search"
+          className="bg-transparent border focus:outline-none px-2 py-1 w-full max-w-md text-sm rounded-md shadow-sm"
+          value={searchTerm}
+          onChange={(e) => {
+            handleSearch(e.target.value);
+          }}
+          defaultValue={searchParams.get("q")?.toString()}
         />
       </div>
+      <DataTable
+        columns={columns}
+        data={filteredCategories}
+        progressPending={loading}
+        progressComponent={
+          <div className="py-8">
+            <Spinner />
+          </div>
+        }
+        pagination
+        selectableRows
+        // actions={<button className="">Export PDF</button>}
+        // fixedHeader
+        selectableRowsHighlight
+        highlightOnHover
+        // subHeader
+        customStyles={customStyles}
+        theme="light"
+      />
     </div>
   );
 };

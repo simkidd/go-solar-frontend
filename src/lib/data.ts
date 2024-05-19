@@ -50,4 +50,22 @@ export const getCategories = async () => {
   }
 };
 
+export const getOrders = async () => {
+  try {
+    const { data } = await axiosInstance.get("/admin/all-orders");
 
+    return data.orders;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getOrder = async (id: string) => {
+  try {
+    const { data } = await axiosInstance.get(`/users/orders/${id}`);
+
+    return data.order;
+  } catch (error) {
+    console.log(error);
+  }
+};
