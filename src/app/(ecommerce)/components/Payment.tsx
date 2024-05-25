@@ -1,20 +1,52 @@
 "use client";
 import { CallbackResponse } from "@/interfaces/payment.interface";
+import {
+  CreateOrderInput,
+  DeliveryDetails,
+} from "@/interfaces/product.interface";
+import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
-import { CircleX } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Spinner } from "@nextui-org/react";
+import { CheckCircle, CircleX } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { usePaystackPayment } from "react-paystack";
 
 const Payment = () => {
-  const { totalPricePaid, setPaymentData } = useCartStore();
+  const {
+    cartItems,
+    deliveryDetails,
+    paymentMethod,
+    setPaymentData,
+    setDeliveryDetails,
+    setTotalPricePaid,
+    totalPricePaid,
+    paymentData,
+    clearCart,
+  } = useCartStore();
   const { user } = useAuthStore();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [errorMsg, setErrorMsg] = useState("");
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "";
+
+  const input: CreateOrderInput = {
+    products: cartItems.map(({ deliveryFee, product, qty }) => ({
+      product: product?._id,
+      qty,
+      deliveryFee,
+    })),
+    deliveryDetails,
+    totalPricePaid,
+    paymentMethod,
+    paymentReference: "",
+    paymentData,
+  };
 
   const config = {
     reference: user?._id + "-" + Date.now(),
@@ -26,11 +58,36 @@ const Payment = () => {
   };
 
   const onSuccess = (response: CallbackResponse) => {
-    if (response.status === "success") {
+    if (response.status === "success" && response?.reference) {
       setPaymentData(JSON.stringify(response));
-      router.push(`/confirm-order${response.redirecturl}`);
-    } else {
-      return;
+      input.paymentReference = response?.reference;
+
+      const createOrder = async () => {
+        try {
+          setLoading(true);
+          const { data } = await axiosInstance.post(
+            "/users/orders/create-order",
+            input
+          );
+
+          if (data) {
+            setOrderSuccess(true);
+            setSuccess(data?.message);
+
+            clearCart();
+            setDeliveryDetails({} as DeliveryDetails);
+            setTotalPricePaid(0);
+            setPaymentData("");
+          }
+        } catch (error: any) {
+          console.log(error?.response?.data.message);
+          setError(error?.response?.data.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      createOrder();
     }
   };
 
@@ -39,6 +96,53 @@ const Payment = () => {
   };
 
   const initializePayment = usePaystackPayment(config);
+
+  if (loading) {
+    return (
+      <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
+        <div className="relative light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-lg p-8 max-w-[500px]">
+          <div className="flex flex-col items-center gap-4">
+            <Spinner size="lg" />
+            <h2 className="text-lg font-semibold">Processing Order...</h2>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !orderSuccess) {
+    return (
+      <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
+        <div className="relative light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-lg p-8 max-w-[500px]">
+          <div className="flex flex-col items-center">
+            <CircleX size={60} className="text-red-600" />
+            <p className="text-lg font-semibold my-4 text-center">{error}</p>
+            <button onClick={() => router.push("/payment")}>Go back</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (orderSuccess) {
+    return (
+      <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
+        <div className="relative light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-lg p-8 max-w-[500px]">
+          <div className="flex flex-col items-center">
+            <CheckCircle size={60} className="text-green-600" />
+            <h2 className="text-lg font-semibold my-4">{success} </h2>
+
+            <button
+              className="mt-4 text-primary"
+              onClick={() => router.push("/shop")}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
