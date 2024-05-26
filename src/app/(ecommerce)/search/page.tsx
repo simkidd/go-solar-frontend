@@ -13,7 +13,7 @@ const SearchResults = async ({
 
   const searchWords = query.toLowerCase().split(" ");
 
-  const filteredResults = products.filter((product) => {
+  const filteredResults = products?.filter((product) => {
     const productName = product?.name.toLowerCase();
     return searchWords.every((word) => productName.includes(word));
   });

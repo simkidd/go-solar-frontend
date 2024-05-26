@@ -21,6 +21,7 @@ const Payment = () => {
     setPaymentData,
     setDeliveryDetails,
     setTotalPricePaid,
+    setPaymentMethod,
     totalPricePaid,
     paymentData,
     clearCart,
@@ -77,6 +78,7 @@ const Payment = () => {
             clearCart();
             setDeliveryDetails({} as DeliveryDetails);
             setTotalPricePaid(0);
+            setPaymentMethod("");
             setPaymentData("");
           }
         } catch (error: any) {
@@ -147,10 +149,10 @@ const Payment = () => {
   return (
     <div>
       <button
-        className="bg-primary text-white px-8 py-2"
+        className="bg-primary text-white px-8 py-2 rounded-md"
         onClick={() => initializePayment({ onSuccess, onClose })}
       >
-        Pay Now
+        Proceed to payment
       </button>
 
       {errorMsg && (

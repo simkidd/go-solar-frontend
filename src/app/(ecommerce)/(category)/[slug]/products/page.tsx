@@ -13,7 +13,7 @@ export const generateMetadata = async ({
 }: IProp): Promise<Metadata> => {
   const categorySlug = params.slug;
   const categories: Category[] = await getCategories();
-  const category = categories.find((cat) => cat?.slug === categorySlug);
+  const category = categories?.find((cat) => cat?.slug === categorySlug);
 
   return {
     title: category?.name,

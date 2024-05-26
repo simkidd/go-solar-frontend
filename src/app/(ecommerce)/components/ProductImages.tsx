@@ -24,7 +24,7 @@ const ProductImages: React.FC<{
           className="w-full h-full object-cover"
         />
       </div>
-      <div className="flex gap-2 overflow-auto tailwind-scrollbar-hide">
+      <div className="flex gap-2 overflow-y-auto scrollbar-hide">
         {images.map((img, i) => (
           <div
             key={i}
