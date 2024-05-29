@@ -1,7 +1,7 @@
 "use client";
 import useCartStore, { CartItem } from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
-import { Minus, MinusCircle, Plus, PlusCircle, Trash } from "lucide-react";
+import { Minus, Plus, Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -21,8 +21,8 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
             height={70}
           />
         </div>
-        <div className="w-full">
-          <div>
+        <div className="w-full flex gap-1">
+          <div className="w-3/4">
             <Link href={`/product/${cartItem?.product?.slug}`}>
               <h3 className="text-base font-bold">{cartItem.product.name}</h3>
             </Link>
@@ -30,16 +30,19 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
               {cartItem.product.description}
             </p>
           </div>
-          <p className="font-semibold">
-            {formatCurrency(cartItem?.product?.price, "NGN")}
-          </p>
+          <div className="w-auto ms-auto">
+            <p className="font-semibold">
+              {formatCurrency(cartItem?.product?.price, "NGN")}
+            </p>
+          </div>
         </div>
       </div>
       <div className="w-full flex items-center justify-between mt-2">
         <button
-          className="text-red-500 hover:text-red-700 transition"
+          className="flex items-center text-red-500 hover:text-red-700 transition"
           onClick={() => removeItem(cartItem?.product?._id)}
         >
+          <Trash size={16} className="mr-1" />
           Remove
         </button>
         <div className="flex items-center">

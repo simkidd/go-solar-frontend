@@ -62,44 +62,49 @@ const CartPage = () => {
                 </div>
               </div>
 
-              <div className="grid lg:grid-cols-5 gap-6 relative">
-                <div className="lg:col-span-3 space-y-4 lg:pr-6 divide-y-1">
+              <div className="grid lg:grid-cols-6 gap-6 relative">
+                <div className="lg:col-span-4 space-y-4 lg:pr-6 divide-y-1">
                   {cartItems.map((cartItem, i) => (
                     <CartItemCard key={i} cartItem={cartItem} />
                   ))}
                 </div>
                 <div className="lg:col-span-2 space-y-4 ">
-                  <div className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] p-4 sticky top-48">
-                    {/* <h3 className="text-2xl font-bold mb-4">Order Summary</h3> */}
-                    <div className="flex justify-between mb-1">
+                  <div className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] py-2 sticky top-48">
+                    <h3 className="text-lg font-bold px-4">Cart Summary</h3>
+                    <hr className="border-t border-gray-300 my-2" />
+                    <div className="flex justify-between px-4 ">
                       <span>Subtotal</span>
                       <span className="font-bold">
                         {formatCurrency(subtotal, "NGN")}
                       </span>
                     </div>
-                    <div className="flex justify-between mb-1">
+                    <div className="flex justify-between px-4">
                       <span>Shipping</span>
                       <span className="font-bold">
                         {formatCurrency(deliveryFee, "NGN")}
                       </span>
                     </div>
-                    <div className="flex justify-between mb-3 border-t border-gray-300 pt-2">
+                    <hr className="border-t border-gray-300 my-2" />
+                    <div className="flex justify-between mb-3 px-4">
                       <span>Total</span>
                       <span className="font-bold">
                         {formatCurrency(total, "NGN")}
                       </span>
                     </div>
-                    <button
-                      onClick={handleCheckout}
-                      className="w-full bg-primary text-white py-2 rounded-md shadow-md hover:bg-primary-dark transition"
-                    >
-                      Proceed to Checkout
-                    </button>
-                    <Link href="/shop">
-                      <button className="w-full py-2 rounded-md transition mt-2">
-                        Continue Shopping
+                    <hr className="border-t border-gray-300 my-2" />
+                    <div className="px-4">
+                      <button
+                        onClick={handleCheckout}
+                        className="w-full bg-primary text-white py-2 rounded-md shadow-md hover:bg-primary-dark transition"
+                      >
+                        Proceed to Checkout
                       </button>
-                    </Link>
+                      <Link href="/shop">
+                        <button className="w-full py-2 rounded-md transition mt-2">
+                          Continue Shopping
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
