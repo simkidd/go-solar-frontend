@@ -6,3 +6,22 @@
 .text-stroke {
   -webkit-text-stroke: 1px rgba(156, 163, 175, 0.20);
 }
+
+.dashboard-layout {
+  min-height: 100dvh;
+
+  .inner__wrapper {
+    margin-inline-start: auto;
+    // transition: all 500ms ease-in-out;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: calc(100% - 220px);
+
+      &.collapse {
+        width: calc(100% - 80px);
+      }
+    }
+
+  }
+}

@@ -1,10 +1,12 @@
-import { Unlock } from "lucide-react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Link from "next/link";
 import NextTopLoader from "nextjs-toploader";
+import { Suspense } from "react";
+import HeaderShop from "../(ecommerce)/components/HeaderShop";
 import "../globals.scss";
 import { Providers } from "../providers";
+import ProfileSidebar from "./components/ProfileSidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,9 +34,19 @@ export default function RootLayout({
           speed={200}
         />
         <Providers>
-          <div className="min-h-screen light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
-            <main className="w-full ">{children}</main>
-          </div>
+          <Suspense fallback={<LoadingSpinner />}>
+            <HeaderShop />
+            <div className="min-h-screen light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
+              <div className="w-full container max-w-[1100px] mx-auto py-4 grid grid-cols-1 lg:grid-cols-4 gap-5">
+                <div className="col-span-1">
+                  <ProfileSidebar />
+                </div>
+                <main className="w-full col-span-3 light bg-white dark:bg-[#222327]">
+                  {children}
+                </main>
+              </div>
+            </div>
+          </Suspense>
         </Providers>
       </body>
     </html>

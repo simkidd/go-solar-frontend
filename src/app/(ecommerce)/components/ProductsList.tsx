@@ -1,10 +1,10 @@
 "use client";
 import { Category, Product } from "@/interfaces/product.interface";
 import { Pagination, Slider } from "@nextui-org/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import ProductCard from "./ProductCard";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import ProductCard from "./ProductCard";
 
 const ProductsList: React.FC<{
   categories: Category[];
@@ -102,14 +102,16 @@ const ProductsList: React.FC<{
   const handlePageChange = useCallback(
     (newPage: number) => {
       setPage(newPage);
-      const query = { ...Object.fromEntries(searchParams.entries()), page: String(newPage) };
+      const query = {
+        ...Object.fromEntries(searchParams.entries()),
+        page: String(newPage),
+      };
       const url = `${pathname}?${new URLSearchParams(query).toString()}`;
       router.push(url);
       scrollTo(0, 0);
     },
     [pathname, router, searchParams]
   );
-
 
   const paginatedProducts = useMemo(() => {
     const startIndex = (page - 1) * postsPerPage;

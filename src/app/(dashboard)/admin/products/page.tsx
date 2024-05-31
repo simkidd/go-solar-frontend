@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
 import CreateProductButton from "../../components/CreateProductButton";
 import ProductListTable from "../../components/ProductListTable";
+
+const pageTitle = "Products";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: pageTitle,
+  },
+};
 
 const ProductsListPage = async () => {
   return (
