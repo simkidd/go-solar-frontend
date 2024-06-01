@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import Payment from "./Payment";
 import { useRouter } from "next/navigation";
 import { DeliveryDetails } from "@/interfaces/product.interface";
+import Image from "next/image";
 
 const OrderSummary = () => {
   const {
@@ -54,12 +55,16 @@ const OrderSummary = () => {
         <h4 className="text-lg font-semibold mb-2">Items:</h4>
         <ul className="divide-y divide-gray-200">
           {cartItems.map((cartItem, index) => (
-            <li key={index} className="py-4 flex items-center">
-              <img
-                src={cartItem?.product?.images[0].url}
-                alt={cartItem?.product?.name}
-                className="w-20 h-20 object-cover rounded mr-4"
-              />
+            <li key={index} className="py-4 grid grid-cols-[80px_auto]">
+              <div className="w-20 h-20 rounded overflow-hidden">
+                <Image
+                  src={cartItem?.product?.images[0].url}
+                  alt={cartItem?.product?.name}
+                  className="object-cover w-full h-full"
+                  width={80}
+                  height={80}
+                />
+              </div>
               <div className="flex flex-col flex-grow">
                 <span className="mb-2">{cartItem?.product?.name}</span>
                 <span className="font-medium">

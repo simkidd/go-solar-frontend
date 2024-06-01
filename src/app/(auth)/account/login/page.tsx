@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 import LoginForm from "@/app/(auth)/components/LoginForm";
 import { Metadata } from "next";
 import Link from "next/link";

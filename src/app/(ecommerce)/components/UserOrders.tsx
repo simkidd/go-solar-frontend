@@ -31,8 +31,7 @@ const UserOrders = () => {
               <div className="flex justify-between items-center py-1">
                 <div className="flex items-center">
                   <p className="font-semibold">
-                    Order Date: {" "}
-                    {formatDate(order?.trackingId?.createdAt)}
+                    Order Date: {formatDate(order?.trackingId?.createdAt)}
                   </p>
                   <p className="mx-2">|</p>
                   <span
@@ -62,7 +61,10 @@ const UserOrders = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {order?.products.map((item) => (
-                  <div key={item?._id} className="grid grid-cols-[64px_auto] gap-2 py-2">
+                  <div
+                    key={item?._id}
+                    className="grid grid-cols-[64px_auto] gap-2 py-2"
+                  >
                     <div className="w-16 h-16 rounded overflow-hidden">
                       <Image
                         src={item?.product?.images[0].url}
@@ -72,7 +74,9 @@ const UserOrders = () => {
                         height={64}
                       />
                     </div>
-                    <p className="text-sm text-ellipsis line-clamp-1">{item?.product?.name}</p>
+                    <p className="text-sm text-ellipsis line-clamp-1">
+                      {item?.product?.name}
+                    </p>
                   </div>
                 ))}
               </div>
