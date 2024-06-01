@@ -1,6 +1,13 @@
 import React from "react";
 import Steps from "../components/Steps";
 import StepForms from "../components/StepForms";
+import type { Metadata } from "next";
+
+const pageTitle = "Blogs";
+
+export const metadata: Metadata = {
+  title: pageTitle,
+};
 
 const CheckoutPage = () => {
   const steps = [

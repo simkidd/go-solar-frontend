@@ -14,13 +14,12 @@ interface SidebarMenu {
 }
 
 const navList: SidebarMenu[] = [
-  { label: "Overview", href: "/profile", icon: MdDashboard },
-  { label: "Orders", href: "/orders", icon: FaBoxOpen },
-  { label: "Settings", href: "/settings", icon: MdSettings },
+  { label: "Overview", href: "/account/profile", icon: MdDashboard },
+  { label: "Orders", href: "/account/orders", icon: FaBoxOpen },
+  { label: "Settings", href: "/account/settings", icon: MdSettings },
 ];
 
 const ProfileSidebar: React.FC = () => {
-  const { user } = useAuthStore();
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -32,18 +31,13 @@ const ProfileSidebar: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-white dark:bg-[#222327] shadow-md rounded-lg p-4">
-      <div className="flex items-center justify-center space-x-3 mb-6 py-4">
-        <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">
-          {user?.firstname[0]}
-        </div>
-      </div>
-      <ul className="space-y-2">
+    <div className="w-full bg-white dark:bg-[#222327]">
+      <ul className="py-2">
         {navList.map((nav, i) => (
           <li key={i}>
             <Link
               href={nav.href}
-              className={`flex items-center px-4 py-2 gap-2 transition-colors rounded-lg ${
+              className={`flex items-center px-4 py-2 gap-2 transition-colors  ${
                 isActive(nav.href)
                   ? "text-primary bg-primary bg-opacity-10"
                   : "hover:bg-gray-100 dark:hover:bg-gray-700"

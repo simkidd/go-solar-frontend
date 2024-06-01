@@ -37,11 +37,11 @@ export default function RootLayout({
           <Suspense fallback={<LoadingSpinner />}>
             <HeaderShop />
             <div className="min-h-screen light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
-              <div className="w-full container max-w-[1100px] mx-auto py-4 grid grid-cols-1 lg:grid-cols-4 gap-5">
+              <div className="w-full container max-w-[1100px] mx-auto px-2 py-4 grid grid-cols-1 lg:grid-cols-4 gap-5">
                 <div className="col-span-1">
                   <ProfileSidebar />
                 </div>
-                <main className="w-full col-span-3 light bg-white dark:bg-[#222327]">
+                <main className="w-full lg:col-span-3 light bg-white dark:bg-[#222327]">
                   {children}
                 </main>
               </div>

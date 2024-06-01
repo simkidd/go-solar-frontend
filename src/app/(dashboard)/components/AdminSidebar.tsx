@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { BsPeopleFill } from "react-icons/bs";
-import { FaBlogger, FaShopify } from "react-icons/fa6";
+import { FaBlogger, FaBoxOpen, FaShopify } from "react-icons/fa6";
 import { MdDashboard, MdRateReview } from "react-icons/md";
 
 const AdminSidebar = () => {
@@ -126,7 +126,7 @@ const AdminSidebar = () => {
               }`}
               onClick={() => setShowSidebar(false)}
             >
-              <FaShopify
+              <FaBoxOpen
                 className={`text-lg  ${collapsed && "md:mx-auto md:text-2xl"}`}
               />
               <span className={`ml-3 ${collapsed ? "md:hidden" : ""}`}>

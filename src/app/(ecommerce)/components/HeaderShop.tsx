@@ -125,8 +125,8 @@ const HeaderShop = () => {
               <div className="flex h-full ml-auto">
                 <Link href="/cart">
                   <button
-                    className={`h-full justify-center items-center px-4 py-2 flex hover:bg-primary hover:text-white ${
-                      isActive("/cart") && "bg-primary text-white"
+                    className={`h-full justify-center items-center px-4 py-2 flex hover:text-primary ${
+                      isActive("/cart") && "text-primary"
                     }`}
                   >
                     <div className="size-8 mr-1">
@@ -323,7 +323,11 @@ const HeaderShop = () => {
                   </p>
                   <p className="text-sm">{user?.email}</p>
 
-                  <Link href="/profile" className="text-primary font-semibold">
+                  <Link
+                    href="/account/profile"
+                    className="text-primary font-semibold"
+                    onClick={toggleShowMenu}
+                  >
                     Account
                   </Link>
                 </div>
@@ -336,6 +340,7 @@ const HeaderShop = () => {
                   isIconOnly
                   size="sm"
                   onPress={() => logout()}
+                  title="Logout"
                 >
                   <LogOut className=" h-[1.2rem] w-[1.2rem]" />
                 </Button>
@@ -345,10 +350,12 @@ const HeaderShop = () => {
 
           <div className="w-full">
             <div className="grid grid-cols-2">
-              <Link href="">
-                <div className="px-4 py-2 border leading-tight">
+              <Link href="/account/orders" onClick={toggleShowMenu}>
+                <div className="px-4 py-2 border dark:border-gray-700 leading-tight">
                   <p className="">My orders</p>
-                  <span className="text-[12px] text-gray-600">Items Ordered</span>
+                  <span className="text-[12px] text-gray-600">
+                    Items Ordered
+                  </span>
                 </div>
               </Link>
               {/* <Link href="">
