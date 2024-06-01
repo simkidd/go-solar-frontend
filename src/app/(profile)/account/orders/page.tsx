@@ -5,7 +5,9 @@ import React from "react";
 const pageTitle = "My Orders";
 
 export const metadata: Metadata = {
-  title: pageTitle,
+  title: {
+    absolute: pageTitle
+  },
 };
 
 const UserOrdersPage = () => {

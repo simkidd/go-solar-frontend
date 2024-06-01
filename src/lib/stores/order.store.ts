@@ -3,6 +3,7 @@ import { create } from "zustand";
 
 interface IOrderStore {
   loading: boolean;
+  setLoading: (value: boolean) => void;
   order: Order | undefined;
   orders: Order[];
   userOrder: Order | undefined;
@@ -15,6 +16,7 @@ interface IOrderStore {
 
 export const useOrderStore = create<IOrderStore>((set) => ({
   loading: false,
+  setLoading: (loading: boolean) => set({ loading }),
   order: undefined,
   orders: [],
   userOrder: undefined,

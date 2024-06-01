@@ -19,7 +19,7 @@ const UserOrders = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-4">
       <h2 className="flex items-center text-2xl font-bold mb-6">
         <span>My Orders</span>
       </h2>
@@ -36,7 +36,7 @@ const UserOrders = () => {
                   </p>
                   <p className="mx-2">|</p>
                   <span
-                    className={`px-4 py-1 rounded-full bg-opacity-0 ${trackingStatusChip(
+                    className={`px-4 py-1 rounded-full bg-opacity-0 text-sm ${trackingStatusChip(
                       order?.trackingStatus as TrackingStatus
                     )}`}
                   >
@@ -44,8 +44,8 @@ const UserOrders = () => {
                   </span>
                 </div>
                 <Link
-                  href={`/account/orders/${order?._id}`}
-                  className="text-primary bg-primary bg-opacity-30 px-2 py-1 text-semibold text-sm"
+                  href={`/account/orders/${order?.trackingId?.tracking_id}`}
+                  className="text-white bg-primary px-2 py-1 text-semibold text-sm"
                 >
                   View Details
                 </Link>

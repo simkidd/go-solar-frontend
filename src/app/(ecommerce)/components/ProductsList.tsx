@@ -26,9 +26,9 @@ const ProductsList: React.FC<{
   const initialPage = parseInt(searchParams.get("page") || "1", 10);
   const [page, setPage] = useState<number>(initialPage);
 
-  const postsPerPage = 4;
+  const itemPerPage = 40;
 
-  const totalPages = Math.ceil(filteredProducts.length / postsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / itemPerPage);
 
   const brands = Array.from(new Set(products.map((product) => product.brand)));
 
@@ -114,8 +114,8 @@ const ProductsList: React.FC<{
   );
 
   const paginatedProducts = useMemo(() => {
-    const startIndex = (page - 1) * postsPerPage;
-    const endIndex = startIndex + postsPerPage;
+    const startIndex = (page - 1) * itemPerPage;
+    const endIndex = startIndex + itemPerPage;
     return filteredProducts.slice(startIndex, endIndex);
   }, [page, filteredProducts]);
 

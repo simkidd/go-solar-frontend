@@ -56,7 +56,7 @@ const HeaderShop = () => {
   return (
     <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-[#f1f1f1] dark:bg-[#2a2b2f] shadow nav__container">
       {/* top header */}
-      <div className="w-full h-12 hidden lg:flex">
+      <div className="w-full h-10 hidden lg:flex">
         <div className="grid lg:grid-cols-2 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
           <div className="flex items-center gap-4 mr-auto text-sm">
             <span className="flex items-center">Welcome Our Online Store!</span>
@@ -118,7 +118,7 @@ const HeaderShop = () => {
                 GoSolar.
               </Link>
             </div>
-            <div className="flex items-center justify-between w-full lg:h-20 h-14">
+            <div className="flex items-center justify-between w-full lg:h-16 h-14">
               <div className="hidden lg:flex justify-center w-[500px] ml-4">
                 <Search placeholder="Find a product..." />
               </div>
@@ -177,7 +177,7 @@ const HeaderShop = () => {
                           <p className="font-bold">{user?.firstname}</p>
                         </div>
                         <hr />
-                        <ul>
+                        <ul className="text-sm">
                           {user?.isAdmin ||
                             (user?.isSuperAdmin && (
                               <li>
@@ -192,9 +192,9 @@ const HeaderShop = () => {
                           <li>
                             <Link
                               className="flex items-center px-4 py-2 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
-                              href="/profile"
+                              href="/account/profile"
                             >
-                              Account
+                              My Account
                             </Link>
                           </li>
                           <li>
@@ -207,9 +207,10 @@ const HeaderShop = () => {
                           </li>
                           <li>
                             <button
-                              className="text-red-500 w-full py-2 px-8"
+                              className="text-red-500 w-full flex items-center justify-center py-2 px-8"
                               onClick={() => logout()}
                             >
+                              <LogOut className=" h-[1.2rem] w-[1.2rem] mr-2" />
                               Logout
                             </button>
                           </li>
@@ -246,7 +247,7 @@ const HeaderShop = () => {
           </div>
         </div>
         {/* bh-bottom */}
-        <div className="w-full h-10">
+        <div className="w-full h-9">
           <div className="flex items-center container mx-auto px-2 w-full h-full gap-4">
             <div className="md:w-52 h-full relative categories">
               <button className="w-full h-full flex items-center justify-between gap-2 px-2 border-b-2 border-b-primary categories__button">
