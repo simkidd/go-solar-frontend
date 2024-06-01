@@ -35,9 +35,9 @@ const Search = ({ placeholder }: { placeholder: string }) => {
         placeholder={placeholder}
         value={term || ""}
         onChange={(e) => setTerm(e.target.value)}
-        className="w-full focus:outline-none h-10 py-2 px-3 bg-transparent text-sm"
+        className="w-full focus:outline-none h-8 lg:h-10 py-2 px-3 bg-transparent text-sm"
       />
-      <button type="submit" className="bg-primary text-white h-10 px-7">
+      <button type="submit" className="bg-primary text-white h-8 lg:h-10 lg:px-7 px-6">
         <SearchIcon size={18} />
       </button>
     </form>

@@ -31,7 +31,7 @@ const ProfileSidebar: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-white dark:bg-[#222327]">
+    <div className="w-full bg-white dark:bg-[#222327] font-dmsans sticky left-0 top-[156px]">
       <ul className="py-2">
         {navList.map((nav, i) => (
           <li key={i}>

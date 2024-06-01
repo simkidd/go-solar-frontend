@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
 const OrderSuccess = () => {
-  const [] = useState();
-
   return (
     <div
       id="SuccessPage"

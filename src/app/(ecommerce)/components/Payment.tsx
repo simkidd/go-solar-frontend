@@ -60,8 +60,10 @@ const Payment = () => {
 
   const onSuccess = (response: CallbackResponse) => {
     if (response.status === "success" && response?.reference) {
-      setPaymentData(JSON.stringify(response));
+      const paymentdata = JSON.stringify(response);
+
       input.paymentReference = response?.reference;
+      input.paymentData = paymentdata;
 
       const createOrder = async () => {
         try {
