@@ -35,19 +35,21 @@ export interface CreateProductInput {
   brand: string;
   outsideLocationDeliveryFee: number;
   withinLocationDeliveryFee: number;
+  isPublished: boolean;
 }
 
 export interface UpdateProductInput {
   productId: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  additionalInfo: string;
-  quantityInStock: number;
-  brand: string;
-  outsideLocationDeliveryFee: number;
-  withinLocationDeliveryFee: number;
+  name?: string;
+  description?: string;
+  price?: number;
+  category?: string;
+  additionalInfo?: string;
+  quantityInStock?: number;
+  brand?: string;
+  outsideLocationDeliveryFee?: number;
+  withinLocationDeliveryFee?: number;
+  isPublished?: boolean;
 }
 
 export interface Category {

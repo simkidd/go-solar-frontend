@@ -43,13 +43,13 @@ const AdminSidebar = () => {
     <>
       <div
         onClick={() => setShowSidebar(false)}
-        className={`bg-[#00000056] w-full h-dvh absolute top-0 bottom-0 z-50 transition duration-500 ease-linear ${
+        className={`bg-[#00000056] w-full h-dvh fixed top-0 bottom-0 z-50 transition duration-500 ease-linear ${
           showSidebar ? "block" : "hidden"
         }`}
       ></div>
 
       <div
-        className={`-left-full flex md:left-0 flex-col h-dvh fixed top-0 bottom-0 z-50  transition-all duration-500 ease-linear shadow-md bg-white dark:bg-[#222327] font-roboto ${
+        className={`sidebar -left-full flex md:left-0 flex-col fixed top-0 bottom-0 z-50  shadow-md bg-white dark:bg-[#222327] font-roboto ${
           showSidebar ? "left-0" : "w-[220px]"
         } ${collapsed ? "md:w-[80px] w-[220px]" : "w-[220px]"} `}
       >

@@ -10,9 +10,14 @@
 .dashboard-layout {
   min-height: 100dvh;
 
+  .sidebar {
+    transition: all 0.3s ease-in-out;
+    height: 100dvh;
+  }
+
   .inner__wrapper {
     margin-inline-start: auto;
-    // transition: all 500ms ease-in-out;
+    transition: all 0.3s ease-in-out;
     width: 100%;
 
     @media (min-width: 768px) {

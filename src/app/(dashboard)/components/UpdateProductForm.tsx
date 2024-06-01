@@ -1,22 +1,18 @@
 "use client";
 import {
-  Category,
   Product,
-  UpdateProductInput,
+  UpdateProductInput
 } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { Button } from "@nextui-org/react";
-import { Trash2 } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { GrCloudUpload } from "react-icons/gr";
 
 const UpdateProductForm: React.FC<{
   product: Product;
   onClose: () => void;
 }> = ({ product, onClose }) => {
-  const { loading, updateProduct, updateImage, imageLoading, categories } =
+  const { loading, updateProduct, categories } =
     useProductStore();
   const router = useRouter();
   const [input, setInput] = useState<UpdateProductInput>({
@@ -30,53 +26,8 @@ const UpdateProductForm: React.FC<{
     quantityInStock: product?.quantityInStock,
     outsideLocationDeliveryFee: product?.outsideLocationDeliveryFee,
     withinLocationDeliveryFee: product?.withinLocationDeliveryFee,
+    isPublished: product?.isPublished,
   });
-
-  const [imageInput, setImageInput] = useState({
-    images: product?.images,
-  });
-
-  const [imagePreview, setImagePreview] = useState<string[] | File[]>([]);
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    const selectedImages: File[] = Array.from(files);
-    const newPreview = selectedImages.map((image) =>
-      URL.createObjectURL(image)
-    );
-    setImagePreview((prevPreviews) => [
-      ...prevPreviews,
-      ...(newPreview as any),
-    ]);
-    setImageInput((prevInput) => ({
-      ...prevInput,
-      images: [...prevInput.images, ...(selectedImages as any)],
-    }));
-  };
-
-  // const saveImage = async () => {
-  //   const formData = new FormData();
-  //   formData.append("productId", "661158d6e2bdc3e200fb239f");
-  //   formData.append("imgId", "goSolar/ys0nc8n2crou0ad4quqq");
-  //   formData.append("updateImg", imageInput.files[0], "hbl-img2.jpg");
-  //   imageInput.images.forEach((image) => {
-  //     formData.append("updateImg", image);
-  //   });
-
-  //   await updateImage(formData)
-  // };
-
-  const removeImage = (index: number) => {
-    const updatedPreviews = [...imagePreview];
-    updatedPreviews.splice(index, 1);
-    setImagePreview(updatedPreviews as any);
-
-    const updatedImages = [...imageInput.images];
-    updatedImages.splice(index, 1);
-    setInput((prevInput) => ({ ...prevInput, images: updatedImages as any }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -251,6 +202,10 @@ const UpdateProductForm: React.FC<{
               name=""
               id="publish"
               className="accent-current mr-1 cursor-pointer"
+              checked={input.isPublished}
+              onChange={(e) =>
+                setInput({ ...input, isPublished: e.target.checked })
+              }
             />
             <label htmlFor="publish" className="cursor-pointer">
               Publish on site

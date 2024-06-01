@@ -18,7 +18,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         >
           <AdminHeader />
           <main className="py-5 px-2 md:px-5 w-full">
-            <div className="container mx-auto px-2">{children}</div>
+            <div className="container mx-auto px-2 md:px-8">{children}</div>
           </main>
         </div>
       </div>
