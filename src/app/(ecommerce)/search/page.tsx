@@ -1,6 +1,7 @@
 import { Category, Product } from "@/interfaces/product.interface";
 import { getCategories, getProducts } from "@/lib/data";
 import ProductsList from "../components/ProductsList";
+import { notFound } from "next/navigation";
 
 const SearchResults = async ({
   searchParams,
@@ -17,6 +18,10 @@ const SearchResults = async ({
     const productName = product?.name.toLowerCase();
     return searchWords.every((word) => productName.includes(word));
   });
+
+  if (!filteredResults) {
+    notFound();
+  }
 
   return (
     <div className="w-full font-dmsans">

@@ -1,19 +1,26 @@
 "use client";
 import Search from "@/components/Search";
 import { shopNavlist } from "@/data/menuData";
-import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
 import { useProductStore } from "@/lib/stores/product.store";
-import { ChevronDown, Mail, Menu, Phone, ShoppingCart } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  Mail,
+  Menu,
+  Phone,
+  ShoppingCart,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { HiOutlineUser } from "react-icons/hi2";
 import { MdClose, MdDashboard } from "react-icons/md";
 import MenuItem from "../../../components/MenuItem";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
+import { Button } from "@nextui-org/react";
 
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
@@ -22,19 +29,6 @@ const HeaderShop = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
-  const sidebarRef = useRef<HTMLDivElement | null>(null);
-
-  const handleOutsideClick = (e: MouseEvent) => {
-    if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
-      setShowMenu(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("click", handleOutsideClick);
-
-    return () => document.removeEventListener("click", handleOutsideClick);
-  });
 
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
@@ -47,6 +41,17 @@ const HeaderShop = () => {
       pathname.startsWith(href + "/")
     );
   };
+
+  useEffect(() => {
+    if (showMenu) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, [showMenu]);
 
   return (
     <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-[#f1f1f1] dark:bg-[#2a2b2f] shadow nav__container">
@@ -98,16 +103,22 @@ const HeaderShop = () => {
       </div>
       {/* bottom header */}
       <div className="w-full light bg-white dark:bg-[#222327]">
-        <div className="flex w-full border-b light border-b-[#f1f1f1] dark:border-b-[#2a2b2f]">
+        <div className="flex w-full border-b light border-b-[#f1f1f1] dark:border-b-[#2a2b2f] flex-wrap">
           {/* bh-top */}
           <div className="flex items-center container mx-auto px-2 w-full">
+            <button
+              className="cursor-pointer lg:hidden size-10 flex items-center justify-center mr-2"
+              onClick={toggleShowMenu}
+            >
+              {!showMenu ? <Menu size={32} /> : <MdClose size={32} />}
+            </button>
             {/* logo */}
             <div className="flex items-center mr-auto lg:mr-0 w-48">
               <Link href="/" className="text-3xl">
                 GoSolar.
               </Link>
             </div>
-            <div className="flex items-center justify-between w-full h-20">
+            <div className="flex items-center justify-between w-full lg:h-20 h-14">
               <div className="hidden lg:flex justify-center w-[500px] ml-4">
                 <Search placeholder="Find a product..." />
               </div>
@@ -229,6 +240,10 @@ const HeaderShop = () => {
               </div>
             </div>
           </div>
+          {/* mobile search */}
+          <div className="flex lg:hidden items-center w-full container mx-auto px-2 py-1">
+            <Search placeholder="Find a product..." />
+          </div>
         </div>
         {/* bh-bottom */}
         <div className="w-full h-10">
@@ -257,36 +272,103 @@ const HeaderShop = () => {
                 <MenuItem key={i} item={item} isActive={isActive} />
               ))}
             </ul>
-
-            <div
-              className="cursor-pointer lg:hidden size-10 flex items-center justify-center ml-auto"
-              onClick={toggleShowMenu}
-            >
-              <Menu size={32} />
-            </div>
           </div>
         </div>
       </div>
       {/* mobile menu */}
-      <div className={`mob-nav-list lg:hidden ${showMenu && "open"}`}>
+      <>
+        {/* <div
+          onClick={toggleShowMenu}
+          className={`bg-[#00000056] w-full h-screen absolute top-0 bottom-0 z-40 transition duration-500 ease-linear ${
+            showMenu ? "block" : "hidden"
+          }`}
+        ></div> */}
+
         <div
-          ref={sidebarRef}
-          className="mob-nav-inner light bg-white dark:bg-[#222327]"
+          className={`bg-white dark:bg-[#222327] lg:hidden flex flex-col absolute z-50 top-14 bottom-0 -left-full transition-all duration-500 ease-linear h-[calc(100dvh-56px)] w-full px-2 ${
+            showMenu ? "left-0" : ""
+          }`}
         >
-          <div
+          {/* <div
             onClick={toggleShowMenu}
             className="cursor-pointer ml-auto mx-2 my-2"
           >
             <MdClose size={32} />
+          </div> */}
+
+          {!user ? (
+            <div className="flex items-center gap-8 w-full px-2 my-4">
+              <Link
+                href="/account/login"
+                className="w-full border border-primary text-primary flex justify-center items-center py-2 font-medium"
+              >
+                Login
+              </Link>
+              <Link
+                href="/account/register"
+                className="w-full border border-primary text-primary flex justify-center items-center py-2 font-medium"
+              >
+                Signup
+              </Link>
+            </div>
+          ) : (
+            <div className="w-full px-2 my-4 flex justify-between">
+              <div className="grid grid-cols-[40px_auto] gap-2">
+                <div className="bg-primary text-white size-10 flex items-center justify-center rounded-md text-xl font-bold">
+                  {user?.firstname[0]}
+                </div>
+                <div>
+                  <p className="font-bold">
+                    {user?.firstname + " " + user?.lastname}
+                  </p>
+                  <p className="text-sm">{user?.email}</p>
+
+                  <Link href="/profile" className="text-primary font-semibold">
+                    Account
+                  </Link>
+                </div>
+              </div>
+
+              <div>
+                <Button
+                  variant="flat"
+                  color="danger"
+                  isIconOnly
+                  size="sm"
+                  onPress={() => logout()}
+                >
+                  <LogOut className=" h-[1.2rem] w-[1.2rem]" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <div className="w-full">
+            <div className="grid grid-cols-2">
+              <Link href="">
+                <div className="px-4 py-2 border leading-tight">
+                  <p className="">My orders</p>
+                  <span className="text-[12px] text-gray-600">Items Ordered</span>
+                </div>
+              </Link>
+              {/* <Link href="">
+                <div className="px-4 py-2 border border-l-0 leading-tight">
+                  <p className="">My orders</p>
+                  <span className="text-[12px] text-gray-600">Items Ordered</span>
+                </div>
+              </Link> */}
+            </div>
           </div>
 
-          <ul className="flex items-center justify-center space-y-6 flex-col w-full">
+          <ul className="flex space-y-4 flex-col w-full px-2 mt-8">
             {shopNavlist.map(({ href, label }, i) => {
               return (
                 <li key={i} className="">
                   <Link
                     href={href}
-                    className={` ${isActive(href) ? "text-primary" : ""}`}
+                    className={`hover:text-primary ${
+                      isActive(href) ? "text-primary" : ""
+                    }`}
                     onClick={toggleShowMenu}
                   >
                     {label}
@@ -296,19 +378,7 @@ const HeaderShop = () => {
             })}
           </ul>
 
-          {!user ? (
-            <div className="flex">
-              <Link href="/account/login">Login</Link>
-              <span className="mx-2">/</span>
-              <Link href="/account/register">Register</Link>
-            </div>
-          ) : (
-            <div>
-              <Link href="">Account</Link>
-            </div>
-          )}
-
-          <div className="flex justify-center items-center flex-col w-full my-4 space-y-4">
+          <div className="flex justify-center items-center flex-col w-full mb-4 mt-auto space-y-4">
             <ul className="flex items-center gap-4 ">
               <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
                 <Link
@@ -339,7 +409,7 @@ const HeaderShop = () => {
             <ThemeSwitcher />
           </div>
         </div>
-      </div>
+      </>
     </div>
   );
 };
