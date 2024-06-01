@@ -15,25 +15,26 @@ const LoginPage = () => {
     <div className="w-full">
       <h3 className="mb-6 text-center text-2xl font-semibold">Login</h3>
       <LoginForm />
-      <div>
-        <p className="text-sm text-center mb-4">
+      <div className="mb-4">
+        <p className="text-sm text-center">
           Forgot password?{" "}
           <Link
             href="/account/forgot-password"
-            className="font-medium hover:underline"
+            className="font-medium hover:underline text-primary"
           >
             Reset
           </Link>
         </p>
-        <p className="text-sm text-center">
-          Don’t have an account?{" "}
-          <Link
-            href="/account/register"
-            className="font-medium hover:underline"
-          >
-            Signup
-          </Link>
-        </p>
+      </div>
+
+      <div className="flex flex-col mt-2">
+        <p className="text-sm text-center mb-2">Don't have an account?</p>
+        <Link
+          href="/account/register"
+          className="font-medium border border-primary text-primary hover:bg-primary hover:text-white transition-colors transition-background py-2 px-8 flex justify-center items-center"
+        >
+          Signup
+        </Link>
       </div>
     </div>
   );

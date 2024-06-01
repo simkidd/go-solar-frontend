@@ -32,16 +32,13 @@ export default function RootLayout({
           speed={200}
         />
         <Providers>
-          <div className="w-full min-h-screen light bg-[#f2f2f2] dark:bg-[#2a2b2f] relative flex items-center justify-center flex-col font-inter py-10">
+          <div className="w-full min-h-dvh light bg-[#f2f2f2] dark:bg-[#2a2b2f] relative flex items-center justify-center flex-col font-inter py-10">
             <Link href="/">
               <h3 className="text-3xl">GoSolar.ng</h3>
             </Link>
-            <div className="auth-content p-4 mx-auto">
+            <div className="w-full max-w-md p-4 mx-auto">
               <div className="w-full light bg-white dark:bg-[#222327] shadow-lg">
                 <div className="flex flex-col items-center py-8 px-6">
-                  <div className="mb-4 text-primary">
-                    <Unlock size={30} />
-                  </div>
                   <div className="w-full ">{children}</div>
                 </div>
               </div>
