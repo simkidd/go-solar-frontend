@@ -37,7 +37,7 @@ export const generateStaticParams = async () => {
 
     return products.map((product: any) => ({
       // id: product?._id,
-      slug: product?.slug
+      slug: product?.slug,
     }));
   } catch (error) {
     console.log(error);
@@ -47,7 +47,7 @@ export const generateStaticParams = async () => {
 const ProductPage = async ({ params }: IProduct) => {
   const { slug } = params;
   const products: Product[] = await getProducts();
-  const product = products.find((product) => product.slug === slug);
+  const product = products.find((product) => product?.slug === slug);
 
   const productCode = getProductCodeFromSlug(slug);
 

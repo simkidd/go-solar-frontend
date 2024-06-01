@@ -1,14 +1,21 @@
 "use client";
 import { SearchIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
 const Search = ({ placeholder }: { placeholder: string }) => {
   const router = useRouter();
-  const [term, setTerm] = useState("");
+  const search = useSearchParams();
+  const [term, setTerm] = useState<string | null>(
+    search ? search.get("q") : ""
+  );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (typeof term !== "string") {
+      return;
+    }
 
     if (term.trim()) {
       const params = new URLSearchParams();
@@ -26,7 +33,7 @@ const Search = ({ placeholder }: { placeholder: string }) => {
       <input
         type="text"
         placeholder={placeholder}
-        value={term}
+        value={term || ""}
         onChange={(e) => setTerm(e.target.value)}
         className="w-full focus:outline-none h-10 py-2 px-3 bg-transparent text-sm"
       />

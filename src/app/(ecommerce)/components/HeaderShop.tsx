@@ -47,6 +47,7 @@ const HeaderShop = () => {
       pathname.startsWith(href + "/")
     );
   };
+
   return (
     <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-[#f1f1f1] dark:bg-[#2a2b2f] shadow nav__container">
       {/* top header */}
@@ -134,10 +135,10 @@ const HeaderShop = () => {
                     <div className="size-8 mr-1">
                       <HiOutlineUser size={32} />
                     </div>
-                    <div className="flex flex-col text-sm">
+                    <ul className="text-sm">
                       {!user ? (
                         <>
-                          <span className="text-left">Welcome</span>
+                          <li className="text-left">Welcome</li>
                           <div className="flex">
                             <span>Login</span>
                             <span className="mx-2">/</span>
@@ -154,13 +155,13 @@ const HeaderShop = () => {
                           </div>
                         </>
                       )}
-                    </div>
+                    </ul>
                     <ChevronDown size={16} className="ml-1" />
                   </button>
                   <div className="user__menu min-w-52 light bg-white dark:bg-[#2a2b2f] shadow-md">
                     {user ? (
                       <>
-                        <div className="p-4">
+                        <div className="px-4 py-2">
                           <p>Welcome back,</p>
                           <p className="font-bold">{user?.firstname}</p>
                         </div>
@@ -170,7 +171,7 @@ const HeaderShop = () => {
                             (user?.isSuperAdmin && (
                               <li>
                                 <Link
-                                  className="block p-2 hover:text-primary text-center"
+                                  className="flex items-center px-4 py-2 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
                                   href="/admin"
                                 >
                                   Dashboard
@@ -179,16 +180,16 @@ const HeaderShop = () => {
                             ))}
                           <li>
                             <Link
-                              className="block p-2 hover:text-primary text-center"
-                              href="#"
+                              className="flex items-center px-4 py-2 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
+                              href="/profile"
                             >
                               Account
                             </Link>
                           </li>
                           <li>
                             <Link
-                              className="block p-2 hover:text-primary text-center"
-                              href="#"
+                              className="flex items-center px-4 py-2 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
+                              href="/orders"
                             >
                               Orders
                             </Link>
