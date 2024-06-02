@@ -145,7 +145,7 @@ const Navbar = () => {
         ></div>
 
         <div
-          className={`bg-white dark:bg-[#222327] lg:hidden flex flex-col justify-between absolute z-50 top-0 bottom-0 -left-full md:left-0 transition-all duration-500 ease-linear h-dvh w-3/6 ${
+          className={`bg-white dark:bg-[#222327] lg:hidden flex flex-col justify-between absolute z-50 top-0 bottom-0 -left-full transition-all duration-500 ease-linear h-dvh w-3/6 ${
             showMenu ? "left-0" : "w-3/6"
           }`}
         >

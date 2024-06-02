@@ -6,8 +6,13 @@ import { User } from "./interfaces/auth.interface";
 // Specify protected and public routes
 const adminRoutes = ["/admin"];
 const publicRoutes = ["/shop", "/product", "/blog", "/"];
-const privateRoutes = ["/profile"];
-const authRoutes = ["/account"];
+const privateRoutes = ["/account/profile", "/account/orders"];
+const authRoutes = [
+  "/account/login",
+  "/account/register",
+  "/account/reset-password",
+  "/account/forgot-password",
+];
 
 export default async function middleware(req: NextRequest) {
   // Check if the current route is protected or public

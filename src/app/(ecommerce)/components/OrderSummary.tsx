@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import Payment from "./Payment";
 import { useRouter } from "next/navigation";
 import { DeliveryDetails } from "@/interfaces/product.interface";
+import Image from "next/image";
 
 const OrderSummary = () => {
   const {
@@ -48,27 +49,37 @@ const OrderSummary = () => {
   const { subtotal, deliveryFee } = calculateTotals(cartItems);
 
   return (
-    <div className="py-6">
+    <div className="py-6 px-2">
       <h3 className="text-xl font-bold mb-4">Order Summary</h3>
       <div className="mb-6">
         <h4 className="text-lg font-semibold mb-2">Items:</h4>
         <ul className="divide-y divide-gray-200">
           {cartItems.map((cartItem, index) => (
-            <li key={index} className="py-4 flex items-center">
-              <img
-                src={cartItem?.product?.images[0].url}
-                alt={cartItem?.product?.name}
-                className="w-20 h-20 object-cover rounded mr-4"
-              />
+            <li key={index} className="py-4 grid grid-cols-[80px_auto]">
+              <div className="w-20 h-20 rounded overflow-hidden">
+                <Image
+                  src={cartItem?.product?.images[0].url}
+                  alt={cartItem?.product?.name}
+                  className="object-cover w-full h-full"
+                  width={80}
+                  height={80}
+                />
+              </div>
               <div className="flex flex-col flex-grow">
-                <span className="font-medium">{cartItem?.product?.name}</span>
+                <span className="mb-2">{cartItem?.product?.name}</span>
+                <span className="font-medium">
+                  {formatCurrency(
+                    cartItem?.product?.price * cartItem.qty,
+                    "NGN"
+                  )}
+                </span>
                 <span className="text-sm text-gray-500">
                   Quantity: {cartItem.qty}
                 </span>
+                <span className="text-sm text-primary font-medium">
+                  + Delivery fee: {formatCurrency(cartItem.deliveryFee, "NGN")}
+                </span>
               </div>
-              <span className="font-medium">
-                {formatCurrency(cartItem?.product?.price * cartItem.qty, "NGN")}
-              </span>
             </li>
           ))}
         </ul>
@@ -91,7 +102,7 @@ const OrderSummary = () => {
       </div>
 
       <div className="mb-6">
-        <h4 className="text-lg font-semibold mb-2">Price Details:</h4>
+        <h4 className="text-lg font-semibold mb-2">Order Details:</h4>
         <div className="p-4 light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-md">
           <div className="flex justify-between mb-2">
             <span>Subtotal:</span>
@@ -110,7 +121,7 @@ const OrderSummary = () => {
 
       <div className="flex justify-between mt-6">
         <button
-          className="bg-gray-300 px-6 py-2 rounded-md hover:bg-gray-400 transition duration-300"
+          className="bg-gray-300 dark:bg-gray-600 px-6 py-2 rounded-md hover:bg-gray-400 transition duration-300 dark:text-white"
           type="button"
           onClick={handleCancel}
         >

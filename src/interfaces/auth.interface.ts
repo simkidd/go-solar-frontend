@@ -3,10 +3,13 @@ export interface LoginInput {
   password: string;
 }
 export interface SignUpInput {
+  firstName?: string;
+  lastName?: string;
   email: string;
   password: string;
   fullname: string;
   phonenumber: string;
+  confirmPassword: string,
 }
 
 export interface User {

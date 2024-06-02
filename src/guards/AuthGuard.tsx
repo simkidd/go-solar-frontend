@@ -15,7 +15,11 @@ const userToken = Cookies.get(USER_DETAILS) || "";
 const AuthGuard: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { user, setUser } = useAuthStore();
   const { setProducts, setCategories, setLoading } = useProductStore();
-  const { setOrders } = useOrderStore();
+  const {
+    setOrders,
+    setUserOrders,
+    setLoading: setOrderLoading,
+  } = useOrderStore();
   const { setPosts, setLoading: setPostLoading } = useBlogStore();
 
   useEffect(() => {
@@ -49,11 +53,26 @@ const AuthGuard: React.FC<React.PropsWithChildren> = ({ children }) => {
 
     const getOrders = async () => {
       try {
+        setOrderLoading(true);
         const { data } = await axiosInstance.get("/admin/all-orders");
 
         setOrders(data.orders);
       } catch (error) {
         console.log(error);
+      } finally {
+        setOrderLoading(false);
+      }
+    };
+    const getUserOrders = async () => {
+      try {
+        setOrderLoading(true);
+        const { data } = await axiosInstance.get("/users/orders/user-orders");
+
+        setUserOrders(data.orders);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setOrderLoading(false);
       }
     };
 
@@ -70,7 +89,13 @@ const AuthGuard: React.FC<React.PropsWithChildren> = ({ children }) => {
       }
     };
 
-    Promise.all([getProducts(), getCategories(), getOrders(), getPosts()]);
+    Promise.all([
+      getProducts(),
+      getCategories(),
+      getOrders(),
+      getPosts(),
+      getUserOrders(),
+    ]);
   }, []);
 
   // if (!user) {

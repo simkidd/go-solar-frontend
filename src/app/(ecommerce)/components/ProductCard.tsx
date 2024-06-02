@@ -3,7 +3,6 @@ import { formatCurrency } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { TbShoppingCartPlus } from "react-icons/tb";
 
 const ProductCard: React.FC<{
   item: Product;

@@ -4,16 +4,23 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import { Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "react-toastify";
 
 const SignUpForm = () => {
   const { loading, signup } = useAuthStore();
   const [isVisible, setIsVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [input, setInput] = useState<SignUpInput>({
     email: "",
     password: "",
     fullname: "",
     phonenumber: "",
+    firstName: "",
+    lastName: "",
+    confirmPassword: "",
   });
+
+  input.fullname = input.firstName + " " + input.lastName;
 
   const validateEmail = (input: string) =>
     input.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -31,15 +38,29 @@ const SignUpForm = () => {
     return !validatePassword(input.password);
   }, [input.password]);
 
-  const isNameValid = useMemo(() => {
-    if (input.fullname === "") return false;
-  }, [input.fullname]);
+  const isFirstNameValid = useMemo(() => {
+    if (input.firstName === "") return false;
+  }, [input.firstName]);
 
-  const isPhoneValid = useMemo(() => {
+  const isLastNameValid = useMemo(() => {
+    if (input.lastName === "") return false;
+  }, [input.lastName]);
+
+  const validatePhoneNumber = (input: string) => input.match(/^[0-9]{10,15}$/);
+
+  const isPhoneInvalid = useMemo(() => {
     if (input.phonenumber === "") return false;
+    return !validatePhoneNumber(input.phonenumber);
   }, [input.phonenumber]);
 
+  const isConfirmPasswordInvalid = useMemo(() => {
+    if (input.confirmPassword === "") return false;
+    return input.password !== input.confirmPassword;
+  }, [input.password, input.confirmPassword]);
+
   const toggleVisibility = () => setIsVisible(!isVisible);
+  const toggleConfirmPasswordVisibility = () =>
+    setConfirmPasswordVisible(!confirmPasswordVisible);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,18 +69,25 @@ const SignUpForm = () => {
       !input.email ||
       !input.password ||
       !input.fullname ||
-      !input.phonenumber
+      !input.phonenumber ||
+      !input.firstName ||
+      !input.lastName ||
+      !input.confirmPassword
     ) {
-      alert("All fields are required");
+      toast.warning("All fields are required");
       return;
     }
 
     await signup(input);
+
     setInput({
       email: "",
       password: "",
       fullname: "",
       phonenumber: "",
+      firstName: "",
+      lastName: "",
+      confirmPassword: "",
     });
   };
 
@@ -69,16 +97,32 @@ const SignUpForm = () => {
         <Input
           type="text"
           variant="underlined"
-          label="Fullname"
-          name="name"
+          label="First Name"
+          name="firstName"
           size="lg"
           className="w-full"
           classNames={{
             label: "text-black/50 dark:text-white/90",
           }}
-          color={isNameValid ? "danger" : "success"}
-          value={input?.fullname}
-          onChange={(e) => setInput({ ...input, fullname: e.target.value })}
+          color={isFirstNameValid ? "danger" : "success"}
+          value={input?.firstName}
+          onChange={(e) => setInput({ ...input, firstName: e.target.value })}
+        />
+      </div>
+      <div className="input-group mb-3">
+        <Input
+          type="text"
+          variant="underlined"
+          label="Last Name"
+          name="lastName"
+          size="lg"
+          className="w-full"
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+          }}
+          color={isLastNameValid ? "danger" : "success"}
+          value={input?.lastName}
+          onChange={(e) => setInput({ ...input, lastName: e.target.value })}
         />
       </div>
       <div className="input-group mb-3">
@@ -96,6 +140,23 @@ const SignUpForm = () => {
           errorMessage={isEmailInvalid && "Please enter a valid email address"}
           value={input?.email}
           onChange={(e) => setInput({ ...input, email: e.target.value })}
+        />
+      </div>
+      <div className="input-group mb-3">
+        <Input
+          type="text"
+          variant="underlined"
+          label="Phone"
+          name="phone"
+          size="lg"
+          className="w-full"
+          classNames={{
+            label: "text-black/50 dark:text-white/90",
+          }}
+          color={isPhoneInvalid ? "danger" : "success"}
+          errorMessage={isPhoneInvalid && "Please enter a valid phone number"}
+          value={input?.phonenumber}
+          onChange={(e) => setInput({ ...input, phonenumber: e.target.value })}
         />
       </div>
       <div className="input-group mb-4">
@@ -136,22 +197,45 @@ const SignUpForm = () => {
           onChange={(e) => setInput({ ...input, password: e.target.value })}
         />
       </div>
-      <div className="input-group mb-3">
+      <div className="input-group mb-4">
         <Input
-          type="text"
+          type={confirmPasswordVisible ? "text" : "password"}
           variant="underlined"
-          label="Phone"
-          name="phone"
+          label="Confirm Password"
+          name="confirmPassword"
           size="lg"
           className="w-full"
           classNames={{
             label: "text-black/50 dark:text-white/90",
           }}
-          color={isPhoneValid ? "danger" : "success"}
-          value={input?.phonenumber}
-          onChange={(e) => setInput({ ...input, phonenumber: e.target.value })}
+          endContent={
+            <button
+              className="focus:outline-none"
+              type="button"
+              onClick={toggleConfirmPasswordVisibility}
+            >
+              {confirmPasswordVisible ? (
+                <EyeOff
+                  size={20}
+                  className="text-default-400 pointer-events-none"
+                />
+              ) : (
+                <Eye
+                  size={20}
+                  className="text-default-400 pointer-events-none"
+                />
+              )}
+            </button>
+          }
+          color={isConfirmPasswordInvalid ? "danger" : "success"}
+          errorMessage={isConfirmPasswordInvalid && "Passwords do not match"}
+          value={input?.confirmPassword}
+          onChange={(e) =>
+            setInput({ ...input, confirmPassword: e.target.value })
+          }
         />
       </div>
+
       <button
         className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:bg-gray-400"
         disabled={!input.password || isPasswordInvalid}

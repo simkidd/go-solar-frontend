@@ -1,19 +1,26 @@
 "use client";
 import Search from "@/components/Search";
 import { shopNavlist } from "@/data/menuData";
-import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
 import { useProductStore } from "@/lib/stores/product.store";
-import { ChevronDown, Mail, Menu, Phone, ShoppingCart } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  Mail,
+  Menu,
+  Phone,
+  ShoppingCart,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { HiOutlineUser } from "react-icons/hi2";
 import { MdClose, MdDashboard } from "react-icons/md";
 import MenuItem from "../../../components/MenuItem";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
+import { Button } from "@nextui-org/react";
 
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
@@ -22,19 +29,6 @@ const HeaderShop = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
-  const sidebarRef = useRef<HTMLDivElement | null>(null);
-
-  const handleOutsideClick = (e: MouseEvent) => {
-    if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
-      setShowMenu(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("click", handleOutsideClick);
-
-    return () => document.removeEventListener("click", handleOutsideClick);
-  });
 
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
@@ -48,10 +42,21 @@ const HeaderShop = () => {
     );
   };
 
+  useEffect(() => {
+    if (showMenu) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, [showMenu]);
+
   return (
     <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-[#f1f1f1] dark:bg-[#2a2b2f] shadow nav__container">
       {/* top header */}
-      <div className="w-full h-12 hidden lg:flex">
+      <div className="w-full h-10 hidden lg:flex">
         <div className="grid lg:grid-cols-2 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
           <div className="flex items-center gap-4 mr-auto text-sm">
             <span className="flex items-center">Welcome Our Online Store!</span>
@@ -98,24 +103,30 @@ const HeaderShop = () => {
       </div>
       {/* bottom header */}
       <div className="w-full light bg-white dark:bg-[#222327]">
-        <div className="flex w-full border-b light border-b-[#f1f1f1] dark:border-b-[#2a2b2f]">
+        <div className="flex w-full border-b light border-b-[#f1f1f1] dark:border-b-[#2a2b2f] flex-wrap">
           {/* bh-top */}
           <div className="flex items-center container mx-auto px-2 w-full">
+            <button
+              className="cursor-pointer lg:hidden size-10 flex items-center justify-center mr-2"
+              onClick={toggleShowMenu}
+            >
+              {!showMenu ? <Menu size={32} /> : <MdClose size={32} />}
+            </button>
             {/* logo */}
             <div className="flex items-center mr-auto lg:mr-0 w-48">
               <Link href="/" className="text-3xl">
                 GoSolar.
               </Link>
             </div>
-            <div className="flex items-center justify-between w-full h-20">
+            <div className="flex items-center justify-between w-full lg:h-16 h-14">
               <div className="hidden lg:flex justify-center w-[500px] ml-4">
                 <Search placeholder="Find a product..." />
               </div>
               <div className="flex h-full ml-auto">
                 <Link href="/cart">
                   <button
-                    className={`h-full justify-center items-center px-4 py-2 flex hover:bg-primary hover:text-white ${
-                      isActive("/cart") && "bg-primary text-white"
+                    className={`h-full justify-center items-center px-4 py-2 flex hover:text-primary ${
+                      isActive("/cart") && "text-primary"
                     }`}
                   >
                     <div className="size-8 mr-1">
@@ -166,7 +177,7 @@ const HeaderShop = () => {
                           <p className="font-bold">{user?.firstname}</p>
                         </div>
                         <hr />
-                        <ul>
+                        <ul className="text-sm">
                           {user?.isAdmin ||
                             (user?.isSuperAdmin && (
                               <li>
@@ -181,9 +192,9 @@ const HeaderShop = () => {
                           <li>
                             <Link
                               className="flex items-center px-4 py-2 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
-                              href="/profile"
+                              href="/account/profile"
                             >
-                              Account
+                              My Account
                             </Link>
                           </li>
                           <li>
@@ -196,9 +207,10 @@ const HeaderShop = () => {
                           </li>
                           <li>
                             <button
-                              className="text-red-500 w-full py-2 px-8"
+                              className="text-red-500 w-full flex items-center justify-center py-2 px-8"
                               onClick={() => logout()}
                             >
+                              <LogOut className=" h-[1.2rem] w-[1.2rem] mr-2" />
                               Logout
                             </button>
                           </li>
@@ -229,9 +241,13 @@ const HeaderShop = () => {
               </div>
             </div>
           </div>
+          {/* mobile search */}
+          <div className="flex lg:hidden items-center w-full container mx-auto px-2 py-1">
+            <Search placeholder="Find a product..." />
+          </div>
         </div>
         {/* bh-bottom */}
-        <div className="w-full h-10">
+        <div className="w-full h-9">
           <div className="flex items-center container mx-auto px-2 w-full h-full gap-4">
             <div className="md:w-52 h-full relative categories">
               <button className="w-full h-full flex items-center justify-between gap-2 px-2 border-b-2 border-b-primary categories__button">
@@ -257,36 +273,110 @@ const HeaderShop = () => {
                 <MenuItem key={i} item={item} isActive={isActive} />
               ))}
             </ul>
-
-            <div
-              className="cursor-pointer lg:hidden size-10 flex items-center justify-center ml-auto"
-              onClick={toggleShowMenu}
-            >
-              <Menu size={32} />
-            </div>
           </div>
         </div>
       </div>
       {/* mobile menu */}
-      <div className={`mob-nav-list lg:hidden ${showMenu && "open"}`}>
+      <>
+        {/* <div
+          onClick={toggleShowMenu}
+          className={`bg-[#00000056] w-full h-screen absolute top-0 bottom-0 z-40 transition duration-500 ease-linear ${
+            showMenu ? "block" : "hidden"
+          }`}
+        ></div> */}
+
         <div
-          ref={sidebarRef}
-          className="mob-nav-inner light bg-white dark:bg-[#222327]"
+          className={`bg-white dark:bg-[#222327] lg:hidden flex flex-col absolute z-50 top-14 bottom-0 -left-full transition-all duration-500 ease-linear h-[calc(100dvh-56px)] w-full px-2 ${
+            showMenu ? "left-0" : ""
+          }`}
         >
-          <div
+          {/* <div
             onClick={toggleShowMenu}
             className="cursor-pointer ml-auto mx-2 my-2"
           >
             <MdClose size={32} />
+          </div> */}
+
+          {!user ? (
+            <div className="flex items-center gap-8 w-full px-2 my-4">
+              <Link
+                href="/account/login"
+                className="w-full border border-primary text-primary flex justify-center items-center py-2 font-medium"
+              >
+                Login
+              </Link>
+              <Link
+                href="/account/register"
+                className="w-full border border-primary text-primary flex justify-center items-center py-2 font-medium"
+              >
+                Signup
+              </Link>
+            </div>
+          ) : (
+            <div className="w-full px-2 my-4 flex justify-between">
+              <div className="grid grid-cols-[40px_auto] gap-2">
+                <div className="bg-primary text-white size-10 flex items-center justify-center rounded-md text-xl font-bold">
+                  {user?.firstname[0]}
+                </div>
+                <div>
+                  <p className="font-bold">
+                    {user?.firstname + " " + user?.lastname}
+                  </p>
+                  <p className="text-sm">{user?.email}</p>
+
+                  <Link
+                    href="/account/profile"
+                    className="text-primary font-semibold"
+                    onClick={toggleShowMenu}
+                  >
+                    Account
+                  </Link>
+                </div>
+              </div>
+
+              <div>
+                <Button
+                  variant="flat"
+                  color="danger"
+                  isIconOnly
+                  size="sm"
+                  onPress={() => logout()}
+                  title="Logout"
+                >
+                  <LogOut className=" h-[1.2rem] w-[1.2rem]" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <div className="w-full">
+            <div className="grid grid-cols-2">
+              <Link href="/account/orders" onClick={toggleShowMenu}>
+                <div className="px-4 py-2 border dark:border-gray-700 leading-tight">
+                  <p className="">My orders</p>
+                  <span className="text-[12px] text-gray-600">
+                    Items Ordered
+                  </span>
+                </div>
+              </Link>
+              {/* <Link href="">
+                <div className="px-4 py-2 border border-l-0 leading-tight">
+                  <p className="">My orders</p>
+                  <span className="text-[12px] text-gray-600">Items Ordered</span>
+                </div>
+              </Link> */}
+            </div>
           </div>
 
-          <ul className="flex items-center justify-center space-y-6 flex-col w-full">
+          <ul className="flex space-y-4 flex-col w-full px-2 mt-8">
             {shopNavlist.map(({ href, label }, i) => {
               return (
                 <li key={i} className="">
                   <Link
                     href={href}
-                    className={` ${isActive(href) ? "text-primary" : ""}`}
+                    className={`hover:text-primary ${
+                      isActive(href) ? "text-primary" : ""
+                    }`}
                     onClick={toggleShowMenu}
                   >
                     {label}
@@ -296,19 +386,7 @@ const HeaderShop = () => {
             })}
           </ul>
 
-          {!user ? (
-            <div className="flex">
-              <Link href="/account/login">Login</Link>
-              <span className="mx-2">/</span>
-              <Link href="/account/register">Register</Link>
-            </div>
-          ) : (
-            <div>
-              <Link href="">Account</Link>
-            </div>
-          )}
-
-          <div className="flex justify-center items-center flex-col w-full my-4 space-y-4">
+          <div className="flex justify-center items-center flex-col w-full mb-4 mt-auto space-y-4">
             <ul className="flex items-center gap-4 ">
               <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
                 <Link
@@ -339,7 +417,7 @@ const HeaderShop = () => {
             <ThemeSwitcher />
           </div>
         </div>
-      </div>
+      </>
     </div>
   );
 };
