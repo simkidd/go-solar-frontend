@@ -15,12 +15,19 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
+import {
+  FaBoxOpen,
+  FaFacebookF,
+  FaInstagram,
+  FaUser,
+  FaXTwitter,
+} from "react-icons/fa6";
 import { HiOutlineUser } from "react-icons/hi2";
 import { MdClose, MdDashboard } from "react-icons/md";
 import MenuItem from "../../../components/MenuItem";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
 import { Button } from "@nextui-org/react";
+import { BiUser } from "react-icons/bi";
 
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
@@ -123,29 +130,8 @@ const HeaderShop = () => {
                 <Search placeholder="Find a product..." />
               </div>
               <div className="flex h-full ml-auto">
-                <Link href="/cart">
-                  <button
-                    className={`h-full justify-center items-center px-4 py-2 flex hover:text-primary ${
-                      isActive("/cart") && "text-primary"
-                    }`}
-                  >
-                    <div className="size-8 mr-1">
-                      <ShoppingCart size={32} />
-                    </div>
-                    <div className="flex flex-col text-sm">
-                      <span className="bg-primary rounded-full text-white text-xs">
-                        {cartItems?.length}
-                      </span>
-                      <span>Cart</span>
-                    </div>
-                  </button>
-                </Link>
-
                 <div className="user relative lg:block hidden">
-                  <button className=" h-full items-center px-4 py-2 flex user__button">
-                    <div className="size-8 mr-1">
-                      <HiOutlineUser size={32} />
-                    </div>
+                  <button className=" h-full items-center px-4 py-2 flex user__button dark:hover:bg-[#2a2b2f]">
                     <ul className="text-sm">
                       {!user ? (
                         <>
@@ -159,58 +145,57 @@ const HeaderShop = () => {
                       ) : (
                         <>
                           <div className="flex flex-col">
-                            <span className="text-left">
-                              Hi, {user?.firstname}
-                            </span>
-                            <span className="font-semibold">Account</span>
+                            <span className="text-left">My</span>
+                            <span className="">Account</span>
                           </div>
                         </>
                       )}
                     </ul>
-                    <ChevronDown size={16} className="ml-1" />
+                    <ChevronDown size={16} className="ml-4" />
                   </button>
                   <div className="user__menu min-w-52 light bg-white dark:bg-[#2a2b2f] shadow-md">
                     {user ? (
                       <>
-                        <div className="px-4 py-2">
-                          <p>Welcome back,</p>
-                          <p className="font-bold">{user?.firstname}</p>
+                        <div className="px-4 py-3">
+                          <p className="font-bold">Hi, {user?.firstname}</p>
                         </div>
-                        <hr />
                         <ul className="text-sm">
                           {user?.isAdmin ||
                             (user?.isSuperAdmin && (
                               <li>
                                 <Link
-                                  className="flex items-center px-4 py-2 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
+                                  className="flex items-center px-4 py-3 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
                                   href="/admin"
                                 >
+                                  <MdDashboard className=" h-[1rem] w-[1rem] mr-2" />
                                   Dashboard
                                 </Link>
                               </li>
                             ))}
                           <li>
                             <Link
-                              className="flex items-center px-4 py-2 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
+                              className="flex items-center px-4 py-3 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
                               href="/account/profile"
                             >
+                              <FaUser className=" h-[1rem] w-[1rem] mr-2" />
                               My Account
                             </Link>
                           </li>
                           <li>
                             <Link
-                              className="flex items-center px-4 py-2 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
+                              className="flex items-center px-4 py-3 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
                               href="/orders"
                             >
+                              <FaBoxOpen className=" h-[1rem] w-[1rem] mr-2" />
                               Orders
                             </Link>
                           </li>
                           <li>
                             <button
-                              className="text-red-500 w-full flex items-center justify-center py-2 px-8"
+                              className="hover:text-primary w-full flex items-center justify-start py-3 px-4 hover:bg-primary hover:bg-opacity-10"
                               onClick={() => logout()}
                             >
-                              <LogOut className=" h-[1.2rem] w-[1.2rem] mr-2" />
+                              <LogOut className=" h-[1rem] w-[1rem] mr-2" />
                               Logout
                             </button>
                           </li>
@@ -238,6 +223,23 @@ const HeaderShop = () => {
                     )}
                   </div>
                 </div>
+                <Link href="/cart">
+                  <button
+                    className={`h-full justify-center items-center px-4 py-2 flex hover:text-primary ${
+                      isActive("/cart") && "text-primary"
+                    }`}
+                  >
+                    <div className="size-8 mr-1">
+                      <ShoppingCart size={32} />
+                    </div>
+                    <div className="flex flex-col text-sm">
+                      <span className="bg-primary rounded-full text-white text-xs">
+                        {cartItems?.length}
+                      </span>
+                      <span>Cart</span>
+                    </div>
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

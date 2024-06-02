@@ -26,7 +26,12 @@
       &.collapse {
         width: calc(100% - 80px);
       }
+
+      .main__inner {
+        padding-inline: 2rem;
+      }
     }
+
 
   }
 }
