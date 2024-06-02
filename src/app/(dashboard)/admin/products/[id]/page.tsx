@@ -60,7 +60,7 @@ const SingleProductPage = async ({ params }: IProduct) => {
           <UpdateProductButton product={product} />
         </div>
       </div>
-      <div className="w-full bg-white dark:bg-[#222327] py-16 px-6 shadow rounded">
+      <div className="w-full bg-white dark:bg-[#222327] py-16 px-2 md:px-6 shadow rounded">
         <div className="w-full max-w-[860px] mx-auto flex flex-col items-center mb-8">
           <section className="w-full">
             <div className="container mx-auto px-2">

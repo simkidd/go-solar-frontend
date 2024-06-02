@@ -3,12 +3,16 @@ import MultipleSelectChip from "@/components/MultipleSelectChip";
 import { CreatePostInput } from "@/interfaces/post.interface";
 import { useBlogStore } from "@/lib/stores/blog.store";
 import { Button } from "@nextui-org/react";
-import { Plus, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { GrCloudUpload } from "react-icons/gr";
-import { HiXMark } from "react-icons/hi2";
+import { toast } from "react-toastify";
+
+interface FileWithPreview extends File {
+  preview: string;
+}
 
 const tagsList = [
   "HBL OPTIMUZ",
@@ -52,93 +56,70 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     tags: [],
     image: "",
   });
-  const [imagePreview, setImagePreview] = useState<string | File>("");
+  const [file, setFile] = useState<FileWithPreview | null>(null);
 
-  // const [newTag, setNewTag] = useState("");
-  const router = useRouter();
-
-  // const handleAddTag = () => {
-  //   if (newTag.trim() !== "") {
-  //     const newTags = newTag
-  //       .split(",")
-  //       .map((t) => t.trim())
-  //       .filter((t) => t !== "");
-  //     const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
-
-  //     setInput({
-  //       ...input,
-  //       tags: updatedTags,
-  //     });
-  //     setNewTag("");
-  //   }
-  // };
-
-  // const handleDeleteTag = (tagToDelete: string) => {
-  //   setInput((tagInput) => ({
-  //     ...tagInput,
-  //     tags: tagInput.tags.filter((tag) => tag !== tagToDelete),
-  //   }));
-  // };
-
-  // const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === "Enter") {
-  //     e.preventDefault();
-  //     handleAddTag();
-  //   }
-  // };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
-    if (!files?.length) return;
-    const file = files[0];
-
-    // Check if the file type is PNG or JPEG
-    const extension = file.name.split(".").pop()?.toLowerCase();
-    if (
-      !extension ||
-      (extension !== "jpg" && extension !== "jpeg" && extension !== "png")
-    ) {
-      alert("Please select a PNG or JPEG image file.");
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 1) {
+      toast.info("You can only upload one image");
       return;
     }
 
-    // Check if the file size exceeds 5MB
-    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-    if (file.size > maxSize) {
-      alert("Please select an image file smaller than 5MB.");
-      return;
-    }
-
-    setImagePreview(file);
-
-    setInput({
-      ...input,
-      image: file,
+    const newFile = Object.assign(acceptedFiles[0], {
+      preview: URL.createObjectURL(acceptedFiles[0]),
     });
 
-    // const reader = new FileReader();
+    setFile(newFile);
+    setInput((prevInput) => ({
+      ...prevInput,
+      image: newFile,
+    }));
+  }, []);
 
-    // reader.onloadend = () => {
-    //   const imagePreviewUrl = reader.result as string;
-    //   setImagePreview(imagePreviewUrl);
-    //   setInput({
-    //     ...input,
-    //     image: reader.result as string,
-    //   });
-    // };
-    // reader.readAsDataURL(file);
-  };
+  const thumb = file ? (
+    <div key={file.name} className="relative m-2 w-28 h-28">
+      <Image
+        src={file.preview}
+        alt={file.name}
+        className="w-full h-full object-cover rounded-lg"
+        width={80}
+        height={80}
+        onLoad={() => {
+          URL.revokeObjectURL(file.preview);
+        }}
+      />
+      <button
+        type="button"
+        className="absolute top-1 right-1 bg-white text-red-600 rounded-full p-1"
+        onClick={() => {
+          setFile(null);
+          setInput((prevInput) => ({
+            ...prevInput,
+            image: "",
+          }));
+        }}
+      >
+        <Trash2 size={16} />
+      </button>
+    </div>
+  ) : null;
 
-  const removeImage = () => {
-    setInput({
-      ...input,
-      image: "",
-    });
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    return () => {
+      if (file) {
+        URL.revokeObjectURL(file.preview);
+      }
+    };
+  }, [file]);
 
-    // Clear the image preview
-    setImagePreview("");
-  };
-
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+    },
+    multiple: false,
+  });
   const handleTagChange = (tags: string[]) => {
     setInput({
       ...input,
@@ -165,7 +146,6 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     } else {
       onClose();
     }
-
   };
 
   return (
@@ -197,43 +177,7 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             onTagChange={handleTagChange}
           />
         </div>
-        {/* <div className="mb-3">
-          <label htmlFor="title">Tags</label>
-          <div className="relative w-full mt-1">
-            <input
-              type="text"
-              id="title"
-              className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent pr-10"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              onKeyDown={handleKeyPress}
-            />
-            <button
-              type="button"
-              className="bg-primary text-white absolute top-[50%] -translate-y-[50%] right-2"
-              onClick={handleAddTag}
-            >
-              <Plus />
-            </button>
-          </div>
-          <div className="flex gap-1 mt-1 flex-wrap items-center">
-            {input.tags.map((tag, i) => (
-              <span
-                key={i}
-                className="bg-primary text-white rounded-md pl-2 py-[0.5px] text-sm overflow-hidden flex items-center"
-              >
-                {tag}
-                <button
-                  type="button"
-                  className=" ml-2 px-1"
-                  onClick={() => handleDeleteTag(tag)}
-                >
-                  <HiXMark />
-                </button>
-              </span>
-            ))}
-          </div>
-        </div> */}
+
         <div className="mb-3">
           <label htmlFor="title">Author</label>
           <input
@@ -247,49 +191,24 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <label htmlFor="" className="">
             Images
           </label>
-          <div className="flex gap-2 flex-wrap mt-1">
-            {/* upload button */}
-            <div
-              className="size-20 overflow-hidden rounded border hover:bg-gray-400 "
-              style={{ transition: "background .3s ease" }}
-            >
-              <label htmlFor="image" className="cursor-pointer">
-                <div className="w-full h-full flex flex-col items-center justify-center">
-                  <GrCloudUpload size={20} />
-                  <span className="text-sm">Upload</span>
-                </div>
-              </label>
-              <input
-                type="file"
-                id="image"
-                className="hidden"
-                onChange={handleImageUpload}
-                accept="image/*"
-              />
-            </div>
-
-            {/* selected image */}
-            {imagePreview && (
-              <div className="size-20 overflow-hidden rounded relative group">
-                <Image
-                  src={URL.createObjectURL(imagePreview as Blob)}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  width={80}
-                  height={80}
-                />
-                <div
-                  className="bg-[#2424243a] w-full h-full absolute top-0 left-0 flex group-hover:opacity-100 opacity-0"
-                  style={{ transition: "opacity .3s ease" }}
-                >
-                  <button
-                    className="mt-auto ml-[50%] -translate-x-1/2 mb-1 text-white bg-danger p-1 rounded"
-                    onClick={removeImage}
-                    type="button"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
+          <div
+            {...getRootProps({
+              className:
+                "w-full h-40 border-dashed border-2 border-gray-300 p-4 rounded mt-1 cursor-pointer flex items-center justify-center",
+            })}
+          >
+            <input {...getInputProps()} />
+            {isDragActive ? (
+              <p>Drop the file here ...</p>
+            ) : file ? (
+              thumb
+            ) : (
+              <div className="flex flex-col items-center">
+                <GrCloudUpload size={50} />
+                <p className="text-sm">
+                  Drag & drop a file here, or click to select a file
+                </p>
+                <em className="text-[12px]">(Only 1 image allowed)</em>
               </div>
             )}
           </div>
