@@ -55,7 +55,7 @@ const OrderSummary = () => {
         <h4 className="text-lg font-semibold mb-2">Items:</h4>
         <ul className="divide-y divide-gray-200">
           {cartItems.map((cartItem, index) => (
-            <li key={index} className="py-4 grid grid-cols-[80px_auto]">
+            <li key={index} className="py-4 grid grid-cols-[80px_auto] gap-2">
               <div className="w-20 h-20 rounded overflow-hidden">
                 <Image
                   src={cartItem?.product?.images[0].url}
@@ -96,7 +96,7 @@ const OrderSummary = () => {
 
       <div className="mb-6">
         <h4 className="text-lg font-semibold mb-2">Payment Method:</h4>
-        <div className="p-4 light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-md">
+        <div className="p-4 light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-md capitalize">
           <p>{paymentMethod}</p>
         </div>
       </div>

@@ -61,7 +61,7 @@ const Navbar = () => {
                   Dashboard
                 </Link>
               ))}
-            <Link href="/profile" className="text-sm hover:text-primary">
+            <Link href="/account/profile" className="text-sm hover:text-primary">
               My Account
             </Link>
             {user && (
