@@ -6,3 +6,27 @@
 .text-stroke {
   -webkit-text-stroke: 1px rgba(156, 163, 175, 0.20);
 }
+
+.dashboard-layout {
+  min-height: 100dvh;
+
+  .sidebar {
+    transition: all 0.3s ease-in-out;
+    height: 100dvh;
+  }
+
+  .inner__wrapper {
+    margin-inline-start: auto;
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: calc(100% - 220px);
+
+      &.collapse {
+        width: calc(100% - 80px);
+      }
+    }
+
+  }
+}

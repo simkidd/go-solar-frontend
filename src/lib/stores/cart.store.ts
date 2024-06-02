@@ -25,6 +25,8 @@ interface CartStore {
   setPaymentMethod: (value: string) => void;
   paymentData: string;
   setPaymentData: (data: string) => void;
+  currentStep: number;
+  setCurrentStep: (step: number) => void;
 }
 
 const useCartStore = create(
@@ -46,6 +48,8 @@ const useCartStore = create(
       setPaymentMethod: (paymentMethod: string) => set({ paymentMethod }),
       paymentData: "",
       setPaymentData: (data: string) => set({ paymentData: data }),
+      currentStep: 1,
+      setCurrentStep: (step: number) => set({ currentStep: step }),
 
       // add an item to cart
       addItem: (data: CartItem) => {
@@ -59,7 +63,7 @@ const useCartStore = create(
           return toast.info("Item already in cart");
         }
         set({ cartItems: [...currentItems, { product, qty, deliveryFee }] });
-        toast.success("Item added to cart 🛒");
+        toast.success("Cart successfully updated 🛒");
       },
       // remove item from cart
       removeItem: (id: string) => {
@@ -67,7 +71,7 @@ const useCartStore = create(
           (cartItem) => cartItem.product._id !== id
         );
         set({ cartItems: newCartItems });
-        toast.success("Item removed from cart");
+        toast.success("Product was removed from cart");
       },
       // increase item quantity in cart
       increaseQuantity: (id: string) => {
@@ -77,7 +81,7 @@ const useCartStore = create(
             : cartItem
         );
         set({ cartItems: newCartItems });
-        toast.success("Item quantity increased");
+        toast.success("Cart successfully updated 🛒");
       },
       // decrease item quantity in cart
       decreaseQuantity: (id: string) => {
@@ -87,7 +91,7 @@ const useCartStore = create(
             : cartItem
         );
         set({ cartItems: newCartItems });
-        toast.success("Item quantity decreased");
+        toast.success("Cart successfully updated 🛒");
       },
 
       clearCart: () => set({ cartItems: [] }),

@@ -1,4 +1,13 @@
 import UsersListTable from "../../components/UsersListTable";
+import type { Metadata } from "next";
+
+const pageTitle = "Users";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: pageTitle,
+  },
+};
 
 const UsersPage = () => {
   return (

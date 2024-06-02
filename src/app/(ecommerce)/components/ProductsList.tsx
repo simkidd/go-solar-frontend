@@ -1,10 +1,10 @@
 "use client";
 import { Category, Product } from "@/interfaces/product.interface";
 import { Pagination, Slider } from "@nextui-org/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import ProductCard from "./ProductCard";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import ProductCard from "./ProductCard";
 
 const ProductsList: React.FC<{
   categories: Category[];
@@ -26,9 +26,9 @@ const ProductsList: React.FC<{
   const initialPage = parseInt(searchParams.get("page") || "1", 10);
   const [page, setPage] = useState<number>(initialPage);
 
-  const postsPerPage = 4;
+  const itemPerPage = 40;
 
-  const totalPages = Math.ceil(filteredProducts.length / postsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / itemPerPage);
 
   const brands = Array.from(new Set(products.map((product) => product.brand)));
 
@@ -102,7 +102,10 @@ const ProductsList: React.FC<{
   const handlePageChange = useCallback(
     (newPage: number) => {
       setPage(newPage);
-      const query = { ...Object.fromEntries(searchParams.entries()), page: String(newPage) };
+      const query = {
+        ...Object.fromEntries(searchParams.entries()),
+        page: String(newPage),
+      };
       const url = `${pathname}?${new URLSearchParams(query).toString()}`;
       router.push(url);
       scrollTo(0, 0);
@@ -110,10 +113,9 @@ const ProductsList: React.FC<{
     [pathname, router, searchParams]
   );
 
-
   const paginatedProducts = useMemo(() => {
-    const startIndex = (page - 1) * postsPerPage;
-    const endIndex = startIndex + postsPerPage;
+    const startIndex = (page - 1) * itemPerPage;
+    const endIndex = startIndex + itemPerPage;
     return filteredProducts.slice(startIndex, endIndex);
   }, [page, filteredProducts]);
 

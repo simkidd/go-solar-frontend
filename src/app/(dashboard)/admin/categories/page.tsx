@@ -1,5 +1,14 @@
 import CategoryListTable from "../../components/CategoryListTable";
 import CreateCategoryButton from "../../components/CreateCategoryButton";
+import type { Metadata } from "next";
+
+const pageTitle = "Categories";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: pageTitle,
+  },
+};
 
 const page = () => {
   return (

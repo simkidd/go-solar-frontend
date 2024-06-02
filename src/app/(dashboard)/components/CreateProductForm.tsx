@@ -5,12 +5,17 @@ import { Button } from "@nextui-org/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GrCloudUpload } from "react-icons/gr";
+import { useDropzone } from "react-dropzone";
+import { toast } from "react-toastify";
+
+interface FileWithPreview extends File {
+  preview: string;
+}
 
 const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { loading, createProduct, categories } = useProductStore();
-  const router = useRouter();
   const [input, setInput] = useState<CreateProductInput>({
     name: "",
     description: "",
@@ -22,42 +27,80 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     images: [],
     outsideLocationDeliveryFee: 0,
     withinLocationDeliveryFee: 0,
+    isPublished: false,
   });
-  const [imagePreview, setImagePreview] = useState<string[] | File[]>([]);
+  const [files, setFiles] = useState<FileWithPreview[]>([]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (files.length + acceptedFiles.length > 3) {
+      toast.info("You can only upload up to 3 images");
+      return;
+    }
 
-    const selectedImages: File[] = Array.from(files);
-    const newPreview = selectedImages.map((image) =>
-      URL.createObjectURL(image)
+    const newFiles = acceptedFiles.map((file) =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      })
     );
-    setImagePreview((prevPreviews) => [
-      ...prevPreviews,
-      ...(newPreview as any),
-    ]);
+
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
     setInput((prevInput) => ({
       ...prevInput,
-      images: [...prevInput.images, ...(selectedImages as any)],
+      images: [...prevInput.images, ...(acceptedFiles as any)],
     }));
-  };
+  }, []);
 
-  const removeImage = (index: number) => {
-    const updatedPreviews = [...imagePreview];
-    updatedPreviews.splice(index, 1);
-    setImagePreview(updatedPreviews as any);
+  const thumbs = files.map((file) => (
+    <div key={file.name} className="relative m-2 w-20 h-20">
+      <Image
+        src={file.preview}
+        alt={file.name}
+        className="w-full h-full object-cover rounded-lg"
+        width={80}
+        height={80}
+        onLoad={() => {
+          URL.revokeObjectURL(file.preview);
+        }}
+      />
+      <button
+        type="button"
+        className="absolute top-1 right-1 bg-white text-red-600 rounded-full p-1"
+        onClick={() => {
+          setFiles(files.filter((f) => f !== file));
+          setInput((prevInput: any) => ({
+            ...prevInput,
+            images: prevInput.images.filter((img: any) => img !== file),
+          }));
+        }}
+      >
+        <Trash2 size={16} />
+      </button>
+    </div>
+  ));
 
-    const updatedImages = [...input.images];
-    updatedImages.splice(index, 1);
-    setInput((prevInput) => ({ ...prevInput, images: updatedImages as any }));
-  };
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, [files]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+    },
+    multiple: true,
+    maxFiles: 3,
+  });
+
+  console.log("pub>>>", input?.isPublished)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (input.category === "") {
-      alert("Please select a category");
+      toast.info("Please select a category");
       return;
     }
 
@@ -184,62 +227,27 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <label htmlFor="image" className="">
               Images
             </label>
-            <div className="flex gap-2 flex-wrap mt-1">
-              {/* upload button */}
-              <div
-                className="size-20 overflow-hidden rounded border hover:bg-gray-400 "
-                style={{ transition: "background .3s ease" }}
-              >
-                <label htmlFor="image" className="cursor-pointer">
-                  <div className="w-full h-full flex flex-col items-center justify-center">
-                    <GrCloudUpload size={20} />
-                    <span className="text-sm">Upload</span>
-                  </div>
-                </label>
-                <input
-                  type="file"
-                  id="image"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                  multiple
-                  accept="image/*"
-                  disabled={imagePreview.length > 2}
-                />
-              </div>
-              {/* selected images */}
-              {imagePreview.map((image, i) => {
-                const src =
-                  typeof image === "string"
-                    ? image
-                    : URL.createObjectURL(image);
-                return (
-                  <div
-                    key={i}
-                    className="size-20 overflow-hidden rounded relative group"
-                  >
-                    <Image
-                      src={src}
-                      alt={`preview image${i}`}
-                      className="w-full h-full object-cover"
-                      width={80}
-                      height={80}
-                    />
-                    <div
-                      className="bg-[#2424243a] w-full h-full absolute top-0 left-0 flex group-hover:opacity-100 opacity-0"
-                      style={{ transition: "opacity .3s ease" }}
-                    >
-                      <button
-                        className="mt-auto ml-[50%] -translate-x-1/2 mb-1 text-white bg-danger p-1 rounded"
-                        onClick={() => removeImage(i)}
-                        type="button"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </div>
-                );
+            <div
+              {...getRootProps({
+                className:
+                  "flex gap-2 flex-wrap mt-1 border-dashed border-2 border-gray-300 p-4 rounded-lg cursor-pointer",
               })}
+            >
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p>Drop the files here ...</p>
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center">
+                  <GrCloudUpload size={20} />
+                  <p className="text-sm">
+                    Drag & drop some files here, or click to select files
+                  </p>
+                  <em className="text-[12px]">(Maximum of 3 files allowed)</em>
+                </div>
+              )}
             </div>
+
+            <aside className="mt-2 flex flex-wrap">{thumbs}</aside>
           </div>
           <div className="mb-3">
             <label htmlFor="information">Additional Information</label>
@@ -292,9 +300,13 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div className="mb-6">
           <input
             type="checkbox"
-            name=""
+            name="publish"
             id="publish"
             className="accent-current mr-1 cursor-pointer"
+            checked={input.isPublished}
+            onChange={(e) =>
+              setInput({ ...input, isPublished: e.target.checked })
+            }
           />
           <label htmlFor="publish" className="cursor-pointer">
             Publish on site

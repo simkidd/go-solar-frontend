@@ -25,6 +25,8 @@ interface IAuthStore {
   resetPassword: (input: ChangePasswordInput, token: string) => Promise<void>;
   showSidebar: boolean;
   setShowSidebar: (showSidebar: boolean) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }
 
 export const useAuthStore = create<IAuthStore>((set) => ({
@@ -35,6 +37,8 @@ export const useAuthStore = create<IAuthStore>((set) => ({
   setUsers: (users: User[]) => set({ users }),
   showSidebar: false,
   setShowSidebar: (showSidebar: boolean) => set({ showSidebar }),
+  collapsed: false,
+  setCollapsed: (collapsed: boolean) => set({ collapsed }),
   logout: () => {
     window.location.href = "/account/login";
     Cookies.remove(TOKEN_NAME);

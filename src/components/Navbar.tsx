@@ -1,32 +1,19 @@
 "use client";
 import { navlist } from "@/data/menuData";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { Mail, Menu, Phone } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { MdClose } from "react-icons/md";
 import MenuItem from "./MenuItem";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import { useAuthStore } from "@/lib/stores/auth.store";
 
 const Navbar = () => {
   const { user, logout } = useAuthStore();
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
-  const sidebarRef = useRef<HTMLDivElement | null>(null);
-
-  const handleOutsideClick = (e: MouseEvent) => {
-    if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
-      setShowMenu(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("click", handleOutsideClick);
-
-    return () => document.removeEventListener("click", handleOutsideClick);
-  });
 
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
@@ -39,6 +26,17 @@ const Navbar = () => {
       pathname.startsWith(href + "/")
     );
   };
+
+  useEffect(() => {
+    if (showMenu) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, [showMenu]);
 
   return (
     <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-white dark:bg-[#222327] shadow nav__container">
@@ -138,10 +136,18 @@ const Navbar = () => {
       </div>
 
       {/* mobile menu */}
-      <div className={`mob-nav-list lg:hidden ${showMenu && "open"}`}>
+      <>
         <div
-          ref={sidebarRef}
-          className="mob-nav-inner light bg-white dark:bg-[#222327]"
+          onClick={toggleShowMenu}
+          className={`bg-[#00000056] w-full h-screen absolute top-0 bottom-0 z-50 transition duration-500 ease-linear ${
+            showMenu ? "block" : "hidden"
+          }`}
+        ></div>
+
+        <div
+          className={`bg-white dark:bg-[#222327] lg:hidden flex flex-col justify-between absolute z-50 top-0 bottom-0 -left-full transition-all duration-500 ease-linear h-dvh w-3/6 ${
+            showMenu ? "left-0" : "w-3/6"
+          }`}
         >
           <div
             onClick={toggleShowMenu}
@@ -197,7 +203,7 @@ const Navbar = () => {
             <ThemeSwitcher />
           </div>
         </div>
-      </div>
+      </>
     </div>
   );
 };

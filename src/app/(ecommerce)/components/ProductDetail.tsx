@@ -2,7 +2,7 @@
 import { Product } from "@/interfaces/product.interface";
 import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
-import { MinusCircle, PlusCircle } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import React, { useState } from "react";
 import { BsCartPlus } from "react-icons/bs";
 
@@ -32,38 +32,43 @@ const ProductDetail: React.FC<{
       </h3>
 
       <div className="flex items-center mb-2">
-        <p className="text-base-medium text-grey-2 w-32">Brand:</p>
-        <p className="text-base-medium">{product?.brand}</p>
+        <p className="w-32">Brand:</p>
+        <p className="">{product?.brand}</p>
       </div>
       <div className="flex items-center mb-2">
-        <p className="text-base-medium text-grey-2 w-32">Availability:</p>
-        <p className="text-base-medium">
+        <p className="w-32">Availability:</p>
+        <p className="">
           {product?.quantityInStock > 1 ? "In Stock" : "Out of Stock"}
         </p>
       </div>
 
       <div className="flex flex-col gap-2 mb-6">
-        <p className="text-base-medium text-grey-2">Quantity:</p>
-        <div className="flex gap-4 items-center">
-          <MinusCircle
-            className="hover:text-red-1 cursor-pointer"
+        <p className="">Quantity:</p>
+
+        <div className="flex items-center ">
+          <button
+            className="disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed cursor-pointer h-8 w-8 flex items-center justify-center rounded-sm bg-primary text-white"
             onClick={() => quantity > 1 && setQuantity(quantity - 1)}
-          />
-          <p className="text-body-bold">{quantity}</p>
-          <PlusCircle
-            className="hover:text-red-1 cursor-pointer"
+          >
+            <Minus size={18} />
+          </button>
+          <span className="px-4 text-sm">{quantity}</span>
+          <button
+            className="h-8 w-8 flex items-center justify-center rounded-sm bg-primary text-white"
             onClick={() => setQuantity(quantity + 1)}
-          />
+          >
+            <Plus size={18} />
+          </button>
         </div>
       </div>
 
       <div>
-        <p className="text-base-medium text-grey-2">Delivery Fee:</p>
+        <p className="">Delivery Fee:</p>
         <p className="font-bold">
           {formatCurrency(selectedDeliveryFee, "NGN")}
         </p>
 
-        <p className="text-base-medium text-grey-2 mt-4">Location:</p>
+        <p className="mt-4">Location:</p>
         <div className="flex gap-4 mt-1">
           <button
             className={`${
