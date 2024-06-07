@@ -182,12 +182,18 @@ const columns: TableColumn<Product>[] = [
 ];
 
 const ProductListTable = () => {
-  const { products, loading } = useProductStore();
+  const { products, loading, categories } = useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || ""
+  );
+  const [selectedPublished, setSelectedPublished] = useState(
+    searchParams.get("published") || ""
+  );
 
   const filteredProducts = useMemo(() => {
     let selectedProducts = [...products];
@@ -197,8 +203,20 @@ const ProductListTable = () => {
         product?.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
+    if (selectedCategory) {
+      selectedProducts = selectedProducts.filter(
+        (product) => product?.category?.name === selectedCategory
+      );
+    }
+
+    if (selectedPublished) {
+      const isPublished = selectedPublished === "yes";
+      selectedProducts = selectedProducts.filter(
+        (product) => product?.isPublished === isPublished
+      );
+    }
     return selectedProducts;
-  }, [products, searchTerm]);
+  }, [products, searchTerm, selectedCategory, selectedPublished]);
 
   const handleSearch = useCallback(
     (value?: string) => {
@@ -215,9 +233,26 @@ const ProductListTable = () => {
     [pathname, replace, searchParams]
   );
 
+  const handleFilterChange = useCallback(
+    (filterName: string, value?: string) => {
+      const params = new URLSearchParams(searchParams);
+      if (value) {
+        params.set(filterName, value);
+        if (filterName === "category") setSelectedCategory(value);
+        if (filterName === "published") setSelectedPublished(value);
+      } else {
+        params.delete(filterName);
+        if (filterName === "category") setSelectedCategory("");
+        if (filterName === "published") setSelectedPublished("");
+      }
+      replace(`${pathname}?${params.toString()}`);
+    },
+    [pathname, replace, searchParams]
+  );
+
   return (
     <div>
-      <div className="flex items-center py-4 px-4">
+      <div className="flex items-center py-4 px-4 flex-wrap justify-start gap-4">
         <input
           type="text"
           placeholder="Search"
@@ -228,6 +263,40 @@ const ProductListTable = () => {
           }}
           defaultValue={searchParams.get("q")?.toString()}
         />
+
+        <select
+          className="bg-transparent border focus:outline-none px-2 py-1 text-sm rounded-md shadow-sm w-full lg:max-w-max"
+          value={selectedCategory}
+          onChange={(e) => handleFilterChange("category", e.target.value)}
+        >
+          <option value="" className="bg-white dark:bg-[#222327]">
+            All Categories
+          </option>
+          {categories.map((category) => (
+            <option
+              key={category._id}
+              value={category.name}
+              className="bg-white dark:bg-[#222327]"
+            >
+              {category.name}
+            </option>
+          ))}
+        </select>
+        <select
+          className="bg-transparent border focus:outline-none px-2 py-1 text-sm rounded-md shadow-sm w-full lg:max-w-max"
+          value={selectedPublished}
+          onChange={(e) => handleFilterChange("published", e.target.value)}
+        >
+          <option value="" className="bg-white dark:bg-[#222327]">
+            All
+          </option>
+          <option value="yes" className="bg-white dark:bg-[#222327]">
+            Published
+          </option>
+          <option value="no" className="bg-white dark:bg-[#222327]">
+            Unpublished
+          </option>
+        </select>
       </div>
       <DataTable
         columns={columns}

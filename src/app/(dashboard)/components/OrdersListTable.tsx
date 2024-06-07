@@ -1,19 +1,19 @@
 "use client";
 /* eslint-disable react-hooks/rules-of-hooks */
+import { Order, TrackingStatus } from "@/interfaces/order.interface";
 import { useOrderStore } from "@/lib/stores/order.store";
+import { formatCurrency, formatDate } from "@/utils/helpers";
 import { Button, Spinner } from "@nextui-org/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Trash } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
 import DataTable, {
   TableColumn,
   createTheme,
 } from "react-data-table-component";
-import { Order, TrackingStatus } from "@/interfaces/order.interface";
-import { axiosInstance } from "@/lib/axios";
+import { HiDocument } from "react-icons/hi2";
 import { customStyles } from "./UI/tableStyle";
-import { formatCurrency, formatDate } from "@/utils/helpers";
-import { Trash } from "lucide-react";
-import Link from "next/link";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 createTheme(
   "light",
@@ -104,8 +104,10 @@ const OrdersListTable = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [trackingFilter, setTrackingFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [trackingFilter, setTrackingFilter] = useState(
+    searchParams.get("status") || ""
+  );
 
   const filteredOrders = useMemo(() => {
     let selectedOrders = [...orders];
@@ -169,46 +171,21 @@ const OrdersListTable = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between flex-col-reverse md:flex-row mb-6 px-4 py-2 gap-1">
-        <div className="w-full flex items-center gap-1 overflow-x-auto scrollbar-hide">
-          <button
-            className={`px-4 py-2 border-b-2 text-opacity-5 text-nowrap ${isActive(
-              ""
-            )}`}
-            onClick={() => handleTrackingFilter("")}
+      <div className="flex items-center justify-between flex-col-reverse md:flex-row px-4 py-2 gap-1">
+        <div className="ms-auto">
+          <Button
+            size="sm"
+            variant="solid"
+            color="primary"
+            type="submit"
+            className="rounded-md"
+            startContent={<HiDocument size={16} />}
           >
-            All Orders
-          </button>
-          <button
-            className={`px-4 py-2 border-b-2 text-opacity-5 text-nowrap ${isActive(
-              TrackingStatus.Processing
-            )}`}
-            onClick={() => handleTrackingFilter(TrackingStatus.Processing)}
-          >
-            Processing
-          </button>
-          <button
-            className={`px-4 py-2 border-b-2 text-opacity-5 text-nowrap ${isActive(
-              TrackingStatus.Delivered
-            )}`}
-            onClick={() => handleTrackingFilter(TrackingStatus.Delivered)}
-          >
-            Delivered
-          </button>
-          <button
-            className={`px-4 py-2 border-b-2 text-opacity-5 text-nowrap ${isActive(
-              TrackingStatus.Received
-            )}`}
-            onClick={() => handleTrackingFilter(TrackingStatus.Received)}
-          >
-            Received
-          </button>
+            Export CSV
+          </Button>
         </div>
-        <button className="bg-primary text-white px-4 py-2 ms-auto text-nowrap">
-          Export CSV
-        </button>
       </div>
-      <div className="flex items-center py-4 px-4">
+      <div className="flex items-center py-4 px-4 flex-wrap justify-start gap-4">
         <input
           type="text"
           placeholder="Search"
@@ -219,6 +196,36 @@ const OrdersListTable = () => {
           }}
           defaultValue={searchParams.get("q")?.toString()}
         />
+
+        <select
+          className="bg-transparent border focus:outline-none px-2 py-1 text-sm rounded-md shadow-sm w-full lg:max-w-max"
+          value={trackingFilter}
+          onChange={(e) =>
+            handleTrackingFilter(e.target.value as TrackingStatus)
+          }
+        >
+          <option value="" className="bg-white dark:bg-[#222327]">
+            All Orders
+          </option>
+          <option
+            value={TrackingStatus.Processing}
+            className="bg-white dark:bg-[#222327]"
+          >
+            Processing
+          </option>
+          <option
+            value={TrackingStatus.Delivered}
+            className="bg-white dark:bg-[#222327]"
+          >
+            Delivered
+          </option>
+          <option
+            value={TrackingStatus.Received}
+            className="bg-white dark:bg-[#222327]"
+          >
+            Received
+          </option>
+        </select>
       </div>
       <DataTable
         columns={columns}

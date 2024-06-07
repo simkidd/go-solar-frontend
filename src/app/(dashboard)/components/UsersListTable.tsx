@@ -12,9 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import DataTable, {
   TableColumn,
   createTheme,
-  defaultThemes,
 } from "react-data-table-component";
-import { useDebouncedCallback } from "use-debounce";
 
 createTheme(
   "light",
@@ -119,8 +117,10 @@ const columns: TableColumn<User>[] = [
     selector: (row) => row?.is_verified,
     width: "120px",
     cell: (row) => (
-      <div>
-        {row?.is_verified ? <span>Verified</span> : <span>Not Verified</span>}
+      <div
+        className={`px-2 py-1 rounded-full bg-opacity-10 ${verifiedChip(row?.is_verified)}`}
+      >
+        {row?.is_verified ? "Verified" : "Not Verified"}
       </div>
     ),
     sortable: true,
@@ -152,7 +152,8 @@ const UsersListTable = () => {
   const pathname = usePathname();
   const { replace } = useRouter();
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [roleFilter, setRoleFilter] = useState(searchParams.get("role") || "");
 
   useEffect(() => {
     const getUsers = async () => {
@@ -177,11 +178,22 @@ const UsersListTable = () => {
       selectedUsers = selectedUsers.filter(
         (user) =>
           user?.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user?.lastname.toLowerCase().includes(searchTerm.toLowerCase())
+          user?.lastname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user?.phoneNumber.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (roleFilter) {
+      selectedUsers = selectedUsers.filter(
+        (user) =>
+          (roleFilter === "admin" && user?.isAdmin) ||
+          (roleFilter === "superAdmin" && user?.isSuperAdmin) ||
+          (roleFilter === "user" && !user?.isAdmin && !user?.isSuperAdmin)
       );
     }
     return selectedUsers;
-  }, [users, searchTerm]);
+  }, [users, searchTerm, roleFilter]);
 
   const handleSearch = useCallback(
     (value?: string) => {
@@ -198,9 +210,24 @@ const UsersListTable = () => {
     [pathname, replace, searchParams]
   );
 
+  const handleRoleFilterChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedRole = event.target.value;
+      setRoleFilter(selectedRole);
+      const params = new URLSearchParams(searchParams);
+      if (selectedRole) {
+        params.set("role", selectedRole);
+      } else {
+        params.delete("role");
+      }
+      replace(`${pathname}?${params.toString()}`);
+    },
+    [pathname, replace, searchParams]
+  );
+
   return (
     <div>
-      <div className="flex items-center py-4 px-4">
+      <div className="flex items-center py-4 px-4 flex-wrap justify-start gap-4">
         <input
           type="text"
           placeholder="Search"
@@ -211,6 +238,25 @@ const UsersListTable = () => {
           }}
           defaultValue={searchParams.get("q")?.toString()}
         />
+
+        <select
+          className="bg-transparent border focus:outline-none px-2 py-1 text-sm rounded-md shadow-sm w-full lg:max-w-max"
+          value={roleFilter}
+          onChange={handleRoleFilterChange}
+        >
+          <option value="" className="bg-white dark:bg-[#222327]">
+            All
+          </option>
+          <option value="admin" className="bg-white dark:bg-[#222327]">
+            Admin
+          </option>
+          <option value="superAdmin" className="bg-white dark:bg-[#222327]">
+            Super Admin
+          </option>
+          <option value="user" className="bg-white dark:bg-[#222327]">
+            User
+          </option>
+        </select>
       </div>
       <DataTable
         columns={columns}
@@ -236,3 +282,7 @@ const UsersListTable = () => {
 };
 
 export default UsersListTable;
+
+export const verifiedChip = (isVerified: boolean) => {
+  return isVerified ? "text-green-500 bg-green-500" : "text-red-500 bg-red-500";
+};

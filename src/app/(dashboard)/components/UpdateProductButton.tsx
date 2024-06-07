@@ -6,6 +6,7 @@ import { Edit, Plus } from "lucide-react";
 import { Category, Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const UpdateProductButton: React.FC<{
   product: Product;
@@ -41,7 +42,7 @@ const UpdateProductButton: React.FC<{
         startContent={<Edit size={16} />}
         onPress={onPublishOpen}
       >
-        {product.isPublished ? "Unpublish" : "Publish"}
+        {product?.isPublished ? "Unpublish" : "Publish"}
       </Button>
       <AppModal
         isOpen={isOpen}
@@ -81,13 +82,15 @@ export const PublishPopup: React.FC<{
     productId: product?._id,
     isPublished: product?.isPublished,
   });
+  const router = useRouter();
 
   const handlePublish = async () => {
     const newPublishState = !input.isPublished;
     setInput((prevInput) => ({ ...prevInput, isPublished: newPublishState }));
 
-    await updateProduct({ ...input, isPublished: newPublishState });
-    onClose();
+    await updateProduct({ ...input, isPublished: newPublishState })
+      .then(() => router.refresh())
+      .finally(() => onClose());
   };
 
   return (
