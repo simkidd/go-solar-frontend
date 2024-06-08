@@ -55,7 +55,7 @@ const SingleBlogPage = async ({ params }: IPost) => {
 
   return (
     <div className="w-full">
-      <PageHeader name={post?.title} />
+      <PageHeader name={post?.title} heading={post?.title} />
       <div className="container mx-auto px-2 py-16">
         <div className="max-w-[1100px] mx-auto px-2">
           <div className="grid lg:grid-cols-3 grid-cols-1 ">
@@ -77,11 +77,7 @@ const SingleBlogPage = async ({ params }: IPost) => {
               <article className="">{post?.content}</article>
             </div>
             <div className="col-span-1 lg:px-4 mt-8 lg:mt-0">
-              <div>
-                <h2 className="text-lg font-semibold mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
-                  About Us
-                </h2>
-              </div>
+              
               <div className="w-full">
                 <h2 className="text-lg font-semibold mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
                   Recent Post

@@ -96,7 +96,7 @@ export const PublishPopup: React.FC<{
   return (
     <div className="flex flex-col">
       <p>
-        {input.isPublished ? "Unpublish" : "Publish"} <b>{product?.name}</b>?
+        {product.isPublished ? "Unpublish" : "Publish"} <b>{product?.name}</b>?
       </p>
       <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
         <Button
@@ -116,7 +116,7 @@ export const PublishPopup: React.FC<{
           isLoading={loading}
           onPress={handlePublish}
         >
-          Yes, {input.isPublished ? "unpublish" : "publish"}
+          Yes, {product.isPublished ? "unpublish" : "publish"}
         </Button>
       </div>
     </div>

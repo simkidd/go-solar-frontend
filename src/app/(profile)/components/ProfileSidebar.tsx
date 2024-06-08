@@ -1,5 +1,4 @@
 "use client";
-import { useAuthStore } from "@/lib/stores/auth.store";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -40,7 +39,7 @@ const ProfileSidebar: React.FC = () => {
               className={`flex items-center px-4 py-2 gap-2 transition-colors  ${
                 isActive(nav.href)
                   ? "text-primary bg-primary bg-opacity-10"
-                  : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                  : "hover:text-primary hover:bg-primary hover:bg-opacity-10"
               }`}
             >
               <nav.icon />

@@ -1,7 +1,9 @@
 "use client";
+import LogoIcon from "@/assets/gosolar-logo-icon.svg";
 import { navlist } from "@/data/menuData";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Mail, Menu, Phone } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -61,7 +63,10 @@ const Navbar = () => {
                   Dashboard
                 </Link>
               ))}
-            <Link href="/account/profile" className="text-sm hover:text-primary">
+            <Link
+              href="/account/profile"
+              className="text-sm hover:text-primary"
+            >
               My Account
             </Link>
             {user && (
@@ -115,8 +120,11 @@ const Navbar = () => {
 
           {/* logo */}
           <div className="flex items-center justify-center mr-auto lg:mr-0">
-            <Link href="/" className="text-3xl">
-              GoSolar.
+            <Link href="/" className="flex items-center gap-1">
+              <Image src={LogoIcon} alt="logo" width={55} height={50} />
+              <span className="font-medium text-xl font-dmsans mt-2">
+                GoSolar
+              </span>
             </Link>
           </div>
 

@@ -54,18 +54,7 @@ const ShopPage = async () => {
               <ProductCard key={item?._id} item={item} />
             ))}
           </div>
-          {/* brands */}
-          <div className="flex items-center justify-between bg-primary text-white px-4 py-2">
-            <p className="text-xl font-medium">Brands</p>
-            <Link href="" className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
-            {products?.slice(0, 12).map((item) => (
-              <ProductCard key={item?._id} item={item} />
-            ))}
-          </div>
+          
           <div className="mb-6">
             <Cta />
           </div>

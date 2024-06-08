@@ -1,6 +1,6 @@
 import { Category, Product } from "@/interfaces/product.interface";
 import { getCategories, getProducts } from "@/lib/data";
-import ProductsList from "../components/ProductsList";
+import ProductsList from "../../components/ProductsList";
 import { notFound } from "next/navigation";
 
 const SearchResults = async ({
