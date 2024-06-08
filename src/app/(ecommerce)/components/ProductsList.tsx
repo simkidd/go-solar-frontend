@@ -229,12 +229,14 @@ const ProductsList: React.FC<{
             </div>
 
             <div className="flex justify-center mt-8">
+            {totalPages > 1 && (
               <Pagination
                 showControls
                 total={totalPages}
                 page={page}
                 onChange={handlePageChange}
               />
+            )}
             </div>
           </>
         )}

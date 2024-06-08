@@ -1,9 +1,11 @@
 "use client";
+import LogoIcon from "@/assets/gosolar-logo-icon.svg";
 import Search from "@/components/Search";
 import { shopNavlist } from "@/data/menuData";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
 import { useProductStore } from "@/lib/stores/product.store";
+import { Button } from "@nextui-org/react";
 import {
   ChevronDown,
   LogOut,
@@ -12,6 +14,7 @@ import {
   Phone,
   ShoppingCart,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,12 +25,9 @@ import {
   FaUser,
   FaXTwitter,
 } from "react-icons/fa6";
-import { HiOutlineUser } from "react-icons/hi2";
 import { MdClose, MdDashboard } from "react-icons/md";
 import MenuItem from "../../../components/MenuItem";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
-import { Button } from "@nextui-org/react";
-import { BiUser } from "react-icons/bi";
 
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
@@ -121,8 +121,11 @@ const HeaderShop = () => {
             </button>
             {/* logo */}
             <div className="flex items-center mr-auto lg:mr-0 w-48">
-              <Link href="/" className="text-3xl">
-                GoSolar.
+              <Link href="/" className="flex items-center gap-1">
+                <Image src={LogoIcon} alt="logo" width={55} height={50} />
+                <span className="font-medium text-xl font-dmsans mt-2">
+                  GoSolar
+                </span>
               </Link>
             </div>
             <div className="flex items-center justify-between w-full lg:h-16 h-14">
@@ -184,7 +187,7 @@ const HeaderShop = () => {
                           <li>
                             <Link
                               className="flex items-center px-4 py-3 hover:text-primary hover:bg-primary hover:bg-opacity-10 text-center"
-                              href="/orders"
+                              href="/account/orders"
                             >
                               <FaBoxOpen className=" h-[1rem] w-[1rem] mr-2" />
                               Orders
@@ -229,14 +232,11 @@ const HeaderShop = () => {
                       isActive("/cart") && "text-primary"
                     }`}
                   >
-                    <div className="size-8 mr-1">
+                    <div className="size-8 mr-1 relative">
                       <ShoppingCart size={32} />
-                    </div>
-                    <div className="flex flex-col text-sm">
-                      <span className="bg-primary rounded-full text-white text-xs">
+                      <span className="bg-primary rounded-full text-white text-xs absolute -top-1 -right-1 size-4 flex items-center justify-center">
                         {cartItems?.length}
                       </span>
-                      <span>Cart</span>
                     </div>
                   </button>
                 </Link>

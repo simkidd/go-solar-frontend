@@ -1,10 +1,11 @@
-import BlogCard, { BlogCardList } from "@/components/BlogCard";
+import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
+import PostsList from "@/components/PostsList";
 import Search from "@/components/Search";
 import { Post } from "@/interfaces/post.interface";
 import { getPosts } from "@/lib/data";
 import { Metadata } from "next";
-import { Suspense } from "react";
+import { notFound } from "next/navigation";
 
 const pageTitle = "Blogs";
 
@@ -14,48 +15,34 @@ export const metadata: Metadata = {
   },
 };
 
-const BlogsPage = async ({
-  searchParams,
-}: {
-  searchParams?: {
-    query?: string;
-    page?: string;
-  };
-}) => {
+const BlogsPage = async () => {
   const posts: Post[] = await getPosts();
-  const query = searchParams?.query || "";
+
+  if (!posts) {
+    notFound();
+  }
 
   return (
     <div className="w-full font-inter">
-      <PageHeader name="Blog" />
+      <PageHeader name="Blog" heading="Blog" />
 
-      <section className="py-28 w-full">
+      <div className="container mx-auto px-2 pt-8 lg:hidden">
+        <div className="max-w-xl">
+          <Search placeholder="Search a post..." />
+        </div>
+      </div>
+      <section className="lg:py-28 py-14 w-full">
         <div className="container mx-auto px-2">
           <div className="grid lg:grid-cols-4 grid-cols-1 ">
-            {posts?.length === 0 ? (
-              <div className="col-span-3">
-                <p>No post yet</p>
-              </div>
-            ) : (
-              <div className="col-span-3">
-                <Suspense fallback={<div>Loading posts...</div>}>
-                  <div className="grid md:grid-cols-2 grid-cols-1 gap-6 py-4 lg:pr-4">
-                    {posts?.map((post) => (
-                      <BlogCard key={post._id} post={post} />
-                    ))}
-                  </div>
-                </Suspense>
-              </div>
-            )}
+            <div className="col-span-3">
+              <PostsList posts={posts} />
+            </div>
+
             <div className="col-span-1 lg:pl-4 mt-8 lg:mt-0 py-4">
-              <div>
+              <div className="hidden lg:block">
                 <Search placeholder="Search a post..." />
               </div>
-              <div>
-                <h2 className="text-lg font-semibold mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
-                  About Us
-                </h2>
-              </div>
+
               <div className="w-full">
                 <h2 className="text-lg font-semibold mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
                   Recent Post

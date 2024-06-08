@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 const AboutUsPage = () => {
   return (
     <div className="w-full font-inter">
-      <PageHeader name="About Us" />
+      <PageHeader name="About Us" heading="About Us" />
       {/* about us */}
       <section className="w-full py-20">
         <div className="container mx-auto px-2">
