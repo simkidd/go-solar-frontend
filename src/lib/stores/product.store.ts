@@ -20,7 +20,7 @@ interface IProductStore {
   createProduct: (formData: FormData, config: any) => Promise<void>;
   updateProduct: (input: UpdateProductInput) => Promise<void>;
   deleteProduct: (id: string) => void;
-  updateImage: (formData: FormData, config: any) => Promise<void>;
+  updateImages: (formData: FormData, config: any) => Promise<void>;
   category: Category | undefined;
   categories: Category[];
   setCategory: (category: Category) => void;
@@ -115,14 +115,25 @@ export const useProductStore = create<IProductStore>((set) => ({
       set({ loading: false });
     }
   },
-  updateImage: async (formData, config) => {
+  updateImages: async (formData, config) => {
     try {
       set({ imageLoading: true });
-      const { data } = await axiosInstance.post(
-        "admin/update-product-image",
+      const { data } = await axiosInstance.patch(
+        "/admin/update-product-image",
         formData,
         config
       );
+
+      const res = data.product as Product;
+
+      set((state) => ({
+        product: {
+          ...state.product,
+          ...res,
+        },
+      }));
+
+      toast.success(data.message);
 
       return data;
     } catch (error) {

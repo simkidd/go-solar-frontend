@@ -94,8 +94,6 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     maxFiles: 3,
   });
 
-  console.log("pub>>>", input?.isPublished)
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -230,7 +228,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <div
               {...getRootProps({
                 className:
-                  "flex gap-2 flex-wrap mt-1 border-dashed border-2 border-gray-300 p-4 rounded-lg cursor-pointer",
+                  "flex gap-2 flex-wrap mt-1 border-dashed border-2 border-gray-300 py-16 px-4 rounded-lg cursor-pointer",
               })}
             >
               <input {...getInputProps()} />
