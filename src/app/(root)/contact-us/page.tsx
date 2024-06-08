@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const ContactUsPage = () => {
   return (
     <div className="w-full font-inter">
-      <PageHeader name="Contact Us" />
+      <PageHeader name="Contact Us" heading="Contact Us" />
       <section className="w-full py-20">
         <div className="container mx-auto px-2">
           <div className="max-w-[1100px] mx-auto lg:px-2">

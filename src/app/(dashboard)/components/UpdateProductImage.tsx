@@ -76,7 +76,7 @@ export const ProductImagesForm: React.FC<{
     setSelectedImage(newFiles[0]);
   }, []);
 
-  const thumbs = images.map((image,i) => (
+  const thumbs = images.map((image, i) => (
     <div key={i} className="relative m-2 w-20 h-20">
       <Image
         src={image} // Directly use the image URL
@@ -163,14 +163,16 @@ export const ProductImagesForm: React.FC<{
             <p className="text-primary">Drop files here...</p>
           ) : (
             <p className="text-gray-500">
-              Drag 'n' drop image here, or click to select a file
+              Drag & drop image here, or click to select a file
             </p>
           )}
           {selectedImage && (
-            <img
+            <Image
               src={URL.createObjectURL(selectedImage)}
               alt="Selected Image"
               className="w-48 mt-4 rounded"
+              width={80}
+              height={80}
             />
           )}
         </div>
