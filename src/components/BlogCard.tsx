@@ -8,13 +8,19 @@ import React, { Suspense } from "react";
 export const BlogCardList: React.FC<{ item: Post }> = ({ item }) => {
   return (
     <div className="flex">
-      <div className="size-20 bg-gray-500 overflow-hidden">
-        <Image src="" alt="" className="w-full h-full object-cover" />
+      <div className="size-20 bg-gray-500 overflow-hidden rounded-md">
+        <Image
+          src={item?.image}
+          alt={item?.title}
+          className="w-full h-full object-cover"
+          width={80}
+          height={80}
+        />
       </div>
       <div className="flex flex-col w-[calc(100%-5rem)] px-2">
         <Link
           href={`/blog/${item?.slug}`}
-          className="mb-2 hover:underline"
+          className="mb-2 hover:underline text-ellipsis line-clamp-2 text-sm"
           title={item?.title}
         >
           {item?.title}
