@@ -1,17 +1,16 @@
 "use client";
 import AppModal from "@/components/AppModal";
-import { Product } from "@/interfaces/product.interface";
+import { IImage, Product } from "@/interfaces/product.interface";
 import { axiosInstance } from "@/lib/axios";
+import { useProductStore } from "@/lib/stores/product.store";
 import { Button, useDisclosure } from "@nextui-org/react";
 import { Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { GrCloudUpload } from "react-icons/gr";
 import { toast } from "react-toastify";
-
-interface FileWithPreview extends File {
-  preview: string;
-}
 
 const UpdateProductImage: React.FC<{
   product: Product;
@@ -35,10 +34,10 @@ const UpdateProductImage: React.FC<{
       <AppModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        title="Update Product"
+        title="Update Product Images"
         isDismissable={false}
         hideCloseButton
-        size="4xl"
+        size="md"
         scrollBehavior="inside"
       >
         <ProductImagesForm onClose={onClose} product={product} />
@@ -53,8 +52,13 @@ export const ProductImagesForm: React.FC<{
   product: Product;
   onClose: () => void;
 }> = ({ onClose, product }) => {
-  const [images, setImages] = useState<string[]>(product?.images as any);
+  const { updateImages, imageLoading } = useProductStore();
+  const [images, setImages] = useState<string[]>(
+    product.images.map((img) => img.url)
+  );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImgId, setSelectedImgId] = useState<string | null>(null);
+  const router = useRouter();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (images.length + acceptedFiles.length > 3) {
@@ -91,6 +95,7 @@ export const ProductImagesForm: React.FC<{
         onClick={() => {
           setImages(images.filter((f) => f !== image));
           setSelectedImage(null);
+          setSelectedImgId(null);
         }}
       >
         <Trash2 size={16} />
@@ -110,43 +115,48 @@ export const ProductImagesForm: React.FC<{
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedImage) {
+    if (!selectedImage || !selectedImgId) {
       alert("Please select an image to update");
       return;
     }
 
     const formData = new FormData();
-    formData.append("productId", product._id);
-    formData.append("imgId", "goSolar/ys0nc8n2crou0ad4quqq"); // Replace with actual imgId
+    formData.append("productId", product?._id);
+    formData.append("imgId", selectedImgId); // Replace with actual imgId
     formData.append("updateImg", selectedImage);
 
-    try {
-      const response = await axiosInstance.post(
-        "/api/admin/update-product-image",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
 
-      console.log("Product images updated:", response.data);
-      onClose();
-    } catch (error) {
-      console.error("Error updating product images:", error);
-    }
+    await updateImages(formData, config);
+
+    router.refresh();
+    onClose();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="grid grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="w-full font-inter">
+      <div className="w-full">
         {/* Existing Images (You'll need to fetch these from your database) */}
         {product.images && product.images.length > 0 && (
-          <div className="col-span-1">
-            <h3 className="mb-2">Existing Images</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {thumbs}
+          <div className="col-span-1 mb-4">
+            <h3 className="mb-2">Select an image to update</h3>
+            <div className="flex flex-wrap gap-2">
+              {thumbs.map((thumb, i) => (
+                <div
+                  key={i}
+                  onClick={() => {
+                    setSelectedImgId(product?.images[i].public_id);
+                  }}
+                  className={`cursor-pointer border-2 ${
+                    selectedImgId &&
+                    product?.images[i]?.public_id === selectedImgId
+                      ? "border-primary rounded"
+                      : "border-transparent"
+                  }`}
+                >
+                  {thumb}
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -154,7 +164,7 @@ export const ProductImagesForm: React.FC<{
         {/* Image Upload Area */}
         <div
           {...getRootProps()}
-          className={`col-span-1 border-dashed border-2 rounded-lg py-16 px-4 flex flex-col items-center justify-center ${
+          className={`col-span-1 border-dashed border-2 rounded-lg py-16 px-4 flex gap-2 flex-wrap cursor-pointer ${
             isDragActive ? "border-primary" : "border-gray-300"
           }`}
         >
@@ -162,34 +172,45 @@ export const ProductImagesForm: React.FC<{
           {isDragActive ? (
             <p className="text-primary">Drop files here...</p>
           ) : (
-            <p className="text-gray-500">
-              Drag & drop image here, or click to select a file
-            </p>
+            <div className="w-full h-full flex flex-col items-center justify-center">
+              <GrCloudUpload size={20} />
+              <p className="text-gray-500">
+                Drag & drop image here, or click to select a file
+              </p>
+            </div>
           )}
           {selectedImage && (
-            <Image
-              src={URL.createObjectURL(selectedImage)}
-              alt="Selected Image"
-              className="w-48 mt-4 rounded"
-              width={80}
-              height={80}
-            />
+            <div className="w-48 h-48 overflow-hidden rounded">
+              <Image
+                src={URL.createObjectURL(selectedImage)}
+                alt="Selected Image"
+                className="w-full h-full object-cover"
+                width={80}
+                height={80}
+              />
+            </div>
           )}
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-4">
+      <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
+        <Button
+          variant="light"
+          color="default"
+          className="rounded-md"
+          onPress={onClose}
+        >
+          Close
+        </Button>
         <Button
           variant="solid"
           color="primary"
           type="submit"
           className="rounded-md "
-          isDisabled={!selectedImage}
+          isDisabled={imageLoading || !selectedImgId}
+          isLoading={imageLoading}
         >
           Update Image
-        </Button>
-        <Button variant="light" color="default" onPress={onClose}>
-          Close
         </Button>
       </div>
     </form>
