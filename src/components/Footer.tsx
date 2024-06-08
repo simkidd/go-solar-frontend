@@ -3,6 +3,8 @@ import { MapPin, Phone, Mail, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import NewsLetter from "@/app/(ecommerce)/components/NewsLetter";
+import LogoIcon from "@/assets/gosolar-logo-icon.svg";
+import Image from "next/image";
 
 const Footer = () => {
   const today = new Date();
@@ -15,7 +17,12 @@ const Footer = () => {
           <div className="grid lg:grid-cols-4 grid-cols-1">
             <div className="lg:p-4 px-2 py-4 ">
               <div className="mb-4">
-                <h3 className="text-3xl font-bold">GoSolar</h3>
+                <Link href="/" className="flex items-center gap-1">
+                  <Image src={LogoIcon} alt="logo" width={55} height={50} />
+                  <span className="font-medium text-xl font-dmsans mt-2">
+                    GoSolar
+                  </span>
+                </Link>{" "}
               </div>
               <p>
                 Leading provider of sustainable solar energy solutions in Port

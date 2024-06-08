@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <NextTopLoader
-          color="#9dc900"
+          color="#08AA08"
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}

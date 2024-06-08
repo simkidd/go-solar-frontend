@@ -6,6 +6,7 @@ import { Edit, Plus } from "lucide-react";
 import { Category, Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const UpdateProductButton: React.FC<{
   product: Product;
@@ -41,7 +42,7 @@ const UpdateProductButton: React.FC<{
         startContent={<Edit size={16} />}
         onPress={onPublishOpen}
       >
-        {product.isPublished ? "Unpublish" : "Publish"}
+        {product?.isPublished ? "Unpublish" : "Publish"}
       </Button>
       <AppModal
         isOpen={isOpen}
@@ -81,19 +82,21 @@ export const PublishPopup: React.FC<{
     productId: product?._id,
     isPublished: product?.isPublished,
   });
+  const router = useRouter();
 
   const handlePublish = async () => {
     const newPublishState = !input.isPublished;
     setInput((prevInput) => ({ ...prevInput, isPublished: newPublishState }));
 
-    await updateProduct({ ...input, isPublished: newPublishState });
-    onClose();
+    await updateProduct({ ...input, isPublished: newPublishState })
+      .then(() => router.refresh())
+      .finally(() => onClose());
   };
 
   return (
     <div className="flex flex-col">
       <p>
-        {input.isPublished ? "Unpublish" : "Publish"} <b>{product?.name}</b>?
+        {product.isPublished ? "Unpublish" : "Publish"} <b>{product?.name}</b>?
       </p>
       <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
         <Button
@@ -113,7 +116,7 @@ export const PublishPopup: React.FC<{
           isLoading={loading}
           onPress={handlePublish}
         >
-          Yes, {input.isPublished ? "unpublish" : "publish"}
+          Yes, {product.isPublished ? "unpublish" : "publish"}
         </Button>
       </div>
     </div>

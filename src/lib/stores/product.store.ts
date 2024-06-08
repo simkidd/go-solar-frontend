@@ -73,18 +73,18 @@ export const useProductStore = create<IProductStore>((set) => ({
         input
       );
 
+      const res = data.product as Product;
+
       set((state) => ({
         product: {
           ...state.product,
-          ...data.product,
+          ...res,
         },
       }));
 
       set((state) => ({
         products: state.products.map((product) =>
-          product._id === input.productId
-            ? { ...product, ...data.product }
-            : product
+          product._id === input.productId ? { ...product, ...res } : product
         ),
       }));
       toast.success(data.message);
@@ -92,8 +92,8 @@ export const useProductStore = create<IProductStore>((set) => ({
       return data.product;
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
-      console.log(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response?.data.message);
+      console.log(errorMsg?.response?.data.message);
     } finally {
       set({ loading: false });
     }
@@ -109,8 +109,8 @@ export const useProductStore = create<IProductStore>((set) => ({
       toast.success(data.message);
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
-      console.log(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response?.data.message);
+      console.log(errorMsg?.response?.data.message);
     } finally {
       set({ loading: false });
     }
@@ -127,8 +127,8 @@ export const useProductStore = create<IProductStore>((set) => ({
       return data;
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
-      console.log(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response?.data.message);
+      console.log(errorMsg?.response?.data.message);
     } finally {
       set({ imageLoading: false });
     }
@@ -148,8 +148,8 @@ export const useProductStore = create<IProductStore>((set) => ({
       return data.category;
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
-      console.log(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response?.data.message);
+      console.log(errorMsg?.response?.data.message);
     } finally {
       set({ loading: false });
     }
@@ -180,8 +180,8 @@ export const useProductStore = create<IProductStore>((set) => ({
       toast.success(data.message);
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
-      console.log(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response?.data.message);
+      console.log(errorMsg?.response?.data.message);
     } finally {
       set({ loading: false });
     }
@@ -197,8 +197,8 @@ export const useProductStore = create<IProductStore>((set) => ({
       toast.success(data.message);
     } catch (error) {
       const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
-      console.log(errorMsg?.response.data.message);
+      toast.error(errorMsg?.response?.data.message);
+      console.log(errorMsg?.response?.data.message);
     } finally {
       set({ loading: false });
     }

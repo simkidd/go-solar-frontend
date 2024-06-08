@@ -1,14 +1,13 @@
 "use client";
 import { SearchIcon } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
 const Search = ({ placeholder }: { placeholder: string }) => {
   const router = useRouter();
   const search = useSearchParams();
-  const [term, setTerm] = useState<string | null>(
-    search ? search.get("q") : ""
-  );
+  const pathname = usePathname();
+  const [term, setTerm] = useState(search.get("q") || "");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +19,29 @@ const Search = ({ placeholder }: { placeholder: string }) => {
     if (term.trim()) {
       const params = new URLSearchParams();
       params.set("q", term.trim());
-      router.push(`/search?${params.toString()}`);
+
+      let searchRoute: string;
+      if (pathname === "/shop") {
+        searchRoute = "/product/search";
+      } else if (pathname === "/blog") {
+        searchRoute = "/blog/search";
+      } else if (pathname.includes("search")) {
+        // If already on a search page, use the current pathname
+        searchRoute = pathname;
+      } else if (
+        pathname.includes("products") &&
+        !pathname.includes("search")
+      ) {
+        // If on a '/[slug]/products' route, append '/search'
+        searchRoute = "/product/search";
+      } else {
+        searchRoute = `${pathname}/search`;
+      }
+
+      router.push(`${searchRoute}?${params.toString()}`);
       setTerm("");
+
+      router.refresh();
     }
   };
 
@@ -37,7 +57,10 @@ const Search = ({ placeholder }: { placeholder: string }) => {
         onChange={(e) => setTerm(e.target.value)}
         className="w-full focus:outline-none h-9 lg:h-10 py-2 px-3 bg-transparent text-sm"
       />
-      <button type="submit" className="bg-primary text-white h-9 lg:h-10 lg:px-7 px-6">
+      <button
+        type="submit"
+        className="bg-primary text-white h-9 lg:h-10 lg:px-7 px-6"
+      >
         <SearchIcon size={18} />
       </button>
     </form>

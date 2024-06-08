@@ -1,5 +1,6 @@
 import DeleteProduct from "@/app/(dashboard)/components/DeleteProduct";
 import UpdateProductButton from "@/app/(dashboard)/components/UpdateProductButton";
+import UpdateProductImage from "@/app/(dashboard)/components/UpdateProductImage";
 import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/ProductImages";
 import { Product } from "@/interfaces/product.interface";
@@ -68,6 +69,10 @@ const SingleProductPage = async ({ params }: IProduct) => {
                 <div className="grid lg:grid-cols-2 grid-cols-1">
                   <div className="w-full p-4">
                     <ProductImages images={product?.images} />
+
+                    <div className="mt-8">
+                      <UpdateProductImage product={product} />
+                    </div>
                   </div>
                   <div className="w-full flex flex-col p-4">
                     <h2 className="font-bold text-3xl mb-8">{product?.name}</h2>
