@@ -1,6 +1,6 @@
 "use client";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { TrackingStatus } from "@/interfaces/order.interface";
+import { Order, TrackingStatus } from "@/interfaces/order.interface";
 import { axiosInstance } from "@/lib/axios";
 import { useOrderStore } from "@/lib/stores/order.store";
 import { formatCurrency, formatDateTime } from "@/utils/helpers";
@@ -11,35 +11,37 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { trackingStatusChip } from "./OrdersListTable";
 
-const OrderDetails = () => {
-  const { order, setOrder } = useOrderStore();
+const OrderDetails: React.FC<{
+  order: Order;
+}> = ({ order }) => {
+  // const { order, setOrder } = useOrderStore();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      if (id) {
-        try {
-          setLoading(true);
-          const { data } = await axiosInstance.get(`/users/orders/${id}`);
-          setOrder(data.order);
-        } catch (error) {
-          const errorMsg = error as any;
-          console.log(errorMsg?.response.data.message);
-        } finally {
-          setLoading(false);
-        }
-      }
-    })();
-  }, [id]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (id) {
+  //       try {
+  //         setLoading(true);
+  //         const { data } = await axiosInstance.get(`/users/orders/${id}`);
+  //         setOrder(data.order);
+  //       } catch (error) {
+  //         const errorMsg = error as any;
+  //         console.log(errorMsg?.response.data.message);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     }
+  //   })();
+  // }, [id]);
 
-  if (!order && loading) {
-    return (
-      <div>
-        <LoadingSpinner />
-      </div>
-    );
-  }
+  // if (!order && loading) {
+  //   return (
+  //     <div>
+  //       <LoadingSpinner />
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
