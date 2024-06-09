@@ -39,7 +39,7 @@ const BlogsPage = async () => {
             </div>
 
             <div className="col-span-1 lg:pl-4 mt-8 lg:mt-0 py-4">
-              <div className="hidden lg:block">
+              <div className="hidden lg:block mb-4">
                 <Search placeholder="Search a post..." />
               </div>
 

@@ -65,10 +65,12 @@ export const useAuthStore = create<IAuthStore>((set) => ({
       }
 
       if (user?.isAdmin || user?.isSuperAdmin) {
-        window.location.href = "/admin";
+        window.location.href = "/";
       } else {
-        window.location.href = "/shop";
+        window.location.href = "/";
       }
+
+      set({ user });
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
@@ -83,7 +85,7 @@ export const useAuthStore = create<IAuthStore>((set) => ({
       const { data } = await axiosInstance.post("/auth/signup", input);
 
       if (data) {
-        toast.success(data.message);
+        window.location.href = "/account/registration-success";
       }
     } catch (error) {
       const errorMsg = error as any;
