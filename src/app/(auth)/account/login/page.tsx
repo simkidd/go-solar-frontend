@@ -7,9 +7,7 @@ import Link from "next/link";
 const pageTitle = "Log into an account";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: pageTitle,
-  },
+  title: pageTitle,
 };
 
 const LoginPage = () => {

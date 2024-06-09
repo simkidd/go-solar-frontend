@@ -13,7 +13,7 @@ const PostsList: React.FC<{ posts: Post[] }> = ({ posts }) => {
   const initialPage = parseInt(searchParams.get("page") || "1", 10);
   const [page, setPage] = useState<number>(initialPage);
 
-  const itemPerPage = 2;
+  const itemPerPage = 10;
 
   const totalPages = Math.ceil(filteredPosts.length / itemPerPage);
 
