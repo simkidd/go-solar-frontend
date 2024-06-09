@@ -57,25 +57,34 @@ const Navbar = () => {
           </div>
 
           <div className=" ml-auto flex items-center gap-8">
-            {user?.isAdmin ||
-              (user?.isSuperAdmin && (
-                <Link href="/admin" className="text-sm hover:text-primary">
-                  Dashboard
+            {user ? (
+              <>
+                {user?.isAdmin ||
+                  (user?.isSuperAdmin && (
+                    <Link href="/admin" className="text-sm hover:text-primary">
+                      Dashboard
+                    </Link>
+                  ))}
+                <Link
+                  href="/account/profile"
+                  className="text-sm hover:text-primary"
+                >
+                  My Account
                 </Link>
-              ))}
-            <Link
-              href="/account/profile"
-              className="text-sm hover:text-primary"
-            >
-              My Account
-            </Link>
-            {user && (
-              <button
-                className="text-sm hover:text-red-500"
-                onClick={() => logout()}
+                <button
+                  className="text-sm hover:text-red-500"
+                  onClick={() => logout()}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/account/login"
+                className="text-sm hover:text-primary"
               >
-                Logout
-              </button>
+                Login / Register
+              </Link>
             )}
 
             <ThemeSwitcher />
@@ -166,21 +175,52 @@ const Navbar = () => {
             <MdClose size={32} />
           </div>
 
-          <ul className="flex items-center justify-center space-y-6 flex-col w-full">
-            {navlist.map(({ href, label }, i) => {
-              return (
-                <li key={i} className="">
-                  <Link
-                    href={href}
-                    className={` ${isActive(href) ? "text-primary" : ""}`}
-                    onClick={toggleShowMenu}
-                  >
-                    {label}
+          <div className="flex flex-col overflow-y-auto space-y-6">
+            <ul className="flex items-center justify-center space-y-6 flex-col w-full">
+              {navlist.map(({ href, label }, i) => {
+                return (
+                  <li key={i} className="">
+                    <Link
+                      href={href}
+                      className={`hover:text-primary ${isActive(href) ? "text-primary" : ""}`}
+                      onClick={toggleShowMenu}
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="flex flex-col items-center space-y-6">
+              {user ? (
+                <>
+                  {user?.isAdmin ||
+                    (user?.isSuperAdmin && (
+                      <Link href="/admin" className="hover:text-primary">
+                        Dashboard
+                      </Link>
+                    ))}
+                  <Link href="/account/profile" className="hover:text-primary">
+                    My Account
                   </Link>
-                </li>
-              );
-            })}
-          </ul>
+                  <button
+                    className="hover:text-red-500"
+                    onClick={() => logout()}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/account/login"
+                  className="hover:text-primary"
+                >
+                  Login / Register
+                </Link>
+              )}
+            </div>
+          </div>
 
           <div className="flex justify-center items-center flex-col w-full my-4 space-y-4">
             <ul className="flex items-center gap-4 ">
