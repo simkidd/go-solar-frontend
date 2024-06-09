@@ -135,7 +135,9 @@ const Navbar = () => {
           </ul>
 
           <Link
-            href="/get-quote"
+            href="https://wa.me/2347062762879"
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-primary text-white lg:h-full justify-center items-center px-4 py-2 flex"
           >
             Get A Quote
