@@ -1,6 +1,7 @@
-import { Unlock } from "lucide-react";
+import LogoIcon from "@/assets/gosolar-logo-icon.svg";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import NextTopLoader from "nextjs-toploader";
 import "../globals.scss";
@@ -33,8 +34,11 @@ export default function RootLayout({
         />
         <Providers>
           <div className="w-full min-h-dvh light bg-[#f2f2f2] dark:bg-[#2a2b2f] relative flex items-center justify-center flex-col font-inter py-10">
-            <Link href="/">
-              <h3 className="text-3xl">GoSolar.ng</h3>
+            <Link href="/" className="flex items-center gap-1">
+              <Image src={LogoIcon} alt="logo" width={80} height={80} />
+              {/* <span className="font-medium text-xl font-dmsans mt-2">
+                GoSolar
+              </span> */}
             </Link>
             <div className="w-full max-w-md p-4 mx-auto">
               <div className="w-full light bg-white dark:bg-[#222327] shadow-lg">
