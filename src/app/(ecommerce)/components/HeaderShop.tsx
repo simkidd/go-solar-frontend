@@ -231,6 +231,7 @@ const HeaderShop = () => {
                     className={`h-full justify-center items-center px-4 py-2 flex hover:text-primary ${
                       isActive("/cart") && "text-primary"
                     }`}
+                    onClick={() => setShowMenu(false)}
                   >
                     <div className="size-8 mr-1 relative">
                       <ShoppingCart size={32} />

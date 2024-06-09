@@ -28,6 +28,9 @@ const Search = ({ placeholder }: { placeholder: string }) => {
       } else if (pathname.includes("search")) {
         // If already on a search page, use the current pathname
         searchRoute = pathname;
+      } else if (pathname.match(/\/product\/[^\/]+/)) {
+        // If on a '/product/[slug]' route, go to '/product/search'
+        searchRoute = "/product/search";
       } else if (
         pathname.includes("products") &&
         !pathname.includes("search")

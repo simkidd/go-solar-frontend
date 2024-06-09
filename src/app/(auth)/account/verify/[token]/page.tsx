@@ -5,9 +5,7 @@ import React from "react";
 const pageTitle = "Verify account";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: pageTitle,
-  },
+  title: pageTitle,
 };
 
 const VerifyEmailToken = ({

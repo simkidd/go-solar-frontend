@@ -6,9 +6,7 @@ import Link from "next/link";
 const pageTitle = "Create an account";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: pageTitle,
-  },
+  title: pageTitle,
 };
 
 const RegisterPage = () => {
