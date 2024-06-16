@@ -28,8 +28,8 @@ const ProductImages: React.FC<{
         {images.map((img, i) => (
           <div
             key={i}
-            className={`size-14 overflow-hidden rounded-lg cursor-pointer border ${
-              selectedImage === img.url ? "border border-black" : ""
+            className={`size-14 overflow-hidden rounded-lg cursor-pointer border-2 ${
+              selectedImage === img.url ? "border-2 border-primary" : ""
             }`}
             onClick={() => handleSelected(img.url)}
           >
