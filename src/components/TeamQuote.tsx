@@ -2,12 +2,12 @@
 import Image from "next/image";
 import { BiSolidQuoteAltRight } from "react-icons/bi";
 import { Autoplay, Pagination } from "swiper/modules";
+import { TeamQuotes } from "@/data/team";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
 import "swiper/css/autoplay";
 import "swiper/css/pagination";
-import { TeamQuotes } from "@/data/team";
 
 const TeamQuote = () => {
   return (
