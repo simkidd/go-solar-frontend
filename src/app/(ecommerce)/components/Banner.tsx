@@ -18,9 +18,9 @@ const Banner = () => {
   const bannerImages = [banner1, banner2, banner3];
 
   return (
-    <div className="w-full lg:h-[400px] md:h-[300px]">
+    <div className="w-full lg:h-[400px] md:h-[300px] h-[300px]">
       <div className="w-full h-full grid grid-cols-12">
-        <div className="col-span-12 lg:col-span-8 w-full h-full pr-2 overflow-hidden">
+        <div className="col-span-12 lg:col-span-8 w-full h-full lg:pr-2 overflow-hidden">
           <Swiper
             spaceBetween={10}
             slidesPerView={1}
@@ -33,7 +33,7 @@ const Banner = () => {
           >
             {bannerImages.map((banner, i) => (
               <SwiperSlide key={i}>
-                <div className="bg-gray-500 w-full lg:h-[400px] md:h-[300px]">
+                <div className="bg-gray-500 w-full lg:h-[400px] md:h-[300px] h-[300px]">
                   <Image
                     src={banner.src}
                     alt="main banner"
@@ -46,7 +46,7 @@ const Banner = () => {
             ))}
           </Swiper>
         </div>
-        <div className="col-span-4 w-full lg:h-[400px] md:h-[300px] lg:flex flex-col pl-2 gap-4 hidden">
+        <div className="col-span-4 w-full lg:h-[400px] md:h-[300px] h-[300px] lg:flex flex-col pl-2 gap-4 hidden">
           <div className="h-full w-full bg-gray-500 box-border overflow-hidden">
             <Image
               src={banner2.src}
