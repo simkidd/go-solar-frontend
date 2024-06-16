@@ -316,60 +316,61 @@ const HeaderShop = () => {
               </Link>
             </div>
           ) : (
-            <div className="w-full px-2 my-4 flex justify-between">
-              <div className="grid grid-cols-[40px_auto] gap-2">
-                <div className="bg-primary text-white size-10 flex items-center justify-center rounded-md text-xl font-bold">
-                  {user?.firstname[0]}
+            <>
+              <div className="w-full px-2 my-4 flex justify-between">
+                <div className="grid grid-cols-[40px_auto] gap-2">
+                  <div className="bg-primary text-white size-10 flex items-center justify-center rounded-md text-xl font-bold">
+                    {user?.firstname[0]}
+                  </div>
+                  <div>
+                    <p className="font-bold">
+                      {user?.firstname + " " + user?.lastname}
+                    </p>
+                    <p className="text-sm">{user?.email}</p>
+
+                    <Link
+                      href="/account/profile"
+                      className="text-primary font-semibold"
+                      onClick={toggleShowMenu}
+                    >
+                      Account
+                    </Link>
+                  </div>
                 </div>
+
                 <div>
-                  <p className="font-bold">
-                    {user?.firstname + " " + user?.lastname}
-                  </p>
-                  <p className="text-sm">{user?.email}</p>
-
-                  <Link
-                    href="/account/profile"
-                    className="text-primary font-semibold"
-                    onClick={toggleShowMenu}
+                  <Button
+                    variant="flat"
+                    color="danger"
+                    isIconOnly
+                    size="sm"
+                    onPress={() => logout()}
+                    title="Logout"
                   >
-                    Account
+                    <LogOut className=" h-[1.2rem] w-[1.2rem]" />
+                  </Button>
+                </div>
+              </div>
+              <div className="w-full">
+                <div className="grid grid-cols-2">
+                  <Link href="/account/orders" onClick={toggleShowMenu}>
+                    <div className="px-4 py-2 border dark:border-gray-700 leading-tight">
+                      <p className="">My orders</p>
+                      <span className="text-[12px] text-gray-600">
+                        Items Ordered
+                      </span>
+                    </div>
                   </Link>
-                </div>
-              </div>
-
-              <div>
-                <Button
-                  variant="flat"
-                  color="danger"
-                  isIconOnly
-                  size="sm"
-                  onPress={() => logout()}
-                  title="Logout"
-                >
-                  <LogOut className=" h-[1.2rem] w-[1.2rem]" />
-                </Button>
-              </div>
-            </div>
-          )}
-
-          <div className="w-full">
-            <div className="grid grid-cols-2">
-              <Link href="/account/orders" onClick={toggleShowMenu}>
-                <div className="px-4 py-2 border dark:border-gray-700 leading-tight">
-                  <p className="">My orders</p>
-                  <span className="text-[12px] text-gray-600">
-                    Items Ordered
-                  </span>
-                </div>
-              </Link>
-              {/* <Link href="">
+                  {/* <Link href="">
                 <div className="px-4 py-2 border border-l-0 leading-tight">
                   <p className="">My orders</p>
                   <span className="text-[12px] text-gray-600">Items Ordered</span>
                 </div>
               </Link> */}
-            </div>
-          </div>
+                </div>
+              </div>
+            </>
+          )}
 
           <ul className="flex space-y-4 flex-col w-full px-2 mt-8">
             {shopNavlist.map(({ href, label }, i) => {
