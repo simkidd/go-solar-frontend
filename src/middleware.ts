@@ -6,7 +6,11 @@ import { User } from "./interfaces/auth.interface";
 // Specify protected and public routes
 const adminRoutes = ["/admin"];
 const publicRoutes = ["/shop", "/product", "/blog", "/"];
-const privateRoutes = ["/account/profile", "/account/orders"];
+const privateRoutes = [
+  "/account/profile",
+  "/account/orders",
+  "/orders/success",
+];
 const authRoutes = [
   "/account/login",
   "/account/register",
