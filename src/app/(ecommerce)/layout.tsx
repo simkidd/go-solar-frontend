@@ -36,7 +36,7 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={<LoadingSpinner />}>
             <HeaderShop />
-            <main className="min-h-[70vh]">{children}</main>
+            <main className="min-h-[70dvh]">{children}</main>
             <Footer />
           </Suspense>
         </Providers>

@@ -8,9 +8,9 @@ const ProductCard: React.FC<{
   item: Product;
 }> = ({ item }) => {
   return (
-    <div className="w-full border hover:border-primary">
+    <div className="w-full group">
       <Link href={`/product/${item?.slug}`}>
-        <div className="w-full lg:h-56 h-44 overflow-hidden relative group">
+        <div className="w-full lg:h-56 h-44 overflow-hidden relative">
           <div className="absolute top-0 left-0 w-full h-full">
             <Image
               src={
@@ -39,7 +39,7 @@ const ProductCard: React.FC<{
           )}
         </div>
       </Link>
-      <div className="w-full px-2">
+      <div className="w-full py-2 ">
         <Link
           href={`/product/${item?.slug}`}
           className="mb-2 text-sm text-ellipsis line-clamp-2"

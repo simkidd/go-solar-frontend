@@ -22,11 +22,7 @@ const CreateProductButton = () => {
       </AppModal>
 
       <Button
-        size="sm"
-        variant="solid"
         color="primary"
-        type="submit"
-        className="rounded-md "
         startContent={<Plus size={16} />}
         onPress={onOpen}
       >

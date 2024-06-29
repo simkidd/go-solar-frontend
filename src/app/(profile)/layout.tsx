@@ -42,7 +42,7 @@ export default function RootLayout({
                 <div className="col-span-1">
                   <ProfileSidebar />
                 </div>
-                <main className="w-full lg:col-span-3 light bg-white dark:bg-[#222327] font-dmsans">
+                <main className="w-full lg:col-span-3 light bg-white dark:bg-[#222327] font-dmsans min-h-[70dvh]">
                   {children}
                 </main>
               </div>

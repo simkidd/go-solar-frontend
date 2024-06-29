@@ -165,7 +165,7 @@ const AdminSidebar = () => {
               </span>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               href="/admin/reviews"
               className={`flex items-center p-2 px-4 transition-all duration-300 rounded-lg ${
@@ -182,7 +182,7 @@ const AdminSidebar = () => {
                 Reviews
               </span>
             </Link>
-          </li>
+          </li> */}
 
           <SectionTitle>Content Management</SectionTitle>
           <li>
