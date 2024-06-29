@@ -20,13 +20,9 @@ const ProfileDetails = () => {
       <div className="bg-white dark:bg-[#2a2b2f] p-6">
         <h2 className="text-xl font-semibold mb-4">Account Settings</h2>
         <ul className="text-gray-700 dark:text-gray-300">
+          
           <li>
-            <a href="/profile/settings" className="hover:underline">
-              Update Profile
-            </a>
-          </li>
-          <li>
-            <a href="/profile/settings/password" className="hover:underline">
+            <a href="/account/settings" className="hover:underline">
               Change Password
             </a>
           </li>
