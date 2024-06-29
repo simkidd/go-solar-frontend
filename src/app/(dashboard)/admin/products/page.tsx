@@ -18,7 +18,7 @@ const ProductsListPage = async () => {
 
         <CreateProductButton />
       </div>
-      <div className="w-full">
+      <div className="w-full mb-8">
         <ProductsTable />
       </div>
     </div>

@@ -1,112 +1,64 @@
 "use client";
 import AppModal from "@/components/AppModal";
-import { Product } from "@/interfaces/product.interface";
+import { Category } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { formatCurrency, formatDate } from "@/utils/helpers";
+import { formatDate } from "@/utils/helpers";
 import {
-  TableHeader,
-  TableBody,
+  Button,
   Card,
   CardBody,
-  Spinner,
-  TableCell,
-  Table,
-  TableColumn,
-  TableRow,
-  Button,
-  Chip,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
   Input,
   Pagination,
-  SortDescriptor,
   Selection,
+  SortDescriptor,
+  Spinner,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
   useDisclosure,
-  Tooltip,
+  Table,
 } from "@nextui-org/react";
 import {
-  EllipsisVertical,
-  PlusIcon,
-  SearchIcon,
   ChevronDownIcon,
+  EllipsisVertical,
+  SearchIcon,
   Trash,
-  Eye,
 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
 
 const columns = [
-  {
-    name: "Product",
-    uid: "name",
-    minWidth: "400px",
-    sortable: true,
-  },
-  {
-    name: "Price",
-    uid: "price",
-    minWidth: "150px",
-    sortable: true,
-  },
-  {
-    name: "Quantity",
-    uid: "quantity",
-  },
-  {
-    name: "Category",
-    uid: "category",
-  },
-  {
-    name: "Brand",
-    uid: "brand",
-  },
-  {
-    name: "Status",
-    uid: "status",
-    sortable: true,
-  },
-  {
-    name: "Date added",
-    uid: "dateAdded",
-    minWidth: "150px",
-    sortable: true,
-  },
-  {
-    name: "Actions",
-    uid: "actions",
-    width: "80px",
-  },
+  { name: "Name", uid: "name", minWidth: "200px", sortable: true },
+  { name: "Description", uid: "description", minWidth: "300px" },
+  { name: "Products", uid: "products", minWidth: "150px" },
+  { name: "Date added", uid: "dateAdded", minWidth: "150px", sortable: true },
+  { name: "Actions", uid: "actions", width: "80px" },
 ];
 
-const ProductsTable = () => {
-  const { products, loading, categories, deleteProduct } = useProductStore();
+const CategoryTable = () => {
+  const { categories, loading, deleteCategory, products } = useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const router = useRouter();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(columns.map((col) => col.uid))
   );
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "name",
     direction: "ascending",
   });
-  const [page, setPage] = useState(1);
-  const [publishFilter, setPublishFilter] = useState(
-    searchParams.get("published") || "All"
-  );
-  const [categoryFilter, setCategoryFilter] = useState(
-    searchParams.get("category") || "All"
-  );
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
-  const router = useRouter();
+  const [selectedCat, setSelectedCat] = useState<Category | null>(null);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -119,32 +71,16 @@ const ProductsTable = () => {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredProducts = [...products];
+    let filteredCat = [...categories];
 
     if (hasSearchFilter) {
-      filteredProducts = filteredProducts.filter((product) =>
-        product?.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredCat = filteredCat.filter((cat) =>
+        cat?.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
-    if (publishFilter !== "All") {
-      filteredProducts = filteredProducts.filter((product) =>
-        publishFilter === "published"
-          ? product.isPublished
-          : !product.isPublished
-      );
-    }
-
-    if (categoryFilter !== "All") {
-      filteredProducts = filteredProducts.filter((product) =>
-        product?.category?.name
-          .toLowerCase()
-          .includes(categoryFilter.toLowerCase())
-      );
-    }
-
-    return filteredProducts;
-  }, [products, filterValue, publishFilter, categoryFilter]);
+    return filteredCat;
+  }, [categories, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -167,45 +103,19 @@ const ProductsTable = () => {
     return sorted;
   }, [sortDescriptor, items]);
 
-  const renderCell = useCallback((product: Product, columnKey: React.Key) => {
+  const renderCell = useCallback((cat: Category, columnKey: React.Key) => {
     switch (columnKey) {
       case "name":
-        return (
-          <div className="grid grid-cols-[55px_auto] gap-2 w-full py-2">
-            <div className="w-10 h-10">
-              <Image
-                src={product?.images[0].url}
-                alt={product?.name}
-                width={80}
-                height={80}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <Link href={`/admin/products/${product?._id}`}>
-              <span className="text-wrap">{product?.name}</span>
-            </Link>
-          </div>
+        return cat?.name;
+      case "description":
+        return cat?.description;
+      case "products":
+        const categoryProducts = products.filter(
+          (product) => product?.category?._id === cat?._id
         );
-      case "price":
-        return <div>{formatCurrency(product?.price, "NGN")}</div>;
-      case "quantity":
-        return <div>{product?.quantityInStock}</div>;
-      case "category":
-        return <div>{product?.category?.name}</div>;
-      case "brand":
-        return <div>{product?.brand}</div>;
-      case "status":
-        return (
-          <Chip
-            color={product.isPublished ? "success" : "danger"}
-            variant="flat"
-            size="sm"
-          >
-            {product.isPublished ? "Published" : "Unpublished"}
-          </Chip>
-        );
+        return <div>{categoryProducts.length}</div>;
       case "dateAdded":
-        return <div>{formatDate(product?.createdAt)}</div>;
+        return formatDate(cat?.createdAt);
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
@@ -217,14 +127,8 @@ const ProductsTable = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
-                  startContent={<Eye size={16} />}
-                  onPress={() => router.push(`/admin/products/${product?._id}`)}
-                >
-                  View
-                </DropdownItem>
-                <DropdownItem
                   onPress={() => {
-                    setSelectedProduct(product);
+                    setSelectedCat(cat);
                     onOpen();
                   }}
                   startContent={<Trash size={16} />}
@@ -241,8 +145,8 @@ const ProductsTable = () => {
   }, []);
 
   const handleDelete = () => {
-    if (selectedProduct) {
-      deleteProduct(selectedProduct?._id);
+    if (selectedCat) {
+      deleteCategory(selectedCat?._id);
       router.refresh();
       onClose();
     }
@@ -277,51 +181,7 @@ const ProductsTable = () => {
     setPage(1);
   }, []);
 
-  const onPublishFilterChange = useCallback(
-    (keys: Selection) => {
-      const selectedStatus = Array.from(keys).join(", ");
-      const params = new URLSearchParams(searchParams);
-      if (selectedStatus) {
-        params.set("status", selectedStatus);
-        setPublishFilter(selectedStatus);
-      } else {
-        params.delete("status");
-        setPage(1);
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onCatFilterChange = useCallback(
-    (keys: Selection) => {
-      const selectedCat = Array.from(keys).join(", ");
-      const params = new URLSearchParams(searchParams);
-      if (selectedCat) {
-        params.set("category", selectedCat);
-        setCategoryFilter(selectedCat);
-      } else {
-        params.delete("category");
-        setPage(1);
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onResetFilters = useCallback(() => {
-    setFilterValue("");
-    setPublishFilter("All");
-    setPage(1);
-    setCategoryFilter("All");
-    const params = new URLSearchParams();
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [pathname, router]);
-
   const topContent = useMemo(() => {
-    const hasFilters =
-      filterValue || publishFilter !== "All" || categoryFilter !== "All";
-
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
@@ -348,60 +208,8 @@ const ProductsTable = () => {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
+
           <div className="flex gap-3">
-            {hasFilters && (
-              <Button variant="flat" color="danger" onPress={onResetFilters}>
-                Reset
-              </Button>
-            )}
-
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  variant="flat"
-                  className="truncate"
-                  endContent={<ChevronDownIcon className="text-small" />}
-                >
-                  {categoryFilter === "All" ? "All Categories" : categoryFilter}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Select Category"
-                disallowEmptySelection
-                variant="flat"
-                selectionMode="single"
-                selectedKeys={categoryFilter}
-                onSelectionChange={onCatFilterChange}
-              >
-                {categories.map((category) => (
-                  <DropdownItem key={category?.name}>
-                    {category?.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  {publishFilter}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Published"
-                disallowEmptySelection
-                selectionMode="single"
-                selectedKeys={publishFilter}
-                onSelectionChange={onPublishFilterChange}
-              >
-                <DropdownItem key="All">All</DropdownItem>
-                <DropdownItem key="published">Published</DropdownItem>
-                <DropdownItem key="unpublished">Unpublished</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -430,7 +238,7 @@ const ProductsTable = () => {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {products.length} products
+            Total {categories.length} categories
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -451,9 +259,8 @@ const ProductsTable = () => {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    products.length,
+    categories.length,
     hasSearchFilter,
-    publishFilter,
   ]);
 
   const bottomContent = useMemo(() => {
@@ -509,7 +316,7 @@ const ProductsTable = () => {
   );
 
   return (
-    <div className="w-full">
+    <div>
       <AppModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -519,7 +326,7 @@ const ProductsTable = () => {
       >
         <div className="flex flex-col">
           <p>
-            Are you sure you want to delete <b>{selectedProduct?.name}</b>?
+            Are you sure you want to delete <b>{selectedCat?.name}</b>?
           </p>
           <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
             <Button
@@ -596,4 +403,4 @@ const ProductsTable = () => {
   );
 };
 
-export default ProductsTable;
+export default CategoryTable;
