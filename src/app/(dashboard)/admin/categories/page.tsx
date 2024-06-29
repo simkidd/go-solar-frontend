@@ -1,7 +1,6 @@
-import CategoryListTable from "../../components/CategoryListTable";
+import type { Metadata } from "next";
 import CategoryTable from "../../components/CategoryTable";
 import CreateCategoryButton from "../../components/CreateCategoryButton";
-import type { Metadata } from "next";
 
 const pageTitle = "Categories";
 

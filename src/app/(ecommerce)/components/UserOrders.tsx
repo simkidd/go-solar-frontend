@@ -1,9 +1,9 @@
 "use client";
-import { trackingStatusChip } from "@/app/(dashboard)/components/OrdersListTable";
+import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { TrackingStatus } from "@/interfaces/order.interface";
 import { useOrderStore } from "@/lib/stores/order.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
+import { Chip } from "@nextui-org/react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -34,13 +34,13 @@ const UserOrders = () => {
                     Order Date: {formatDate(order?.trackingId?.createdAt)}
                   </p>
                   <p className="mx-2">|</p>
-                  <span
-                    className={`px-4 py-1 rounded-full bg-opacity-0 text-sm ${trackingStatusChip(
-                      order?.trackingStatus as TrackingStatus
-                    )}`}
+                  <Chip
+                    color={getChipColor(order?.trackingStatus)}
+                    size="sm"
+                    variant="flat"
                   >
                     {order?.trackingStatus}
-                  </span>
+                  </Chip>
                 </div>
                 <Link
                   href={`/account/orders/${order?.trackingId?.tracking_id}`}

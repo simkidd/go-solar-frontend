@@ -1,12 +1,12 @@
 "use client";
-import AppModal from "@/components/AppModal";
-import { Category } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
-import { formatDate } from "@/utils/helpers";
+import { Order, TrackingStatus } from "@/interfaces/order.interface";
+import { useOrderStore } from "@/lib/stores/order.store";
+import { formatCurrency, formatDate } from "@/utils/helpers";
 import {
   Button,
   Card,
   CardBody,
+  Chip,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -16,33 +16,59 @@ import {
   Selection,
   SortDescriptor,
   Spinner,
+  Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  useDisclosure,
-  Table,
 } from "@nextui-org/react";
 import {
   ChevronDownIcon,
   EllipsisVertical,
+  Eye,
   SearchIcon,
-  Trash,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
 
 const columns = [
-  { name: "Name", uid: "name", minWidth: "200px", sortable: true },
-  { name: "Description", uid: "description", minWidth: "300px" },
-  { name: "Products", uid: "products", minWidth: "150px" },
-  { name: "Date added", uid: "dateAdded", minWidth: "150px", sortable: true },
-  { name: "Actions", uid: "actions", width: "80px" },
+  { name: "Order ID", uid: "orderId", minWidth: "200px" },
+  {
+    name: "Billing Name",
+    uid: "billingName",
+    minWidth: "200px",
+    sortable: true,
+  },
+  { name: "Date", uid: "dateOrdered", minWidth: "300px" },
+  { name: "Total", uid: "total", minWidth: "150px" },
+  {
+    name: "Tracking Status",
+    uid: "trackingStatus",
+    minWidth: "150px",
+    sortable: true,
+  },
+  {
+    name: "Actions",
+    uid: "actions",
+  },
 ];
 
-const CategoryTable = () => {
-  const { categories, loading, deleteCategory, products } = useProductStore();
+export const getChipColor = (status: TrackingStatus) => {
+  switch (status) {
+    case TrackingStatus.Processing:
+      return "warning";
+    case TrackingStatus.Delivered:
+      return "success";
+    case TrackingStatus.Received:
+      return "primary";
+    default:
+      return "default";
+  }
+};
+
+const OrdersTable = () => {
+  const { orders, loading } = useOrderStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -57,8 +83,9 @@ const CategoryTable = () => {
     column: "name",
     direction: "ascending",
   });
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [selectedCat, setSelectedCat] = useState<Category | null>(null);
+  const [statusFilter, setStatusFilter] = useState(
+    searchParams.get("status") || "All"
+  );
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -71,16 +98,31 @@ const CategoryTable = () => {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredCat = [...categories];
+    let filteredOrders = [...orders];
 
     if (hasSearchFilter) {
-      filteredCat = filteredCat.filter((cat) =>
-        cat?.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredOrders = filteredOrders.filter(
+        (order) =>
+          order?.user?.firstname
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          order?.user?.lastname
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          order?.trackingId?.tracking_id
+            .toLowerCase()
+            .includes(filterValue.toLowerCase())
       );
     }
 
-    return filteredCat;
-  }, [categories, filterValue]);
+    if (statusFilter !== "All") {
+      filteredOrders = filteredOrders.filter(
+        (order) => order?.trackingStatus === statusFilter
+      );
+    }
+
+    return filteredOrders;
+  }, [orders, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -103,19 +145,28 @@ const CategoryTable = () => {
     return sorted;
   }, [sortDescriptor, items]);
 
-  const renderCell = useCallback((cat: Category, columnKey: React.Key) => {
+  const renderCell = useCallback((order: Order, columnKey: React.Key) => {
     switch (columnKey) {
-      case "name":
-        return cat?.name;
-      case "description":
-        return cat?.description;
-      case "products":
-        const categoryProducts = products.filter(
-          (product) => product?.category?._id === cat?._id
+      case "orderId":
+        return order?.trackingId?.tracking_id;
+      case "billingName":
+        return (
+          <div>{order?.user?.firstname + " " + order?.user?.lastname}</div>
         );
-        return <div>{categoryProducts.length}</div>;
-      case "dateAdded":
-        return formatDate(cat?.createdAt);
+      case "dateOrdered":
+        return formatDate(order?.createdAt);
+      case "total":
+        return <div>{formatCurrency(order?.totalPricePaid, "NGN")}</div>;
+      case "trackingStatus":
+        return (
+          <Chip
+            color={getChipColor(order?.trackingStatus)}
+            size="sm"
+            variant="flat"
+          >
+            {order?.trackingStatus}
+          </Chip>
+        );
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
@@ -127,13 +178,10 @@ const CategoryTable = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
-                  onPress={() => {
-                    setSelectedCat(cat);
-                    onOpen();
-                  }}
-                  startContent={<Trash size={16} />}
+                  startContent={<Eye size={16} />}
+                  onPress={() => router.push(`/admin/orders/${order?._id}`)}
                 >
-                  Delete
+                  View
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -143,14 +191,6 @@ const CategoryTable = () => {
         return null;
     }
   }, []);
-
-  const handleDelete = () => {
-    if (selectedCat) {
-      deleteCategory(selectedCat?._id);
-      router.refresh();
-      onClose();
-    }
-  };
 
   const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -181,7 +221,33 @@ const CategoryTable = () => {
     setPage(1);
   }, []);
 
+  const onStatusFilterChange = useCallback(
+    (keys: Selection) => {
+      const selectedStatus = Array.from(keys).join(", ");
+      const params = new URLSearchParams(searchParams);
+      if (selectedStatus) {
+        params.set("status", selectedStatus);
+        setStatusFilter(selectedStatus);
+      } else {
+        params.delete("status");
+        setPage(1);
+      }
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams]
+  );
+
+  const onResetFilters = useCallback(() => {
+    setFilterValue("");
+    setStatusFilter("All");
+    setPage(1);
+    const params = new URLSearchParams();
+    router.replace(`${pathname}?${params.toString()}`);
+  }, [pathname, router]);
+
   const topContent = useMemo(() => {
+    const hasFilters = filterValue || statusFilter !== "All";
+
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
@@ -210,6 +276,38 @@ const CategoryTable = () => {
           />
 
           <div className="flex gap-3">
+            {hasFilters && (
+              <Button variant="flat" color="danger" onPress={onResetFilters}>
+                Reset
+              </Button>
+            )}
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<ChevronDownIcon className="text-small" />}
+                  variant="flat"
+                >
+                  {statusFilter}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Role Filter"
+                onSelectionChange={onStatusFilterChange}
+                selectionMode="single"
+              >
+                <DropdownItem key="All">All</DropdownItem>
+                <DropdownItem key={TrackingStatus.Processing}>
+                  Processing
+                </DropdownItem>
+                <DropdownItem key={TrackingStatus.Delivered}>
+                  Delivered
+                </DropdownItem>
+                <DropdownItem key={TrackingStatus.Received}>
+                  Recieved
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -238,7 +336,7 @@ const CategoryTable = () => {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {categories.length} categories
+            Total {orders.length} orders
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -259,7 +357,7 @@ const CategoryTable = () => {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    categories.length,
+    orders.length,
     hasSearchFilter,
   ]);
 
@@ -317,41 +415,6 @@ const CategoryTable = () => {
 
   return (
     <div>
-      <AppModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        title="Confirmation"
-        isDismissable={false}
-        hideCloseButton
-      >
-        <div className="flex flex-col">
-          <p>
-            Are you sure you want to delete <b>{selectedCat?.name}</b>?
-          </p>
-          <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-            <Button
-              variant="light"
-              color="default"
-              className="rounded-md"
-              onPress={onClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="solid"
-              color="danger"
-              type="submit"
-              className="rounded-md"
-              isDisabled={loading}
-              isLoading={loading}
-              onPress={handleDelete}
-            >
-              Delete
-            </Button>
-          </div>
-        </div>
-      </AppModal>
-
       <Table
         isCompact
         aria-label="Example table with custom cells, pagination and sorting"
@@ -379,7 +442,7 @@ const CategoryTable = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No products found"}
+          emptyContent={"No orders found"}
           items={sortedItems}
           isLoading={loading}
           loadingContent={
@@ -403,4 +466,4 @@ const CategoryTable = () => {
   );
 };
 
-export default CategoryTable;
+export default OrdersTable;

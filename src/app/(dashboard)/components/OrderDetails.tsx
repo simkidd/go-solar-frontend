@@ -1,15 +1,13 @@
 "use client";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { Order, TrackingStatus } from "@/interfaces/order.interface";
-import { axiosInstance } from "@/lib/axios";
-import { useOrderStore } from "@/lib/stores/order.store";
+import { Order } from "@/interfaces/order.interface";
 import { formatCurrency, formatDateTime } from "@/utils/helpers";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Chip } from "@nextui-org/react";
 import { Mail, Phone } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { trackingStatusChip } from "./OrdersListTable";
+import { useState } from "react";
+import { getChipColor } from "./OrdersTable";
 
 const OrderDetails: React.FC<{
   order: Order;
@@ -155,13 +153,13 @@ const OrderDetails: React.FC<{
             <div>
               <p>
                 Status:{" "}
-                <span
-                  className={`px-4 py-1 rounded-full bg-opacity-10 ${trackingStatusChip(
-                    order?.trackingStatus as TrackingStatus
-                  )}`}
+                <Chip
+                  color={getChipColor(order?.trackingStatus)}
+                  size="sm"
+                  variant="flat"
                 >
                   {order?.trackingStatus}
-                </span>
+                </Chip>
               </p>
             </div>
           </div>

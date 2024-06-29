@@ -212,7 +212,7 @@ const ProductsTable = () => {
             <Dropdown>
               <DropdownTrigger>
                 <Button isIconOnly size="sm" variant="light">
-                  <EllipsisVertical className="text-default-300" />
+                  <EllipsisVertical className="text-default-300" size={16} />
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>

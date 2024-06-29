@@ -24,8 +24,6 @@ export const generateStaticParams = async () => {
   try {
     const orders = await getOrders();
 
-    console.log("orders>>>>", orders);
-
     // Make sure `orders` is an array before mapping
     if (Array.isArray(orders)) {
       return orders.map((order: any) => ({
