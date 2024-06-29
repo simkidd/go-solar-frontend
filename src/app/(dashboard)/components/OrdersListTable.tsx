@@ -86,17 +86,6 @@ const columns: TableColumn<Order>[] = [
     ),
     width: "150px",
   },
-  {
-    name: "Actions",
-    cell: (row) => (
-      <div className="w-full flex items-center justify-center">
-        <Button isIconOnly color="danger" variant="light" size="sm">
-          <Trash size={16} />
-        </Button>
-      </div>
-    ),
-    width: "80px",
-  },
 ];
 
 const OrdersListTable = () => {
