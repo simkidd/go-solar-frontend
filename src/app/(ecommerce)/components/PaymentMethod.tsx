@@ -7,6 +7,8 @@ import React, { useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { BiCreditCard, BiWallet } from "react-icons/bi";
 import StepButton from "./StepButtons";
+import { FaCircle, FaRegCircle } from "react-icons/fa6";
+import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
 
 interface PaymentType {
   name: string;
@@ -91,7 +93,11 @@ const PaymentMethod = () => {
                 {payment.disabled && (
                   <span className="text-sm">Unavailable</span>
                 )}
-                <Circle className="w-5 h-5 ms-3 flex-shrink-0" />
+                {input.paymentMethod === payment.value ? (
+                  <MdRadioButtonChecked className="w-5 h-5 ms-3 flex-shrink-0" />
+                ) : (
+                  <MdRadioButtonUnchecked className="w-5 h-5 ms-3 flex-shrink-0" />
+                )}
               </div>
             </label>
           </li>

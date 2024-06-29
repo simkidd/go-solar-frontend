@@ -1,8 +1,8 @@
 "use client";
-import { trackingStatusChip } from "@/app/(dashboard)/components/OrdersListTable";
-import { TrackingStatus } from "@/interfaces/order.interface";
+import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
 import { useOrderStore } from "@/lib/stores/order.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
+import { Chip } from "@nextui-org/react";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { notFound, useRouter } from "next/navigation";
@@ -121,13 +121,13 @@ const AccountOrderDetails: React.FC<{
       <div className="mb-8 border dark:border-[#2a2b2f]">
         <div className="px-6 py-2 bg-[#f1f1f1] dark:bg-[#2a2b2f] flex items-center justify-between">
           <h3 className="text-lg font-semibold">Items Ordered</h3>
-          <span
-            className={`px-4 py-1 rounded-full bg-opacity-20 text-sm ${trackingStatusChip(
-              order?.trackingStatus as TrackingStatus
-            )}`}
+          <Chip
+            color={getChipColor(order?.trackingStatus)}
+            size="sm"
+            variant="flat"
           >
             {order?.trackingStatus}
-          </span>
+          </Chip>
         </div>
         <ul className="space-y-4">
           {order?.products.map((item) => (

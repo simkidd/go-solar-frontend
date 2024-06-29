@@ -95,12 +95,12 @@ const CartPage = () => {
                     <div className="px-4">
                       <button
                         onClick={handleCheckout}
-                        className="w-full bg-primary text-white py-2 rounded-md shadow-md hover:bg-primary-dark transition"
+                        className="w-full bg-primary text-white py-2 shadow-md hover:bg-primary-dark transition"
                       >
                         Proceed to Checkout
                       </button>
                       <Link href="/shop">
-                        <button className="w-full py-2 rounded-md transition mt-2">
+                        <button className="w-full py-2 transition mt-2">
                           Continue Shopping
                         </button>
                       </Link>

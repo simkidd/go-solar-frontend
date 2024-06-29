@@ -29,8 +29,6 @@ const Payment = () => {
   const { user } = useAuthStore();
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState("");
-  const [orderSuccess, setOrderSuccess] = useState(false);
-  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -73,15 +71,14 @@ const Payment = () => {
             input
           );
 
-          if (data) {
-            setOrderSuccess(true);
-            setSuccess(data?.message);
-
+          if (data.success) {
             clearCart();
             setDeliveryDetails({} as DeliveryDetails);
             setTotalPricePaid(0);
             setPaymentMethod("");
             setPaymentData("");
+
+            router.push('/orders/success')
           }
         } catch (error: any) {
           console.log(error?.response?.data.message);
@@ -114,7 +111,7 @@ const Payment = () => {
     );
   }
 
-  if (error && !orderSuccess) {
+  if (error) {
     return (
       <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
         <div className="relative light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-lg p-8 max-w-[500px]">
@@ -128,30 +125,10 @@ const Payment = () => {
     );
   }
 
-  if (orderSuccess) {
-    return (
-      <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
-        <div className="relative light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-lg p-8 max-w-[500px]">
-          <div className="flex flex-col items-center">
-            <CheckCircle size={60} className="text-green-600" />
-            <h2 className="text-lg font-semibold my-4">{success} </h2>
-
-            <button
-              className="mt-4 text-primary"
-              onClick={() => router.push("/shop")}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
       <button
-        className="bg-primary text-white px-8 py-2 rounded-md"
+        className="bg-primary text-white px-8 py-2"
         onClick={() => initializePayment({ onSuccess, onClose })}
       >
         Proceed to payment

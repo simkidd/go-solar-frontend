@@ -61,7 +61,7 @@ const ShippingDetailsForm = () => {
           name="suiteNumber"
           value={shipping.suiteNumber}
           onChange={handleChange}
-          className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-primary bg-transparent"
+          className="mt-1 p-2 w-full border border-gray-300  focus:outline-none focus:border-primary bg-transparent"
         />
       </div>
       <div className="mb-4">
@@ -73,7 +73,7 @@ const ShippingDetailsForm = () => {
           name="streetAddress"
           value={shipping.streetAddress}
           onChange={handleChange}
-          className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-primary bg-transparent"
+          className="mt-1 p-2 w-full border border-gray-300  focus:outline-none focus:border-primary bg-transparent"
         />
       </div>
       <div className="mb-4">
@@ -83,7 +83,7 @@ const ShippingDetailsForm = () => {
           name="city"
           value={shipping.city}
           onChange={handleChange}
-          className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-primary bg-transparent"
+          className="mt-1 p-2 w-full border border-gray-300  focus:outline-none focus:border-primary bg-transparent"
         />
       </div>
       <div className="mb-4">
@@ -95,7 +95,7 @@ const ShippingDetailsForm = () => {
           name="zipCode"
           value={shipping.zipCode}
           onChange={handleChange}
-          className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-primary bg-transparent"
+          className="mt-1 p-2 w-full border border-gray-300  focus:outline-none focus:border-primary bg-transparent"
         />
       </div>
       <StepButton />

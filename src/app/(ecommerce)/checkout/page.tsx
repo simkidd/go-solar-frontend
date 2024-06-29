@@ -3,7 +3,7 @@ import Steps from "../components/Steps";
 import StepForms from "../components/StepForms";
 import type { Metadata } from "next";
 
-const pageTitle = "Blogs";
+const pageTitle = "Checkout";
 
 export const metadata: Metadata = {
   title: pageTitle,
