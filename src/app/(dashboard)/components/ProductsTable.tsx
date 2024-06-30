@@ -324,10 +324,10 @@ const ProductsTable = () => {
 
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex justify-between gap-3 items-end lg:flex-row flex-col">
           <Input
             isClearable
-            className="w-full sm:max-w-[44%]"
+            className="w-full lg:max-w-[44%]"
             classNames={{
               input: ["bg-transparent"],
               innerWrapper: "bg-transparent ",
@@ -348,9 +348,9 @@ const ProductsTable = () => {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
             {hasFilters && (
-              <Button variant="flat" color="danger" onPress={onResetFilters}>
+              <Button variant="flat" color="danger" onPress={onResetFilters} >
                 Reset
               </Button>
             )}
@@ -458,8 +458,8 @@ const ProductsTable = () => {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+      <div className="py-2 px-2 flex justify-between items-center md:flex-row flex-col gap-4">
+        <span className="lg:w-[30%] text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
             : `${selectedKeys.size} of ${filteredItems.length} selected`}
@@ -474,7 +474,11 @@ const ProductsTable = () => {
           total={pages}
           onChange={setPage}
           classNames={{
-            wrapper: "bg-red-500",
+            wrapper: "bg-white dark:bg-[#222327]",
+            item: "bg-transparent dark:text-white",
+            prev: "bg-white dark:bg-[#222327]",
+            next: "bg-white dark:bg-[#222327]",
+            cursor: "",
           }}
         />
         {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">

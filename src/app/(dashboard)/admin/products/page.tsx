@@ -14,7 +14,7 @@ const ProductsListPage = async () => {
   return (
     <div className="w-full py-4">
       <div className="flex items-center justify-between mb-8">
-        <h3 className="text-2xl font-medium">Products</h3>
+        <h3 className="text-2xl font-semibold">Products</h3>
 
         <CreateProductButton />
       </div>
