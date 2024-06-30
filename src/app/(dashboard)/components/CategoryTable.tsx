@@ -184,10 +184,10 @@ const CategoryTable = () => {
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex justify-between gap-3 items-end lg:flex-row flex-col">
           <Input
             isClearable
-            className="w-full sm:max-w-[44%]"
+            className="w-full lg:max-w-[44%]"
             classNames={{
               input: ["bg-transparent"],
               innerWrapper: "bg-transparent ",
@@ -265,7 +265,7 @@ const CategoryTable = () => {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 px-2 flex justify-between items-center md:flex-row flex-col gap-4">
         <span className="w-[30%] text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
@@ -281,7 +281,11 @@ const CategoryTable = () => {
           total={pages}
           onChange={setPage}
           classNames={{
-            wrapper: "bg-red-500",
+            wrapper: "bg-white dark:bg-[#222327]",
+            item: "bg-transparent dark:text-white",
+            prev: "bg-white dark:bg-[#222327]",
+            next: "bg-white dark:bg-[#222327]",
+            cursor: "",
           }}
         />
         {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
