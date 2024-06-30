@@ -4,8 +4,18 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import { useOrderStore } from "@/lib/stores/order.store";
 import { useProductStore } from "@/lib/stores/product.store";
 import { useUserStore } from "@/lib/stores/user.store";
-import { Chip, Card, Button, Skeleton, CardBody } from "@nextui-org/react";
-import { SquareGanttChart } from "lucide-react";
+import {
+  Chip,
+  Card,
+  Button,
+  Skeleton,
+  CardBody,
+  Dropdown,
+  DropdownItem,
+  DropdownTrigger,
+  DropdownMenu,
+} from "@nextui-org/react";
+import { ChevronDownIcon, SquareGanttChart } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
@@ -53,6 +63,7 @@ const OverviewComp = () => {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState("month"); // Initial period is "month"
 
   useEffect(() => {
     (async () => {
@@ -68,26 +79,49 @@ const OverviewComp = () => {
     })();
   }, []);
 
-  const chartData = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [
-      {
-        label: "Revenue",
-        data: Object.values(dashboardData?.revenuePerMonth || {}),
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Orders",
-        data: Object.values(dashboardData?.ordersPerMonth || {}),
-        backgroundColor: "rgba(255, 159, 64, 0.2)",
-        borderColor: "rgba(255, 159, 64, 1)",
-        borderWidth: 1,
-      },
-    ],
+  const getChartData = () => {
+    const { revenuePerMonth, ordersPerMonth } = dashboardData || {};
+    if (!revenuePerMonth || !ordersPerMonth)
+      return { labels: [], datasets: [] };
+
+    let labels: string[] = [];
+    let revenueData: number[] = [];
+    let ordersData: number[] = [];
+
+    if (selectedPeriod === "month") {
+      labels = Object.keys(revenuePerMonth);
+      revenueData = Object.values(revenuePerMonth);
+      ordersData = Object.values(ordersPerMonth);
+    } else if (selectedPeriod === "year") {
+      labels = Object.keys(revenuePerMonth);
+      revenueData = labels.map((month) => revenuePerMonth[month]);
+      ordersData = labels.map((month) => ordersPerMonth[month]);
+    }
+
+    const chartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: "Revenue",
+          data: revenueData,
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1,
+        },
+        {
+          label: "Orders",
+          data: ordersData,
+          backgroundColor: "rgba(255, 159, 64, 0.2)",
+          borderColor: "rgba(255, 159, 64, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    return chartData;
   };
 
+  const chartData = getChartData();
   const chartOptions = {
     scales: {
       y: {
@@ -96,9 +130,13 @@ const OverviewComp = () => {
     },
   };
 
+  const handlePeriodChange = (period: string) => {
+    setSelectedPeriod(period);
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-9 gap-4">
-      <Card className="col-span-1 lg:col-span-3 dark:bg-[#222327] text-white">
+      <Card className="col-span-1 lg:col-span-3 dark:bg-[#222327] dark:text-white">
         <CardBody>
           <div className="flex gap-2 flex-col justify-between">
             <div className="w-full">
@@ -134,7 +172,7 @@ const OverviewComp = () => {
           </div>
         </CardBody>
       </Card>
-      <Card className="col-span-1 lg:col-span-2 dark:bg-[#222327] text-white">
+      <Card className="col-span-1 lg:col-span-2 dark:bg-[#222327] dark:text-white">
         <CardBody>
           <div className="flex flex-col gap-2">
             <p>Products</p>
@@ -145,7 +183,7 @@ const OverviewComp = () => {
           </div>
         </CardBody>
       </Card>
-      <Card className="col-span-1 lg:col-span-2 dark:bg-[#222327] text-white">
+      <Card className="col-span-1 lg:col-span-2 dark:bg-[#222327] dark:text-white">
         <CardBody>
           <div className="flex flex-col gap-2">
             <p>Customers</p>
@@ -156,7 +194,7 @@ const OverviewComp = () => {
           </div>
         </CardBody>
       </Card>
-      <Card className="col-span-1 lg:col-span-2 dark:bg-[#222327] text-white">
+      <Card className="col-span-1 lg:col-span-2 dark:bg-[#222327] dark:text-white">
         <CardBody>
           <div className="flex flex-col gap-2">
             <p>Orders</p>
@@ -167,29 +205,60 @@ const OverviewComp = () => {
           </div>
         </CardBody>
       </Card>
-      <Card className="col-span-1 lg:col-span-6 dark:bg-[#222327] text-white">
+      <Card className="col-span-1 lg:col-span-6 dark:bg-[#222327] dark:text-white">
         <CardBody>
-          <div className="mb-2 flex gap-2">
-            <p className="font-medium text-lg">Total Revenue:</p>
-            {isLoading ? (
-              <Skeleton className="w-3/12 rounded-lg">
-                <div className="h-4 w-3/12 rounded-lg bg-default-200"></div>
-              </Skeleton>
-            ) : (
-              <p className="text-xl font-bold">
-                {formatCurrency(dashboardData?.totalRevenue || 0, "NGN")}
-              </p>
-            )}
-          </div>
-          <div className="mb-4 flex gap-2">
-            <p className="font-medium text-lg">Total Orders:</p>
-            {isLoading ? (
-              <Skeleton className="w-3/12 rounded-lg">
-                <div className="h-4 w-3/12 rounded-lg bg-default-200"></div>
-              </Skeleton>
-            ) : (
-              <p className="text-xl font-bold">{dashboardData?.totalOrders}</p>
-            )}
+          <div className="mb-4 flex justify-between">
+            <div>
+              <div className="flex gap-2">
+                <p className="font-medium text-lg">Total Revenue:</p>
+                {isLoading ? (
+                  <Skeleton className="w-3/12 rounded-lg">
+                    <div className="h-4 w-3/12 rounded-lg bg-default-200"></div>
+                  </Skeleton>
+                ) : (
+                  <p className="text-xl font-bold">
+                    {formatCurrency(dashboardData?.totalRevenue || 0, "NGN")}
+                  </p>
+                )}
+              </div>
+              <div className="mb-4 flex gap-2">
+                <p className="font-medium text-lg">Total Orders:</p>
+                {isLoading ? (
+                  <Skeleton className="w-3/12 rounded-lg">
+                    <div className="h-4 w-3/12 rounded-lg bg-default-200"></div>
+                  </Skeleton>
+                ) : (
+                  <p className="text-xl font-bold">
+                    {dashboardData?.totalOrders || 0}
+                  </p>
+                )}
+              </div>
+            </div>
+            
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  endContent={<ChevronDownIcon className="text-small" />}
+                  variant="flat"
+                >
+                  {selectedPeriod === "month" ? "Month" : "Year"}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem
+                  key="month"
+                  onPress={() => handlePeriodChange("month")}
+                >
+                  Month
+                </DropdownItem>
+                <DropdownItem
+                  key="year"
+                  onPress={() => handlePeriodChange("year")}
+                >
+                  Year
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
           <div className="w-full h-full">
             <Line data={chartData} options={chartOptions} className="w-full" />
@@ -201,7 +270,7 @@ const OverviewComp = () => {
         <Calendar
           aria-label="Date (Read Only)"
           value={today(getLocalTimeZone())}
-          // isReadOnly
+          isReadOnly
           classNames={{
             content: "w-full",
             gridHeader: "dark:bg-transparent",
