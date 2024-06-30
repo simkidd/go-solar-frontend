@@ -26,7 +26,7 @@ const OveriewPage = () => {
   return (
     <div className="w-full py-4">
       <div className="mb-4">
-        <h3 className="text-2xl font-medium mb-1">Overview</h3>
+        <h3 className="text-2xl font-semibold mb-1">Overview</h3>
       </div>
 
       <div className="mb-4">
