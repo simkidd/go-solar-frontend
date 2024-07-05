@@ -1,7 +1,15 @@
 "use client";
 import { CreateProductInput } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button } from "@nextui-org/react";
+import {
+  Button,
+  Checkbox,
+  Input,
+  Select,
+  SelectItem,
+  Textarea,
+  divider,
+} from "@nextui-org/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,7 +23,7 @@ interface FileWithPreview extends File {
 }
 
 const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { loading, createProduct, categories } = useProductStore();
+  const { loading, createProduct, categories, offers } = useProductStore();
   const [input, setInput] = useState<CreateProductInput>({
     name: "",
     description: "",
@@ -28,6 +36,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     outsideLocationDeliveryFee: 0,
     withinLocationDeliveryFee: 0,
     isPublished: false,
+    currentOffer: "",
   });
   const [files, setFiles] = useState<FileWithPreview[]>([]);
 
@@ -136,80 +145,86 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <div className="w-full grid lg:grid-cols-2 grid-cols-1">
         <div className="col-span-1 lg:pr-4">
           <div className="mb-3">
-            <label htmlFor="title">Product title</label>
-            <input
+            <Input
               type="text"
-              id="title"
-              className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
+              label="Title"
+              labelPlacement="outside"
+              placeholder="Enter product name"
+              value={input.name}
               onChange={(e) => setInput({ ...input, name: e.target.value })}
             />
           </div>
           <div className="mb-3">
-            <label htmlFor="description">Product description</label>
-            <textarea
-              name=""
-              id="description"
-              className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent min-h-28 mt-1 resize-none"
-              value={input?.description}
+            <Textarea
+              label="Description"
+              labelPlacement="outside"
+              placeholder="Enter product description"
+              value={input.description}
               onChange={(e) =>
                 setInput({ ...input, description: e.target.value })
               }
-            ></textarea>
+              minRows={4}
+              maxRows={8}
+            />
           </div>
           <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
             <div className="">
-              <label htmlFor="category">Category</label>
-              <select
-                name=""
-                id="category"
-                className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent cursor-pointer mt-1"
+              <Select
+                items={categories}
+                label="Category"
+                placeholder="Select a category"
+                labelPlacement="outside"
                 onChange={(e) =>
                   setInput({ ...input, category: e.target.value })
                 }
               >
-                <option value="" hidden></option>
-                {categories?.map((cat) => (
-                  <option
-                    key={cat._id}
-                    value={cat._id}
-                    className="bg-white dark:bg-[#222327]"
-                  >
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
+                {(cat) => (
+                  <SelectItem key={cat?._id} value={cat?._id}>
+                    {cat?.name}
+                  </SelectItem>
+                )}
+              </Select>
             </div>
             <div className="">
-              <label htmlFor="brand">Brand</label>
-              <input
+              <Input
                 type="text"
-                id="title"
-                className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent cursor-pointer mt-1"
+                label="Brand"
+                labelPlacement="outside"
+                placeholder="Enter a brand name"
+                value={input.brand}
                 onChange={(e) => setInput({ ...input, brand: e.target.value })}
               />
             </div>
           </div>
+
           <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
             <div className="">
-              <label htmlFor="price">Price</label>
-              <input
+              <Input
                 type="number"
-                id="price"
-                className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
+                label="Price"
+                labelPlacement="outside"
+                placeholder="0.00"
+                value={String(input.price)}
                 onChange={(e) => {
                   const newValue = e.target.valueAsNumber;
                   if (!isNaN(newValue) && newValue > 0) {
                     setInput({ ...input, price: newValue });
                   }
                 }}
+                startContent={
+                  <div className="pointer-events-none flex items-center">
+                    <span className="text-default-400 text-small">₦</span>
+                  </div>
+                }
               />
             </div>
             <div className="">
-              <label htmlFor="stock">Quantity in stock</label>
-              <input
+              <Input
                 type="number"
-                id="stock"
-                className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
+                label="Quantity in stock"
+                labelPlacement="outside"
+                placeholder="0.00"
+                value={String(input.quantityInStock)}
                 onChange={(e) => {
                   const newValue = e.target.valueAsNumber;
                   if (!isNaN(newValue) && newValue > 0) {
@@ -217,6 +232,70 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   }
                 }}
               />
+            </div>
+          </div>
+
+          <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
+            <div className="">
+              <Input
+                type="number"
+                label="Within Port Harcourt"
+                labelPlacement="outside"
+                placeholder="0.00"
+                value={String(input.withinLocationDeliveryFee)}
+                onChange={(e) => {
+                  const newValue = e.target.valueAsNumber;
+                  if (!isNaN(newValue) && newValue > 0) {
+                    setInput({ ...input, withinLocationDeliveryFee: newValue });
+                  }
+                }}
+                startContent={
+                  <div className="pointer-events-none flex items-center">
+                    <span className="text-default-400 text-small">₦</span>
+                  </div>
+                }
+              />
+            </div>
+            <div className="">
+              <Input
+                type="number"
+                label="Outside Port Harcourt"
+                labelPlacement="outside"
+                placeholder="0.00"
+                value={String(input.outsideLocationDeliveryFee)}
+                onChange={(e) => {
+                  const newValue = e.target.valueAsNumber;
+                  if (!isNaN(newValue) && newValue > 0) {
+                    setInput({
+                      ...input,
+                      outsideLocationDeliveryFee: newValue,
+                    });
+                  }
+                }}
+                startContent={
+                  <div className="pointer-events-none flex items-center">
+                    <span className="text-default-400 text-small">₦</span>
+                  </div>
+                }
+              />
+            </div>
+
+            <div className="">
+              <Select
+                items={offers}
+                label="Add Offer to Product"
+                placeholder="Select an offer"
+                labelPlacement="outside"
+                onChange={(e) =>
+                  setInput({ ...input, currentOffer: e.target.value })
+                }
+              >
+                {(offer) => (
+                  <SelectItem key={offer?._id} value={offer?._id}>
+                    {offer?.name}
+                  </SelectItem>
+                )}
+              </Select>
             </div>
           </div>
         </div>
@@ -248,87 +327,44 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <aside className="mt-2 flex flex-wrap">{thumbs}</aside>
           </div>
           <div className="mb-3">
-            <label htmlFor="information">Additional Information</label>
-            <textarea
-              name=""
-              id="information"
-              className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent min-h-28 mt-1 resize-none"
+            <Textarea
+              label="Additional Information"
+              labelPlacement="outside"
+              placeholder="Enter additional information"
+              value={input.additionalInfo}
               onChange={(e) =>
                 setInput({ ...input, additionalInfo: e.target.value })
               }
-            ></textarea>
-          </div>
-          <h4 className="text-lg font-medium mb-2">Delivery fee:</h4>
-          <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
-            <div className="">
-              <label htmlFor="within">Within Port Harcourt</label>
-              <input
-                type="number"
-                id="within"
-                className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({ ...input, withinLocationDeliveryFee: newValue });
-                  }
-                }}
-              />
-            </div>
-            <div className="">
-              <label htmlFor="outside">Outside Port Harcourt</label>
-              <input
-                type="number"
-                id="outside"
-                className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({
-                      ...input,
-                      outsideLocationDeliveryFee: newValue,
-                    });
-                  }
-                }}
-              />
-            </div>
+              minRows={4}
+              maxRows={8}
+            />
           </div>
         </div>
       </div>
       <div>
-        <div className="mb-6">
-          <input
-            type="checkbox"
-            name="publish"
-            id="publish"
-            className="accent-current mr-1 cursor-pointer"
-            checked={input.isPublished}
+        {/* <div className="mb-6">
+          <Checkbox
+            isSelected={input.isPublished}
             onChange={(e) =>
-              setInput({ ...input, isPublished: e.target.checked })
+              setInput({ ...input, isPublished: e })
             }
-          />
-          <label htmlFor="publish" className="cursor-pointer">
-            Publish on site
-          </label>
-        </div>
+          >
+            Publish
+          </Checkbox>
+        </div> */}
 
         <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-          <Button
-            variant="light"
-            color="default"
-            className="rounded-md"
-            onPress={onClose}
-          >
+          <Button variant="light" color="default" onPress={onClose}>
             Close
           </Button>
           <Button
             variant="solid"
             color="primary"
             type="submit"
-            className="rounded-md "
             isDisabled={loading}
             isLoading={loading}
           >
-            Add
+            Create
           </Button>
         </div>
       </div>

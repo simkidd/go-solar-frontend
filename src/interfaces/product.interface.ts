@@ -22,6 +22,7 @@ export interface Product {
   updatedAt: string;
   isPublished: boolean;
   isDeleted: boolean;
+  currentOffer: Offer;
 }
 
 export interface CreateProductInput {
@@ -36,6 +37,7 @@ export interface CreateProductInput {
   outsideLocationDeliveryFee: number;
   withinLocationDeliveryFee: number;
   isPublished: boolean;
+  currentOffer: string;
 }
 
 export interface UpdateProductInput {
@@ -50,6 +52,7 @@ export interface UpdateProductInput {
   outsideLocationDeliveryFee?: number;
   withinLocationDeliveryFee?: number;
   isPublished?: boolean;
+  currentOffer?: string;
 }
 
 export interface Category {
@@ -90,4 +93,38 @@ export interface DeliveryDetails {
   streetAddress: string;
   city: string;
   zipCode: string;
+}
+
+export interface Offer {
+  _id: string;
+  name: string;
+  description: string;
+  type: OfferType;
+  priceSlash: number;
+  percentageOff: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateOfferInput {
+  name: string;
+  description: string;
+  type: OfferType;
+  priceSlash?: number;
+  percentageOff?: number;
+  id?: string;
+}
+
+export enum OfferType {
+  PriceSlash = "Price Slash",
+  PercentageOff = "Percentage Off",
+}
+
+export interface UpdateOfferInput extends CreateOfferInput {
+  id: string;
+}
+
+export interface AddOfferProductDTO {
+  products: string[];
+  offer: string;
 }

@@ -145,6 +145,24 @@ const AdminSidebar = () => {
               </span>
             </Link>
           </li>
+          <li>
+            <Link
+              href="/admin/sales-offers"
+              className={`flex items-center p-2 px-4 transition-all duration-300 rounded-lg ${
+                isActive("/admin/sales-offers")
+                  ? "text-primary bg-primary bg-opacity-10"
+                  : "hover:text-primary hover:bg-primary hover:bg-opacity-10"
+              }`}
+              onClick={() => setShowSidebar(false)}
+            >
+              <FaShopify
+                className={`text-lg  ${collapsed && "md:mx-auto md:text-2xl"}`}
+              />
+              <span className={`ml-3 ${collapsed ? "md:hidden" : ""}`}>
+                Sales Offers
+              </span>
+            </Link>
+          </li>
 
           <SectionTitle>User Management</SectionTitle>
           <li>

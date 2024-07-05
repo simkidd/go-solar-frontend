@@ -34,15 +34,13 @@ const UpdateProductButton: React.FC<{
       </AppModal>
 
       <Button
-        size="sm"
         variant="faded"
         color="default"
         type="submit"
-        className="rounded-md "
         startContent={<Edit size={16} />}
         onPress={onPublishOpen}
       >
-        {product?.isPublished ? "Unpublish" : "Publish"}
+        {product?.isPublished ? "Draft" : "Publish"}
       </Button>
       <AppModal
         isOpen={isOpen}
@@ -57,11 +55,9 @@ const UpdateProductButton: React.FC<{
       </AppModal>
 
       <Button
-        size="sm"
         variant="solid"
         color="primary"
         type="submit"
-        className="rounded-md "
         startContent={<Edit size={16} />}
         onPress={onOpen}
       >
@@ -96,27 +92,21 @@ export const PublishPopup: React.FC<{
   return (
     <div className="flex flex-col">
       <p>
-        {product.isPublished ? "Unpublish" : "Publish"} <b>{product?.name}</b>?
+        {product.isPublished ? "Draft" : "Publish"} <b>{product?.name}</b>?
       </p>
       <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-        <Button
-          variant="light"
-          color="default"
-          className="rounded-md"
-          onPress={onClose}
-        >
+        <Button variant="light" color="default" onPress={onClose}>
           Cancel
         </Button>
         <Button
           variant="solid"
           color="danger"
           type="submit"
-          className="rounded-md "
           isDisabled={loading}
           isLoading={loading}
           onPress={handlePublish}
         >
-          Yes, {product.isPublished ? "unpublish" : "publish"}
+          Yes, {product.isPublished ? "draft" : "publish"}
         </Button>
       </div>
     </div>

@@ -69,3 +69,22 @@ export const getOrder = async (id: string) => {
     console.log(error);
   }
 };
+
+export const getOffers = async () => {
+  try {
+    const { data } = await axiosInstance.get("/offers");
+
+    return data.offers;
+  } catch (error) {
+    console.error(error);
+  }
+};
+export const getOffer = async (id: string) => {
+  try {
+    const { data } = await axiosInstance.get(`/offers/${id}`);
+
+    return data.offer;
+  } catch (error) {
+    console.error(error);
+  }
+};
