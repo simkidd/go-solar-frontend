@@ -112,7 +112,6 @@ export interface CreateOfferInput {
   type: OfferType;
   priceSlash?: number;
   percentageOff?: number;
-  id?: string;
 }
 
 export enum OfferType {
@@ -121,7 +120,7 @@ export enum OfferType {
 }
 
 export interface UpdateOfferInput extends CreateOfferInput {
-  id: string;
+  offerId: string;
 }
 
 export interface AddOfferProductDTO {

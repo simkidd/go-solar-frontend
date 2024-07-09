@@ -12,7 +12,6 @@ import {
 import { create } from "zustand";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../axios";
-import { input } from "@nextui-org/react";
 
 interface IProductStore {
   loading: boolean;
@@ -251,29 +250,27 @@ export const useProductStore = create<IProductStore>((set) => ({
       set({ loading: false });
     }
   },
-  updateOffer: async (input) => {
+  updateOffer: async (input: UpdateOfferInput) => {
     try {
       set({ loading: true });
+      console.log("Updating offer with input:", input);
       const { data } = await axiosInstance.put("/offers/update-offer", {
         input,
       });
-
-      const res = data.offer as Offer;
-
-      set((state) => ({
-        offer: {
-          ...state.offer,
-          ...res,
-        },
-      }));
-
-      set((state) => ({
-        offers: state.offers.map((offer) =>
-          offer._id === input?.id ? { ...offer, ...res } : offer
-        ),
-      }));
+      console.log("first>>", data);
+        const res = data.offer as Offer;
+        set((state) => ({
+          offer: {
+            ...state.offer,
+            ...res,
+          },
+        }));
+        set((state) => ({
+          offers: state.offers.map((offer) =>
+            offer._id === input.offerId ? { ...offer, ...res } : offer
+          ),
+        }));
       toast.success(data.message);
-
       return data.offer;
     } catch (error) {
       const errorMsg = error as any;

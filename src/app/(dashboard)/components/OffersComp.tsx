@@ -19,7 +19,7 @@ import { EllipsisVertical, PencilLine, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import CreateOfferForm from "./CreateOfferForm";
+import UpdateOfferForm from "./UpdateOfferForm";
 
 const OffersComp = () => {
   const { loading, offers, deleteOffer } = useProductStore();
@@ -87,7 +87,7 @@ const OffersComp = () => {
         isDismissable={false}
         hideCloseButton
       >
-        <CreateOfferForm
+        <UpdateOfferForm
           onClose={onUpdateClose}
           existingOffer={selectedOffer as Offer}
         />

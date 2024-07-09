@@ -1,25 +1,32 @@
-"use client";
-import { CreateOfferInput, OfferType } from "@/interfaces/product.interface";
+import {
+  Offer,
+  OfferType,
+  UpdateOfferInput,
+} from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button, Input, Select, SelectItem, Textarea } from "@nextui-org/react";
+import { Textarea, Select, SelectItem, Button, Input } from "@nextui-org/react";
 import React, { useState } from "react";
 
-const CreateOfferForm: React.FC<{
+const UpdateOfferForm: React.FC<{
   onClose: () => void;
-}> = ({ onClose }) => {
-  const { loading, createOffer } = useProductStore();
-  const [input, setInput] = useState<CreateOfferInput>({
-    name: "",
-    description: "",
-    type: OfferType.PercentageOff,
-    percentageOff: 0,
-    priceSlash: 0,
+  existingOffer?: Offer;
+}> = ({ onClose, existingOffer }) => {
+  const { loading, updateOffer } = useProductStore();
+  const [input, setInput] = useState<UpdateOfferInput>({
+    offerId: existingOffer?._id as string,
+    name: existingOffer?.name || "",
+    description: existingOffer?.description || "",
+    type: existingOffer?.type as OfferType,
+    percentageOff: existingOffer?.percentageOff || 0,
+    priceSlash: existingOffer?.priceSlash || 0,
   });
+
+  console.log("updated>>>", input);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await createOffer(input);
+    await updateOffer(input);
     onClose();
   };
 
@@ -129,11 +136,11 @@ const CreateOfferForm: React.FC<{
           isDisabled={loading}
           isLoading={loading}
         >
-          Create
+          Update
         </Button>
       </div>
     </form>
   );
 };
 
-export default CreateOfferForm;
+export default UpdateOfferForm;
