@@ -164,8 +164,8 @@ export const ProductImagesForm: React.FC<{
         {/* Image Upload Area */}
         <div
           {...getRootProps()}
-          className={`col-span-1 border-dashed border-2 rounded-lg py-16 px-4 flex gap-2 flex-wrap cursor-pointer ${
-            isDragActive ? "border-primary" : "border-gray-300"
+          className={`col-span-1 border-dashed border-1 rounded-lg py-16 px-4 flex gap-2 flex-wrap cursor-pointer bg-[#f4f4f5] dark:bg-[#27272A] ${
+            isDragActive ? "border-primary" : ""
           }`}
         >
           <input {...getInputProps()} />

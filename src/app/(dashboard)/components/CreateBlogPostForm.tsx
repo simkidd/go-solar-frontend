@@ -2,7 +2,7 @@
 import MultipleSelectChip from "@/components/MultipleSelectChip";
 import { CreatePostInput } from "@/interfaces/post.interface";
 import { useBlogStore } from "@/lib/stores/blog.store";
-import { Button } from "@nextui-org/react";
+import { Button, Input, Textarea } from "@nextui-org/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
@@ -150,25 +150,29 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   return (
     <form className="w-full" onSubmit={handleSubmit}>
-      <div>
+      <div className="flex flex-col">
         <div className="mb-3">
-          <label htmlFor="title">Post title</label>
-          <input
+          <Input
             type="text"
-            id="title"
-            className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
+            label="Title"
+            labelPlacement="outside"
+            placeholder="Enter post title"
+            value={input.title}
             onChange={(e) => setInput({ ...input, title: e.target.value })}
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="description">Content</label>
-          <textarea
-            name=""
-            id="description"
-            className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent min-h-56 mt-1 resize-none"
+          <Textarea
+            label="Content"
+            labelPlacement="outside"
+            placeholder="Enter post content here..."
+            value={input.content}
             onChange={(e) => setInput({ ...input, content: e.target.value })}
-          ></textarea>
+            minRows={8}
+            maxRows={15}
+          />
         </div>
+
         <div className="mb-3">
           <MultipleSelectChip
             tags={tagsList}
@@ -178,15 +182,18 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           />
         </div>
 
+        <div></div>
         <div className="mb-3">
-          <label htmlFor="title">Author</label>
-          <input
+          <Input
             type="text"
-            id="title"
-            className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
+            label="Author"
+            labelPlacement="outside"
+            placeholder="Enter author name"
+            value={input.author}
             onChange={(e) => setInput({ ...input, author: e.target.value })}
           />
         </div>
+
         <div className="mb-3">
           <label htmlFor="" className="">
             Images
@@ -194,7 +201,7 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <div
             {...getRootProps({
               className:
-                "w-full h-40 border-dashed border-2 border-gray-300 p-4 rounded mt-1 cursor-pointer flex items-center justify-center",
+                "w-full h-40 border-dashed border-1 border-gray-300 dark:border-gray-700 p-4 rounded-lg mt-1 cursor-pointer flex items-center justify-center bg-[#f4f4f5] dark:bg-[#27272A]",
             })}
           >
             <input {...getInputProps()} />
@@ -215,23 +222,17 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-          <Button
-            variant="light"
-            color="default"
-            className="rounded-md"
-            onPress={onClose}
-          >
+          <Button variant="light" color="default" onPress={onClose}>
             Close
           </Button>
           <Button
             variant="solid"
             color="primary"
             type="submit"
-            className="rounded-md "
             isDisabled={loading}
             isLoading={loading}
           >
-            Add
+            Create
           </Button>
         </div>
       </div>
