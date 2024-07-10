@@ -13,6 +13,7 @@ interface IBlog {
   createPost: (formData: FormData, config: any) => Promise<void>;
   updatePost: (formData: FormData, config: any) => Promise<void>;
   deletePost: (id: string) => Promise<void>;
+  fetchPosts:()=> Promise<void>;
 }
 
 export const useBlogStore = create<IBlog>((set) => ({
@@ -86,6 +87,21 @@ export const useBlogStore = create<IBlog>((set) => ({
       const errorMsg = error as any;
       toast.error(errorMsg?.response?.data.message);
       console.log(error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  // for refetching
+  fetchPosts: async () => {
+    try {
+      set({ loading: true });
+      const { data } = await axiosInstance.get("/blogs");
+      set({ posts: data.blogs });
+    } catch (error) {
+      const errorMsg = error as any;
+      toast.error(errorMsg?.response?.data?.message);
+      console.log(errorMsg?.response?.data?.message);
     } finally {
       set({ loading: false });
     }

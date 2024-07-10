@@ -1,10 +1,7 @@
 "use client";
-import {
-  Product,
-  UpdateProductInput
-} from "@/interfaces/product.interface";
+import { Product, UpdateProductInput } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, Textarea } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -12,14 +9,13 @@ const UpdateProductForm: React.FC<{
   product: Product;
   onClose: () => void;
 }> = ({ product, onClose }) => {
-  const { loading, updateProduct, categories } =
-    useProductStore();
+  const { loading, updateProduct, categories, offers } = useProductStore();
   const router = useRouter();
   const [input, setInput] = useState<UpdateProductInput>({
     productId: product?._id,
     name: product?.name,
     description: product?.description,
-    category: product?.category._id,
+    category: product?.category?._id,
     brand: product?.brand,
     price: product?.price,
     additionalInfo: product?.additionalInfo,
@@ -27,7 +23,11 @@ const UpdateProductForm: React.FC<{
     outsideLocationDeliveryFee: product?.outsideLocationDeliveryFee,
     withinLocationDeliveryFee: product?.withinLocationDeliveryFee,
     isPublished: product?.isPublished,
+    currentOffer: product?.currentOffer?._id,
   });
+
+  console.log("product>>>>", product);
+  console.log("input>>", input);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ const UpdateProductForm: React.FC<{
     await updateProduct(input);
 
     router.refresh();
-    router.back();
+    onClose();
   };
 
   return (
@@ -50,58 +50,54 @@ const UpdateProductForm: React.FC<{
         <div className="w-full grid lg:grid-cols-2 grid-cols-1">
           <div className="col-span-1 lg:pr-4">
             <div className="mb-3">
-              <label htmlFor="title">Product title</label>
-              <input
+              <Input
                 type="text"
-                id="title"
-                className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
+                label="Title"
+                labelPlacement="outside"
+                placeholder="Enter product name"
                 value={input.name}
                 onChange={(e) => setInput({ ...input, name: e.target.value })}
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="description">Product description</label>
-              <textarea
-                name=""
-                id="description"
-                className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent min-h-28 mt-1 resize-none"
-                value={input?.description}
+              <Textarea
+                label="Description"
+                labelPlacement="outside"
+                placeholder="Enter product description"
+                value={input.description}
                 onChange={(e) =>
                   setInput({ ...input, description: e.target.value })
                 }
-              ></textarea>
+                minRows={4}
+                maxRows={8}
+              />
             </div>
             <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
               <div className="">
-                <label htmlFor="category">Category</label>
-                <select
-                  name=""
-                  id="category"
-                  className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent cursor-pointer mt-1"
-                  value={input?.category}
+                <Select
+                  items={categories}
+                  label="Category"
+                  placeholder="Select a category"
+                  labelPlacement="outside"
+                  value={input.category}
                   onChange={(e) =>
                     setInput({ ...input, category: e.target.value })
                   }
                 >
-                  <option value="" hidden></option>
-                  {categories?.map((cat) => (
-                    <option
-                      key={cat._id}
-                      value={cat._id}
-                      className="bg-white dark:bg-[#222327]"
-                    >
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
+                  {(cat) => (
+                    <SelectItem key={cat?._id} value={cat?._id}>
+                      {cat?.name}
+                    </SelectItem>
+                  )}
+                </Select>
               </div>
               <div className="">
-                <label htmlFor="brand">Brand</label>
-                <input
+                <Input
                   type="text"
-                  id="title"
-                  className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent cursor-pointer mt-1"
-                  value={input?.brand}
+                  label="Brand"
+                  labelPlacement="outside"
+                  placeholder="Enter a brand name"
+                  value={input.brand}
                   onChange={(e) =>
                     setInput({ ...input, brand: e.target.value })
                   }
@@ -110,27 +106,32 @@ const UpdateProductForm: React.FC<{
             </div>
             <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
               <div className="">
-                <label htmlFor="price">Price</label>
-                <input
+                <Input
                   type="number"
-                  id="price"
-                  className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                  value={input?.price}
+                  label="Price"
+                  labelPlacement="outside"
+                  placeholder="0.00"
+                  value={String(input.price)}
                   onChange={(e) => {
                     const newValue = e.target.valueAsNumber;
                     if (!isNaN(newValue) && newValue > 0) {
                       setInput({ ...input, price: newValue });
                     }
                   }}
+                  startContent={
+                    <div className="pointer-events-none flex items-center">
+                      <span className="text-default-400 text-small">₦</span>
+                    </div>
+                  }
                 />
               </div>
               <div className="">
-                <label htmlFor="stock">Quantity in stock</label>
-                <input
+                <Input
                   type="number"
-                  id="stock"
-                  className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                  value={input?.quantityInStock}
+                  label="Quantity in stock"
+                  labelPlacement="outside"
+                  placeholder="0.00"
+                  value={String(input.quantityInStock)}
                   onChange={(e) => {
                     const newValue = e.target.valueAsNumber;
                     if (!isNaN(newValue) && newValue > 0) {
@@ -141,28 +142,29 @@ const UpdateProductForm: React.FC<{
               </div>
             </div>
           </div>
+
           <div className="col-span-1 lg:pl-4">
             <div className="mb-3">
-              <label htmlFor="information">Additional Information</label>
-              <textarea
-                name=""
-                id="information"
-                className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent min-h-28 mt-1 resize-none"
-                value={input?.additionalInfo}
+              <Textarea
+                label="Additional Information"
+                labelPlacement="outside"
+                placeholder="Enter additional information"
+                value={input.additionalInfo}
                 onChange={(e) =>
                   setInput({ ...input, additionalInfo: e.target.value })
                 }
-              ></textarea>
+                minRows={4}
+                maxRows={8}
+              />
             </div>
-            <h4 className="text-lg font-medium mb-2">Delivery fee:</h4>
             <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
               <div className="">
-                <label htmlFor="within">Within Port Harcourt</label>
-                <input
+                <Input
                   type="number"
-                  id="within"
-                  className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                  value={input?.withinLocationDeliveryFee}
+                  label="Within Port Harcourt"
+                  labelPlacement="outside"
+                  placeholder="0.00"
+                  value={String(input.withinLocationDeliveryFee)}
                   onChange={(e) => {
                     const newValue = e.target.valueAsNumber;
                     if (!isNaN(newValue) && newValue > 0) {
@@ -172,15 +174,20 @@ const UpdateProductForm: React.FC<{
                       });
                     }
                   }}
+                  startContent={
+                    <div className="pointer-events-none flex items-center">
+                      <span className="text-default-400 text-small">₦</span>
+                    </div>
+                  }
                 />
               </div>
               <div className="">
-                <label htmlFor="outside">Outside Port Harcourt</label>
-                <input
+                <Input
                   type="number"
-                  id="outside"
-                  className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-                  value={input?.outsideLocationDeliveryFee}
+                  label="Outside Port Harcourt"
+                  labelPlacement="outside"
+                  placeholder="0.00"
+                  value={String(input.outsideLocationDeliveryFee)}
                   onChange={(e) => {
                     const newValue = e.target.valueAsNumber;
                     if (!isNaN(newValue) && newValue > 0) {
@@ -190,14 +197,38 @@ const UpdateProductForm: React.FC<{
                       });
                     }
                   }}
+                  startContent={
+                    <div className="pointer-events-none flex items-center">
+                      <span className="text-default-400 text-small">₦</span>
+                    </div>
+                  }
                 />
+              </div>
+
+              <div className="">
+                <Select
+                  items={offers}
+                  label="Add Offer to Product"
+                  placeholder="Select an offer"
+                  labelPlacement="outside"
+                  value={input.currentOffer}
+                  onChange={(e) =>
+                    setInput({ ...input, currentOffer: e.target.value })
+                  }
+                >
+                  {(offer) => (
+                    <SelectItem key={offer?._id} value={offer?._id}>
+                      {offer?.name}
+                    </SelectItem>
+                  )}
+                </Select>
               </div>
             </div>
           </div>
         </div>
         <div>
           <div className="mb-6">
-            <input
+            {/* <input
               type="checkbox"
               name=""
               id="publish"
@@ -209,22 +240,16 @@ const UpdateProductForm: React.FC<{
             />
             <label htmlFor="publish" className="cursor-pointer">
               Publish on site
-            </label>
+            </label> */}
           </div>
           <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-            <Button
-              variant="light"
-              color="default"
-              className="rounded-md"
-              onPress={onClose}
-            >
+            <Button variant="light" color="default" onPress={onClose}>
               Close
             </Button>
             <Button
               variant="solid"
               color="primary"
               type="submit"
-              className="rounded-md "
               isDisabled={loading}
               isLoading={loading}
             >

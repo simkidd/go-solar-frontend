@@ -1,11 +1,11 @@
 "use client";
+import React from "react";
 import AppModal from "@/components/AppModal";
 import { Button, useDisclosure } from "@nextui-org/react";
 import { Plus } from "lucide-react";
-import React from "react";
-import CreateBlogPostForm from "./CreateBlogPostForm";
+import CreateOfferForm from "./CreateOfferForm";
 
-const CreatePostButton = () => {
+const CreateOfferButton = () => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   return (
@@ -13,24 +13,26 @@ const CreatePostButton = () => {
       <AppModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        title="New Post"
+        title="Create Offer"
         isDismissable={false}
         hideCloseButton
-        size="2xl"
+        size="xl"
         scrollBehavior="inside"
       >
-        <CreateBlogPostForm onClose={onClose} />
+        <CreateOfferForm onClose={onClose} />
       </AppModal>
 
       <Button
+        variant="solid"
         color="primary"
+        type="submit"
         startContent={<Plus size={16} />}
         onPress={onOpen}
       >
-        Add Post
+        Add Offer
       </Button>
     </div>
   );
 };
 
-export default CreatePostButton;
+export default CreateOfferButton;

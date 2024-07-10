@@ -194,19 +194,13 @@ export const ProductImagesForm: React.FC<{
       </div>
 
       <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-        <Button
-          variant="light"
-          color="default"
-          className="rounded-md"
-          onPress={onClose}
-        >
+        <Button variant="light" color="default" onPress={onClose}>
           Close
         </Button>
         <Button
           variant="solid"
           color="primary"
           type="submit"
-          className="rounded-md "
           isDisabled={imageLoading || !selectedImgId}
           isLoading={imageLoading}
         >
