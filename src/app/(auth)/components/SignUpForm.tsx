@@ -1,7 +1,7 @@
 "use client";
 import { SignUpInput } from "@/interfaces/auth.interface";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Input } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -144,7 +144,7 @@ const SignUpForm = () => {
       </div>
       <div className="input-group mb-3">
         <Input
-          type="text"
+          type="number"
           variant="underlined"
           label="Phone"
           name="phone"
@@ -236,12 +236,16 @@ const SignUpForm = () => {
         />
       </div>
 
-      <button
-        className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:bg-gray-400"
-        disabled={!input.password || isPasswordInvalid}
+      <Button
+        variant="solid"
+        color="primary"
+        type="submit"
+        className="w-full rounded-none disabled:!bg-gray-400 mt-4"
+        isLoading={loading}
+        isDisabled={!input.password || isPasswordInvalid || loading}
       >
-        {loading ? "Loading..." : "Sign Up"}
-      </button>
+        Sign Up
+      </Button>
     </form>
   );
 };

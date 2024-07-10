@@ -307,7 +307,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <div
               {...getRootProps({
                 className:
-                  "flex gap-2 flex-wrap mt-1 border-dashed border-2 border-gray-300 py-16 px-4 rounded-lg cursor-pointer",
+                  "w-full h-40 border-dashed border-1 border-gray-300 dark:border-gray-700 p-4 rounded-lg mt-1 cursor-pointer flex items-center justify-center bg-[#f4f4f5] dark:bg-[#27272A]",
               })}
             >
               <input {...getInputProps()} />
