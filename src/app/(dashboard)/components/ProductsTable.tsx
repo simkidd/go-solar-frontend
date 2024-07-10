@@ -33,6 +33,8 @@ import {
   ChevronDownIcon,
   Trash,
   Eye,
+  Trash2,
+  RefreshCcw,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -83,7 +85,8 @@ const columns = [
 ];
 
 const ProductsTable = () => {
-  const { products, loading, categories, deleteProduct } = useProductStore();
+  const { products, loading, categories, deleteProduct, fetchProducts } =
+    useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
@@ -181,9 +184,7 @@ const ProductsTable = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <Link href={`/admin/products/${product?._id}`}>
-              <span className="text-wrap">{product?.name}</span>
-            </Link>
+            <span className="text-wrap">{product?.name}</span>
           </div>
         );
       case "price":
@@ -197,11 +198,11 @@ const ProductsTable = () => {
       case "status":
         return (
           <Chip
-            color={product.isPublished ? "success" : "danger"}
+            color={product.isPublished ? "success" : "default"}
             variant="flat"
             size="sm"
           >
-            {product.isPublished ? "Published" : "Unpublished"}
+            {product.isPublished ? "Published" : "Draft"}
           </Chip>
         );
       case "dateAdded":
@@ -220,7 +221,7 @@ const ProductsTable = () => {
                   startContent={<Eye size={16} />}
                   onPress={() => router.push(`/admin/products/${product?._id}`)}
                 >
-                  View
+                  View details
                 </DropdownItem>
                 <DropdownItem
                   onPress={() => {
@@ -350,7 +351,7 @@ const ProductsTable = () => {
           />
           <div className="flex items-center gap-3">
             {hasFilters && (
-              <Button variant="flat" color="danger" onPress={onResetFilters} >
+              <Button variant="flat" color="danger" onPress={onResetFilters}>
                 Reset
               </Button>
             )}
@@ -399,7 +400,7 @@ const ProductsTable = () => {
               >
                 <DropdownItem key="All">All</DropdownItem>
                 <DropdownItem key="published">Published</DropdownItem>
-                <DropdownItem key="unpublished">Unpublished</DropdownItem>
+                <DropdownItem key="draft">Draft</DropdownItem>
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
@@ -526,28 +527,35 @@ const ProductsTable = () => {
             Are you sure you want to delete <b>{selectedProduct?.name}</b>?
           </p>
           <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-            <Button
-              variant="light"
-              color="default"
-              className="rounded-md"
-              onPress={onClose}
-            >
+            <Button variant="light" color="default" onPress={onClose}>
               Cancel
             </Button>
             <Button
               variant="solid"
               color="danger"
               type="submit"
-              className="rounded-md"
               isDisabled={loading}
               isLoading={loading}
               onPress={handleDelete}
+              endContent={<Trash2 size={16} />}
             >
               Delete
             </Button>
           </div>
         </div>
       </AppModal>
+
+      <div className="w-full flex justify-end mb-4">
+        <Button
+          variant="solid"
+          color="warning"
+          onPress={fetchProducts}
+          startContent={<RefreshCcw size={16} />}
+          size="sm"
+        >
+          Refresh
+        </Button>
+      </div>
 
       <Table
         isCompact

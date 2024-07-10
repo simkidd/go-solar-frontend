@@ -18,7 +18,7 @@ const BloglistPage = async () => {
 
         <CreatePostButton />
       </div>
-      <div className="w-full bg-white dark:bg-[#222327] shadow mb-4 rounded">
+      <div className="w-full mb-8">
         <BlogList />
       </div>
     </div>
