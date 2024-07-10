@@ -27,12 +27,15 @@ import {
 import {
   ChevronDownIcon,
   EllipsisVertical,
+  PencilLine,
   RefreshCcw,
   SearchIcon,
   Trash,
+  Trash2,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
+import UpdateCategoryForm from "./UpdateCategoryForm";
 
 const columns = [
   { name: "Name", uid: "name", minWidth: "200px", sortable: true },
@@ -60,6 +63,12 @@ const CategoryTable = () => {
     direction: "ascending",
   });
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const {
+    isOpen: isUpdateOpen,
+    onOpen: onUpdateOpen,
+    onOpenChange: onUpdateOpenChange,
+    onClose: onUpdateClose,
+  } = useDisclosure();
   const [selectedCat, setSelectedCat] = useState<Category | null>(null);
 
   const hasSearchFilter = Boolean(filterValue);
@@ -128,6 +137,15 @@ const CategoryTable = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
+                <DropdownItem
+                  onPress={() => {
+                    setSelectedCat(cat);
+                    onUpdateOpen();
+                  }}
+                  startContent={<PencilLine size={16} />}
+                >
+                  Update
+                </DropdownItem>
                 <DropdownItem
                   onPress={() => {
                     setSelectedCat(cat);
@@ -335,27 +353,36 @@ const CategoryTable = () => {
             Are you sure you want to delete <b>{selectedCat?.name}</b>?
           </p>
           <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-            <Button
-              variant="light"
-              color="default"
-              className="rounded-md"
-              onPress={onClose}
-            >
+            <Button variant="light" color="default" onPress={onClose}>
               Cancel
             </Button>
             <Button
               variant="solid"
               color="danger"
               type="submit"
-              className="rounded-md"
               isDisabled={loading}
               isLoading={loading}
               onPress={handleDelete}
+              endContent={<Trash2 size={16} />}
             >
               Delete
             </Button>
           </div>
         </div>
+      </AppModal>
+
+      {/* Update Offer Modal */}
+      <AppModal
+        isOpen={isUpdateOpen}
+        onOpenChange={onUpdateOpenChange}
+        title="Update Offer"
+        isDismissable={false}
+        hideCloseButton
+      >
+        <UpdateCategoryForm
+          onClose={onUpdateClose}
+          category={selectedCat as Category}
+        />
       </AppModal>
 
       <div className="w-full flex justify-end mb-4">

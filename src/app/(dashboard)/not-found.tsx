@@ -1,3 +1,4 @@
+import { Button } from "@nextui-org/react";
 import Link from "next/link";
 
 export default function NotFound() {
@@ -6,7 +7,11 @@ export default function NotFound() {
       <div className="container mx-auto px-2 mb-8 flex flex-col items-center justify-center w-full h-full">
         <h2 className="text-3xl font-medium mb-8">Not Found</h2>
         <p className="mb-4">Could not find requested resource</p>
-        <Link href="/admin" className="bg-primary text-white px-6 py-2">Return to Dashboard</Link>
+        <Link href="/admin">
+          <Button variant="solid" color="primary">
+            Return to Dashboard
+          </Button>
+        </Link>
       </div>
     </div>
   );

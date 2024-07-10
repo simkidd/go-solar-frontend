@@ -122,14 +122,14 @@ const BlogList = () => {
       ) : paginatedPosts?.length === 0 ? (
         <Card className="dark:bg-[#222327]">
           <CardBody className="p-6">
-            <p className="text-center">No post found</p>
+            <p className="text-center dark:text-white">No post found</p>
           </CardBody>
         </Card>
       ) : (
         <div className="flex flex-col gap-5">
           <Card className="dark:bg-[#222327]">
             <CardBody>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                 {paginatedPosts?.map((post) => (
                   <BlogCardAdmin key={post._id} post={post} />
                 ))}

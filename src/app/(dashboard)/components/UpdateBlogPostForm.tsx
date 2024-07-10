@@ -2,7 +2,7 @@
 import MultipleSelectChip from "@/components/MultipleSelectChip";
 import { Post, UpdatePostInput } from "@/interfaces/post.interface";
 import { useBlogStore } from "@/lib/stores/blog.store";
-import { Button } from "@nextui-org/react";
+import { Button, Input, Textarea } from "@nextui-org/react";
 import { Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -173,24 +173,25 @@ const UpdateBlogPostForm: React.FC<{
     <form className="w-full" onSubmit={handleSubmit}>
       <div>
         <div className="mb-3">
-          <label htmlFor="title">Post title</label>
-          <input
+          <Input
             type="text"
-            id="title"
-            className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-            value={input?.title}
+            label="Title"
+            labelPlacement="outside"
+            placeholder="Enter post title"
+            value={input.title}
             onChange={(e) => setInput({ ...input, title: e.target.value })}
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="description">Content</label>
-          <textarea
-            name=""
-            id="description"
-            className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent min-h-56 mt-1 resize-none"
-            value={input?.content}
+          <Textarea
+            label="Content"
+            labelPlacement="outside"
+            placeholder="Enter post content here..."
+            value={input.content}
             onChange={(e) => setInput({ ...input, content: e.target.value })}
-          ></textarea>
+            minRows={8}
+            maxRows={15}
+          />
         </div>
         <div className="mb-3">
           <MultipleSelectChip
@@ -200,49 +201,13 @@ const UpdateBlogPostForm: React.FC<{
             onTagChange={handleTagChange}
           />
         </div>
-        {/* <div className="mb-3">
-          <label htmlFor="title">Tags</label>
-          <div className="relative w-full mt-1">
-            <input
-              type="text"
-              id="title"
-              className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent pr-10"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              onKeyDown={handleKeyPress}
-            />
-            <button
-              type="button"
-              className="bg-primary text-white absolute top-[50%] -translate-y-[50%] right-2"
-              onClick={handleAddTag}
-            >
-              <Plus />
-            </button>
-          </div>
-          <div className="flex gap-1 mt-1 flex-wrap items-center">
-            {input?.tags?.map((tag, i) => (
-              <span
-                key={i}
-                className="bg-primary text-white rounded-md pl-2 py-[0.5px] text-sm overflow-hidden flex items-center"
-              >
-                {tag}
-                <button
-                  type="button"
-                  className=" ml-2 px-1"
-                  onClick={() => handleDeleteTag(tag)}
-                >
-                  <HiXMark />
-                </button>
-              </span>
-            ))}
-          </div>
-        </div> */}
+
         <div className="mb-3">
-          <label htmlFor="title">Author</label>
-          <input
+          <Input
             type="text"
-            id="title"
-            className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
+            label="Author"
+            labelPlacement="outside"
+            placeholder="Enter author name"
             value={input.author}
             onChange={(e) => setInput({ ...input, author: e.target.value })}
           />
@@ -304,23 +269,17 @@ const UpdateBlogPostForm: React.FC<{
         </div>
 
         <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-          <Button
-            variant="light"
-            color="default"
-            className="rounded-md"
-            onPress={onClose}
-          >
+          <Button variant="light" color="default" onPress={onClose}>
             Close
           </Button>
           <Button
             variant="solid"
             color="primary"
             type="submit"
-            className="rounded-md "
             isDisabled={loading}
             isLoading={loading}
           >
-            Save Changes
+            Save
           </Button>
         </div>
       </div>
