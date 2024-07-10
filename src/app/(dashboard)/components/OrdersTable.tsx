@@ -27,6 +27,7 @@ import {
   ChevronDownIcon,
   EllipsisVertical,
   Eye,
+  RefreshCcw,
   SearchIcon,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -68,7 +69,7 @@ export const getChipColor = (status: TrackingStatus) => {
 };
 
 const OrdersTable = () => {
-  const { orders, loading } = useOrderStore();
+  const { orders, loading, fetchOrders } = useOrderStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -418,7 +419,19 @@ const OrdersTable = () => {
   );
 
   return (
-    <div>
+    <div className="w-full">
+      <div className="w-full flex justify-end mb-4">
+        <Button
+          variant="solid"
+          color="warning"
+          onPress={fetchOrders}
+          startContent={<RefreshCcw size={16} />}
+          size="sm"
+        >
+          Refresh
+        </Button>
+      </div>
+
       <Table
         isCompact
         aria-label="Example table with custom cells, pagination and sorting"

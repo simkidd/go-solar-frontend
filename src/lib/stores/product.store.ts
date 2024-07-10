@@ -37,9 +37,12 @@ interface IProductStore {
   setOffer: (order: Offer) => void;
   setOffers: (orders: Offer[]) => void;
   createOffer: (input: CreateOfferInput) => Promise<void>;
-  updateOffer: (input: UpdateOfferInput) => Promise<void>;
+  updateOffer: (input: UpdateOfferInput, id: string) => Promise<void>;
   deleteOffer: (id: string) => void;
   addToOffer: (input: AddOfferProductDTO) => Promise<void>;
+  fetchProducts: () => Promise<void>;
+  fetchCategories: () => Promise<void>;
+  fetchOffers: () => Promise<void>;
 }
 
 export const useProductStore = create<IProductStore>((set) => ({
@@ -250,26 +253,26 @@ export const useProductStore = create<IProductStore>((set) => ({
       set({ loading: false });
     }
   },
-  updateOffer: async (input: UpdateOfferInput) => {
+  updateOffer: async (input: UpdateOfferInput, id: string) => {
     try {
       set({ loading: true });
-      console.log("Updating offer with input:", input);
-      const { data } = await axiosInstance.put("/offers/update-offer", {
-        input,
-      });
-      console.log("first>>", data);
-        const res = data.offer as Offer;
-        set((state) => ({
-          offer: {
-            ...state.offer,
-            ...res,
-          },
-        }));
-        set((state) => ({
-          offers: state.offers.map((offer) =>
-            offer._id === input.offerId ? { ...offer, ...res } : offer
-          ),
-        }));
+      const { data } = await axiosInstance.put(
+        `/offers/update-offer/${id}`,
+        input
+      );
+      const res = data.offer as Offer;
+
+      set((state) => ({
+        offer: {
+          ...state.offer,
+          ...res,
+        },
+      }));
+      set((state) => ({
+        offers: state.offers.map((offer) =>
+          offer._id === id ? { ...offer, ...res } : offer
+        ),
+      }));
       toast.success(data.message);
       return data.offer;
     } catch (error) {
@@ -312,6 +315,47 @@ export const useProductStore = create<IProductStore>((set) => ({
       const errorMsg = error as any;
       toast.error(errorMsg?.response.data.message);
       console.log(errorMsg?.response.data.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  // for refetching
+  fetchProducts: async () => {
+    try {
+      set({ loading: true });
+      const { data } = await axiosInstance.get("/products");
+      set({ products: data.products });
+    } catch (error) {
+      const errorMsg = error as any;
+      toast.error(errorMsg?.response?.data?.message);
+      console.log(errorMsg?.response?.data?.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+  fetchCategories: async () => {
+    try {
+      set({ loading: true });
+      const { data } = await axiosInstance.get("/categories");
+      set({ categories: data.categories });
+    } catch (error) {
+      const errorMsg = error as any;
+      toast.error(errorMsg?.response?.data?.message);
+      console.log(errorMsg?.response?.data?.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+  fetchOffers: async () => {
+    try {
+      set({ loading: true });
+      const { data } = await axiosInstance.get("/offers");
+      set({ offers: data.offers });
+    } catch (error) {
+      const errorMsg = error as any;
+      toast.error(errorMsg?.response?.data?.message);
+      console.log(errorMsg?.response?.data?.message);
     } finally {
       set({ loading: false });
     }

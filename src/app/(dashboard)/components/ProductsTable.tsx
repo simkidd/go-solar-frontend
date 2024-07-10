@@ -34,6 +34,7 @@ import {
   Trash,
   Eye,
   Trash2,
+  RefreshCcw,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -84,7 +85,8 @@ const columns = [
 ];
 
 const ProductsTable = () => {
-  const { products, loading, categories, deleteProduct } = useProductStore();
+  const { products, loading, categories, deleteProduct, fetchProducts } =
+    useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
@@ -542,6 +544,18 @@ const ProductsTable = () => {
           </div>
         </div>
       </AppModal>
+
+      <div className="w-full flex justify-end mb-4">
+        <Button
+          variant="solid"
+          color="warning"
+          onPress={fetchProducts}
+          startContent={<RefreshCcw size={16} />}
+          size="sm"
+        >
+          Refresh
+        </Button>
+      </div>
 
       <Table
         isCompact

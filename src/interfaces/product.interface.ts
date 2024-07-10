@@ -120,7 +120,7 @@ export enum OfferType {
 }
 
 export interface UpdateOfferInput extends CreateOfferInput {
-  offerId: string;
+  // offerId: string;
 }
 
 export interface AddOfferProductDTO {

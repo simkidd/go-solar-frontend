@@ -52,7 +52,7 @@ export const BlogCardAdmin: React.FC<{
             />
           </div>
         </Link>
-        <div className="text-sm flex items-center px-2 py-2">
+        <div className="text-sm flex items-center px-2 py-2 dark:text-white">
           <CalendarCheck size={16} />
           <span className="ml-1">{formatDate(post?.createdAt)}</span>
         </div>
@@ -62,7 +62,9 @@ export const BlogCardAdmin: React.FC<{
               <p>{post?.title}</p>
             </Link>
           </div>
-          <p className="text-ellipsis line-clamp-2 mb-4">{post?.content}</p>
+          <p className="text-ellipsis line-clamp-2 mb-4 dark:text-white">
+            {post?.content}
+          </p>
           <Link href={`/admin/blogs/${post?._id}`} className="text-primary">
             Read More
           </Link>

@@ -13,7 +13,7 @@ const UpdateOfferForm: React.FC<{
 }> = ({ onClose, existingOffer }) => {
   const { loading, updateOffer } = useProductStore();
   const [input, setInput] = useState<UpdateOfferInput>({
-    offerId: existingOffer?._id as string,
+    // offerId: existingOffer?._id as string,
     name: existingOffer?.name || "",
     description: existingOffer?.description || "",
     type: existingOffer?.type as OfferType,
@@ -21,12 +21,10 @@ const UpdateOfferForm: React.FC<{
     priceSlash: existingOffer?.priceSlash || 0,
   });
 
-  console.log("updated>>>", input);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await updateOffer(input);
+    await updateOffer(input, existingOffer?._id as string);
     onClose();
   };
 

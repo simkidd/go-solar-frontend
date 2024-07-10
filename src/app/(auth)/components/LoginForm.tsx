@@ -1,7 +1,7 @@
 "use client";
 import { LoginInput } from "@/interfaces/auth.interface";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Input } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -100,12 +100,22 @@ const LoginForm = () => {
           onChange={(e) => setInput({ ...input, password: e.target.value })}
         />
       </div>
-      <button
+      <Button
+        variant="solid"
+        color="primary"
+        type="submit"
+        className="w-full rounded-none disabled:!bg-gray-400"
+        isLoading={loading}
+        isDisabled={!input.password || isPasswordInvalid || loading}
+      >
+        Login
+      </Button>
+      {/* <button
         className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:bg-gray-400"
         disabled={!input.password || isPasswordInvalid}
       >
         {loading ? "Loading..." : "Login"}
-      </button>
+      </button> */}
     </form>
   );
 };

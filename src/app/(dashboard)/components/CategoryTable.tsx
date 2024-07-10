@@ -27,6 +27,7 @@ import {
 import {
   ChevronDownIcon,
   EllipsisVertical,
+  RefreshCcw,
   SearchIcon,
   Trash,
 } from "lucide-react";
@@ -42,7 +43,8 @@ const columns = [
 ];
 
 const CategoryTable = () => {
-  const { categories, loading, deleteCategory, products } = useProductStore();
+  const { categories, loading, deleteCategory, products, fetchCategories } =
+    useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -355,6 +357,18 @@ const CategoryTable = () => {
           </div>
         </div>
       </AppModal>
+
+      <div className="w-full flex justify-end mb-4">
+        <Button
+          variant="solid"
+          color="warning"
+          onPress={fetchCategories}
+          startContent={<RefreshCcw size={16} />}
+          size="sm"
+        >
+          Refresh
+        </Button>
+      </div>
 
       <Table
         isCompact

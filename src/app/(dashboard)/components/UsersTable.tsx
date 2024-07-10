@@ -25,6 +25,7 @@ import {
   ChevronDownIcon,
   EllipsisVertical,
   PlusIcon,
+  RefreshCcw,
   SearchIcon,
 } from "lucide-react";
 import { axiosInstance } from "@/lib/axios";
@@ -47,7 +48,7 @@ const columns = [
 ];
 
 const UsersTable = () => {
-  const { users, setUsers } = useUserStore();
+  const { users, loading, fetchUsers } = useUserStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
@@ -55,7 +56,6 @@ const UsersTable = () => {
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(columns.map((col) => col.uid))
   );
-  const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "name",
@@ -66,21 +66,6 @@ const UsersTable = () => {
     searchParams.get("role") || "All"
   );
   const router = useRouter();
-
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        setLoading(true);
-        const { data } = await axiosInstance.get("/admin/users");
-        setUsers(data.users);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getUsers();
-  }, []);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -399,11 +384,11 @@ const UsersTable = () => {
           total={pages}
           onChange={setPage}
           classNames={{
-            wrapper:"bg-white dark:bg-[#222327]",
+            wrapper: "bg-white dark:bg-[#222327]",
             item: "bg-transparent dark:text-white",
-            prev:"bg-white dark:bg-[#222327]",
-            next:"bg-white dark:bg-[#222327]",
-            cursor:""
+            prev: "bg-white dark:bg-[#222327]",
+            next: "bg-white dark:bg-[#222327]",
+            cursor: "",
           }}
         />
         {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
@@ -439,6 +424,18 @@ const UsersTable = () => {
 
   return (
     <div className="w-full">
+      <div className="w-full flex justify-end mb-4">
+        <Button
+          variant="solid"
+          color="warning"
+          onPress={fetchUsers}
+          startContent={<RefreshCcw size={16} />}
+          size="sm"
+        >
+          Refresh
+        </Button>
+      </div>
+
       <Table
         isCompact
         aria-label="Example table with custom cells, pagination and sorting"

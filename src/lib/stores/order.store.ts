@@ -1,5 +1,7 @@
 import { Order } from "@/interfaces/order.interface";
 import { create } from "zustand";
+import { axiosInstance } from "../axios";
+import { toast } from "react-toastify";
 
 interface IOrderStore {
   loading: boolean;
@@ -12,6 +14,7 @@ interface IOrderStore {
   setOrders: (orders: Order[]) => void;
   setUserOrder: (userOrder: Order) => void;
   setUserOrders: (userOrder: Order[]) => void;
+  fetchOrders: () => Promise<void>;
 }
 
 export const useOrderStore = create<IOrderStore>((set) => ({
@@ -25,4 +28,19 @@ export const useOrderStore = create<IOrderStore>((set) => ({
   setOrders: (orders: Order[]) => set({ orders }),
   setUserOrder: (userOrder: Order) => set({ userOrder }),
   setUserOrders: (userOrders: Order[]) => set({ userOrders }),
+
+  // for refetching
+  fetchOrders: async () => {
+    try {
+      set({ loading: true });
+      const { data } = await axiosInstance.get("/admin/all-orders");
+      set({ orders: data.orders });
+    } catch (error) {
+      const errorMsg = error as any;
+      toast.error(errorMsg?.response?.data?.message);
+      console.log(errorMsg?.response?.data?.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
 }));

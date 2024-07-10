@@ -15,14 +15,14 @@ import {
   Spinner,
   useDisclosure,
 } from "@nextui-org/react";
-import { EllipsisVertical, PencilLine, Trash2 } from "lucide-react";
+import { EllipsisVertical, PencilLine, RefreshCcw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import UpdateOfferForm from "./UpdateOfferForm";
 
 const OffersComp = () => {
-  const { loading, offers, deleteOffer } = useProductStore();
+  const { loading, offers, deleteOffer, fetchOffers } = useProductStore();
   const router = useRouter();
   const {
     isOpen: isDeleteOpen,
@@ -48,6 +48,7 @@ const OffersComp = () => {
 
   return (
     <div className="w-full">
+      {/* delete offer modal */}
       <AppModal
         isOpen={isDeleteOpen}
         onOpenChange={onDeleteOpenChange}
@@ -92,17 +93,32 @@ const OffersComp = () => {
           existingOffer={selectedOffer as Offer}
         />
       </AppModal>
+      <div className="w-full flex justify-end mb-4">
+        <Button
+          variant="solid"
+          color="warning"
+          onPress={fetchOffers}
+          startContent={<RefreshCcw size={16} />}
+          size="sm"
+        >
+          Refresh
+        </Button>
+      </div>
 
       {loading ? (
         <div className="py-4 flex justify-center">
-          <Spinner />
+          <Card className="dark:bg-[#222327]">
+            <CardBody className="p-6">
+              <Spinner size="lg" />
+            </CardBody>
+          </Card>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {offers.map((offer) => (
-            <Card key={offer?._id} className="rounded-none shadow-none">
+            <Card key={offer?._id} className="dark:bg-[#222327]">
               <CardHeader className="w-full flex items-start justify-between">
-                <h3 className="text-lg font-bold">{offer?.name}</h3>
+                <h3 className="text-lg font-bold dark:text-white">{offer?.name}</h3>
 
                 <Dropdown>
                   <DropdownTrigger>
@@ -136,7 +152,7 @@ const OffersComp = () => {
                 </Dropdown>
               </CardHeader>
               <CardBody>
-                <p>{offer?.description}</p>
+                <p className="dark:text-white">{offer?.description}</p>
                 {offer?.type === OfferType.PriceSlash && (
                   <p className="text-gray-700">
                     Price Slash: ₦{String(offer?.priceSlash)}

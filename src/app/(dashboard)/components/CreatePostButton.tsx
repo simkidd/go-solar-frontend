@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import AppModal from "@/components/AppModal";
 import { Button, useDisclosure } from "@nextui-org/react";
 import { Plus } from "lucide-react";
@@ -23,11 +23,7 @@ const CreatePostButton = () => {
       </AppModal>
 
       <Button
-        size="sm"
-        variant="solid"
         color="primary"
-        type="submit"
-        className="rounded-md "
         startContent={<Plus size={16} />}
         onPress={onOpen}
       >
