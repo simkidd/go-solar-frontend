@@ -1,4 +1,5 @@
 "use client";
+import { Button, Chip } from "@nextui-org/react";
 import React, {
   useState,
   useEffect,
@@ -61,8 +62,9 @@ const MultipleSelectChip: React.FC<SelectProps> = ({
     <div className="w-full">
       <label htmlFor="multiple-chip">{label}</label>
       <div className="relative mt-1" ref={dropdownRef}>
-        <button
-          className="w-full p-2 text-left border rounded"
+        <Button
+          variant="flat"
+          className="w-full p-2 flex justify-start"
           onClick={handleButtonClick}
         >
           {selectedTags.length === 0 ? (
@@ -70,18 +72,21 @@ const MultipleSelectChip: React.FC<SelectProps> = ({
           ) : (
             <div className="flex flex-wrap gap-2">
               {selectedTags.map((value) => (
-                <div
-                  key={value}
-                  className="inline-flex items-center px-2 py-1 text-primary bg-primary bg-opacity-10 rounded-full text-sm"
-                >
+                // <div
+                //   key={value}
+                //   className="inline-flex items-center px-2 py-1 text-primary bg-primary bg-opacity-10 rounded-full text-sm"
+                // >
+                //   {value}
+                // </div>
+                <Chip key={value} variant="flat" size="sm" color="primary">
                   {value}
-                </div>
+                </Chip>
               ))}
             </div>
           )}
-        </button>
+        </Button>
         {dropdownOpen && (
-          <ul className="absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto border rounded z-10 bg-white dark:bg-[#222327]">
+          <ul className="absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto border rounded z-30 bg-white dark:bg-[#222327]">
             {tags.map((name) => (
               <li
                 key={name}

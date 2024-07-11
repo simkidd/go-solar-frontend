@@ -24,11 +24,9 @@ const UpdatePostButton: React.FC<{ post: Post }> = ({ post }) => {
       </AppModal>
 
       <Button
-        size="sm"
         variant="solid"
         color="primary"
         type="submit"
-        className="rounded-md "
         startContent={<Edit size={16} />}
         onPress={onOpen}
       >

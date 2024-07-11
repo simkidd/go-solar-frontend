@@ -37,7 +37,7 @@ export interface CreateProductInput {
   outsideLocationDeliveryFee: number;
   withinLocationDeliveryFee: number;
   isPublished: boolean;
-  currentOffer: string;
+  currentOffer?: string;
 }
 
 export interface UpdateProductInput {

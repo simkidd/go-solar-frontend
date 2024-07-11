@@ -104,18 +104,12 @@ const LoginForm = () => {
         variant="solid"
         color="primary"
         type="submit"
-        className="w-full rounded-none disabled:!bg-gray-400"
+        className="w-full rounded-none disabled:!bg-gray-400 mt-4"
         isLoading={loading}
         isDisabled={!input.password || isPasswordInvalid || loading}
       >
         Login
       </Button>
-      {/* <button
-        className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:bg-gray-400"
-        disabled={!input.password || isPasswordInvalid}
-      >
-        {loading ? "Loading..." : "Login"}
-      </button> */}
     </form>
   );
 };

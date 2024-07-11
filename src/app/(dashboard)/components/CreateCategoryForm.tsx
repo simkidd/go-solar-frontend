@@ -1,8 +1,9 @@
 "use client";
 import { CreateCategoryInput } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button } from "@nextui-org/react";
+import { Button, Input, Textarea } from "@nextui-org/react";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const CreateCategoryForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { loading, createCategory } = useProductStore();
@@ -14,55 +15,50 @@ const CreateCategoryForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (input.description === "") {
+      toast.info("Description is required");
+      return;
+    }
+
     await createCategory(input);
-    setInput(input);
     onClose();
   };
 
   return (
     <form className="w-full" onSubmit={handleSubmit}>
       <div className="mb-3">
-        <label htmlFor="title" className="text-sm">
-          Category name
-        </label>
-        <input
+        <Input
           type="text"
-          id="title"
-          className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent mt-1"
-          value={input?.name}
+          label="Name"
+          labelPlacement="outside"
+          placeholder="Enter category name"
+          value={input.name}
           onChange={(e) => setInput({ ...input, name: e.target.value })}
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="description" className="text-sm">
-          Category description
-        </label>
-        <textarea
-          name=""
-          id="description"
-          className="w-full border focus:outline-none focus:border-primary focus:border h-10 py-2 px-3 bg-transparent min-h-20 mt-1 resize-none"
-          value={input?.description}
+        <Textarea
+          label="Description"
+          labelPlacement="outside"
+          placeholder="Enter category description"
+          value={input.description}
           onChange={(e) => setInput({ ...input, description: e.target.value })}
-        ></textarea>
+          minRows={4}
+          maxRows={8}
+        />
       </div>
       <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-        <Button
-          variant="light"
-          color="default"
-          className="rounded-md"
-          onPress={onClose}
-        >
+        <Button variant="light" color="default" onPress={onClose}>
           Close
         </Button>
         <Button
           variant="solid"
           color="primary"
           type="submit"
-          className="rounded-md "
           isDisabled={loading}
           isLoading={loading}
         >
-          Add
+          Create
         </Button>
       </div>
     </form>
