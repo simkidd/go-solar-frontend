@@ -21,7 +21,7 @@ const CartPage = () => {
       0
     );
     const deliveryFee = cartItems.reduce(
-      (acc, cartItem) => acc + cartItem.deliveryFee,
+      (acc, cartItem) => acc + cartItem.deliveryFee * cartItem.qty,
       0
     );
     const total = subtotal + deliveryFee;
