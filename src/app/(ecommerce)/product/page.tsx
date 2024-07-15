@@ -1,11 +1,11 @@
 import { Category, Product } from "@/interfaces/product.interface";
-import { getCategories, getProducts } from "@/lib/data";
+import { getCategories, getPubilshedProducts } from "@/lib/data";
+import { notFound } from "next/navigation";
 import Cta from "../components/Cta";
 import ProductsList from "../components/ProductsList";
-import { notFound } from "next/navigation";
 
 const ProductListPage = async () => {
-  const products: Product[] = await getProducts();
+  const products: Product[] = await getPubilshedProducts();
   const categories: Category[] = await getCategories();
 
   if (!products) {

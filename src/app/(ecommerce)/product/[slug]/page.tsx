@@ -3,7 +3,7 @@ import ProductImages from "@/app/(ecommerce)/components/ProductImages";
 import RelatedProducts from "@/app/(ecommerce)/components/RelatedProducts";
 import Breadcrumb from "@/components/Breadcrumb";
 import { Product } from "@/interfaces/product.interface";
-import { getProducts } from "@/lib/data";
+import { getProducts, getPubilshedProducts } from "@/lib/data";
 import { getProductCodeFromSlug } from "@/utils/helpers";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -17,7 +17,7 @@ export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
   const slug = params.slug;
-  const products: Product[] = await getProducts();
+  const products: Product[] = await getPubilshedProducts();
   const product = products.find((product) => product?.slug === slug);
 
   return {
