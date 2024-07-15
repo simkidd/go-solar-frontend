@@ -1,8 +1,7 @@
 import ProductsList from "@/app/(ecommerce)/components/ProductsList";
 import { Category, Product } from "@/interfaces/product.interface";
-import { getCategories, getProducts } from "@/lib/data";
+import { getCategories, getPubilshedProducts } from "@/lib/data";
 import { Metadata } from "next";
-import React from "react";
 
 interface IProp {
   params: { slug: string };
@@ -35,7 +34,7 @@ export const generateStaticParams = async () => {
 
 const CategoryProducts = async ({ params }: IProp) => {
   const categorySlug = params.slug;
-  const products: Product[] = await getProducts();
+  const products: Product[] = await getPubilshedProducts();
   const categories: Category[] = await getCategories();
 
   const category = categories.find((cat) => cat?.slug === categorySlug);

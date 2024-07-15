@@ -305,9 +305,7 @@ export const useProductStore = create<IProductStore>((set) => ({
       set({ loading: true });
       const { data } = await axiosInstance.patch(
         "/admin/add-offer-to-products",
-        {
-          input,
-        }
+        input
       );
 
       console.log("add to offer", data);
