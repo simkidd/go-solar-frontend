@@ -14,7 +14,10 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const filteredProducts = products.filter(
+        const publishedProducts = products.filter(
+          (product) => product.isPublished
+        );
+        const filteredProducts = publishedProducts.filter(
           (p) =>
             p.category?._id === product.category?._id && p._id !== product._id
         );

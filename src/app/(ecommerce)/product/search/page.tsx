@@ -1,7 +1,7 @@
 import { Category, Product } from "@/interfaces/product.interface";
-import { getCategories, getProducts } from "@/lib/data";
-import ProductsList from "../../components/ProductsList";
+import { getCategories, getPubilshedProducts } from "@/lib/data";
 import { notFound } from "next/navigation";
+import ProductsList from "../../components/ProductsList";
 
 const SearchResults = async ({
   searchParams,
@@ -9,7 +9,7 @@ const SearchResults = async ({
   searchParams: { q: string };
 }) => {
   const query = searchParams.q;
-  const products: Product[] = await getProducts();
+  const products: Product[] = await getPubilshedProducts();
   const categories: Category[] = await getCategories();
 
   const searchWords = query.toLowerCase().split(" ");

@@ -1,3 +1,4 @@
+import { Product } from "@/interfaces/product.interface";
 import { axiosInstance } from "./axios";
 
 export const getPosts = async () => {
@@ -25,6 +26,19 @@ export const getProducts = async () => {
     const { data } = await axiosInstance.get("/products");
 
     return data.products;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getPubilshedProducts = async () => {
+  try {
+    const { data } = await axiosInstance.get("/products");
+
+    const publishedProducts = data.products.filter(
+      (product: Product) => product.isPublished
+    );
+
+    return publishedProducts;
   } catch (error) {
     console.log(error);
   }

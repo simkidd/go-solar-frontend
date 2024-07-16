@@ -40,6 +40,9 @@ const ProductCard: React.FC<{
         </div>
       </Link>
       <div className="w-full py-2 ">
+        <div>
+          <span>{item?.currentOffer?.name}</span>
+        </div>
         <Link
           href={`/product/${item?.slug}`}
           className="mb-2 text-sm text-ellipsis line-clamp-2"
@@ -47,9 +50,7 @@ const ProductCard: React.FC<{
         >
           {item?.name}
         </Link>
-        <p className="font-semibold">
-          {formatCurrency(item?.price, "NGN")}
-        </p>
+        <p className="font-semibold">{formatCurrency(item?.price, "NGN")}</p>
       </div>
       <div className="w-full px-2 flex justify-center mb-2">
         {/* <button className="bg-primary flex items-center gap-2 text-white px-4 py-2 text-sm">
