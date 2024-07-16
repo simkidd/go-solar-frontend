@@ -1,6 +1,6 @@
 "use client";
 import AppModal from "@/components/AppModal";
-import { Product } from "@/interfaces/product.interface";
+import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import {
@@ -25,6 +25,8 @@ import {
   Selection,
   useDisclosure,
   Tooltip,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import {
   EllipsisVertical,
@@ -40,23 +42,34 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
+import AddProductsToOffer from "./AddProductsToOffer";
 
 const columns = [
   {
     name: "Product",
     uid: "name",
-    minWidth: "400px",
+    minWidth: 400,
     sortable: true,
   },
   {
     name: "Price",
     uid: "price",
-    minWidth: "150px",
+    minWidth: 150,
+    sortable: true,
+  },
+  {
+    name: "Discount",
+    uid: "discount",
+    minWidth: 150,
     sortable: true,
   },
   {
     name: "Quantity",
     uid: "quantity",
+  },
+  {
+    name: "Offer",
+    uid: "offer",
   },
   {
     name: "Category",
@@ -74,19 +87,26 @@ const columns = [
   {
     name: "Date added",
     uid: "dateAdded",
-    minWidth: "150px",
+    minWidth: 150,
     sortable: true,
   },
   {
     name: "Actions",
     uid: "actions",
-    width: "80px",
+    minWidth: 80,
   },
 ];
 
 const ProductsTable = () => {
-  const { products, loading, categories, deleteProduct, fetchProducts } =
-    useProductStore();
+  const {
+    products,
+    loading,
+    categories,
+    deleteProduct,
+    fetchProducts,
+    addToOffer,
+    offers,
+  } = useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
@@ -108,6 +128,10 @@ const ProductsTable = () => {
   );
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [input, setInput] = useState<AddOfferProductDTO>({
+    offer: "",
+    products: [],
+  });
 
   const router = useRouter();
 
@@ -189,8 +213,25 @@ const ProductsTable = () => {
         );
       case "price":
         return <div>{formatCurrency(product?.price, "NGN")}</div>;
+      case "discount":
+        return (
+          <div>
+            {product?.currentOffer?.percentageOff && (
+              <Chip color="success" variant="flat" size="sm">
+                {product?.currentOffer?.percentageOff}% Off
+              </Chip>
+            )}
+            {product?.currentOffer?.priceSlash && (
+              <Chip color="warning" variant="flat" size="sm">
+                {formatCurrency(product?.currentOffer?.priceSlash, "NGN")}
+              </Chip>
+            )}
+          </div>
+        );
       case "quantity":
         return <div>{product?.quantityInStock}</div>;
+      case "offer":
+        return <div>{product?.currentOffer?.name}</div>;
       case "category":
         return <div>{product?.category?.name}</div>;
       case "brand":
@@ -318,6 +359,24 @@ const ProductsTable = () => {
     const params = new URLSearchParams();
     router.replace(`${pathname}?${params.toString()}`);
   }, [pathname, router]);
+
+  const handleAddOffer = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Convert selectedKeys (Set of Key) to an array of strings
+    const productIds = Array.from(selectedKeys).map((key: any) =>
+      // Ensure the key is a string before adding
+      typeof key === "string" ? key : key.toString()
+    );
+    const offerPayload: AddOfferProductDTO = {
+      offer: input.offer,
+      products: productIds,
+    };
+
+    await addToOffer(offerPayload);
+    router.refresh();
+    onClose();
+  };
 
   const topContent = useMemo(() => {
     const hasFilters =
@@ -460,11 +519,22 @@ const ProductsTable = () => {
   const bottomContent = useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center md:flex-row flex-col gap-4">
-        <span className="lg:w-[30%] text-small text-default-400">
+        <div className="flex gap-4 items-center">
+          <span className="text-small text-default-400">
+            {selectedKeys === "all"
+              ? "All items selected"
+              : `${selectedKeys.size} of ${filteredItems.length} selected`}
+          </span>
           {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
+            ? ""
+            : selectedKeys.size > 0 && (
+                // <AddProductsToOffer productIds={selectedKeys} />
+                <Button>
+                  Add to offer
+                </Button>
+              )}
+        </div>
+
         <Pagination
           isCompact
           showControls
@@ -545,6 +615,48 @@ const ProductsTable = () => {
         </div>
       </AppModal>
 
+      <AppModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        title="Add Offer"
+        isDismissable={false}
+        hideCloseButton
+        scrollBehavior="inside"
+      >
+        <form className="w-full" onSubmit={handleAddOffer}>
+          <div className="">
+            <Select
+              items={offers}
+              label="Add Offer to Product"
+              placeholder="Select an offer"
+              labelPlacement="outside"
+              value={input.offer}
+              onChange={(e) => setInput({ ...input, offer: e.target.value })}
+            >
+              {(offer) => (
+                <SelectItem key={offer?._id} value={offer?._id}>
+                  {offer?.name}
+                </SelectItem>
+              )}
+            </Select>
+          </div>
+          <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
+            <Button variant="light" color="default" onPress={onClose}>
+              Close
+            </Button>
+            <Button
+              variant="solid"
+              color="primary"
+              type="submit"
+              isDisabled={loading}
+              isLoading={loading}
+            >
+              Save
+            </Button>
+          </div>
+        </form>
+      </AppModal>
+
       <div className="w-full flex justify-end mb-4">
         <Button
           variant="solid"
@@ -578,6 +690,7 @@ const ProductsTable = () => {
               key={column.uid}
               align={column.uid === "actions" ? "center" : "start"}
               allowsSorting={column.sortable}
+              minWidth={column.minWidth}
             >
               {column.name}
             </TableColumn>

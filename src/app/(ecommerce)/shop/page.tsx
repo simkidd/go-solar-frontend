@@ -2,11 +2,11 @@ import Banner from "@/app/(ecommerce)/components/Banner";
 import Cta from "@/app/(ecommerce)/components/Cta";
 import ProductCard from "@/app/(ecommerce)/components/ProductCard";
 import { Product } from "@/interfaces/product.interface";
-import { getProducts } from "@/lib/data";
+import { getPubilshedProducts } from "@/lib/data";
 import Link from "next/link";
 
 const ShopPage = async () => {
-  const products: Product[] = await getProducts();
+  const products: Product[] = await getPubilshedProducts();
 
   return (
     <div className="w-full font-inter">

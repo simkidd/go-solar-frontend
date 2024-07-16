@@ -1,15 +1,13 @@
-"use client";
 import AppModal from "@/components/AppModal";
 import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { Button, Select, SelectItem, useDisclosure } from "@nextui-org/react";
-import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 
-const AddToOfferButton: React.FC<{
-  product: Product;
-}> = ({ product }) => {
+const AddProductsToOffer: React.FC<{ productIds: string[] }> = ({
+  productIds,
+}) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   return (
@@ -22,27 +20,27 @@ const AddToOfferButton: React.FC<{
         hideCloseButton
         scrollBehavior="inside"
       >
-        <Popup product={product} onClose={onClose} />
+        <Popup productIds={productIds} onClose={onClose} />
       </AppModal>
 
       <Button variant="solid" color="primary" type="submit" onPress={onOpen}>
-        Add To Offer
+        Add selected to offer
       </Button>
     </>
   );
 };
 
-export default AddToOfferButton;
+export default AddProductsToOffer;
 
 export const Popup: React.FC<{
-  product: Product;
+  productIds: string[];
   onClose: () => void;
-}> = ({ onClose, product }) => {
+}> = ({ onClose, productIds }) => {
   const { loading, addToOffer, offers } = useProductStore();
   const router = useRouter();
   const [input, setInput] = useState<AddOfferProductDTO>({
     offer: "",
-    products: [product?._id],
+    products: productIds,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

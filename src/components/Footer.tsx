@@ -14,7 +14,7 @@ const Footer = () => {
       {/* <NewsLetter /> */}
       <div className="w-full py-10">
         <div className="container mx-auto px-2 mb-8">
-          <div className="grid lg:grid-cols-4 grid-cols-1">
+          <div className="grid lg:grid-cols-3 grid-cols-1">
             <div className="lg:p-4 px-2 py-4 ">
               <div className="mb-4">
                 <Link href="/" className="flex items-center gap-1">
@@ -24,10 +24,39 @@ const Footer = () => {
                   </span>
                 </Link>{" "}
               </div>
-              <p>
+              <p className="mb-6">
                 Leading provider of sustainable solar energy solutions in Port
                 Harcourt, Nigeria.
               </p>
+
+              <ul className="flex items-center gap-4 ">
+                <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
+                  <Link
+                    href="https://www.facebook.com/Gosolar.ng"
+                    target="_blank"
+                    className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
+                  >
+                    <FaFacebookF />
+                  </Link>
+                </li>
+                <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
+                  <Link
+                    href="https://twitter.com/Gosolarng"
+                    target="_blank"
+                    className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
+                  >
+                    <FaXTwitter />
+                  </Link>
+                </li>
+                <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
+                  <Link
+                    href="#"
+                    className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
+                  >
+                    <FaInstagram />
+                  </Link>
+                </li>
+              </ul>
             </div>
             <div className="lg:p-4 px-2 py-4 ">
               <h6 className="text-lg mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
@@ -39,11 +68,7 @@ const Footer = () => {
                     About Us
                   </Link>
                 </li>
-                <li className="flex items-center">
-                  <Link href="#" className="hover:text-primary">
-                    Services
-                  </Link>
-                </li>
+                
                 <li className="flex items-center">
                   <Link href="/blog" className="hover:text-primary">
                     Blog
@@ -87,43 +112,11 @@ const Footer = () => {
                 </li>
               </ul>
             </div>
-            <div className="lg:p-4 px-2 py-4 lg:col-span-1">
-              <h6 className="text-lg mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
-                Connect with us
-              </h6>
-              <ul className="flex items-center gap-4 ">
-                <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
-                  <Link
-                    href="https://www.facebook.com/Gosolar.ng"
-                    target="_blank"
-                    className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
-                  >
-                    <FaFacebookF />
-                  </Link>
-                </li>
-                <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
-                  <Link
-                    href="https://twitter.com/Gosolarng"
-                    target="_blank"
-                    className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
-                  >
-                    <FaXTwitter />
-                  </Link>
-                </li>
-                <li className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] size-7 rounded-full flex items-center justify-center">
-                  <Link
-                    href="#"
-                    className="text-sm hover:text-primary flex items-center justify-center w-full h-full"
-                  >
-                    <FaInstagram />
-                  </Link>
-                </li>
-              </ul>
-            </div>
+           
           </div>
         </div>
         <div className="container mx-auto px-2">
-          <div className="grid grid-cols-1 lg:grid-cols-3 w-full text-sm gap-1">
+          <div className="grid grid-cols-1 lg:grid-cols-3 w-full text-[12px] gap-1">
             <div className="col-span-1">
               <p>&copy; {today.getFullYear()} GoSolar. All right reversed.</p>
             </div>
