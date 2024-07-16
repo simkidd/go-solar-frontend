@@ -5,13 +5,13 @@ import MarqueeComp from "@/components/MarqueeComp";
 import Review from "@/components/Review";
 import { Post } from "@/interfaces/post.interface";
 import { Product } from "@/interfaces/product.interface";
-import { getPosts, getProducts } from "@/lib/data";
+import { getPosts, getPubilshedProducts } from "@/lib/data";
 import Link from "next/link";
 import ProductCard from "../(ecommerce)/components/ProductCard";
 
 const page = async () => {
   const posts: Post[] = await getPosts();
-  const products: Product[] = await getProducts();
+  const products: Product[] = await getPubilshedProducts();
 
   return (
     <div className="w-full font-inter">
