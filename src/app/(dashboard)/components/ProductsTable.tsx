@@ -525,14 +525,11 @@ const ProductsTable = () => {
               ? "All items selected"
               : `${selectedKeys.size} of ${filteredItems.length} selected`}
           </span>
-          {selectedKeys === "all"
-            ? ""
-            : selectedKeys.size > 0 && (
-                // <AddProductsToOffer productIds={selectedKeys} />
-                <Button>
-                  Add to offer
-                </Button>
-              )}
+          {/* {selectedKeys && (
+            <AddProductsToOffer
+              productIds={Array.from(selectedKeys) as unknown as string[]}
+            />
+          )} */}
         </div>
 
         <Pagination
