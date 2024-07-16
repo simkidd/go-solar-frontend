@@ -36,7 +36,7 @@ const UpdateOfferForm: React.FC<{
             type="text"
             label="Title"
             labelPlacement="outside"
-            placeholder="Enter product name"
+            placeholder="Enter offer name"
             value={input.name}
             onChange={(e) => setInput({ ...input, name: e.target.value })}
           />
@@ -45,7 +45,7 @@ const UpdateOfferForm: React.FC<{
           <Textarea
             label="Description"
             labelPlacement="outside"
-            placeholder="Enter product description"
+            placeholder="Enter offer description"
             value={input.description}
             onChange={(e) =>
               setInput({ ...input, description: e.target.value })
