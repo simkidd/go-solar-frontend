@@ -7,20 +7,48 @@ import NextTopLoader from "nextjs-toploader";
 import Footer from "@/components/Footer";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { config } from "@/utils/config";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default:
-      "Go Solar | Affordable Solar Panels and Renewable Energy Solutions",
+    default: config.SITE_TITLE,
     template: "%s | Go Solar",
   },
-  description:
-    "Discover affordable solar panels, installation services, and renewable energy solutions tailored to your needs. Go solar today for sustainable energy and savings",
+  metadataBase: new URL(config.SITE_URL),
+  description: config.SITE_DESCRIPTION,
+  keywords: [],
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en-US": "/en-US",
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: config.SITE_URL,
+    title: config.SITE_TITLE,
+    description: config.SITE_DESCRIPTION,
+    siteName: config.SITE_NAME,
+    images: [
+      {
+        url: config.OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: config.SITE_NAME,
+      },
+    ],
+  },
   twitter: {
     card: "summary_large_image",
+    title: config.SITE_TITLE,
+    description: config.SITE_DESCRIPTION,
+    images: [config.OG_IMAGE_URL],
+    creator: "@onidev",
   },
+  manifest: `${config.SITE_URL}/site.webmanifest`,
 };
 
 export default function RootLayout({

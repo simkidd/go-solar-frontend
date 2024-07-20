@@ -23,10 +23,13 @@ export const generateMetadata = async ({
   return {
     title: product?.name,
     description: product?.description,
+    alternates: {
+      canonical: `/product/${product?.slug}`,
+    },
     openGraph: {
-      images: {
-        url: product?.images[0].url || "",
-      },
+      title: product?.name,
+      description: product?.description,
+      images: [product?.images[0].url || ""],
     },
   };
 };
@@ -58,29 +61,35 @@ const ProductPage = async ({ params }: IProduct) => {
   return (
     <div className="w-full font-inter py-20 pt-10">
       <div className="container mx-auto px-2 mb-8">
-        <div className="max-w-[1100px] mx-auto px-2">
-          <Breadcrumb name={product?.name} />
-        </div>
+        <Breadcrumb name={product?.name} />
       </div>
       <section className="w-full">
         <div className="container mx-auto px-2">
-          <div className="max-w-[1100px] mx-auto px-2">
-            <div className="grid lg:grid-cols-2 grid-cols-1">
-              <div className="w-full h-fit lg:p-4 mb-8">
-                <ProductImages images={product?.images} />
+          <div className="grid lg:grid-cols-5 grid-cols-1">
+            {/* images and desc */}
+            <div className="lg:col-span-4 col-span-1">
+              <div className="grid lg:grid-cols-5 grid-cols-1">
+                <div className="lg:col-span-2 col-span-1 w-full h-fit lg:p-4 mb-8">
+                  <ProductImages images={product?.images} />
+                </div>
+                <div className="lg:col-span-3 col-span-1">
+                  <ProductDetail product={product} productCode={productCode} />
+                </div>
               </div>
-              <ProductDetail product={product} productCode={productCode} />
+              <div className="w-full">
+                <ProductDesc product={product} />
+              </div>
             </div>
+
+            <div className="col-span-1">return policy</div>
           </div>
         </div>
       </section>
-      <section className="w-full py-16">
+      {/* <section className="w-full py-16">
         <div className="container mx-auto px-2">
-          <div className="max-w-[1100px] mx-auto px-2">
-            <ProductDesc product={product} />
-          </div>
+          <div className="max-w-[1100px] mx-auto px-2"></div>
         </div>
-      </section>
+      </section> */}
       <section className="w-full">
         <div className="container mx-auto px-2">
           <h3 className="font-bold capitalize lg:text-3xl text-2xl mb-6">
