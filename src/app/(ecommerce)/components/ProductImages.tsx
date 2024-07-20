@@ -1,7 +1,6 @@
 "use client";
 import { IImage } from "@/interfaces/product.interface";
-import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 import ImageGallery from "react-image-gallery";
 
 const ProductImages: React.FC<{

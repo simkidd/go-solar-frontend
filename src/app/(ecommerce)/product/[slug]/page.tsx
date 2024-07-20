@@ -8,6 +8,7 @@ import { getProductCodeFromSlug } from "@/utils/helpers";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetail from "../../components/ProductDetail";
+import { RefreshCcw, Truck } from "lucide-react";
 
 interface IProduct {
   params: { slug: string };
@@ -81,7 +82,48 @@ const ProductPage = async ({ params }: IProduct) => {
               </div>
             </div>
 
-            <div className="col-span-1">return policy</div>
+            <div className="col-span-1 lg:p-4">
+              <h2 className="pb-2 border-b font-bold text-lg">
+                Delivery and Returns
+              </h2>
+              <div className="pt-2 space-y-3">
+                <div className="flex space-x-2">
+                  <Truck size={28} />
+                  <div className=" space-y-1">
+                    <h2 className="font-semibold">Delivery</h2>
+                    <div className="text-xs space-y-2">
+                      <p>Estimated delivery time 1-9 business days</p>
+                      <p>Express Delivery Available</p>
+                      <p>
+                        For Same-Day-Delivery: Please place your order before
+                        11AM
+                      </p>
+                      <p>
+                        Next-Day-Delivery: Orders placed after 11AM will be
+                        delievered the next day
+                      </p>
+                      <p>Note: Availability may vary by location</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex space-x-2">
+                  <RefreshCcw size={28} />
+                  <div className="space-y-1">
+                    <h2 className="font-semibold">Return Policy</h2>
+                    <div className="text-xs space-y-2">
+                      <h3 className="font-semibold">
+                        Guaranteed 7-Day Return Policy
+                      </h3>
+                      <p>
+                        For details about return shipping options, please visit
+                        - GoSolar Return Policy
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

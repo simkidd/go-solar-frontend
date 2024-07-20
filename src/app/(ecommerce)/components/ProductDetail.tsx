@@ -38,7 +38,7 @@ const ProductDetail: React.FC<{
           {formatCurrency(product?.price, "NGN")}
         </h3>
 
-        <p className="">
+        <p className="text-gray-500">
           Stock:{" "}
           <span className="font-semibold">{product?.quantityInStock}</span>
         </p>
