@@ -1,4 +1,6 @@
+"use client";
 import { Product } from "@/interfaces/product.interface";
+import { useViewHistoryStore } from "@/lib/stores/viewHistory.store";
 import { formatCurrency } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,9 +9,15 @@ import React from "react";
 const ProductCard: React.FC<{
   item: Product;
 }> = ({ item }) => {
+  const { addProductToHistory } = useViewHistoryStore();
+
+  const handleCardClick = () => {
+    addProductToHistory(item);
+  };
+
   return (
     <div className="w-full group">
-      <Link href={`/product/${item?.slug}`}>
+      <Link href={`/product/${item?.slug}`} onClick={handleCardClick}>
         <div className="w-full lg:h-56 h-44 overflow-hidden relative">
           <div className="absolute top-0 left-0 w-full h-full">
             <Image
@@ -47,6 +55,7 @@ const ProductCard: React.FC<{
           href={`/product/${item?.slug}`}
           className="mb-2 text-sm text-ellipsis line-clamp-2"
           title={item?.name}
+          onClick={handleCardClick}
         >
           {item?.name}
         </Link>

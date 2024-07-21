@@ -3,9 +3,9 @@ import { Product } from "@/interfaces/product.interface";
 import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import ProductCard from "./ProductCard";
+import { useProductStore } from "@/lib/stores/product.store";
 
 import "swiper/css";
-import { useProductStore } from "@/lib/stores/product.store";
 
 const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
   const { products } = useProductStore();
@@ -34,25 +34,39 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
   }, []);
 
   return (
-    <Swiper
-      slidesPerView={2}
-      spaceBetween={10}
-      slidesPerGroup={1}
-      breakpoints={{
-        768: {
-          slidesPerView: 3,
-        },
-        1024: {
-          slidesPerView: 6,
-        },
-      }}
-    >
-      {relatedProducts.map((item, i) => (
-        <SwiperSlide key={i}>
-          <ProductCard item={item} />
-        </SwiperSlide>
-      ))}
-    </Swiper>
+    <>
+      {relatedProducts && relatedProducts.length > 1 && (
+        <div className="w-full">
+          <div className=" bg-primary text-white px-4 py-2">
+            <h3 className="font-medium lg:text-xl text-lg">
+              You may also like
+            </h3>
+          </div>
+
+          <div className="my-6">
+            <Swiper
+              slidesPerView={2}
+              spaceBetween={16}
+              slidesPerGroup={1}
+              breakpoints={{
+                768: {
+                  slidesPerView: 3,
+                },
+                1024: {
+                  slidesPerView: 6,
+                },
+              }}
+            >
+              {relatedProducts.map((item) => (
+                <SwiperSlide key={item?._id}>
+                  <ProductCard item={item} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
