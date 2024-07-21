@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { GrCloudUpload } from "react-icons/gr";
 import { HiXMark } from "react-icons/hi2";
+import NovelEditor from "./NovelEditor";
 
 const tagsList = [
   "HBL OPTIMUZ",
@@ -68,36 +69,6 @@ const UpdateBlogPostForm: React.FC<{
       tags: tags,
     });
   };
-
-  // const handleAddTag = () => {
-  //   if (newTag.trim() !== "") {
-  //     const newTags = newTag
-  //       .split(",")
-  //       .map((t) => t.trim())
-  //       .filter((t) => t !== "");
-  //     const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
-
-  //     setInput({
-  //       ...input,
-  //       tags: updatedTags,
-  //     });
-  //     setNewTag("");
-  //   }
-  // };
-
-  // const handleDeleteTag = (tagToDelete: string) => {
-  //   setInput((tagInput) => ({
-  //     ...tagInput,
-  //     tags: tagInput.tags.filter((tag) => tag !== tagToDelete),
-  //   }));
-  // };
-
-  // const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === "Enter") {
-  //     e.preventDefault();
-  //     handleAddTag();
-  //   }
-  // };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
@@ -183,7 +154,7 @@ const UpdateBlogPostForm: React.FC<{
           />
         </div>
         <div className="mb-3">
-          <Textarea
+          {/* <Textarea
             label="Content"
             labelPlacement="outside"
             placeholder="Enter post content here..."
@@ -191,6 +162,11 @@ const UpdateBlogPostForm: React.FC<{
             onChange={(e) => setInput({ ...input, content: e.target.value })}
             minRows={8}
             maxRows={15}
+          /> */}
+
+          <NovelEditor
+            content={input.content}
+            setContent={(content) => setInput({ ...input, content })}
           />
         </div>
         <div className="mb-3">

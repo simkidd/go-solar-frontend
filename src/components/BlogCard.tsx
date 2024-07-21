@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { Suspense } from "react";
 
+
 export const BlogCardList: React.FC<{ item: Post }> = ({ item }) => {
   return (
     <div className="flex">
@@ -62,12 +63,12 @@ export const BlogCardAdmin: React.FC<{
               <p>{post?.title}</p>
             </Link>
           </div>
-          <p className="text-ellipsis line-clamp-2 mb-4 dark:text-white">
+          {/* <p className="text-ellipsis line-clamp-2 mb-4 dark:text-white">
             {post?.content}
-          </p>
-          <Link href={`/admin/blogs/${post?._id}`} className="text-primary">
+          </p> */}
+          {/* <Link href={`/admin/blogs/${post?._id}`} className="text-primary">
             Read More
-          </Link>
+          </Link> */}
         </div>
       </div>
     </Suspense>
@@ -102,10 +103,10 @@ const BlogCard: React.FC<{
               <p>{post?.title}</p>
             </Link>
           </div>
-          <p className="text-ellipsis line-clamp-2 mb-4">{post?.content}</p>
-          <Link href={`/blog/${post?.slug}`} className="text-primary">
+          {/* <p className="text-ellipsis line-clamp-2 mb-4">{post?.content}</p> */}
+          {/* <Link href={`/blog/${post?.slug}`} className="text-primary">
             Read More
-          </Link>
+          </Link> */}
         </div>
       </div>
     </Suspense>

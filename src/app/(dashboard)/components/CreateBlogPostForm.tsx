@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { GrCloudUpload } from "react-icons/gr";
 import { toast } from "react-toastify";
+import NovelEditor from "./NovelEditor";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -57,6 +58,7 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     image: "",
   });
   const [file, setFile] = useState<FileWithPreview | null>(null);
+  const [content, setContent] = useState("");
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 1) {
@@ -132,7 +134,7 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     const formData = new FormData();
     formData.append("title", input.title);
-    formData.append("content", input.content);
+    formData.append("content", content);
     formData.append("author", input.author);
     formData.append("tags", JSON.stringify(input.tags));
     formData.append("blogImage", input.image as Blob);
@@ -141,7 +143,7 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     await createPost(formData, config);
 
-    if (!input.title || !input.content || !input.tags || !input.author) {
+    if (!input.title || !content || !input.tags || !input.author) {
       return;
     } else {
       onClose();
@@ -162,7 +164,7 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           />
         </div>
         <div className="mb-3">
-          <Textarea
+          {/* <Textarea
             label="Content"
             labelPlacement="outside"
             placeholder="Enter post content here..."
@@ -170,7 +172,8 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             onChange={(e) => setInput({ ...input, content: e.target.value })}
             minRows={8}
             maxRows={15}
-          />
+          /> */}
+          <NovelEditor content={content} setContent={setContent} />
         </div>
 
         <div className="mb-3">
@@ -195,7 +198,7 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="" className="">
+          <label htmlFor="" className="text-sm">
             Images
           </label>
           <div

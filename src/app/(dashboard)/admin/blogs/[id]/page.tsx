@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import parse from "html-react-parser";
 
 interface IPost {
   params: { id: string };
@@ -82,9 +83,10 @@ const SinglePostPage = async ({ params }: IPost) => {
             height={500}
           />
         </div>
-        <article className="w-full max-w-[750px] mx-auto text-justify">
+        {/* <article className="w-full max-w-[750px] mx-auto text-justify">
           {post?.content}
-        </article>
+        </article> */}
+        <div className="parsed-html">{parse(`${post?.content}`)}</div>
       </div>
     </div>
   );
