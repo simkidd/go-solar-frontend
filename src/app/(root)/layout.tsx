@@ -48,7 +48,6 @@ export const metadata: Metadata = {
     images: [config.OG_IMAGE_URL],
     creator: "@onidev",
   },
-  manifest: `${config.SITE_URL}/site.webmanifest`,
 };
 
 export default function RootLayout({

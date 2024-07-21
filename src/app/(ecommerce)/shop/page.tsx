@@ -4,6 +4,7 @@ import ProductCard from "@/app/(ecommerce)/components/ProductCard";
 import { Product } from "@/interfaces/product.interface";
 import { getPubilshedProducts } from "@/lib/data";
 import Link from "next/link";
+import ViewHistoryComp from "../components/ViewHistory";
 
 const ShopPage = async () => {
   const products: Product[] = await getPubilshedProducts();
@@ -54,10 +55,12 @@ const ShopPage = async () => {
               <ProductCard key={item?._id} item={item} />
             ))}
           </div>
-          
+
           <div className="mb-6">
             <Cta />
           </div>
+
+          <ViewHistoryComp />
         </div>
       </section>
     </div>

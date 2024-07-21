@@ -9,6 +9,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetail from "../../components/ProductDetail";
 import { RefreshCcw, Truck } from "lucide-react";
+import ViewHistoryComp from "../../components/ViewHistory";
 
 interface IProduct {
   params: { slug: string };
@@ -64,7 +65,7 @@ const ProductPage = async ({ params }: IProduct) => {
       <div className="container mx-auto px-2 mb-8">
         <Breadcrumb name={product?.name} />
       </div>
-      <section className="w-full">
+      <section className="w-full mb-6">
         <div className="container mx-auto px-2">
           <div className="grid lg:grid-cols-5 grid-cols-1">
             {/* images and desc */}
@@ -127,20 +128,13 @@ const ProductPage = async ({ params }: IProduct) => {
           </div>
         </div>
       </section>
-      {/* <section className="w-full py-16">
-        <div className="container mx-auto px-2">
-          <div className="max-w-[1100px] mx-auto px-2"></div>
-        </div>
-      </section> */}
-      <section className="w-full">
-        <div className="container mx-auto px-2">
-          <h3 className="font-bold capitalize lg:text-3xl text-2xl mb-6">
-            You may also like
-          </h3>
-          <div>
-            <RelatedProducts product={product} />
-          </div>
-        </div>
+
+      <section className="container mx-auto px-2 mb-6">
+        <RelatedProducts product={product} />
+      </section>
+
+      <section className="container mx-auto px-2">
+        <ViewHistoryComp />
       </section>
     </div>
   );
