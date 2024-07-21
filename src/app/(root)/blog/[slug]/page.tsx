@@ -23,19 +23,22 @@ export const generateMetadata = async ({
   return {
     title: post?.title,
     description: post?.content,
+    alternates: {
+      canonical: `/blog/${post?.slug}`,
+    },
     openGraph: {
-      images: {
-        url: post?.image || "",
-      },
+      title: post?.title,
+      description: post?.content,
+      images: [post?.image || ""],
     },
   };
 };
 
 export const generateStaticParams = async () => {
   try {
-    const posts= await getPosts();
+    const posts = await getPosts();
 
-    return posts.map((post:any) => ({
+    return posts.map((post: any) => ({
       // id: post?._id,
       slug: post?.slug,
     }));
@@ -77,7 +80,6 @@ const SingleBlogPage = async ({ params }: IPost) => {
               <article className="">{post?.content}</article>
             </div>
             <div className="col-span-1 lg:px-4 mt-8 lg:mt-0">
-              
               <div className="w-full">
                 <h2 className="text-lg font-semibold mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
                   Recent Post

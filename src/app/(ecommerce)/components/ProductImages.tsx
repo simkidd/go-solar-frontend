@@ -1,48 +1,25 @@
 "use client";
 import { IImage } from "@/interfaces/product.interface";
-import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
+import ImageGallery from "react-image-gallery";
 
 const ProductImages: React.FC<{
   images: IImage[];
 }> = ({ images }) => {
-  const [selectedImage, setSelectedImage] = useState(images?.[0].url);
-
-  const handleSelected = (img: string) => {
-    setSelectedImage(img);
-  };
-
   return (
-    <div className="flex flex-col gap-3 ">
-      <div className="lg:w-[384px] aspect-square lg:h-[384px] rounded-lg shadow-xl border overflow-hidden">
-        <Image
-          src={selectedImage}
-          alt="image selected"
-          width={300}
-          height={300}
-          priority
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <div className="flex gap-2 overflow-y-auto scrollbar-hide">
-        {images.map((img, i) => (
-          <div
-            key={i}
-            className={`size-14 overflow-hidden rounded-lg cursor-pointer border-2 ${
-              selectedImage === img.url ? "border-2 border-primary" : ""
-            }`}
-            onClick={() => handleSelected(img.url)}
-          >
-            <Image
-              src={img.url}
-              alt="product"
-              width={150}
-              height={150}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
-      </div>
+    <div className="w-full">
+      <ImageGallery
+        items={images.map((img) => ({
+          original: img.url,
+          thumbnail: img.url,
+          loading: "lazy",
+        }))}
+        showBullets={false}
+        showNav={false}
+        autoPlay={false}
+        showPlayButton={false}
+        infinite
+      />
     </div>
   );
 };

@@ -48,3 +48,8 @@ export enum TrackingStatus {
   Delivered = "Delivered",
   Received = "Received",
 }
+
+export interface UpdateTrackingStatus {
+  trackingLevel: number;
+  trackingId: string;
+}
