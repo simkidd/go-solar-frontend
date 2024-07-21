@@ -1,45 +1,33 @@
 "use client";
-import { Order } from "@/interfaces/order.interface";
+import {
+  Order,
+  TrackingStatus,
+  UpdateTrackingStatus,
+} from "@/interfaces/order.interface";
 import { formatCurrency, formatDateTime } from "@/utils/helpers";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
-import { Chip } from "@nextui-org/react";
 import { Mail, Phone } from "lucide-react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { getChipColor } from "./OrdersTable";
+import { useOrderStore } from "@/lib/stores/order.store";
+import { Button, Chip, Select, SelectItem } from "@nextui-org/react";
 
 const OrderDetails: React.FC<{
   order: Order;
 }> = ({ order }) => {
-  // const { order, setOrder } = useOrderStore();
-  const { id } = useParams();
-  const [loading, setLoading] = useState(false);
+  const { statusLoading, updateTrackingLevel } = useOrderStore();
+  const router = useRouter();
+  const [input, setInput] = useState<UpdateTrackingStatus>({
+    trackingLevel: 1,
+    trackingId: order?.trackingId?._id,
+  });
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (id) {
-  //       try {
-  //         setLoading(true);
-  //         const { data } = await axiosInstance.get(`/users/orders/${id}`);
-  //         setOrder(data.order);
-  //       } catch (error) {
-  //         const errorMsg = error as any;
-  //         console.log(errorMsg?.response.data.message);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     }
-  //   })();
-  // }, [id]);
-
-  // if (!order && loading) {
-  //   return (
-  //     <div>
-  //       <LoadingSpinner />
-  //     </div>
-  //   );
-  // }
+  const handleUpdateTracking = async () => {
+    await updateTrackingLevel(input);
+    router.refresh();
+  };
 
   return (
     <>
@@ -149,9 +137,9 @@ const OrderDetails: React.FC<{
             </p>
           </div>
           <div className="bg-white dark:bg-[#222327] shadow rounded px-4 py-4">
-            <h4 className="font-medium text-lg">Activity</h4>
-            <div>
-              <p>
+            <div className="mb-8">
+              <h4 className="font-medium text-lg">Activity</h4>
+              <div>
                 Status:{" "}
                 <Chip
                   color={getChipColor(order?.trackingStatus)}
@@ -160,8 +148,47 @@ const OrderDetails: React.FC<{
                 >
                   {order?.trackingStatus}
                 </Chip>
-              </p>
+              </div>
             </div>
+
+            {/* update order status */}
+            <form
+              className="mt-4 flex flex-col gap-2"
+              onSubmit={handleUpdateTracking}
+            >
+              <Select
+                label="Tracking Level"
+                placeholder="Update Order Status"
+                labelPlacement="outside"
+                value={input.trackingLevel}
+                onChange={(e) =>
+                  setInput({
+                    ...input,
+                    trackingLevel: Number(e.target.value),
+                  })
+                }
+              >
+                <SelectItem key={1} value={1}>
+                  {TrackingStatus.Processing}
+                </SelectItem>
+                <SelectItem key={2} value={2}>
+                  {TrackingStatus.Delivered}
+                </SelectItem>
+                <SelectItem key={3} value={3}>
+                  {TrackingStatus.Received}
+                </SelectItem>
+              </Select>
+
+              <Button
+                variant="solid"
+                color="primary"
+                type="submit"
+                isDisabled={statusLoading}
+                isLoading={statusLoading}
+              >
+                Update
+              </Button>
+            </form>
           </div>
         </div>
       </div>

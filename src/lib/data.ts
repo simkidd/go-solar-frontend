@@ -102,3 +102,13 @@ export const getOffer = async (id: string) => {
     console.error(error);
   }
 };
+
+export const getUserOrders = async () => {
+  try {
+    const { data } = await axiosInstance.get("/users/orders/user-orders");
+
+    return data.orders;
+  } catch (error) {
+    console.log(error);
+  }
+};

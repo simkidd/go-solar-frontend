@@ -4,16 +4,9 @@ import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import {
-  TableHeader,
-  TableBody,
+  Button,
   Card,
   CardBody,
-  Spinner,
-  TableCell,
-  Table,
-  TableColumn,
-  TableRow,
-  Button,
   Chip,
   Dropdown,
   DropdownItem,
@@ -21,28 +14,31 @@ import {
   DropdownTrigger,
   Input,
   Pagination,
-  SortDescriptor,
-  Selection,
-  useDisclosure,
-  Tooltip,
   Select,
+  Selection,
   SelectItem,
+  SortDescriptor,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  useDisclosure
 } from "@nextui-org/react";
 import {
-  EllipsisVertical,
-  PlusIcon,
-  SearchIcon,
   ChevronDownIcon,
-  Trash,
+  EllipsisVertical,
   Eye,
-  Trash2,
   RefreshCcw,
+  SearchIcon,
+  Trash,
+  Trash2
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
-import AddProductsToOffer from "./AddProductsToOffer";
 
 const columns = [
   {

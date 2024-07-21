@@ -2,16 +2,17 @@
 import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
 import { useOrderStore } from "@/lib/stores/order.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
-import { Chip } from "@nextui-org/react";
+import { Button, Chip } from "@nextui-org/react";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
 import React from "react";
 
 const AccountOrderDetails: React.FC<{
   id: string;
 }> = ({ id }) => {
-  const { userOrders } = useOrderStore();
+  const { userOrders, updateTrackingLevel, statusLoading } = useOrderStore();
   const router = useRouter();
 
   const order = userOrders.find(
@@ -27,15 +28,25 @@ const AccountOrderDetails: React.FC<{
     0
   );
 
+  const handleConfirmReceipt = async () => {
+    await updateTrackingLevel({
+      trackingLevel: 3,
+      trackingId: order?.trackingId?._id,
+    });
+    router.refresh();
+  };
+
   return (
     <div className="container mx-auto px-4 py-4">
       <div className="flex items-center mb-6">
-        <button
+        <Button
+          isIconOnly
+          variant="flat"
           onClick={() => router.back()}
-          className="mr-4 p-1 rounded-full hover:bg-gray-100"
+          className="mr-4 rounded-full"
         >
           <ArrowLeft size={24} />
-        </button>
+        </Button>
         <h2 className="text-2xl font-bold">Order Detail</h2>
       </div>
 
@@ -121,13 +132,22 @@ const AccountOrderDetails: React.FC<{
       <div className="mb-8 border dark:border-[#2a2b2f]">
         <div className="px-6 py-2 bg-[#f1f1f1] dark:bg-[#2a2b2f] flex items-center justify-between">
           <h3 className="text-lg font-semibold">Items Ordered</h3>
-          <Chip
-            color={getChipColor(order?.trackingStatus)}
-            size="sm"
-            variant="flat"
-          >
-            {order?.trackingStatus}
-          </Chip>
+          <div className="flex gap-2 items-center">
+            <Chip
+              color={getChipColor(order?.trackingStatus)}
+              size="sm"
+              variant="flat"
+            >
+              {order?.trackingStatus}
+            </Chip>
+
+            <Link
+              href={`${order?.trackingId?.tracking_id}/track`}
+              className="text-sm hover:underline text-primary"
+            >
+              Track
+            </Link>
+          </div>
         </div>
         <ul className="space-y-4">
           {order?.products.map((item) => (
@@ -159,6 +179,22 @@ const AccountOrderDetails: React.FC<{
           ))}
         </ul>
       </div>
+
+      {order?.trackingLevel === 2 && (
+        <div className="flex justify-end gap-4 items-center">
+          <p className="text-gray-500">Have you Received your order?</p>
+          <Button
+            variant="solid"
+            color="primary"
+            type="submit"
+            isDisabled={statusLoading}
+            isLoading={statusLoading}
+            onClick={handleConfirmReceipt}
+          >
+            Confirm Receipt
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
