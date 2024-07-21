@@ -60,7 +60,9 @@ const MultipleSelectChip: React.FC<SelectProps> = ({
 
   return (
     <div className="w-full">
-      <label htmlFor="multiple-chip">{label}</label>
+      <label htmlFor="multiple-chip" className="text-sm">
+        {label}
+      </label>
       <div className="relative mt-1" ref={dropdownRef}>
         <Button
           variant="flat"

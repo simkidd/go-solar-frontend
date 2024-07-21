@@ -1,14 +1,21 @@
 import { Post } from "@/interfaces/post.interface";
-import { getPosts } from "@/lib/data";
+import { Product } from "@/interfaces/product.interface";
+import { getPosts, getProducts, getPubilshedProducts } from "@/lib/data";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base_url = process.env.BASE_URL;
   const posts: Post[] = await getPosts();
+  const products: Product[] = await getPubilshedProducts();
 
-  const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
+  const postUrls: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${base_url}/blog/${post?.slug}`,
-    // lastModified: new Date(post.updatedAt)
+    lastModified: new Date(post?.updatedAt),
+  }));
+
+  const productUrls: MetadataRoute.Sitemap = products.map((product) => ({
+    url: `${base_url}/product/${product?.slug}`,
+    lastModified: new Date(product?.updatedAt),
   }));
 
   return [
@@ -48,6 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.5,
     },
-    ...postEntries,
+    ...postUrls,
+    ...productUrls,
   ];
 }

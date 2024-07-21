@@ -61,7 +61,7 @@ const HeaderShop = () => {
   }, [showMenu]);
 
   return (
-    <div className="w-full font-dmsans sticky top-0 left-0 z-50 light bg-[#f1f1f1] dark:bg-[#2a2b2f] shadow nav__container">
+    <div className="w-full font-dmsans sticky top-0 left-0 z-40 light bg-[#f1f1f1] dark:bg-[#2a2b2f] shadow nav__container">
       {/* top header */}
       <div className="w-full h-10 hidden lg:flex">
         <div className="grid lg:grid-cols-2 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
@@ -289,7 +289,7 @@ const HeaderShop = () => {
         ></div> */}
 
         <div
-          className={`bg-white dark:bg-[#222327] lg:hidden flex flex-col absolute z-50 top-14 bottom-0 -left-full transition-all duration-500 ease-linear h-[calc(100dvh-56px)] w-full px-2 ${
+          className={`bg-white dark:bg-[#222327] lg:hidden flex flex-col absolute z-40 top-14 bottom-0 -left-full transition-all duration-500 ease-linear h-[calc(100dvh-56px)] w-full px-2 ${
             showMenu ? "left-0" : ""
           }`}
         >

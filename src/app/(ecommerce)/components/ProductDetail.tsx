@@ -23,28 +23,28 @@ const ProductDetail: React.FC<{
 
   return (
     <div className="w-full flex flex-col lg:p-4">
-      <h2 className="font-bold text-3xl mb-4">{product?.name}</h2>
-      <p className="text-sm mb-8">
-        Product code: <span className="font-semibold">{productCode}</span>
-      </p>
-      <h3 className="font-bold text-2xl mb-6">
-        {formatCurrency(product?.price, "NGN")}
-      </h3>
-
-      <div className="flex items-center mb-2">
-        <p className="w-32">Brand:</p>
-        <p className="">{product?.brand}</p>
-      </div>
-      <div className="flex items-center mb-2">
-        <p className="w-32">Availability:</p>
-        <p className="">
-          {product?.quantityInStock > 1 ? "In Stock" : "Out of Stock"}
+      <div className="mb-3">
+        <h2 className="font-bold text-2xl">{product?.name}</h2>
+        <p className="text-base">
+          Product code: <span className="font-semibold">{productCode}</span>
+        </p>
+        <p className="text-base">
+          Brand: <span className="font-semibold">{product?.brand}</span>
         </p>
       </div>
 
-      <div className="flex flex-col gap-2 mb-6">
-        <p className="">Quantity:</p>
+      <div className="flex justify-between items-center border-t border-b border-t-[#f1f1f1] dark:border-t-[#2a2b2f] border-b-[#f1f1f1] dark:border-b-[#2a2b2f] py-4 mb-4">
+        <h3 className="font-bold text-2xl">
+          {formatCurrency(product?.price, "NGN")}
+        </h3>
 
+        <p className="text-gray-500">
+          Stock:{" "}
+          <span className="font-semibold">{product?.quantityInStock}</span>
+        </p>
+      </div>
+
+      <div className="flex gap-8 mb-6">
         <div className="flex items-center ">
           <button
             className="disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed cursor-pointer h-8 w-8 flex items-center justify-center rounded-sm bg-primary text-white"
@@ -60,12 +60,30 @@ const ProductDetail: React.FC<{
             <Plus size={18} />
           </button>
         </div>
+
+        <div>
+          <button
+            className="bg-primary text-white py-4 px-8 flex items-center gap-2"
+            onClick={() =>
+              addItem({
+                product,
+                qty: quantity,
+                deliveryFee: selectedDeliveryFee,
+              })
+            }
+          >
+            Add To Cart
+            <BsCartPlus />
+          </button>
+        </div>
       </div>
 
       <div>
-        <p className="">Delivery Fee:</p>
-        <p className="font-bold">
-          {formatCurrency(selectedDeliveryFee, "NGN")}
+        <p className="">
+          Delivery Fee:{" "}
+          <span className="font-bold">
+            {formatCurrency(selectedDeliveryFee, "NGN")}
+          </span>
         </p>
 
         <p className="mt-4">Location:</p>
@@ -93,20 +111,12 @@ const ProductDetail: React.FC<{
         </div>
       </div>
 
-      <div>
-        <button
-          className="bg-primary text-white py-4 px-8 mt-8 flex items-center gap-2"
-          onClick={() =>
-            addItem({
-              product,
-              qty: quantity,
-              deliveryFee: selectedDeliveryFee,
-            })
-          }
-        >
-          Add To Cart
-          <BsCartPlus />
-        </button>
+      <div className="flex gap-4 mt-4">
+        <div className="bg-gray-400 text-black py-2 px-3 rounded-md">
+          <p className="font-medium">Call us for Bulk Purchases:</p>
+          <p>0706 276 2879</p>
+        </div>
+        <div></div>
       </div>
     </div>
   );
