@@ -15,8 +15,17 @@ const ProductCard: React.FC<{
     addProductToHistory(item);
   };
 
+  const calculateNewPrice = (price: number, percentageOff: number) => {
+    return price - (price * percentageOff) / 100;
+  };
+
+  const newPrice =
+    item?.currentOffer?.percentageOff !== undefined
+      ? calculateNewPrice(item?.price, item?.currentOffer?.percentageOff)
+      : item?.price;
+
   return (
-    <div className="w-full group">
+    <div className="w-full group relative">
       <Link href={`/product/${item?.slug}`} onClick={handleCardClick}>
         <div className="w-full lg:h-56 h-44 overflow-hidden relative">
           <div className="absolute top-0 left-0 w-full h-full">
@@ -46,11 +55,13 @@ const ProductCard: React.FC<{
             </div>
           )}
         </div>
+        {item?.currentOffer?.percentageOff && (
+          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded z-[2]">
+            {item?.currentOffer?.percentageOff}% off
+          </div>
+        )}
       </Link>
       <div className="w-full py-2 ">
-        <div>
-          <span>{item?.currentOffer?.name}</span>
-        </div>
         <Link
           href={`/product/${item?.slug}`}
           className="mb-2 text-sm text-ellipsis line-clamp-2"
@@ -59,8 +70,19 @@ const ProductCard: React.FC<{
         >
           {item?.name}
         </Link>
-        <p className="font-semibold">{formatCurrency(item?.price, "NGN")}</p>
+
+        <div className="flex items-center space-x-2">
+          <span className="font-semibold">
+            {formatCurrency(newPrice, "NGN")}
+          </span>
+          {item?.currentOffer?.percentageOff && (
+            <span className="line-through text-gray-500 text-sm">
+              {formatCurrency(item?.price, "NGN")}
+            </span>
+          )}
+        </div>
       </div>
+
       <div className="w-full px-2 flex justify-center mb-2">
         {/* <button className="bg-primary flex items-center gap-2 text-white px-4 py-2 text-sm">
           Add To Cart <TbShoppingCartPlus size={18} />
