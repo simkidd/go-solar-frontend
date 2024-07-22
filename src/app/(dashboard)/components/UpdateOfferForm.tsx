@@ -63,7 +63,7 @@ const UpdateOfferForm: React.FC<{
             maxRows={8}
           />
         </div>
-        <div className="mb-3">
+        {/* <div className="mb-3">
           <Select
             label="Offer Type"
             placeholder="Select an offer type"
@@ -83,7 +83,7 @@ const UpdateOfferForm: React.FC<{
               Price Slash
             </SelectItem>
           </Select>
-        </div>
+        </div> */}
 
         <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
           <div className="">
@@ -108,7 +108,7 @@ const UpdateOfferForm: React.FC<{
             />
           </div>
 
-          <div className="">
+          {/* <div className="">
             <Input
               type="number"
               label="Price Slash"
@@ -128,7 +128,7 @@ const UpdateOfferForm: React.FC<{
                 </div>
               }
             />
-          </div>
+          </div> */}
         </div>
       </div>
 
