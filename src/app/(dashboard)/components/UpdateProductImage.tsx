@@ -60,25 +60,30 @@ export const ProductImagesForm: React.FC<{
   const [selectedImgId, setSelectedImgId] = useState<string | null>(null);
   const router = useRouter();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (images.length + acceptedFiles.length > 3) {
-      toast.info("You can only upload up to 3 images");
-      return;
-    }
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (images.length + acceptedFiles.length > 3) {
+        toast.info("You can only upload up to 3 images");
+        return;
+      }
 
-    const newFiles = acceptedFiles.map((file) =>
-      Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      })
-    );
+      const newFiles = acceptedFiles.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      );
 
-    // Create an array of new image URLs
-    const newImageUrls = acceptedFiles.map((file) => URL.createObjectURL(file));
+      // Create an array of new image URLs
+      const newImageUrls = acceptedFiles.map((file) =>
+        URL.createObjectURL(file)
+      );
 
-    // Update the images state with new URLs
-    setImages((prevFiles) => [...prevFiles, ...newImageUrls]);
-    setSelectedImage(newFiles[0]);
-  }, []);
+      // Update the images state with new URLs
+      setImages((prevFiles) => [...prevFiles, ...newImageUrls]);
+      setSelectedImage(newFiles[0]);
+    },
+    [images.length]
+  );
 
   const thumbs = images.map((image, i) => (
     <div key={i} className="relative m-2 w-20 h-20">

@@ -123,7 +123,7 @@ const OrdersTable = () => {
     }
 
     return filteredOrders;
-  }, [orders, filterValue, statusFilter]);
+  }, [orders, filterValue, statusFilter, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -360,6 +360,10 @@ const OrdersTable = () => {
     onRowsPerPageChange,
     orders.length,
     hasSearchFilter,
+    onResetFilters,
+    statusFilter,
+    onClear,
+    onStatusFilterChange
   ]);
 
   const bottomContent = useMemo(() => {
@@ -407,7 +411,7 @@ const OrdersTable = () => {
         </div> */}
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, page, pages, filteredItems.length]);
 
   const classNames = React.useMemo(
     () => ({
