@@ -79,17 +79,20 @@ const ProductDetail: React.FC<{
 
         <div>
           <button
-            className="bg-primary text-white py-4 px-8 flex items-center gap-2"
+            className="bg-primary text-white py-3 px-6 flex items-center gap-2"
             onClick={() =>
               addItem({
-                product,
+                product: {
+                  ...product,
+                  price: newPrice,
+                },
                 qty: quantity,
                 deliveryFee: selectedDeliveryFee,
               })
             }
           >
             Add To Cart
-            <BsCartPlus />
+            <BsCartPlus size={18} />
           </button>
         </div>
       </div>
