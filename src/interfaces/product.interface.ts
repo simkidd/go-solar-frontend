@@ -102,6 +102,7 @@ export interface Offer {
   type: OfferType;
   priceSlash: number;
   percentageOff: number;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -112,6 +113,7 @@ export interface CreateOfferInput {
   type: OfferType;
   priceSlash?: number;
   percentageOff?: number;
+  isActive?: boolean;
 }
 
 export enum OfferType {

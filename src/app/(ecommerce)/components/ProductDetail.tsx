@@ -21,6 +21,15 @@ const ProductDetail: React.FC<{
       ? product?.withinLocationDeliveryFee
       : product?.outsideLocationDeliveryFee;
 
+  const calculateNewPrice = (price: number, percentageOff: number) => {
+    return price - (price * percentageOff) / 100;
+  };
+
+  const newPrice =
+    product?.currentOffer?.percentageOff !== undefined
+      ? calculateNewPrice(product?.price, product?.currentOffer?.percentageOff)
+      : product?.price;
+
   return (
     <div className="w-full flex flex-col lg:p-4">
       <div className="mb-3">
@@ -34,8 +43,15 @@ const ProductDetail: React.FC<{
       </div>
 
       <div className="flex justify-between items-center border-t border-b border-t-[#f1f1f1] dark:border-t-[#2a2b2f] border-b-[#f1f1f1] dark:border-b-[#2a2b2f] py-4 mb-4">
-        <h3 className="font-bold text-2xl">
-          {formatCurrency(product?.price, "NGN")}
+        <h3 className="font-bold text-2xl space-x-2">
+          <span className="font-semibold">
+            {formatCurrency(newPrice, "NGN")}
+          </span>
+          {product?.currentOffer?.percentageOff && (
+            <span className="line-through text-gray-500 text-xl">
+              {formatCurrency(product?.price, "NGN")}
+            </span>
+          )}
         </h3>
 
         <p className="text-gray-500">
@@ -63,17 +79,20 @@ const ProductDetail: React.FC<{
 
         <div>
           <button
-            className="bg-primary text-white py-4 px-8 flex items-center gap-2"
+            className="bg-primary text-white py-3 px-6 flex items-center gap-2"
             onClick={() =>
               addItem({
-                product,
+                product: {
+                  ...product,
+                  price: newPrice,
+                },
                 qty: quantity,
                 deliveryFee: selectedDeliveryFee,
               })
             }
           >
             Add To Cart
-            <BsCartPlus />
+            <BsCartPlus size={18} />
           </button>
         </div>
       </div>

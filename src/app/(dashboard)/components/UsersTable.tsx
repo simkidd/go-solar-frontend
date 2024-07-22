@@ -99,7 +99,7 @@ const UsersTable = () => {
     }
 
     return filteredUsers;
-  }, [users, filterValue, roleFilter]);
+  }, [users, filterValue, roleFilter, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -363,8 +363,10 @@ const UsersTable = () => {
     onSearchChange,
     onRowsPerPageChange,
     users.length,
-    hasSearchFilter,
     roleFilter,
+    onClear,
+    onResetFilters,
+    onRoleFilterChange,
   ]);
 
   const bottomContent = useMemo(() => {
@@ -411,7 +413,7 @@ const UsersTable = () => {
         </div> */}
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, filteredItems.length, page, pages]);
 
   const classNames = React.useMemo(
     () => ({
