@@ -58,8 +58,6 @@ const OffersComp = () => {
     }
   };
 
-  console.log("offer>>>>", offers);
-
   return (
     <div className="w-full">
       {/* delete offer modal */}

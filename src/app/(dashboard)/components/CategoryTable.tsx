@@ -91,7 +91,7 @@ const CategoryTable = () => {
     }
 
     return filteredCat;
-  }, [categories, filterValue]);
+  }, [categories, filterValue, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -280,7 +280,7 @@ const CategoryTable = () => {
     onSearchChange,
     onRowsPerPageChange,
     categories.length,
-    hasSearchFilter,
+    onClear,
   ]);
 
   const bottomContent = useMemo(() => {
@@ -328,7 +328,7 @@ const CategoryTable = () => {
         </div> */}
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, filteredItems.length, page, pages]);
 
   const classNames = React.useMemo(
     () => ({

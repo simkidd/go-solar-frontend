@@ -58,7 +58,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       ...prevInput,
       images: [...prevInput.images, ...(acceptedFiles as any)],
     }));
-  }, []);
+  }, [files.length]);
 
   const thumbs = files.map((file) => (
     <div key={file.name} className="relative m-2 w-20 h-20">
