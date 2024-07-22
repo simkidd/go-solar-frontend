@@ -8,6 +8,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Chip,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -20,6 +21,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import UpdateOfferForm from "./UpdateOfferForm";
+
+export const getOfferChipColor = (active: boolean) => {
+  switch (active) {
+    case true:
+      return "success";
+    case false:
+      return "default";
+    default:
+      return "default";
+  }
+};
 
 const OffersComp = () => {
   const { loading, offers, deleteOffer, fetchOffers } = useProductStore();
@@ -45,6 +57,8 @@ const OffersComp = () => {
       router.refresh();
     }
   };
+
+  console.log("offer>>>>", offers);
 
   return (
     <div className="w-full">
@@ -118,7 +132,9 @@ const OffersComp = () => {
           {offers.map((offer) => (
             <Card key={offer?._id} className="dark:bg-[#222327]">
               <CardHeader className="w-full flex items-start justify-between">
-                <h3 className="text-lg font-bold dark:text-white">{offer?.name}</h3>
+                <h3 className="text-lg font-bold dark:text-white">
+                  {offer?.name}
+                </h3>
 
                 <Dropdown>
                   <DropdownTrigger>
@@ -164,12 +180,20 @@ const OffersComp = () => {
                   </p>
                 )}
               </CardBody>
-              <CardFooter>
+              <CardFooter className="w-full flex items-center justify-between">
                 <Link href={`/admin/sales-offers/${offer?._id}`}>
                   <Button variant="solid" color="primary">
                     See Details
                   </Button>
                 </Link>
+
+                <Chip
+                  color={getOfferChipColor(offer?.isActive)}
+                  size="sm"
+                  variant="flat"
+                >
+                  {offer?.isActive ? "Active" : "Inactive"}
+                </Chip>
               </CardFooter>
             </Card>
           ))}
