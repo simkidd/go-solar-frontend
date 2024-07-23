@@ -39,7 +39,7 @@ const OrderSummary = () => {
       0
     );
     const deliveryFee = cartItems.reduce(
-      (acc, cartItem) => acc + cartItem.deliveryFee,
+      (acc, cartItem) => acc + cartItem.deliveryFee * cartItem.qty,
       0
     );
     const total = subtotal + deliveryFee;
@@ -77,7 +77,7 @@ const OrderSummary = () => {
                   Quantity: {cartItem.qty}
                 </span>
                 <span className="text-sm text-primary font-medium">
-                  + Delivery fee: {formatCurrency(cartItem.deliveryFee, "NGN")}
+                  + Delivery fee: {formatCurrency(cartItem.deliveryFee * cartItem.qty, "NGN")}
                 </span>
               </div>
             </li>
