@@ -1,14 +1,13 @@
 "use client";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
-import { Circle, LucideIcon } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { BiCreditCard, BiWallet } from "react-icons/bi";
-import StepButton from "./StepButtons";
-import { FaCircle, FaRegCircle } from "react-icons/fa6";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
+import StepButton from "./StepButtons";
 
 interface PaymentType {
   name: string;
@@ -104,7 +103,7 @@ const PaymentMethod = () => {
         ))}
       </ul>
 
-      <StepButton />
+      <StepButton nextDisabled={!input.paymentMethod} />
     </form>
   );
 };

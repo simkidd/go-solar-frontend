@@ -98,7 +98,14 @@ const ShippingDetailsForm = () => {
           className="mt-1 p-2 w-full border border-gray-300  focus:outline-none focus:border-primary bg-transparent"
         />
       </div>
-      <StepButton />
+      <StepButton
+        nextDisabled={
+          !shipping.suiteNumber ||
+          !shipping.streetAddress ||
+          !shipping.city ||
+          !shipping.zipCode
+        }
+      />
     </form>
   );
 };
