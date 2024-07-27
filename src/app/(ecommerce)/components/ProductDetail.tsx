@@ -27,6 +27,7 @@ const ProductDetail: React.FC<{
   };
 
   const newPrice =
+    product?.currentOffer?.isActive &&
     product?.currentOffer?.percentageOff !== undefined
       ? calculateNewPrice(product?.price, product?.currentOffer?.percentageOff)
       : product?.price;
@@ -43,7 +44,7 @@ const ProductDetail: React.FC<{
         </p>
       </div>
 
-      {product?.currentOffer && (
+      {product?.currentOffer?.isActive && (
         <div className="bg-yellow-200 text-yellow-900 p-4 mb-4 rounded-md shadow-md">
           <p className="text-lg font-semibold">Limited Time Offer!</p>
           <p className="capitalize">{product?.currentOffer?.name}</p>
@@ -55,11 +56,12 @@ const ProductDetail: React.FC<{
           <span className="font-semibold">
             {formatCurrency(newPrice, "NGN")}
           </span>
-          {product?.currentOffer?.percentageOff && (
-            <span className="line-through text-gray-500 text-xl">
-              {formatCurrency(product?.price, "NGN")}
-            </span>
-          )}
+          {product?.currentOffer?.isActive &&
+            product?.currentOffer?.percentageOff && (
+              <span className="line-through text-gray-500 text-xl">
+                {formatCurrency(product?.price, "NGN")}
+              </span>
+            )}
         </h3>
 
         <p className="text-gray-500">
@@ -144,7 +146,7 @@ const ProductDetail: React.FC<{
           <p>0706 276 2879</p>
         </div>
         <div>
-          <SocialShare/>
+          <SocialShare />
         </div>
       </div>
     </div>

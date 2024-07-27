@@ -20,6 +20,7 @@ const ProductCard: React.FC<{
   };
 
   const newPrice =
+    item?.currentOffer?.isActive &&
     item?.currentOffer?.percentageOff !== undefined
       ? calculateNewPrice(item?.price, item?.currentOffer?.percentageOff)
       : item?.price;
@@ -55,7 +56,7 @@ const ProductCard: React.FC<{
             </div>
           )}
         </div>
-        {item?.currentOffer?.percentageOff && (
+        {item?.currentOffer?.isActive && item?.currentOffer?.percentageOff && (
           <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded z-[2]">
             {item?.currentOffer?.percentageOff}% off
           </div>
@@ -75,11 +76,12 @@ const ProductCard: React.FC<{
           <span className="font-semibold">
             {formatCurrency(newPrice, "NGN")}
           </span>
-          {item?.currentOffer?.percentageOff && (
-            <span className="line-through text-gray-500 text-sm">
-              {formatCurrency(item?.price, "NGN")}
-            </span>
-          )}
+          {item?.currentOffer?.isActive &&
+            item?.currentOffer?.percentageOff && (
+              <span className="line-through text-gray-500 text-sm">
+                {formatCurrency(item?.price, "NGN")}
+              </span>
+            )}
         </div>
       </div>
 
