@@ -1,5 +1,6 @@
 import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
+import SocialShare from "@/components/SocialShare";
 import { Post } from "@/interfaces/post.interface";
 import { axiosInstance } from "@/lib/axios";
 import { getPost, getPosts } from "@/lib/data";
@@ -80,7 +81,7 @@ const SingleBlogPage = async ({ params }: IPost) => {
               <article className="">{post?.content}</article>
             </div>
             <div className="col-span-1 lg:px-4 mt-8 lg:mt-0">
-              <div className="w-full">
+              <div className="w-full mb-8">
                 <h2 className="text-lg font-semibold mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
                   Recent Post
                 </h2>
@@ -90,6 +91,13 @@ const SingleBlogPage = async ({ params }: IPost) => {
                     <BlogCardList key={item?._id} item={item} />
                   ))}
                 </div>
+              </div>
+
+              <div>
+                <h2 className="text-lg font-semibold mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
+                  Share
+                </h2>
+                <SocialShare />
               </div>
             </div>
           </div>

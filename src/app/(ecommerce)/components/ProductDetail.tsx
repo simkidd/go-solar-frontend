@@ -1,4 +1,5 @@
 "use client";
+import SocialShare from "@/components/SocialShare";
 import { Product } from "@/interfaces/product.interface";
 import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
@@ -130,12 +131,14 @@ const ProductDetail: React.FC<{
         </div>
       </div>
 
-      <div className="flex gap-4 mt-4">
+      <div className="flex gap-4 mt-4 items-center">
         <div className="bg-gray-400 text-black py-2 px-3 rounded-md">
           <p className="font-medium">Call us for Bulk Purchases:</p>
           <p>0706 276 2879</p>
         </div>
-        <div></div>
+        <div>
+          <SocialShare/>
+        </div>
       </div>
     </div>
   );
