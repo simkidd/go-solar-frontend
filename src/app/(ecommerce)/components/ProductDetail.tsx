@@ -43,6 +43,13 @@ const ProductDetail: React.FC<{
         </p>
       </div>
 
+      {product?.currentOffer && (
+        <div className="bg-yellow-200 text-yellow-900 p-4 mb-4 rounded-md shadow-md">
+          <p className="text-lg font-semibold">Limited Time Offer!</p>
+          <p className="capitalize">{product?.currentOffer?.name}</p>
+        </div>
+      )}
+
       <div className="flex justify-between items-center border-t border-b border-t-[#f1f1f1] dark:border-t-[#2a2b2f] border-b-[#f1f1f1] dark:border-b-[#2a2b2f] py-4 mb-4">
         <h3 className="font-bold text-2xl space-x-2">
           <span className="font-semibold">
