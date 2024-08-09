@@ -2,6 +2,7 @@ import { Post } from "@/interfaces/post.interface";
 import { create } from "zustand";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../axios";
+import { revalidatePath } from "next/cache";
 
 interface IBlog {
   loading: boolean;
@@ -13,7 +14,7 @@ interface IBlog {
   createPost: (formData: FormData, config: any) => Promise<void>;
   updatePost: (formData: FormData, config: any) => Promise<void>;
   deletePost: (id: string) => Promise<void>;
-  fetchPosts:()=> Promise<void>;
+  fetchPosts: () => Promise<void>;
 }
 
 export const useBlogStore = create<IBlog>((set) => ({
@@ -36,6 +37,9 @@ export const useBlogStore = create<IBlog>((set) => ({
         posts: [...state.posts, data.blog],
       }));
       toast.success(data.message);
+
+      revalidatePath("/");
+      revalidatePath("/blog");
 
       return data.blog;
     } catch (error) {
@@ -61,6 +65,9 @@ export const useBlogStore = create<IBlog>((set) => ({
 
       toast.success(data.message);
 
+      revalidatePath("/");
+      revalidatePath("/blog");
+
       return data.blog;
     } catch (error) {
       const errorMsg = error as any;
@@ -81,6 +88,9 @@ export const useBlogStore = create<IBlog>((set) => ({
       }));
 
       toast.success(data.message);
+
+      revalidatePath("/");
+      revalidatePath("/blog");
 
       return data;
     } catch (error) {

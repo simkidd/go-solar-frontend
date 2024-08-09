@@ -12,6 +12,7 @@ import {
 import { create } from "zustand";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../axios";
+import { revalidatePath } from "next/cache";
 
 interface IProductStore {
   loading: boolean;
@@ -76,6 +77,9 @@ export const useProductStore = create<IProductStore>((set) => ({
       }));
       toast.success(data.message);
 
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
       return data.product;
     } catch (error) {
       const errorMsg = error as any;
@@ -109,6 +113,9 @@ export const useProductStore = create<IProductStore>((set) => ({
       }));
       toast.success(data.message);
 
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
       return data.product;
     } catch (error) {
       const errorMsg = error as any;
@@ -127,6 +134,9 @@ export const useProductStore = create<IProductStore>((set) => ({
         products: state.products.filter((product) => product?._id !== id),
       }));
       toast.success(data.message);
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response?.data.message);
@@ -155,6 +165,9 @@ export const useProductStore = create<IProductStore>((set) => ({
 
       toast.success(data.message);
 
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
       return data;
     } catch (error) {
       const errorMsg = error as any;
@@ -176,6 +189,9 @@ export const useProductStore = create<IProductStore>((set) => ({
 
       toast.success(data.message);
 
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
       return data.category;
     } catch (error) {
       const errorMsg = error as any;
@@ -208,6 +224,9 @@ export const useProductStore = create<IProductStore>((set) => ({
         ),
       }));
 
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
       toast.success(data.message);
     } catch (error) {
       const errorMsg = error as any;
@@ -226,6 +245,9 @@ export const useProductStore = create<IProductStore>((set) => ({
         categories: state.categories.filter((category) => category?._id !== id),
       }));
       toast.success(data.message);
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response?.data.message);
@@ -244,6 +266,9 @@ export const useProductStore = create<IProductStore>((set) => ({
       }));
       toast.success(data.message);
 
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
       return data.offer;
     } catch (error) {
       const errorMsg = error as any;
@@ -273,6 +298,9 @@ export const useProductStore = create<IProductStore>((set) => ({
           offer._id === id ? { ...offer, ...res } : offer
         ),
       }));
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
       toast.success(data.message);
       return data.offer;
     } catch (error) {
@@ -292,6 +320,9 @@ export const useProductStore = create<IProductStore>((set) => ({
         offers: state.offers.filter((offer) => offer?._id !== id),
       }));
       toast.success(data.message);
+      revalidatePath("/");
+      revalidatePath("/shop");
+      revalidatePath("/product");
     } catch (error) {
       const errorMsg = error as any;
       toast.error(errorMsg?.response?.data.message);
