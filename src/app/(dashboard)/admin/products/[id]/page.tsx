@@ -8,7 +8,7 @@ import { Product } from "@/interfaces/product.interface";
 import { getProduct, getProducts } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
 import { Button, Card, CardBody } from "@nextui-org/react";
-import { ArrowLeft, Pen } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -47,6 +47,16 @@ const SingleProductPage = async ({ params }: IProduct) => {
     notFound();
   }
 
+  const calculateNewPrice = (price: number, percentageOff: number) => {
+    return price - (price * percentageOff) / 100;
+  };
+
+  const newPrice =
+    product?.currentOffer?.isActive &&
+    product?.currentOffer?.percentageOff !== undefined
+      ? calculateNewPrice(product?.price, product?.currentOffer?.percentageOff)
+      : product?.price;
+
   return (
     <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
       <div className="flex items-center justify-between mb-4">
@@ -72,7 +82,7 @@ const SingleProductPage = async ({ params }: IProduct) => {
           <AddToOfferButton product={product} />
         </div>
       </div>
-      {/* <div className="w-full bg-white dark:bg-[#222327] py-16 px-2 md:px-6 shadow rounded"> */}
+
       <Card className="dark:bg-[#222327] dark:text-white mb-8">
         <CardBody>
           <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
@@ -88,18 +98,26 @@ const SingleProductPage = async ({ params }: IProduct) => {
             {/* product details */}
             <div className="w-full flex flex-col">
               <h2 className="font-bold text-2xl mb-4">{product?.name}</h2>
-              <h3 className="font-bold text-2xl">
-                {formatCurrency(product?.price, "NGN")}
+              <h3 className="font-bold text-2xl mb-5 space-x-2">
+                <span className="font-semibold">
+                  {formatCurrency(newPrice, "NGN")}
+                </span>
+                {product?.currentOffer?.isActive &&
+                  product?.currentOffer?.percentageOff && (
+                    <span className="line-through text-gray-500 text-xl">
+                      {formatCurrency(product?.price, "NGN")}
+                    </span>
+                  )}{" "}
               </h3>
 
               {product?.currentOffer?.isActive && (
-                <div className="bg-yellow-200 text-yellow-900 p-4 mb-4 rounded-md shadow-md">
+                <div className="bg-yellow-200 text-yellow-900 p-4 rounded-md shadow-md">
                   <p className="text-lg font-semibold">Limited Time Offer!</p>
                   <p className="capitalize">{product?.currentOffer?.name}</p>
                 </div>
               )}
 
-              <div className="mt-10">
+              <div className="mt-5">
                 <p className="font-medium">Quantity in stock:</p>{" "}
                 <span className="font-bold text-lg">
                   {product?.quantityInStock}
@@ -126,7 +144,6 @@ const SingleProductPage = async ({ params }: IProduct) => {
           <ProductDesc product={product} />
         </CardBody>
       </Card>
-      {/* </div> */}
     </div>
   );
 };
