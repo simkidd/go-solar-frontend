@@ -2,7 +2,6 @@ import { Order, UpdateTrackingStatus } from "@/interfaces/order.interface";
 import { create } from "zustand";
 import { axiosInstance } from "../axios";
 import { toast } from "react-toastify";
-import { revalidatePath } from "next/cache";
 
 interface IOrderStore {
   loading: boolean;
@@ -47,7 +46,6 @@ export const useOrderStore = create<IOrderStore>((set) => ({
         orders: [...state.orders, data.order],
       }));
 
-      revalidatePath("/");
       toast.success(data.message);
     } catch (error) {
       const errorMsg = error as any;

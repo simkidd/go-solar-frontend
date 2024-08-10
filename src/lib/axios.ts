@@ -16,3 +16,14 @@ export const axiosInstance = axios.create({
     Authorization: `Bearer ${TOKEN}`,
   },
 });
+
+axiosInstance.interceptors.response.use(
+  (res) => {
+    res.headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
+
+    return res;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
