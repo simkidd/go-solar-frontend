@@ -28,8 +28,8 @@ const ProductCard: React.FC<{
   return (
     <div className="w-full group relative">
       <Link href={`/product/${item?.slug}`} onClick={handleCardClick}>
-        <div className="w-full lg:h-56 h-44 overflow-hidden relative">
-          <div className="absolute top-0 left-0 w-full h-full">
+        <div className="w-full lg:h-56 h-44 overflow-hidden relative bg-white">
+          <div className="absolute top-0 left-0 w-full h-full group-hover:opacity-0">
             <Image
               src={
                 item?.images[0].url || "https://fakeimg.pl/300x300?font=noto"

@@ -75,7 +75,6 @@ const SingleProductPage = async ({ params }: IProduct) => {
       {/* <div className="w-full bg-white dark:bg-[#222327] py-16 px-2 md:px-6 shadow rounded"> */}
       <Card className="dark:bg-[#222327] dark:text-white mb-8">
         <CardBody>
-          <p>current offer: {product?.currentOffer?.name}</p>
           <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
             {/* product images */}
             <div className="w-full">
@@ -92,6 +91,13 @@ const SingleProductPage = async ({ params }: IProduct) => {
               <h3 className="font-bold text-2xl">
                 {formatCurrency(product?.price, "NGN")}
               </h3>
+
+              {product?.currentOffer?.isActive && (
+                <div className="bg-yellow-200 text-yellow-900 p-4 mb-4 rounded-md shadow-md">
+                  <p className="text-lg font-semibold">Limited Time Offer!</p>
+                  <p className="capitalize">{product?.currentOffer?.name}</p>
+                </div>
+              )}
 
               <div className="mt-10">
                 <p className="font-medium">Quantity in stock:</p>{" "}
