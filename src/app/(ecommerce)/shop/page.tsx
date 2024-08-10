@@ -1,13 +1,28 @@
 import Banner from "@/app/(ecommerce)/components/Banner";
 import Cta from "@/app/(ecommerce)/components/Cta";
-import ProductCard from "@/app/(ecommerce)/components/ProductCard";
-import { Product } from "@/interfaces/product.interface";
-import { getPubilshedProducts } from "@/lib/data";
-import Link from "next/link";
+import { Category, Offer, Product } from "@/interfaces/product.interface";
+import { getCategories, getOffers, getPubilshedProducts } from "@/lib/data";
+import CategoriesSectionGrid, {
+  CategorySection,
+} from "../components/CategorySection";
+import SpecialOffers from "../components/SpecialOffers";
 import ViewHistoryComp from "../components/ViewHistory";
 
 const ShopPage = async () => {
   const products: Product[] = await getPubilshedProducts();
+  const categories: Category[] = await getCategories();
+  const offers: Offer[] = await getOffers();
+
+  const productsInCategory = (category: Category) => {
+    return products.filter(
+      (product) => product?.category?._id === category?._id
+    );
+  };
+
+  const topOffers = offers
+    .filter((offer) => offer.isActive)
+    .sort((a, b) => b.percentageOff - a.percentageOff)
+    .slice(0, 3);
 
   return (
     <div className="w-full font-inter">
@@ -16,49 +31,26 @@ const ShopPage = async () => {
       </div>
       <section className="w-full">
         <div className="container mx-auto px-2 py-10">
-          {/* battery */}
-          <div className="flex items-center justify-between bg-primary text-white px-4 py-2">
-            <p className="text-xl font-medium">Batteries</p>
-            <Link href="" className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
-            {products?.slice(0, 6).map((item) => (
-              <ProductCard key={item?._id} item={item} />
-            ))}
-          </div>
-          {/* inverters */}
-          <div className="flex items-center justify-between bg-primary text-white px-4 py-2">
-            <p className="text-xl font-medium">Inverters</p>
-            <Link href="" className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
-            {products?.slice(0, 6).map((item) => (
-              <ProductCard key={item?._id} item={item} />
-            ))}
-          </div>
-          <div className="mb-6">
-            <Cta />
-          </div>
-          {/* solar panels */}
-          <div className="flex items-center justify-between bg-primary text-white px-4 py-2">
-            <p className="text-xl font-medium">Solar Panels</p>
-            <Link href="" className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
-            {products?.slice(0, 6).map((item) => (
-              <ProductCard key={item?._id} item={item} />
-            ))}
-          </div>
+          <CategoriesSectionGrid categories={categories} />
 
           <div className="mb-6">
             <Cta />
           </div>
+
+          {categories.map((category) => (
+            <CategorySection
+              key={category?._id}
+              title={category?.name}
+              products={productsInCategory(category)}
+              link={`/${category?.slug}/products`}
+            />
+          ))}
+
+          <div className="mb-6">
+            <Cta />
+          </div>
+
+          <SpecialOffers offers={topOffers} />
 
           <ViewHistoryComp />
         </div>

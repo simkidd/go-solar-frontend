@@ -53,7 +53,7 @@ const CategoryTable = () => {
   const router = useRouter();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(columns.map((col) => col.uid))
@@ -269,6 +269,8 @@ const CategoryTable = () => {
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
             </select>
           </label>
         </div>
