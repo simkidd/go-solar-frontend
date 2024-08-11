@@ -42,8 +42,8 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
     <>
       {products && products?.length > 0 && (
         <div className="mb-16">
-          <div className="flex items-center justify-between bg-primary text-white px-6 py-4 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold tracking-wide">{title}</h2>
+          <div className="flex items-center justify-between bg-primary text-white px-6 py-3 rounded-lg shadow-md">
+            <h3 className="text-2xl font-semibold">{title}</h3>
             <Link
               href={link}
               className="text-sm font-medium text-white hover:underline hover:text-yellow-300 transition-colors"

@@ -53,11 +53,13 @@ export const Popup: React.FC<{
     onClose();
   };
 
+  const activeOffers = offers.filter((offer) => offer?.isActive);
+
   return (
     <form className="w-full" onSubmit={handleSubmit}>
       <div className="">
         <Select
-          items={offers}
+          items={activeOffers}
           label="Add Offer to Product"
           placeholder="Select an offer"
           labelPlacement="outside"

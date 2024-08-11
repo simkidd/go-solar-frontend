@@ -40,25 +40,28 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   });
   const [files, setFiles] = useState<FileWithPreview[]>([]);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (files.length + acceptedFiles.length > 3) {
-      toast.info("You can only upload up to 3 images");
-      return;
-    }
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (files.length + acceptedFiles.length > 3) {
+        toast.info("You can only upload up to 3 images");
+        return;
+      }
 
-    const newFiles = acceptedFiles.map((file) =>
-      Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      })
-    );
+      const newFiles = acceptedFiles.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      );
 
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
 
-    setInput((prevInput) => ({
-      ...prevInput,
-      images: [...prevInput.images, ...(acceptedFiles as any)],
-    }));
-  }, [files.length]);
+      setInput((prevInput) => ({
+        ...prevInput,
+        images: [...prevInput.images, ...(acceptedFiles as any)],
+      }));
+    },
+    [files.length]
+  );
 
   const thumbs = files.map((file) => (
     <div key={file.name} className="relative m-2 w-20 h-20">
@@ -139,6 +142,8 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       onClose();
     }
   };
+
+  const activeOffers = offers.filter((offer) => offer?.isActive);
 
   return (
     <form className="w-full font-inter" onSubmit={handleSubmit}>
@@ -282,7 +287,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
             <div className="">
               <Select
-                items={offers}
+                items={activeOffers}
                 label="Add Offer to Product"
                 placeholder="Select an offer"
                 labelPlacement="outside"
