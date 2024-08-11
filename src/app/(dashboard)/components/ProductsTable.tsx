@@ -25,7 +25,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  useDisclosure
+  useDisclosure,
 } from "@nextui-org/react";
 import {
   ChevronDownIcon,
@@ -34,7 +34,7 @@ import {
   RefreshCcw,
   SearchIcon,
   Trash,
-  Trash2
+  Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -110,7 +110,7 @@ const ProductsTable = () => {
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(columns.map((col) => col.uid))
   );
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "name",
     direction: "ascending",
@@ -212,16 +212,12 @@ const ProductsTable = () => {
       case "discount":
         return (
           <div>
-            {product?.currentOffer?.percentageOff && (
-              <Chip color="success" variant="flat" size="sm">
-                {product?.currentOffer?.percentageOff}% Off
-              </Chip>
-            )}
-            {product?.currentOffer?.priceSlash && (
-              <Chip color="warning" variant="flat" size="sm">
-                {formatCurrency(product?.currentOffer?.priceSlash, "NGN")}
-              </Chip>
-            )}
+            {product?.currentOffer?.isActive &&
+              product?.currentOffer?.percentageOff && (
+                <Chip color="success" variant="flat" size="sm">
+                  {product?.currentOffer?.percentageOff}% Off
+                </Chip>
+              )}
           </div>
         );
       case "quantity":
@@ -497,6 +493,8 @@ const ProductsTable = () => {
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
             </select>
           </label>
         </div>

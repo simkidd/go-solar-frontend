@@ -40,6 +40,8 @@ const UpdateProductForm: React.FC<{
     onClose();
   };
 
+  const activeOffers = offers.filter((offer) => offer?.isActive);
+
   return (
     <form className="w-full" onSubmit={handleSubmit}>
       <div className="w-full grid lg:grid-cols-2 grid-cols-1">
@@ -200,7 +202,7 @@ const UpdateProductForm: React.FC<{
 
             <div className="">
               <Select
-                items={offers}
+                items={activeOffers}
                 label="Add Offer to Product"
                 placeholder="Select an offer"
                 labelPlacement="outside"

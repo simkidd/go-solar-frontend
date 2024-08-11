@@ -8,6 +8,10 @@ import "swiper/css";
 const ViewHistoryComp = () => {
   const { viewHistory } = useViewHistoryStore();
 
+  const publishedViewedProduct = viewHistory.filter(
+    (product) => product?.isPublished
+  );
+
   return (
     <>
       {viewHistory && viewHistory.length > 0 && (
@@ -32,7 +36,7 @@ const ViewHistoryComp = () => {
                 },
               }}
             >
-              {viewHistory.slice(0, 6).map((product) => (
+              {publishedViewedProduct.slice(0, 6).map((product) => (
                 <SwiperSlide key={product?._id}>
                   <ProductCard item={product} />
                 </SwiperSlide>
