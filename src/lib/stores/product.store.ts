@@ -1,16 +1,16 @@
 import {
+  AddOfferProductDTO,
   Category,
   CreateCategoryInput,
+  CreateOfferInput,
+  Offer,
   Product,
   UpdateCategoryInput,
-  UpdateProductInput,
-  Offer,
-  CreateOfferInput,
   UpdateOfferInput,
-  AddOfferProductDTO,
+  UpdateProductInput,
 } from "@/interfaces/product.interface";
-import { create } from "zustand";
 import { toast } from "react-toastify";
+import { create } from "zustand";
 import { axiosInstance } from "../axios";
 
 interface IProductStore {
