@@ -1,11 +1,9 @@
 import { Product } from "@/interfaces/product.interface";
 import { axiosInstance } from "./axios";
 
-const timestamp = new Date().getTime();
-
 export const getPosts = async () => {
   try {
-    const { data } = await axiosInstance.get(`/blogs?t=${timestamp}`);
+    const { data } = await axiosInstance.get("/blogs");
 
     return data.blogs;
   } catch (error) {
@@ -25,7 +23,7 @@ export const getPost = async (id: string) => {
 
 export const getProducts = async () => {
   try {
-    const { data } = await axiosInstance.get(`/products?t=${timestamp}`);
+    const { data } = await axiosInstance.get("/products");
 
     return data.products;
   } catch (error) {
@@ -34,7 +32,7 @@ export const getProducts = async () => {
 };
 export const getPubilshedProducts = async () => {
   try {
-    const { data } = await axiosInstance.get(`/products?t=${timestamp}`);
+    const { data } = await axiosInstance.get("/products");
 
     const publishedProducts = data.products.filter(
       (product: Product) => product.isPublished
@@ -58,7 +56,7 @@ export const getProduct = async (id: string) => {
 
 export const getCategories = async () => {
   try {
-    const { data } = await axiosInstance.get(`/categories?t=${timestamp}`);
+    const { data } = await axiosInstance.get("/categories");
 
     return data.categories;
   } catch (error) {
@@ -68,9 +66,7 @@ export const getCategories = async () => {
 
 export const getOrders = async () => {
   try {
-    const { data } = await axiosInstance.get(
-      `/admin/all-orders?t=${timestamp}`
-    );
+    const { data } = await axiosInstance.get("/admin/all-orders");
 
     return data.orders;
   } catch (error) {
@@ -90,7 +86,7 @@ export const getOrder = async (id: string) => {
 
 export const getOffers = async () => {
   try {
-    const { data } = await axiosInstance.get(`/offers?t=${timestamp}`);
+    const { data } = await axiosInstance.get("/offers");
 
     return data.offers;
   } catch (error) {
@@ -109,9 +105,7 @@ export const getOffer = async (id: string) => {
 
 export const getUserOrders = async () => {
   try {
-    const { data } = await axiosInstance.get(
-      `/users/orders/user-orders?t=${timestamp}`
-    );
+    const { data } = await axiosInstance.get("/users/orders/user-orders");
 
     return data.orders;
   } catch (error) {

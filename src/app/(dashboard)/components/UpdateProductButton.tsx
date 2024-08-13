@@ -1,12 +1,12 @@
 "use client";
 import AppModal from "@/components/AppModal";
-import UpdateProductForm from "./UpdateProductForm";
-import { Button, useDisclosure } from "@nextui-org/react";
-import { Edit, Plus } from "lucide-react";
-import { Category, Product } from "@/interfaces/product.interface";
+import { Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { useState } from "react";
+import { Button, useDisclosure } from "@nextui-org/react";
+import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import UpdateProductForm from "./UpdateProductForm";
 
 const UpdateProductButton: React.FC<{
   product: Product;
