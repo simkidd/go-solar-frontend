@@ -49,7 +49,7 @@ const SingleCatgory = async ({ params }: IProp) => {
             startContent={<ArrowLeft size={16} />}
             className="dark:text-white"
           >
-            Go back
+            Go back categories
           </Button>
         </Link>
       </div>
