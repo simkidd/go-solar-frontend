@@ -1,7 +1,9 @@
+"use client";
+
 import Banner from "@/app/(ecommerce)/components/Banner";
 import Cta from "@/app/(ecommerce)/components/Cta";
-import { Category, Offer, Product } from "@/interfaces/product.interface";
-import { getCategories, getOffers, getPubilshedProducts } from "@/lib/data";
+import { Category } from "@/interfaces/product.interface";
+import { useProductStore } from "@/lib/stores/product.store";
 import CategoriesSectionGrid, {
   CategorySection,
 } from "../components/CategorySection";
@@ -9,12 +11,12 @@ import SpecialOffers from "../components/SpecialOffers";
 import ViewHistoryComp from "../components/ViewHistory";
 
 const ShopPage = async () => {
-  const products: Product[] = await getPubilshedProducts();
-  const categories: Category[] = await getCategories();
-  const offers: Offer[] = await getOffers();
+  const { products, categories, offers } = useProductStore();
+
+  const publishedProducts = products.filter((product) => product.isPublished);
 
   const productsInCategory = (category: Category) => {
-    return products.filter(
+    return publishedProducts.filter(
       (product) => product?.category?._id === category?._id
     );
   };

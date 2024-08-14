@@ -1,6 +1,6 @@
-import ProductsList from "@/app/(ecommerce)/components/ProductsList";
-import { Category, Product } from "@/interfaces/product.interface";
-import { getCategories, getPubilshedProducts } from "@/lib/data";
+import CategoryProductsList from "@/app/(ecommerce)/components/CategoryProductsList";
+import { Category } from "@/interfaces/product.interface";
+import { getCategories } from "@/lib/data";
 import { Metadata } from "next";
 
 interface IProp {
@@ -32,27 +32,13 @@ export const generateStaticParams = async () => {
   }
 };
 
-const CategoryProducts = async ({ params }: IProp) => {
+const CategoryProducts = ({ params }: IProp) => {
   const categorySlug = params.slug;
-  const products: Product[] = await getPubilshedProducts();
-  const categories: Category[] = await getCategories();
-
-  const category = categories.find((cat) => cat?.slug === categorySlug);
-
-  const filteredProducts = category
-    ? products.filter((product) => product?.category?._id === category?._id)
-    : [];
 
   return (
     <div className="w-full font-dmsans">
       <section className="w-full">
-        <div className="container mx-auto px-2 py-8">
-          <ProductsList
-            categories={categories}
-            products={filteredProducts}
-            category={category}
-          />
-        </div>
+        <CategoryProductsList slug={categorySlug} />
       </section>
     </div>
   );
