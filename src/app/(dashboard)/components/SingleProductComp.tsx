@@ -1,17 +1,17 @@
 "use client";
+import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
+import ProductImages from "@/app/(ecommerce)/components/ProductImages";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { getProduct } from "@/lib/data";
 import { useProductStore } from "@/lib/stores/product.store";
+import { formatCurrency } from "@/utils/helpers";
+import { Card, CardBody } from "@nextui-org/react";
 import { notFound } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import AddToOfferButton from "./AddToOfferButton";
 import DeleteProduct from "./DeleteProduct";
 import UpdateProductButton from "./UpdateProductButton";
-import AddToOfferButton from "./AddToOfferButton";
-import { Button, Card, CardBody } from "@nextui-org/react";
-import { formatCurrency } from "@/utils/helpers";
 import UpdateProductImage from "./UpdateProductImage";
-import ProductImages from "@/app/(ecommerce)/components/ProductImages";
-import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
-import LoadingSpinner from "@/components/LoadingSpinner";
 
 const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
   const { product, setProduct } = useProductStore();
@@ -21,15 +21,10 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
     const fetchProduct = async () => {
       if (id) {
         try {
-          const fetchedProduct = await getProduct(id);
-          if (fetchedProduct) {
-            setProduct(fetchedProduct);
-          } else {
-            notFound();
-          }
+          const data = await getProduct(id);
+          setProduct(data);
         } catch (error) {
           console.error("Error fetching product:", error);
-          notFound();
         } finally {
           setLoading(false);
         }
