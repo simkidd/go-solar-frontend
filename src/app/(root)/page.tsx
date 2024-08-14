@@ -136,67 +136,71 @@ const page = async () => {
         </div>
       </section>
       {/* blog section */}
-      <section className="w-full py-16">
-        <div className="container mx-auto px-2">
-          <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
-            <div className="relative">
-              <h2 className="text-primary text-2xl font-bold mb-4">
-                Latest Blog Posts
-              </h2>
-              <h2 className="lg:text-5xl text-4xl font-bold mb-4">
-                Stay Updated with Our Blog
-              </h2>
-              <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
-                Blog
+      {posts && posts.length > 0 && (
+        <section className="w-full py-16">
+          <div className="container mx-auto px-2">
+            <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
+              <div className="relative">
+                <h2 className="text-primary text-2xl font-bold mb-4">
+                  Latest Blog Posts
+                </h2>
+                <h2 className="lg:text-5xl text-4xl font-bold mb-4">
+                  Stay Updated with Our Blog
+                </h2>
+                <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
+                  Blog
+                </div>
               </div>
+
+              <Link href="/blog" className="ml-auto mt-auto">
+                <button className="bg-primary text-white py-4 px-8">
+                  All Articles
+                </button>
+              </Link>
             </div>
 
-            <Link href="/blog" className="ml-auto mt-auto">
-              <button className="bg-primary text-white py-4 px-8">
-                All Articles
-              </button>
-            </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
+              {posts?.slice(0, 3).map((post) => (
+                <BlogCard key={post?._id} post={post} />
+              ))}
+            </div>
+            <div></div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
-            {posts?.slice(0, 3).map((post) => (
-              <BlogCard key={post?._id} post={post} />
-            ))}
-          </div>
-          <div></div>
-        </div>
-      </section>
+        </section>
+      )}
       {/* shop section */}
-      <section className="w-full py-16">
-        <div className="container mx-auto px-2">
-          <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
-            <div className="relative">
-              <h2 className="text-primary text-2xl font-bold mb-4">
-                Our Shop
-              </h2>
-              <h2 className="lg:text-5xl text-4xl font-bold mb-4">
-                Renewable Energy Solutions
-              </h2>
-              <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
-                Shop
+      {products && posts.length > 0 && (
+        <section className="w-full py-16">
+          <div className="container mx-auto px-2">
+            <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
+              <div className="relative">
+                <h2 className="text-primary text-2xl font-bold mb-4">
+                  Our Shop
+                </h2>
+                <h2 className="lg:text-5xl text-4xl font-bold mb-4">
+                  Renewable Energy Solutions
+                </h2>
+                <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
+                  Shop
+                </div>
               </div>
+
+              <Link href="/shop" className="ml-auto mt-auto">
+                <button className="bg-primary text-white py-4 px-8">
+                  Go Shop
+                </button>
+              </Link>
             </div>
 
-            <Link href="/shop" className="ml-auto mt-auto">
-              <button className="bg-primary text-white py-4 px-8">
-                Go Shop
-              </button>
-            </Link>
+            <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
+              {products?.slice(0, 6).map((item) => (
+                <ProductCard key={item?._id} item={item} />
+              ))}
+            </div>
+            <div></div>
           </div>
-
-          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-4 my-6">
-            {products?.slice(0, 6).map((item) => (
-              <ProductCard key={item?._id} item={item} />
-            ))}
-          </div>
-          <div></div>
-        </div>
-      </section>
+        </section>
+      )}
       {/* contact section */}
       <section className="w-full py-16">
         <div className="container mx-auto px-2 py-16 border border-gray-400">
