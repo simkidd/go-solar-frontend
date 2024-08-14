@@ -1,14 +1,13 @@
 "use client";
-import { useAuthStore } from "@/lib/stores/auth.store";
-import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import { TOKEN_NAME, USER_DETAILS } from "@/utils/constants";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import { axiosInstance } from "@/lib/axios";
-import { useProductStore } from "@/lib/stores/product.store";
-import { useOrderStore } from "@/lib/stores/order.store";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { useBlogStore } from "@/lib/stores/blog.store";
+import { useOrderStore } from "@/lib/stores/order.store";
+import { useProductStore } from "@/lib/stores/product.store";
 import { useUserStore } from "@/lib/stores/user.store";
+import { TOKEN_NAME, USER_DETAILS } from "@/utils/constants";
+import Cookies from "js-cookie";
+import React, { useEffect } from "react";
 
 const TOKEN = Cookies.get(TOKEN_NAME) || "";
 const userToken = Cookies.get(USER_DETAILS) || "";
