@@ -12,8 +12,10 @@ const SingleCategoryProducts = ({ category }: { category: Category }) => {
 
   return (
     <>
-      <div className="w-full">
-        <h4 className="font-semibold text-xl">{category?.name}</h4>
+      <div className="w-full mb-4">
+        <h4 className="font-bold text-xl mb-2">{category?.name}</h4>
+
+        <p className="text-default-500 dark:text-default-400 max-w-xl">{category?.description}</p>
       </div>
 
       <div className="w-full mb-8">
