@@ -1,16 +1,12 @@
-import { Category, Product } from "@/interfaces/product.interface";
-import { getCategories, getPubilshedProducts } from "@/lib/data";
-import { notFound } from "next/navigation";
+"use client";
+import { useProductStore } from "@/lib/stores/product.store";
 import Cta from "../components/Cta";
 import ProductsList from "../components/ProductsList";
 
-const ProductListPage = async () => {
-  const products: Product[] = await getPubilshedProducts();
-  const categories: Category[] = await getCategories();
+const ProductListPage = () => {
+  const { products, categories } = useProductStore();
 
-  if (!products) {
-    notFound();
-  }
+  const publishedProducts = products.filter((product) => product.isPublished);
 
   return (
     <div className="w-full font-dmsans">
@@ -19,7 +15,7 @@ const ProductListPage = async () => {
           <div className="mb-6">
             <Cta />
           </div>
-          <ProductsList categories={categories} products={products} />
+          <ProductsList categories={categories} products={publishedProducts} />
         </div>
       </section>
     </div>
