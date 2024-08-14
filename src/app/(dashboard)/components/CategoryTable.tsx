@@ -121,10 +121,13 @@ const CategoryTable = () => {
     return sorted;
   }, [sortDescriptor, items]);
 
-  const catProducts = (category: Category) =>
-    category
-      ? products.filter((product) => product?.category?._id === category?._id)
-      : [];
+  const catProducts = useCallback(
+    (category: Category) =>
+      category
+        ? products.filter((product) => product?.category?._id === category?._id)
+        : [],
+    [products]
+  );
 
   const renderCell = useCallback((cat: Category, columnKey: React.Key) => {
     switch (columnKey) {
