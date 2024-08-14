@@ -1,12 +1,9 @@
-"use client";
-import AppModal from "@/components/AppModal";
-import { Category } from "@/interfaces/product.interface";
+import { Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { formatDate } from "@/utils/helpers";
+import { formatCurrency, formatDate } from "@/utils/helpers";
 import {
   Button,
-  Card,
-  CardBody,
+  Chip,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -15,68 +12,92 @@ import {
   Pagination,
   Selection,
   SortDescriptor,
-  Spinner,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  useDisclosure,
   Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Card,
+  CardBody,
+  Spinner,
 } from "@nextui-org/react";
-import {
-  ChevronDownIcon,
-  EllipsisVertical,
-  Eye,
-  PencilLine,
-  RefreshCcw,
-  SearchIcon,
-  Trash,
-  Trash2,
-} from "lucide-react";
+import { ChevronDownIcon, EllipsisVertical, Eye, RefreshCcw, SearchIcon } from "lucide-react";
+import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
-import UpdateCategoryForm from "./UpdateCategoryForm";
 
 const columns = [
-  { name: "Name", uid: "name", minWidth: "200px", sortable: true },
-  { name: "Description", uid: "description", minWidth: "300px" },
-  { name: "Products", uid: "products", minWidth: "150px" },
-  { name: "Date added", uid: "dateAdded", minWidth: "150px", sortable: true },
-  { name: "Actions", uid: "actions", width: "80px" },
+  {
+    name: "Product",
+    uid: "name",
+    minWidth: 400,
+    sortable: true,
+  },
+  {
+    name: "Price",
+    uid: "price",
+    minWidth: 150,
+    sortable: true,
+  },
+  {
+    name: "Discount",
+    uid: "discount",
+    minWidth: 150,
+    sortable: true,
+  },
+  {
+    name: "Quantity",
+    uid: "quantity",
+  },
+  {
+    name: "Offer",
+    uid: "offer",
+  },
+  {
+    name: "Brand",
+    uid: "brand",
+  },
+  {
+    name: "Status",
+    uid: "status",
+    sortable: true,
+  },
+  {
+    name: "Date added",
+    uid: "dateAdded",
+    minWidth: 150,
+    sortable: true,
+  },
+  {
+    name: "Actions",
+    uid: "actions",
+    minWidth: 80,
+  },
 ];
 
-const CategoryTable = () => {
-  const {
-    categories,
-    loading,
-    deleteCategory,
-    products,
-    fetchCategories,
-    fetchProducts,
-  } = useProductStore();
+const CategoryProductsTable: React.FC<{ products: Product[] }> = ({
+  products,
+}) => {
+  const { loading, fetchProducts } = useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const router = useRouter();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(columns.map((col) => col.uid))
   );
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "name",
     direction: "ascending",
   });
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const {
-    isOpen: isUpdateOpen,
-    onOpen: onUpdateOpen,
-    onOpenChange: onUpdateOpenChange,
-    onClose: onUpdateClose,
-  } = useDisclosure();
-  const [selectedCat, setSelectedCat] = useState<Category | null>(null);
+  const [page, setPage] = useState(1);
+  const [publishFilter, setPublishFilter] = useState(
+    searchParams.get("published") || "All"
+  );
+
+  const router = useRouter();
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -89,16 +110,24 @@ const CategoryTable = () => {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredCat = [...categories];
+    let filteredProducts = [...products];
 
     if (hasSearchFilter) {
-      filteredCat = filteredCat.filter((cat) =>
-        cat?.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredProducts = filteredProducts.filter((product) =>
+        product?.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
-    return filteredCat;
-  }, [categories, filterValue, hasSearchFilter]);
+    if (publishFilter !== "All") {
+      filteredProducts = filteredProducts.filter((product) =>
+        publishFilter === "published"
+          ? product.isPublished
+          : !product.isPublished
+      );
+    }
+
+    return filteredProducts;
+  }, [products, filterValue, publishFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -121,24 +150,54 @@ const CategoryTable = () => {
     return sorted;
   }, [sortDescriptor, items]);
 
-  const catProducts = useCallback(
-    (category: Category) =>
-      category
-        ? products.filter((product) => product?.category?._id === category?._id)
-        : [],
-    [products]
-  );
-
-  const renderCell = useCallback((cat: Category, columnKey: React.Key) => {
+  const renderCell = useCallback((product: Product, columnKey: React.Key) => {
     switch (columnKey) {
       case "name":
-        return cat?.name;
-      case "description":
-        return cat?.description;
-      case "products":
-        return <div>{catProducts(cat).length}</div>;
+        return (
+          <div className="grid grid-cols-[55px_auto] gap-2 w-full py-2">
+            <div className="w-10 h-10">
+              <Image
+                src={product?.images[0].url}
+                alt={product?.name}
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <span className="text-wrap">{product?.name}</span>
+          </div>
+        );
+      case "price":
+        return <div>{formatCurrency(product?.price, "NGN")}</div>;
+      case "discount":
+        return (
+          <div>
+            {product?.currentOffer?.isActive &&
+              product?.currentOffer?.percentageOff && (
+                <Chip color="success" variant="flat" size="sm">
+                  {product?.currentOffer?.percentageOff}% Off
+                </Chip>
+              )}
+          </div>
+        );
+      case "quantity":
+        return <div>{product?.quantityInStock}</div>;
+      case "offer":
+        return <div>{product?.currentOffer?.name}</div>;
+      case "brand":
+        return <div>{product?.brand}</div>;
+      case "status":
+        return (
+          <Chip
+            color={product.isPublished ? "success" : "default"}
+            variant="flat"
+            size="sm"
+          >
+            {product.isPublished ? "Published" : "Draft"}
+          </Chip>
+        );
       case "dateAdded":
-        return formatDate(cat?.createdAt);
+        return <div>{formatDate(product?.createdAt)}</div>;
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
@@ -151,27 +210,9 @@ const CategoryTable = () => {
               <DropdownMenu>
                 <DropdownItem
                   startContent={<Eye size={16} />}
-                  onPress={() => router.push(`/admin/categories/${cat?.slug}`)}
+                  onPress={() => router.push(`/admin/products/${product?._id}`)}
                 >
-                  See products
-                </DropdownItem>
-                <DropdownItem
-                  onPress={() => {
-                    setSelectedCat(cat);
-                    onUpdateOpen();
-                  }}
-                  startContent={<PencilLine size={16} />}
-                >
-                  Update
-                </DropdownItem>
-                <DropdownItem
-                  onPress={() => {
-                    setSelectedCat(cat);
-                    onOpen();
-                  }}
-                  startContent={<Trash size={16} />}
-                >
-                  Delete
+                  View details
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -181,14 +222,6 @@ const CategoryTable = () => {
         return null;
     }
   }, []);
-
-  const handleDelete = () => {
-    if (selectedCat) {
-      deleteCategory(selectedCat?._id);
-      router.refresh();
-      onClose();
-    }
-  };
 
   const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -219,7 +252,33 @@ const CategoryTable = () => {
     setPage(1);
   }, []);
 
+  const onPublishFilterChange = useCallback(
+    (keys: Selection) => {
+      const selectedStatus = Array.from(keys).join(", ");
+      const params = new URLSearchParams(searchParams);
+      if (selectedStatus) {
+        params.set("status", selectedStatus);
+        setPublishFilter(selectedStatus);
+      } else {
+        params.delete("status");
+        setPage(1);
+      }
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams]
+  );
+
+  const onResetFilters = useCallback(() => {
+    setFilterValue("");
+    setPublishFilter("All");
+    setPage(1);
+    const params = new URLSearchParams();
+    router.replace(`${pathname}?${params.toString()}`);
+  }, [pathname, router]);
+
   const topContent = useMemo(() => {
+    const hasFilters = filterValue || publishFilter !== "All";
+
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end lg:flex-row flex-col">
@@ -246,8 +305,34 @@ const CategoryTable = () => {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
+          <div className="flex items-center gap-3">
+            {hasFilters && (
+              <Button variant="flat" color="danger" onPress={onResetFilters}>
+                Reset
+              </Button>
+            )}
 
-          <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  endContent={<ChevronDownIcon className="text-small" />}
+                  variant="flat"
+                >
+                  {publishFilter}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Published"
+                disallowEmptySelection
+                selectionMode="single"
+                selectedKeys={publishFilter}
+                onSelectionChange={onPublishFilterChange}
+              >
+                <DropdownItem key="All">All</DropdownItem>
+                <DropdownItem key="published">Published</DropdownItem>
+                <DropdownItem key="draft">Draft</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -276,7 +361,7 @@ const CategoryTable = () => {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {categories.length} categories
+            Total {products.length} products
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -299,18 +384,22 @@ const CategoryTable = () => {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    categories.length,
-    onClear,
+    products.length,
+    hasSearchFilter,
+    publishFilter,
   ]);
 
   const bottomContent = useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center md:flex-row flex-col gap-4">
-        <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
+        <div className="flex gap-4 items-center">
+          <span className="text-small text-default-400">
+            {selectedKeys === "all"
+              ? "All items selected"
+              : `${selectedKeys.size} of ${filteredItems.length} selected`}
+          </span>
+        </div>
+
         <Pagination
           isCompact
           showControls
@@ -328,27 +417,9 @@ const CategoryTable = () => {
             cursor: "",
           }}
         />
-        {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div> */}
       </div>
     );
-  }, [selectedKeys, filteredItems.length, page, pages]);
+  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
   const classNames = React.useMemo(
     () => ({
@@ -360,59 +431,12 @@ const CategoryTable = () => {
   );
 
   return (
-    <div>
-      <AppModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        title="Confirmation"
-        isDismissable={false}
-        hideCloseButton
-      >
-        <div className="flex flex-col">
-          <p>
-            Are you sure you want to delete <b>{selectedCat?.name}</b>?
-          </p>
-          <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-            <Button variant="light" color="default" onPress={onClose}>
-              Cancel
-            </Button>
-            <Button
-              variant="solid"
-              color="danger"
-              type="submit"
-              isDisabled={loading}
-              isLoading={loading}
-              onPress={handleDelete}
-              endContent={<Trash2 size={16} />}
-            >
-              Delete
-            </Button>
-          </div>
-        </div>
-      </AppModal>
-
-      {/* Update Offer Modal */}
-      <AppModal
-        isOpen={isUpdateOpen}
-        onOpenChange={onUpdateOpenChange}
-        title="Update Offer"
-        isDismissable={false}
-        hideCloseButton
-      >
-        <UpdateCategoryForm
-          onClose={onUpdateClose}
-          category={selectedCat as Category}
-        />
-      </AppModal>
-
+    <div className="w-full">
       <div className="w-full flex justify-end mb-4">
         <Button
           variant="solid"
           color="warning"
-          onPress={() => {
-            fetchCategories();
-            fetchProducts();
-          }}
+          onPress={fetchProducts}
           startContent={<RefreshCcw size={16} />}
           size="sm"
         >
@@ -441,6 +465,7 @@ const CategoryTable = () => {
               key={column.uid}
               align={column.uid === "actions" ? "center" : "start"}
               allowsSorting={column.sortable}
+              minWidth={column.minWidth}
             >
               {column.name}
             </TableColumn>
@@ -471,4 +496,4 @@ const CategoryTable = () => {
   );
 };
 
-export default CategoryTable;
+export default CategoryProductsTable;
