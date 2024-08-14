@@ -41,7 +41,7 @@ import UpdateCategoryForm from "./UpdateCategoryForm";
 const columns = [
   { name: "Name", uid: "name", minWidth: "200px", sortable: true },
   { name: "Description", uid: "description", minWidth: "300px" },
-  { name: "Products", uid: "products", minWidth: "150px" },
+  // { name: "Products", uid: "products", minWidth: "150px" },
   { name: "Date added", uid: "dateAdded", minWidth: "150px", sortable: true },
   { name: "Actions", uid: "actions", width: "80px" },
 ];
@@ -134,9 +134,11 @@ const CategoryTable = () => {
       case "name":
         return cat?.name;
       case "description":
-        return cat?.description;
-      case "products":
-        return <div>{catProducts(cat).length}</div>;
+        return (
+          <div className="text-ellipsis line-clamp-2">{cat?.description}</div>
+        );
+      // case "products":
+      //   return <div>{catProducts(cat).length}</div>;
       case "dateAdded":
         return formatDate(cat?.createdAt);
       case "actions":
