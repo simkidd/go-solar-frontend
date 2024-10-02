@@ -132,10 +132,10 @@ const Footer = () => {
             <div className="col-span-1 lg:ml-auto">
               Designed & Built by{" "}
               <a
-                href="http://linkedin.com/in/mason10396"
+                href="https://www.linkedin.com/company/24-karats/"
                 className="hover:underline"
               >
-                Onidev
+                24karats
               </a>
             </div>
           </div>
