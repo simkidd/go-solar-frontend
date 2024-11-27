@@ -10,7 +10,7 @@ import CategoriesSectionGrid, {
 import SpecialOffers from "../components/SpecialOffers";
 import ViewHistoryComp from "../components/ViewHistory";
 
-const ShopPage = async () => {
+const ShopPage = () => {
   const { products, categories, offers } = useProductStore();
 
   const publishedProducts = products.filter((product) => product.isPublished);
