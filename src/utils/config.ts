@@ -1,5 +1,5 @@
 export const config = {
-  SITE_NAME: "Go Solar",
+  SITE_NAME: process.env.SITE_NAME ||"Go Solar",
   SITE_URL: process.env.BASE_URL || "",
   SITE_TITLE:
     "Go Solar | Affordable Solar Panels and Renewable Energy Solutions",

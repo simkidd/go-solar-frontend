@@ -8,6 +8,7 @@ import "../globals.scss";
 import { Providers } from "../providers";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { config } from "@/utils/config";
+import Hotjar from "@/utils/hotjar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -107,6 +108,8 @@ export default function RootLayout({
             <Footer />
           </Suspense>
         </Providers>
+
+        <Hotjar />
       </body>
     </html>
   );
