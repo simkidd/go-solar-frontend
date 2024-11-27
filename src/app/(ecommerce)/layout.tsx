@@ -90,6 +90,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <HotJar />
       <body className={inter.className}>
         <NextTopLoader
           color="#08AA08"
@@ -108,8 +109,6 @@ export default function RootLayout({
             <Footer />
           </Suspense>
         </Providers>
-
-        <HotJar />
       </body>
     </html>
   );

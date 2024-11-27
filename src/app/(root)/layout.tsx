@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { config } from "@/utils/config";
+import { HotJar } from "@/utils/Hotjar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -89,6 +90,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="light" suppressHydrationWarning>
+      <HotJar />
       <body className={inter.className}>
         <NextTopLoader
           color="#08AA08"
