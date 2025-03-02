@@ -1,16 +1,17 @@
-import CategoryProductsList from "@/app/(ecommerce)/components/CategoryProductsList";
+import Cta from "@/app/(ecommerce)/components/shop/Cta";
+import ProductsList from "@/app/(ecommerce)/components/shop/ProductsList";
 import { Category } from "@/interfaces/product.interface";
 import { getCategories } from "@/lib/data";
 import { Metadata } from "next";
 
 interface IProp {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: IProp): Promise<Metadata> => {
-  const categorySlug = params.slug;
+  const { slug: categorySlug } = await params;
   const categories: Category[] = await getCategories();
   const category = categories?.find((cat) => cat?.slug === categorySlug);
 
@@ -32,13 +33,18 @@ export const generateStaticParams = async () => {
   }
 };
 
-const CategoryProducts = ({ params }: IProp) => {
-  const categorySlug = params.slug;
+const CategoryProducts = async ({ params }: IProp) => {
+  const { slug: categorySlug } = await params;
 
   return (
     <div className="w-full font-dmsans">
       <section className="w-full">
-        <CategoryProductsList slug={categorySlug} />
+        <div className="container mx-auto px-2 py-8">
+          <div className="mb-6">
+            <Cta />
+          </div>
+          <ProductsList categorySlug={categorySlug} />
+        </div>
       </section>
     </div>
   );

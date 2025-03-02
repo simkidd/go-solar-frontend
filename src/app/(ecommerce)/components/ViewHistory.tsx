@@ -1,6 +1,6 @@
 "use client";
 import { useViewHistoryStore } from "@/lib/stores/viewHistory.store";
-import ProductCard from "./ProductCard";
+import ProductCard from "./shop/ProductCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";

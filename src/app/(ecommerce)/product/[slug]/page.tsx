@@ -1,12 +1,12 @@
-import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
-import ProductImages from "@/app/(ecommerce)/components/ProductImages";
-import RelatedProducts from "@/app/(ecommerce)/components/RelatedProducts";
+import ProductDesc from "@/app/(ecommerce)/components/shop/ProductDesc";
+import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
+import RelatedProducts from "@/app/(ecommerce)/components/shop/RelatedProducts";
 import Breadcrumb from "@/components/Breadcrumb";
 import { Product } from "@/interfaces/product.interface";
 import { getProductCodeFromSlug } from "@/utils/helpers";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ProductDetail from "../../components/ProductDetail";
+import ProductDetail from "../../components/shop/ProductDetail";
 import { RefreshCcw, Truck } from "lucide-react";
 import ViewHistoryComp from "../../components/ViewHistory";
 import { getProducts, getPubilshedProducts } from "@/lib/api/products";

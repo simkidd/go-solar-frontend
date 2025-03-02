@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
-import Cta from "@/app/(ecommerce)/components/Cta";
+import Cta from "@/app/(ecommerce)/components/shop/Cta";
 import { Category } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import CategoriesSectionGrid, {
   CategorySection,
-} from "../components/CategorySection";
-import SpecialOffers from "../components/SpecialOffers";
+} from "./shop/CategorySection";
+import SpecialOffers from "./shop/SpecialOffers";
 import ViewHistoryComp from "../components/ViewHistory";
 import useProducts from "@/hooks/useProducts";
 import useCategories from "@/hooks/useCategories";

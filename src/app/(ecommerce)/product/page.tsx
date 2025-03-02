@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import Cta from "../components/Cta";
-import ProductsList from "../components/ProductsList";
+import Cta from "../components/shop/Cta";
+import ProductsList from "../components/shop/ProductsList";
 
 const pageTitle = "Products";
 

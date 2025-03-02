@@ -1,6 +1,6 @@
 "use client";
-import ProductDesc from "@/app/(ecommerce)/components/ProductDesc";
-import ProductImages from "@/app/(ecommerce)/components/ProductImages";
+import ProductDesc from "@/app/(ecommerce)/components/shop/ProductDesc";
+import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { getProduct } from "@/lib/data";
 import { useProductStore } from "@/lib/stores/product.store";

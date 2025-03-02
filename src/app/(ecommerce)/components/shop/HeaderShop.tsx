@@ -26,8 +26,8 @@ import {
   FaXTwitter,
 } from "react-icons/fa6";
 import { MdClose, MdDashboard } from "react-icons/md";
-import MenuItem from "../../../components/MenuItem";
-import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
+import MenuItem from "../../../../components/MenuItem";
+import { ThemeSwitcher } from "../../../../components/ThemeSwitcher";
 
 const HeaderShop = () => {
   const { cartItems } = useCartStore();

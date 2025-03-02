@@ -7,7 +7,7 @@ import { Post } from "@/interfaces/post.interface";
 import { Product } from "@/interfaces/product.interface";
 import { getPosts, getPubilshedProducts } from "@/lib/data";
 import Link from "next/link";
-import ProductCard from "../(ecommerce)/components/ProductCard";
+import ProductCard from "../(ecommerce)/components/shop/ProductCard";
 
 const page = async () => {
   const posts: Post[] = await getPosts();

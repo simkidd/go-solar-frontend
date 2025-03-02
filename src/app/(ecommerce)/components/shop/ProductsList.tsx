@@ -1,16 +1,25 @@
 "use client";
-import { Category, Product } from "@/interfaces/product.interface";
-import { Pagination, Slider, Skeleton } from "@heroui/react";
-import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import ProductCard from "./ProductCard";
-import useProducts from "@/hooks/useProducts";
 import useCategories from "@/hooks/useCategories";
-import FilterComp from "./products/FilterComp";
+import useProducts from "@/hooks/useProducts";
+import { Product } from "@/interfaces/product.interface";
+import { Pagination, Skeleton } from "@heroui/react";
 import { ArrowLeftCircleIcon, FilterIcon } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import FilterComp from "./FilterComp";
+import ProductCard from "./ProductCard";
 
-const ProductsList = ({ category }: { category?: Category }) => {
+const ProductsList = ({
+  categorySlug,
+  query,
+}: {
+  categorySlug?: string;
+  query?: string;
+}) => {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const {
     products: allProducts,
     isError: productsError,
@@ -30,7 +39,37 @@ const ProductsList = ({ category }: { category?: Category }) => {
     [allProducts]
   );
 
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  // Find the category based on the categorySlug
+  const category = useMemo(
+    () => allCategories.find((cat) => cat.slug === categorySlug),
+    [allCategories, categorySlug]
+  );
+
+  // Filter products by category and search query
+  const filteredProducts = useMemo(() => {
+    let filtered = [...publishedProducts];
+
+    // Filter by category if categorySlug is provided
+    if (categorySlug) {
+      filtered = filtered.filter(
+        (product) => product.category?.slug === categorySlug
+      );
+    }
+
+    // Filter by search query if query is provided
+    if (query) {
+      const lowerCaseQuery = query.toLowerCase();
+      filtered = filtered.filter(
+        (product) =>
+          product.name.toLowerCase().includes(lowerCaseQuery) ||
+          product.description.toLowerCase().includes(lowerCaseQuery) ||
+          product.brand.toLowerCase().includes(lowerCaseQuery)
+      );
+    }
+
+    return filtered;
+  }, [publishedProducts, categorySlug, query]);
+
   const [priceRange, setPriceRange] = useState<number[]>([50000, 5000000]);
   const [tempPriceRange, setTempPriceRange] = useState<number[]>([
     50000, 5000000,
@@ -38,38 +77,34 @@ const ProductsList = ({ category }: { category?: Category }) => {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [tempSelectedBrands, setTempSelectedBrands] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("newest");
-  const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const initialPage = parseInt(searchParams.get("page") || "1", 10);
   const [page, setPage] = useState<number>(initialPage);
   const [openFilter, setOpenFilter] = useState(false);
   const itemPerPage = 4;
   const totalPages = Math.ceil(filteredProducts.length / itemPerPage);
 
-  const brands = Array.from(
-    new Set(publishedProducts.map((product) => product.brand))
+  const brands = useMemo(
+    () => Array.from(new Set(filteredProducts.map((product) => product.brand))),
+    [filteredProducts]
   );
 
   // Apply filters and sorting
-  useEffect(() => {
-    let filtered = [...publishedProducts];
-
+  const finalFilteredProducts = useMemo(() => {
+    let filtered = [...filteredProducts];
+  
     // Filter by price range
-    if (Array.isArray(priceRange)) {
-      filtered = filtered.filter(
-        (product) =>
-          product.price >= priceRange[0] && product.price <= priceRange[1]
-      );
-    }
-
+    filtered = filtered.filter(
+      (product) =>
+        product.price >= priceRange[0] && product.price <= priceRange[1]
+    );
+  
     // Filter by brand
     if (selectedBrands.length > 0) {
       filtered = filtered.filter((product) =>
         selectedBrands.includes(product.brand)
       );
     }
-
+  
     // Apply sorting
     switch (sortBy) {
       case "name-asc":
@@ -93,10 +128,10 @@ const ProductsList = ({ category }: { category?: Category }) => {
       default:
         break;
     }
-
-    setFilteredProducts(filtered);
-    setPage(1); // Reset to the first page when filters change
-  }, [publishedProducts, priceRange, selectedBrands, sortBy]);
+  
+    return filtered;
+  }, [filteredProducts, priceRange, selectedBrands, sortBy]);
+  
 
   // Handle brand selection
   const handleBrandChange = (brand: string) => {
@@ -135,8 +170,8 @@ const ProductsList = ({ category }: { category?: Category }) => {
   const paginatedProducts = useMemo(() => {
     const startIndex = (page - 1) * itemPerPage;
     const endIndex = startIndex + itemPerPage;
-    return filteredProducts.slice(startIndex, endIndex);
-  }, [page, filteredProducts]);
+    return finalFilteredProducts.slice(startIndex, endIndex);
+  }, [page, finalFilteredProducts]);
 
   const handleResetFilters = () => {
     setTempPriceRange([50000, 5000000]); // Reset price range
@@ -144,6 +179,7 @@ const ProductsList = ({ category }: { category?: Category }) => {
     setSelectedBrands([]); // Reset selected brands
     setTempSelectedBrands([]);
     setOpenFilter(false);
+    setPage(1)
   };
 
   // Skeleton loading for products
@@ -233,7 +269,11 @@ const ProductsList = ({ category }: { category?: Category }) => {
         <div className="flex flex-col border rounded-lg dark:border-gray-500 mb-4 shadow text-sm">
           <div className="px-4 py-2 flex items-center justify-between border-b dark:border-gray-500">
             <p className="font-bold text-lg">
-              {!category ? "Shop Online" : category?.name}
+              {query
+                ? `Search Results for "${query}"`
+                : category
+                ? category.name
+                : "Shop Online"}
             </p>
             <div className="flex items-center gap-4">
               {/* Sort By Dropdown */}
@@ -275,7 +315,38 @@ const ProductsList = ({ category }: { category?: Category }) => {
           </div>
         </div>
         {paginatedProducts.length < 1 ? (
-          <div>No products found</div>
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="text-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 mx-auto text-gray-400 dark:text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <h3 className="mt-4 text-xl font-semibold text-gray-800 dark:text-gray-200">
+                No Products Found
+              </h3>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                {query
+                  ? `We couldn't find any products matching "${query}". Try adjusting your search or browse other categories.`
+                  : "We couldn't find any products matching your filters. Try adjusting your search or browse other categories."}
+              </p>
+              <button
+                onClick={handleResetFilters}
+                className="mt-6 px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors duration-300"
+              >
+                Reset Filters
+              </button>
+            </div>
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

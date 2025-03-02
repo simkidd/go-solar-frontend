@@ -1,4 +1,4 @@
-import Banner from "@/app/(ecommerce)/components/Banner";
+import Banner from "@/app/(ecommerce)/components/shop/Banner";
 import ShopPageComp from "../components/ShopPageComp";
 
 const ShopPage = () => {

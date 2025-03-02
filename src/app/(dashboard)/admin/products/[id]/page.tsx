@@ -1,19 +1,19 @@
 import SingleProductComp from "@/app/(dashboard)/components/SingleProductComp";
 import { Product } from "@/interfaces/product.interface";
-import { getProduct, getProducts } from "@/lib/data";
-import { Button } from "@heroui/react";
+import { getProduct, getProducts } from "@/lib/api/products";
 import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 
 interface IProduct {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
-  const product: Product = await getProduct(params.id);
+  const { id } = await params;
+  const product: Product = await getProduct(id);
 
   return {
     title: product?.name,
@@ -33,23 +33,21 @@ export const generateStaticParams = async () => {
   }
 };
 
-const SingleProductPage = ({ params }: IProduct) => {
+const SingleProductPage = async ({ params }: IProduct) => {
+  const { id } = await params;
+
   return (
     <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
       <div className="flex items-center justify-between mb-4">
         <Link href="/admin/products">
-          <Button
-            variant="light"
-            color="default"
-            startContent={<ArrowLeft size={16} />}
-            className="dark:text-white"
-          >
+          <button className="inline-flex items-center gap-1">
+            <ArrowLeft size={16} />
             Go back
-          </Button>
+          </button>
         </Link>
       </div>
 
-      <SingleProductComp id={params.id} />
+      <SingleProductComp id={id} />
     </div>
   );
 };
