@@ -76,7 +76,11 @@ const ShopPageComp = () => {
                 </div>
                 <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-6 my-8">
                   {Array.from({ length: 6 }).map((_, idx) => (
-                    <Skeleton key={idx} className="h-60 rounded-lg" /> // Skeleton for products
+                    <div key={idx} className="space-y-3">
+                      <Skeleton className="h-40 rounded-lg" />
+                      <Skeleton className="h-4 w-3/4 rounded-lg" />
+                      <Skeleton className="h-4 w-1/2 rounded-lg" />
+                    </div>
                   ))}
                 </div>
               </div>

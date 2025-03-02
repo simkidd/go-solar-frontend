@@ -28,7 +28,7 @@ const ProductCard: React.FC<{
   return (
     <div className="w-full group relative">
       <Link href={`/product/${item?.slug}`} onClick={handleCardClick}>
-        <div className="w-full lg:h-56 h-44 overflow-hidden relative">
+        <div className="w-full aspect-square overflow-hidden relative rounded-lg">
           <div className="absolute top-0 left-0 w-full h-full">
             <Image
               src={

@@ -130,7 +130,13 @@ const Navbar = () => {
           {/* logo */}
           <div className="flex items-center justify-center mr-auto lg:mr-0">
             <Link href="/" className="flex items-center gap-1">
-              <Image src={LogoIcon} alt="logo" width={55} height={50} />
+              <Image
+                src={LogoIcon}
+                alt="logo"
+                width={55}
+                height={50}
+                style={{ width: "50px", height: "40px" }}
+              />
               <span className="font-medium text-xl font-dmsans mt-2">
                 GoSolar
               </span>
@@ -182,7 +188,9 @@ const Navbar = () => {
                   <li key={i} className="">
                     <Link
                       href={href}
-                      className={`hover:text-primary ${isActive(href) ? "text-primary" : ""}`}
+                      className={`hover:text-primary ${
+                        isActive(href) ? "text-primary" : ""
+                      }`}
                       onClick={toggleShowMenu}
                     >
                       {label}
@@ -212,10 +220,7 @@ const Navbar = () => {
                   </button>
                 </>
               ) : (
-                <Link
-                  href="/account/login"
-                  className="hover:text-primary"
-                >
+                <Link href="/account/login" className="hover:text-primary">
                   Login / Register
                 </Link>
               )}

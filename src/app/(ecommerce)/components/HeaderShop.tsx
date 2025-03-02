@@ -122,7 +122,13 @@ const HeaderShop = () => {
             {/* logo */}
             <div className="flex items-center mr-auto lg:mr-0 w-48">
               <Link href="/" className="flex items-center gap-1">
-                <Image src={LogoIcon} alt="logo" width={55} height={50} />
+                <Image
+                  src={LogoIcon}
+                  alt="logo"
+                  width={55}
+                  height={50}
+                  style={{ width: "50px", height: "40px" }}
+                />
                 <span className="font-medium text-xl font-dmsans mt-2">
                   GoSolar
                 </span>

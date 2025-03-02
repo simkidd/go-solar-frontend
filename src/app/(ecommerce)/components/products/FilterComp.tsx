@@ -98,10 +98,10 @@ const FilterComp: React.FC<FilterCompProps> = ({
 
       {/* Apply and Reset Buttons */}
       <div className="flex gap-2 px-3 mt-4">
-        <Button color="primary" className="w-full" onClick={handleApplyFilters}>
+        <Button color="primary" className="w-full" onPress={handleApplyFilters}>
           Apply
         </Button>
-        <Button className="w-full" onClick={handleResetFilters}>
+        <Button className="w-full" onPress={handleResetFilters}>
           Reset
         </Button>
       </div>

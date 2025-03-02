@@ -22,19 +22,24 @@ export function ThemeSwitcher() {
 
   if (!mounted) return null;
 
-  const Icon =
-    theme === "light" ? Sun : theme === "dark" ? MoonStar : BiDesktop;
-
   return (
     <Dropdown>
       <DropdownTrigger>
         <Button variant="flat" size="sm" isIconOnly>
-          <Icon className="h-[1.2rem] w-[1.2rem] transition-all dark:text-white" />
+          {theme === "light" && (
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          )}
+          {theme === "dark" && (
+            <MoonStar className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 dark:text-white" />
+          )}
+          {theme === "system" && (
+            <BiDesktop className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:rotate-0 dark:scale-100 dark:text-white" />
+          )}
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownTrigger>
       <DropdownMenu>
-        <DropdownItem key='light' onPress={() => setTheme("light")}>Light</DropdownItem>
+      <DropdownItem key='light' onPress={() => setTheme("light")}>Light</DropdownItem>
         <DropdownItem key='dark' onPress={() => setTheme("dark")}>Dark</DropdownItem>
         <DropdownItem key='system' onPress={() => setTheme("system")}>System</DropdownItem>
       </DropdownMenu>

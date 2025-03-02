@@ -8,7 +8,7 @@ import ProductCard from "./ProductCard";
 import useProducts from "@/hooks/useProducts";
 import useCategories from "@/hooks/useCategories";
 import FilterComp from "./products/FilterComp";
-import { ArrowLeftCircleIcon } from "lucide-react";
+import { ArrowLeftCircleIcon, FilterIcon } from "lucide-react";
 
 const ProductsList = ({ category }: { category?: Category }) => {
   const {
@@ -24,9 +24,12 @@ const ProductsList = ({ category }: { category?: Category }) => {
     refetch: refetchCategories,
   } = useCategories();
 
-  const publishedProducts = allProducts.filter(
-    (product) => product.isPublished
+  // Memoize publishedProducts to avoid unnecessary recalculations
+  const publishedProducts = useMemo(
+    () => allProducts.filter((product) => product.isPublished),
+    [allProducts]
   );
+
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [priceRange, setPriceRange] = useState<number[]>([50000, 5000000]);
   const [tempPriceRange, setTempPriceRange] = useState<number[]>([
@@ -227,8 +230,8 @@ const ProductsList = ({ category }: { category?: Category }) => {
 
       {/* Main Content */}
       <div className="lg:col-span-7 col-span-1">
-        <div className="flex flex-col border mb-4 shadow text-sm">
-          <div className="px-4 py-2 flex items-center justify-between border-b">
+        <div className="flex flex-col border rounded-lg dark:border-gray-500 mb-4 shadow text-sm">
+          <div className="px-4 py-2 flex items-center justify-between border-b dark:border-gray-500">
             <p className="font-bold text-lg">
               {!category ? "Shop Online" : category?.name}
             </p>
@@ -238,7 +241,7 @@ const ProductsList = ({ category }: { category?: Category }) => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="ml-2 border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:border-blue-500"
+                className="ml-2 border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:border-primary"
               >
                 <option value="name-asc">A-Z</option>
                 <option value="name-desc">Z-A</option>
@@ -251,7 +254,7 @@ const ProductsList = ({ category }: { category?: Category }) => {
           <div className="px-4 py-2 flex items-center justify-between">
             <p>
               Showing{" "}
-              <span className="text-primary">
+              <span className="text-primary font-semibold">
                 {Math.min(
                   (page - 1) * itemPerPage + 1,
                   filteredProducts.length
@@ -266,18 +269,7 @@ const ProductsList = ({ category }: { category?: Category }) => {
               className="lg:hidden flex items-center gap-2 text-sm bg-primary text-white px-3 py-1 rounded-md"
               onClick={() => setOpenFilter(!openFilter)}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <FilterIcon size={16} />
               Filters
             </button>
           </div>
