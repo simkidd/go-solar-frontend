@@ -179,6 +179,7 @@ const OrdersTable = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
+                  key={"view"}
                   startContent={<Eye size={16} />}
                   onPress={() => router.push(`/admin/orders/${order?._id}`)}
                 >
@@ -363,7 +364,7 @@ const OrdersTable = () => {
     onResetFilters,
     statusFilter,
     onClear,
-    onStatusFilterChange
+    onStatusFilterChange,
   ]);
 
   const bottomContent = useMemo(() => {

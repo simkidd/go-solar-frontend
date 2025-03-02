@@ -63,7 +63,7 @@ export const Popup: React.FC<{
           onChange={(e) => setInput({ ...input, offer: e.target.value })}
         >
           {(offer) => (
-            <SelectItem key={offer?._id} value={offer?._id}>
+            <SelectItem key={offer?._id} textValue={offer?.name}>
               {offer?.name}
             </SelectItem>
           )}

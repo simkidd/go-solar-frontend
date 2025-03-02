@@ -152,12 +152,14 @@ const CategoryTable = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
+                  key={"see_products"}
                   startContent={<Eye size={16} />}
                   onPress={() => router.push(`/admin/categories/${cat?.slug}`)}
                 >
                   See products
                 </DropdownItem>
                 <DropdownItem
+                  key={"update"}
                   onPress={() => {
                     setSelectedCat(cat);
                     onUpdateOpen();
@@ -167,6 +169,7 @@ const CategoryTable = () => {
                   Update
                 </DropdownItem>
                 <DropdownItem
+                  key={"delete"}
                   onPress={() => {
                     setSelectedCat(cat);
                     onOpen();

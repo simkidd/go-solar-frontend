@@ -7,13 +7,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface IOrder {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: IOrder): Promise<Metadata> => {
-  const order: Order = await getOrder(params.id);
+  const { id } = await params;
+  const order: Order = await getOrder(id);
 
   return {
     title: `Order #${order?.trackingId?.tracking_id}`,
@@ -42,7 +43,8 @@ export const generateMetadata = async ({
 // };
 
 const SingleOrderPage = async ({ params }: IOrder) => {
-  const order: Order = await getOrder(params.id);
+  const { id } = await params;
+  const order: Order = await getOrder(id);
 
   if (!order) {
     notFound();

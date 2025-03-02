@@ -145,6 +145,7 @@ const OffersComp = () => {
                   </DropdownTrigger>
                   <DropdownMenu>
                     <DropdownItem
+                      key={"update"}
                       startContent={<PencilLine size={16} />}
                       onPress={() => {
                         setSelectedOffer(offer);
@@ -154,6 +155,7 @@ const OffersComp = () => {
                       Update
                     </DropdownItem>
                     <DropdownItem
+                      key={"delete"}
                       startContent={<Trash2 size={16} />}
                       onPress={() => {
                         setSelectedOffer(offer);

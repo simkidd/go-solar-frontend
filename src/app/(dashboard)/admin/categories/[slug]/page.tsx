@@ -7,13 +7,13 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 interface IProp {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: IProp): Promise<Metadata> => {
-  const categorySlug = params.slug;
+  const { slug: categorySlug } = await params;
   const categories: Category[] = await getCategories();
   const category = categories?.find((cat) => cat?.slug === categorySlug);
 
@@ -36,8 +36,9 @@ export const generateStaticParams = async () => {
 };
 
 const SingleCatgory = async ({ params }: IProp) => {
+  const { slug: categorySlug } = await params;
   const categories: Category[] = await getCategories();
-  const category = categories?.find((cat) => cat?.slug === params.slug);
+  const category = categories?.find((cat) => cat?.slug === categorySlug);
 
   return (
     <div className="w-full font-inter">

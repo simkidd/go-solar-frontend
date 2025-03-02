@@ -8,13 +8,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface IOffer {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: IOffer): Promise<Metadata> => {
-  const offer: Offer = await getOffer(params.id);
+  const { id } = await params;
+  const offer: Offer = await getOffer(id);
 
   return {
     title: offer?.name,
@@ -35,7 +36,8 @@ export const generateStaticParams = async () => {
 };
 
 const SingleOfferPage = async ({ params }: IOffer) => {
-  const offer: Offer = await getOffer(params.id);
+  const { id } = await params;
+  const offer: Offer = await getOffer(id);
 
   if (!offer) {
     notFound();

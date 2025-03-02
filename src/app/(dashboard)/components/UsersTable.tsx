@@ -179,6 +179,7 @@ const UsersTable = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
+                  key={"view"}
                   onPress={() => router.push(`/admin/users/${user?._id}`)}
                 >
                   View

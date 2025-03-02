@@ -96,8 +96,7 @@ const columns = [
 ];
 
 const ProductsTable = () => {
-  const { loading, deleteProduct, addToOffer, offers } =
-    useProductStore();
+  const { loading, deleteProduct, addToOffer, offers } = useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
@@ -249,12 +248,14 @@ const ProductsTable = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
+                  key={"view_details"}
                   startContent={<Eye size={16} />}
                   onPress={() => router.push(`/admin/products/${product?._id}`)}
                 >
                   View details
                 </DropdownItem>
                 <DropdownItem
+                  key={"edit_product"}
                   onPress={() => {
                     setSelectedProduct(product);
                     onOpen();
@@ -623,7 +624,7 @@ const ProductsTable = () => {
               onChange={(e) => setInput({ ...input, offer: e.target.value })}
             >
               {(offer) => (
-                <SelectItem key={offer?._id} value={offer?._id}>
+                <SelectItem key={offer?._id} textValue={offer?.name}>
                   {offer?.name}
                 </SelectItem>
               )}

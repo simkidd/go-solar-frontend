@@ -4,9 +4,9 @@ import ProductsList from "../../components/shop/ProductsList";
 const SearchResults = async ({
   searchParams,
 }: {
-  searchParams: { q: string };
+  searchParams: Promise<{ q: string }>;
 }) => {
-  const query = searchParams.q;
+  const { q } = await searchParams;
 
   return (
     <div className="w-full font-dmsans">
@@ -15,7 +15,7 @@ const SearchResults = async ({
           <div className="mb-6">
             <Cta />
           </div>
-          <ProductsList query={query} />
+          <ProductsList query={q} />
         </div>
       </section>
     </div>

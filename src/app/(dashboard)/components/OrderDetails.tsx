@@ -168,13 +168,13 @@ const OrderDetails: React.FC<{
                   })
                 }
               >
-                <SelectItem key={1} value={1}>
+                <SelectItem key={"1"} textValue={String(1)}>
                   {TrackingStatus.Processing}
                 </SelectItem>
-                <SelectItem key={2} value={2}>
+                <SelectItem key={"2"} textValue={String(2)}>
                   {TrackingStatus.Delivered}
                 </SelectItem>
-                <SelectItem key={3} value={3}>
+                <SelectItem key={"3"} textValue={String(3)}>
                   {TrackingStatus.Received}
                 </SelectItem>
               </Select>
