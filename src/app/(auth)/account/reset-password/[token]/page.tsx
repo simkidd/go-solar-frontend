@@ -8,11 +8,12 @@ export const metadata: Metadata = {
   title: pageTitle,
 };
 
-const ResetPassword = ({
-  params: { token },
+const ResetPassword = async ({
+  params,
 }: {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }) => {
+  const { token } = await params;
   return (
     <div className="w-full">
       <h3 className="mb-2 text-center text-2xl font-semibold">
