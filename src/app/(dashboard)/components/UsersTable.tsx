@@ -20,7 +20,7 @@ import {
   Spinner,
   Card,
   CardBody,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   EllipsisVertical,

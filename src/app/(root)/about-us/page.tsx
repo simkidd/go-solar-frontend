@@ -4,7 +4,7 @@ import PageHeader from "@/components/PageHeader";
 import TeamCard from "@/components/TeamCard";
 import TeamQuote from "@/components/TeamQuote";
 import { TeamMember } from "@/data/team";
-import { Avatar, AvatarGroup } from "@nextui-org/react";
+import { Avatar, AvatarGroup } from "@heroui/react";
 import { Metadata } from "next";
 import Image from "next/image";
 import { GiCheckMark } from "react-icons/gi";

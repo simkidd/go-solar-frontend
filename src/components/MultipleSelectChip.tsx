@@ -1,5 +1,5 @@
 "use client";
-import { Button, Chip } from "@nextui-org/react";
+import { Button, Chip } from "@heroui/react";
 import React, {
   useState,
   useEffect,

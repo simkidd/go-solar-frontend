@@ -3,22 +3,22 @@ import ProductImages from "@/app/(ecommerce)/components/ProductImages";
 import RelatedProducts from "@/app/(ecommerce)/components/RelatedProducts";
 import Breadcrumb from "@/components/Breadcrumb";
 import { Product } from "@/interfaces/product.interface";
-import { getProducts, getPubilshedProducts } from "@/lib/data";
 import { getProductCodeFromSlug } from "@/utils/helpers";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetail from "../../components/ProductDetail";
 import { RefreshCcw, Truck } from "lucide-react";
 import ViewHistoryComp from "../../components/ViewHistory";
+import { getProducts, getPubilshedProducts } from "@/lib/api/products";
 
 interface IProduct {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
-  const slug = params.slug;
+  const { slug } = await params;
   const products: Product[] = await getPubilshedProducts();
   const product = products.find((product) => product?.slug === slug);
 
@@ -50,7 +50,7 @@ export const generateStaticParams = async () => {
 };
 
 const ProductPage = async ({ params }: IProduct) => {
-  const { slug } = params;
+  const { slug } = await params;
   const products: Product[] = await getProducts();
   const product = products.find((product) => product?.slug === slug);
 

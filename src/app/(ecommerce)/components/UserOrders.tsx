@@ -2,7 +2,7 @@
 import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
 import { useOrderStore } from "@/lib/stores/order.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
-import { Card, CardBody, Chip, Spinner } from "@nextui-org/react";
+import { Card, CardBody, Chip, Spinner } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 

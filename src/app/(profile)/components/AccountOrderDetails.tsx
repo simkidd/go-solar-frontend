@@ -2,7 +2,7 @@
 import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
 import { useOrderStore } from "@/lib/stores/order.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
-import { Button, Chip } from "@nextui-org/react";
+import { Button, Chip } from "@heroui/react";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

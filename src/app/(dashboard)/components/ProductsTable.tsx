@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   EllipsisVertical,

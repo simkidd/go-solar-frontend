@@ -13,7 +13,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow
-} from "@nextui-org/react";
+} from "@heroui/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 

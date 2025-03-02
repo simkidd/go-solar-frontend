@@ -7,7 +7,7 @@ import {
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 import { CheckCircle, CircleX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

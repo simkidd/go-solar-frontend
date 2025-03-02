@@ -21,7 +21,7 @@ import {
   Card,
   CardBody,
   Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { ChevronDownIcon, EllipsisVertical, Eye, RefreshCcw, SearchIcon } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

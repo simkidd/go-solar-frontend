@@ -1,6 +1,6 @@
 "use client";
 import { Category } from "@/interfaces/product.interface";
-import { Button, Slider } from "@nextui-org/react";
+import { Button, Slider } from "@heroui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -47,7 +47,7 @@ const FilterComp: React.FC<FilterCompProps> = ({
             <li key={category._id}>
               <Link
                 href={`/${category.slug}/products`}
-                className={`flex items-center px-4 py-2 gap-1 hover:bg-gray-300 ${
+                className={`flex items-center px-4 py-2 gap-1 hover:bg-gray-300 dark:hover:bg-gray-300/10 ${
                   isActive(`/${category.slug}/products`) &&
                   "text-primary bg-primary bg-opacity-10"
                 }`}

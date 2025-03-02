@@ -5,7 +5,7 @@ import { shopNavlist } from "@/data/menuData";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import {
   ChevronDown,
   LogOut,

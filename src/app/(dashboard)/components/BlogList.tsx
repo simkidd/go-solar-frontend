@@ -8,7 +8,7 @@ import {
   Input,
   Pagination,
   Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { RefreshCcw, SearchIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useMemo, useState } from "react";

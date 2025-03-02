@@ -22,7 +22,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   EllipsisVertical,

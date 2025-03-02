@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Input } from "@nextui-org/react";
+import { Input } from "@heroui/react";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 

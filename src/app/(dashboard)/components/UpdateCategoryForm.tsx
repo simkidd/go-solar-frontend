@@ -1,7 +1,7 @@
 "use client";
 import { Category, UpdateCategoryInput } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button, Input, Textarea } from "@nextui-org/react";
+import { Button, Input, Textarea } from "@heroui/react";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 

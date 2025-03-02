@@ -2,7 +2,7 @@
 import { TrackingStatus } from "@/interfaces/order.interface";
 import { useOrderStore } from "@/lib/stores/order.store";
 import { formatDateTime } from "@/utils/helpers";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { Timeline } from "antd";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";

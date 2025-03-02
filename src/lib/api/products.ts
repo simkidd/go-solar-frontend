@@ -15,3 +15,12 @@ export const getCategories = async () => {
   const { data } = await axiosInstance.get("/categories");
   return data.categories;
 };
+
+export const getPubilshedProducts = async () => {
+  const { data } = await axiosInstance.get("/products");
+
+  const publishedProducts = data.products.filter(
+    (product: Product) => product.isPublished
+  );
+  return publishedProducts;
+};

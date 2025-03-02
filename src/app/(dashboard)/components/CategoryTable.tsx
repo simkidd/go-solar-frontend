@@ -23,7 +23,7 @@ import {
   TableRow,
   useDisclosure,
   Table,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   EllipsisVertical,

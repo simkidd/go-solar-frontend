@@ -2,7 +2,7 @@
 import AppModal from "@/components/AppModal";
 import { Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@heroui/react";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

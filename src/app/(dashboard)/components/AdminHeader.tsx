@@ -7,7 +7,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Bell, Menu } from "lucide-react";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
 

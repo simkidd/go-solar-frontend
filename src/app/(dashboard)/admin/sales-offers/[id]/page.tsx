@@ -1,7 +1,7 @@
 import OfferProducts from "@/app/(dashboard)/components/OfferProducts";
 import { Offer } from "@/interfaces/product.interface";
 import { getOffer, getOffers } from "@/lib/data";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";

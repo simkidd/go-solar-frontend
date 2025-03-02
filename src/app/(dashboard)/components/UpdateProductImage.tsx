@@ -3,7 +3,7 @@ import AppModal from "@/components/AppModal";
 import { IImage, Product } from "@/interfaces/product.interface";
 import { axiosInstance } from "@/lib/axios";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@heroui/react";
 import { Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

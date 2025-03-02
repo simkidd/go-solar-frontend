@@ -7,7 +7,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalProps,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import React from "react";
 
 interface MProps extends ModalProps {

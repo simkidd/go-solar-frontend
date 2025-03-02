@@ -2,14 +2,14 @@
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import QueryProvider from "@/providers/Queryprovider";
-import { NextUIProvider } from "@nextui-org/react";
+import {HeroUIProvider} from "@heroui/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
       <QueryProvider>
-        <NextUIProvider>
+        <HeroUIProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
             <ToastContainer
@@ -20,7 +20,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               theme="dark"
             />
           </ThemeProvider>
-        </NextUIProvider>
+        </HeroUIProvider>
       </QueryProvider>
   );
 }

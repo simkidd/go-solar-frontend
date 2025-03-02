@@ -1,6 +1,12 @@
-
+import { Metadata } from "next";
 import Cta from "../components/Cta";
 import ProductsList from "../components/ProductsList";
+
+const pageTitle = "Products";
+
+export const metadata: Metadata = {
+  title: pageTitle
+};
 
 const ProductListPage = () => {
  

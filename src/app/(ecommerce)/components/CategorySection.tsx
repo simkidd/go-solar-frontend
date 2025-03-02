@@ -4,7 +4,7 @@ import Link from "next/link";
 import React from "react";
 import CategoryCard from "./CategoryCard";
 import ProductCard from "./ProductCard";
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@heroui/react";
 
 interface CategorySectionProps {
   title: string;

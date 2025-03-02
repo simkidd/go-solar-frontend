@@ -1,6 +1,6 @@
 "use client";
 import { Category, Product } from "@/interfaces/product.interface";
-import { Pagination, Slider, Skeleton } from "@nextui-org/react";
+import { Pagination, Slider, Skeleton } from "@heroui/react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -103,10 +103,10 @@ const ProductsList = ({ category }: { category?: Category }) => {
   };
 
   // Handle apply filters
-  const handleApplyFilters  = () => {
+  const handleApplyFilters = () => {
     setPriceRange(tempPriceRange);
     setSelectedBrands(tempSelectedBrands);
-    setOpenFilter(false)
+    setOpenFilter(false);
   };
 
   // Handle page change
@@ -139,8 +139,8 @@ const ProductsList = ({ category }: { category?: Category }) => {
     setTempPriceRange([50000, 5000000]); // Reset price range
     setPriceRange([50000, 5000000]); // Reset applied price range
     setSelectedBrands([]); // Reset selected brands
-    setTempSelectedBrands([]); 
-    setOpenFilter(false)
+    setTempSelectedBrands([]);
+    setOpenFilter(false);
   };
 
   // Skeleton loading for products
@@ -234,24 +234,32 @@ const ProductsList = ({ category }: { category?: Category }) => {
             </p>
             <div className="flex items-center gap-4">
               {/* Sort By Dropdown */}
-              <div>
-                <span className="hidden md:block">Sort By</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="ml-2 border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:border-blue-500"
-                >
-                  <option value="name-asc">A-Z</option>
-                  <option value="name-desc">Z-A</option>
-                  <option value="newest">Newest</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                </select>
-              </div>
+              <span className="hidden md:block">Sort By</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="ml-2 border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:border-blue-500"
+              >
+                <option value="name-asc">A-Z</option>
+                <option value="name-desc">Z-A</option>
+                <option value="newest">Newest</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
             </div>
           </div>
           <div className="px-4 py-2 flex items-center justify-between">
-            <p>{filteredProducts?.length} products found</p>
+            <p>
+              Showing{" "}
+              <span className="text-primary">
+                {Math.min(
+                  (page - 1) * itemPerPage + 1,
+                  filteredProducts.length
+                )}{" "}
+                - {Math.min(page * itemPerPage, filteredProducts.length)}
+              </span>{" "}
+              of {filteredProducts.length} products
+            </p>
 
             {/* Filter Button (visible on small screens) */}
             <button
@@ -327,7 +335,7 @@ const ProductsList = ({ category }: { category?: Category }) => {
             selectedBrands={selectedBrands}
             handleBrandChange={handleBrandChange}
             brands={brands}
-            handleApplyFilters={handleApplyFilters} 
+            handleApplyFilters={handleApplyFilters}
             handleResetFilters={handleResetFilters}
           />
         </div>

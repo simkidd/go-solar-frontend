@@ -15,7 +15,7 @@ import {
   DropdownTrigger,
   Spinner,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { EllipsisVertical, PencilLine, RefreshCcw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

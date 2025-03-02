@@ -2,8 +2,7 @@ import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
 import SocialShare from "@/components/SocialShare";
 import { Post } from "@/interfaces/post.interface";
-import { axiosInstance } from "@/lib/axios";
-import { getPost, getPosts } from "@/lib/data";
+import { getPosts } from "@/lib/api/posts";
 import { formatDate } from "@/utils/helpers";
 import { CalendarCheck } from "lucide-react";
 import { Metadata } from "next";
@@ -11,13 +10,13 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 interface IPost {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: IPost): Promise<Metadata> => {
-  const slug = params.slug;
+  const { slug } = await params;
   const posts: Post[] = await getPosts();
   const post = posts.find((post) => post?.slug === slug);
 
@@ -49,7 +48,7 @@ export const generateStaticParams = async () => {
 };
 
 const SingleBlogPage = async ({ params }: IPost) => {
-  const { slug } = params;
+  const { slug } = await params;
   const posts: Post[] = await getPosts();
   const post = posts.find((post) => post?.slug === slug);
 

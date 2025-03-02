@@ -1,6 +1,6 @@
 "use client";
 import { Product } from "@/interfaces/product.interface";
-import { Tab, Tabs } from "@nextui-org/react";
+import { Tab, Tabs } from "@heroui/react";
 import React from "react";
 
 const ProductDesc: React.FC<{

@@ -5,14 +5,14 @@ import {
   UpdateTrackingStatus,
 } from "@/interfaces/order.interface";
 import { formatCurrency, formatDateTime } from "@/utils/helpers";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Mail, Phone } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { getChipColor } from "./OrdersTable";
 import { useOrderStore } from "@/lib/stores/order.store";
-import { Button, Chip, Select, SelectItem } from "@nextui-org/react";
+import { Button, Chip, Select, SelectItem } from "@heroui/react";
 
 const OrderDetails: React.FC<{
   order: Order;

@@ -1,6 +1,6 @@
 "use client";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Input } from "@nextui-org/react";
+import { Input } from "@heroui/react";
 import React, { useMemo, useState } from "react";
 
 const ForgetPswForm = () => {

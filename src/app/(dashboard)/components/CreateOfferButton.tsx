@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import AppModal from "@/components/AppModal";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@heroui/react";
 import { Plus } from "lucide-react";
 import CreateOfferForm from "./CreateOfferForm";
 

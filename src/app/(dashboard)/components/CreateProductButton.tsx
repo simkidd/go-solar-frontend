@@ -1,6 +1,6 @@
 "use client";
 import AppModal from "@/components/AppModal";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@heroui/react";
 import CreateProductForm from "./CreateProductForm";
 import { Plus } from "lucide-react";
 

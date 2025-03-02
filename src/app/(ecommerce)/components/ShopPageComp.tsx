@@ -10,7 +10,7 @@ import SpecialOffers from "../components/SpecialOffers";
 import ViewHistoryComp from "../components/ViewHistory";
 import useProducts from "@/hooks/useProducts";
 import useCategories from "@/hooks/useCategories";
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@heroui/react";
 
 const ShopPageComp = () => {
   const { offers } = useProductStore();

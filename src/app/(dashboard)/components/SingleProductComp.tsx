@@ -5,7 +5,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { getProduct } from "@/lib/data";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency } from "@/utils/helpers";
-import { Card, CardBody } from "@nextui-org/react";
+import { Card, CardBody } from "@heroui/react";
 import { notFound } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import AddToOfferButton from "./AddToOfferButton";

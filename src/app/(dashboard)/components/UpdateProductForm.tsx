@@ -1,7 +1,7 @@
 "use client";
 import { Product, UpdateProductInput } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button, Input, Select, SelectItem, Textarea } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
