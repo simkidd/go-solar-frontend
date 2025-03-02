@@ -6,12 +6,11 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/react";
-import { Laptop, LaptopMinimal, MoonStar, Sun } from "lucide-react";
+} from "@heroui/react";
+import { MoonStar, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { BiDesktop } from "react-icons/bi";
-import { CgDesktop } from "react-icons/cg";
 
 export function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false);
@@ -40,9 +39,9 @@ export function ThemeSwitcher() {
         </Button>
       </DropdownTrigger>
       <DropdownMenu>
-        <DropdownItem onPress={() => setTheme("light")}>Light</DropdownItem>
-        <DropdownItem onPress={() => setTheme("dark")}>Dark</DropdownItem>
-        <DropdownItem onPress={() => setTheme("system")}>System</DropdownItem>
+      <DropdownItem key='light' onPress={() => setTheme("light")}>Light</DropdownItem>
+        <DropdownItem key='dark' onPress={() => setTheme("dark")}>Dark</DropdownItem>
+        <DropdownItem key='system' onPress={() => setTheme("system")}>System</DropdownItem>
       </DropdownMenu>
     </Dropdown>
   );

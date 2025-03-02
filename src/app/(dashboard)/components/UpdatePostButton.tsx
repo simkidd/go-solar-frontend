@@ -1,7 +1,7 @@
 "use client";
 import AppModal from "@/components/AppModal";
 import { Post } from "@/interfaces/post.interface";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@heroui/react";
 import React from "react";
 import UpdateBlogPostForm from "./UpdateBlogPostForm";
 import { Edit } from "lucide-react";

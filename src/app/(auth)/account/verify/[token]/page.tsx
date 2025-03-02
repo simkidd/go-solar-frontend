@@ -8,11 +8,12 @@ export const metadata: Metadata = {
   title: pageTitle,
 };
 
-const VerifyEmailToken = ({
-  params: { token },
+const VerifyEmailToken = async ({
+  params,
 }: {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }) => {
+  const { token } = await params;
   return (
     <div className="w-full">
       {token ? (

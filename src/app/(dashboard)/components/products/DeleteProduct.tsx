@@ -1,11 +1,13 @@
 "use client";
 import AppModal from "@/components/AppModal";
 import { Product } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { deleteProduct } from "@/lib/api/products";
+import { Button, useDisclosure } from "@heroui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { toast } from "react-toastify";
 
 const DeleteProduct: React.FC<{ product: Product }> = ({ product }) => {
   const {
@@ -44,13 +46,21 @@ export const DeletePopup: React.FC<{
   product: Product;
   onClose: () => void;
 }> = ({ product, onClose }) => {
-  const { loading, deleteProduct } = useProductStore();
+  const queryClient = useQueryClient();
   const router = useRouter();
 
+  const deleteProductMutation = useMutation({
+    mutationFn: deleteProduct,
+    onSuccess: (data) => {
+      toast.success(data?.message);
+      queryClient.invalidateQueries({ queryKey: ["allProducts"] });
+      onClose();
+      router.back();
+    },
+  });
+
   const handleDelete = () => {
-    deleteProduct(product?._id);
-    onClose();
-    router.back();
+    deleteProductMutation.mutate(product?._id);
   };
 
   return (
@@ -66,8 +76,8 @@ export const DeletePopup: React.FC<{
           variant="solid"
           color="danger"
           type="submit"
-          isDisabled={loading}
-          isLoading={loading}
+          isDisabled={deleteProductMutation.isPending}
+          isLoading={deleteProductMutation.isPending}
           onPress={handleDelete}
         >
           Delete

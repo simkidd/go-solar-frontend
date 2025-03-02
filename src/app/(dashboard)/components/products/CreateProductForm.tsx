@@ -9,7 +9,7 @@ import {
   SelectItem,
   Textarea,
   divider,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -184,7 +184,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 }
               >
                 {(cat) => (
-                  <SelectItem key={cat?._id} value={cat?._id}>
+                  <SelectItem key={cat?._id} textValue={cat?.name}>
                     {cat?.name}
                   </SelectItem>
                 )}
@@ -296,7 +296,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 }
               >
                 {(offer) => (
-                  <SelectItem key={offer?._id} value={offer?._id}>
+                  <SelectItem key={offer?._id} textValue={offer?.name}>
                     {offer?.name}
                   </SelectItem>
                 )}

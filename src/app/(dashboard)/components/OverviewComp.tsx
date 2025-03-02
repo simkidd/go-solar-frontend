@@ -14,7 +14,7 @@ import {
   DropdownItem,
   DropdownTrigger,
   DropdownMenu,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { ChevronDownIcon, SquareGanttChart } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -29,7 +29,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Calendar } from "@nextui-org/calendar";
+import { Calendar } from "@heroui/calendar";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { formatCurrency } from "@/utils/helpers";
 

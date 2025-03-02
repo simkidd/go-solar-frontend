@@ -11,7 +11,7 @@ import {
   Button,
   Input,
   Switch,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Check, X } from "lucide-react";
 import React, { useState } from "react";
 

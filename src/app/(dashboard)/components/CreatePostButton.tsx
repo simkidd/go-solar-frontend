@@ -1,6 +1,6 @@
 "use client";
 import AppModal from "@/components/AppModal";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@heroui/react";
 import { Plus } from "lucide-react";
 import React from "react";
 import CreateBlogPostForm from "./CreateBlogPostForm";

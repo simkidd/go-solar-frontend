@@ -21,8 +21,14 @@ import {
   Card,
   CardBody,
   Spinner,
-} from "@nextui-org/react";
-import { ChevronDownIcon, EllipsisVertical, Eye, RefreshCcw, SearchIcon } from "lucide-react";
+} from "@heroui/react";
+import {
+  ChevronDownIcon,
+  EllipsisVertical,
+  Eye,
+  RefreshCcw,
+  SearchIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
@@ -209,6 +215,7 @@ const CategoryProductsTable: React.FC<{ products: Product[] }> = ({
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
+                  key="view_details"
                   startContent={<Eye size={16} />}
                   onPress={() => router.push(`/admin/products/${product?._id}`)}
                 >

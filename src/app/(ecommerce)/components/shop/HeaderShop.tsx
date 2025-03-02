@@ -5,7 +5,7 @@ import { shopNavlist } from "@/data/menuData";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import {
   ChevronDown,
   LogOut,
@@ -26,8 +26,8 @@ import {
   FaXTwitter,
 } from "react-icons/fa6";
 import { MdClose, MdDashboard } from "react-icons/md";
-import MenuItem from "../../../components/MenuItem";
-import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
+import MenuItem from "../../../../components/MenuItem";
+import { ThemeSwitcher } from "../../../../components/ThemeSwitcher";
 
 const HeaderShop = () => {
   const { cartItems } = useCartStore();
@@ -122,7 +122,13 @@ const HeaderShop = () => {
             {/* logo */}
             <div className="flex items-center mr-auto lg:mr-0 w-48">
               <Link href="/" className="flex items-center gap-1">
-                <Image src={LogoIcon} alt="logo" width={55} height={50} />
+                <Image
+                  src={LogoIcon}
+                  alt="logo"
+                  width={55}
+                  height={50}
+                  style={{ width: "50px", height: "40px" }}
+                />
                 <span className="font-medium text-xl font-dmsans mt-2">
                   GoSolar
                 </span>

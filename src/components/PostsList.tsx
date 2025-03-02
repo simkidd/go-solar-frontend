@@ -1,6 +1,6 @@
 "use client";
 import { Post } from "@/interfaces/post.interface";
-import { Pagination } from "@nextui-org/react";
+import { Pagination } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
 import BlogCard from "./BlogCard";

@@ -1,7 +1,7 @@
 "use client";
 import LogoIcon from "@/assets/gosolar-logo-icon.svg";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -59,7 +59,14 @@ const AdminSidebar = () => {
       >
         <div className="flex items-center justify-between h-16 px-4 transition duration-300">
           <Link href="/" className="flex items-center gap-1">
-            <Image src={LogoIcon} alt="logo" width={55} height={50} />
+            <Image
+              src={LogoIcon}
+              alt="logo"
+              width={55}
+              height={50}
+              style={{ width: "50px", height: "40px" }}
+              priority
+            />
             <span
               className={`font-medium text-xl font-dmsans mt-2 ${
                 collapsed && "hidden"

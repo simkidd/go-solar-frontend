@@ -18,7 +18,13 @@ const Footer = () => {
             <div className="lg:p-4 px-2 py-4 ">
               <div className="mb-4">
                 <Link href="/" className="flex items-center gap-1">
-                  <Image src={LogoIcon} alt="logo" width={55} height={50} />
+                  <Image
+                    src={LogoIcon}
+                    alt="logo"
+                    width={55}
+                    height={50}
+                    style={{ width: "50px", height: "40px" }}
+                  />
                   <span className="font-medium text-xl font-dmsans mt-2">
                     GoSolar
                   </span>
@@ -68,7 +74,7 @@ const Footer = () => {
                     About Us
                   </Link>
                 </li>
-                
+
                 <li className="flex items-center">
                   <Link href="/blog" className="hover:text-primary">
                     Blog
@@ -112,7 +118,6 @@ const Footer = () => {
                 </li>
               </ul>
             </div>
-           
           </div>
         </div>
         <div className="container mx-auto px-2">

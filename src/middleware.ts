@@ -28,8 +28,9 @@ export default async function middleware(req: NextRequest) {
   const isPrivateRoute = privateRoutes.some((route) => path.startsWith(route));
   const isAuthRoute = authRoutes.some((route) => path.startsWith(route));
 
-  const cookie = cookies().get(TOKEN_NAME)?.value;
-  const userCookie = cookies().get(USER_DETAILS)?.value;
+  const cookieStore = await cookies();
+  const cookie = cookieStore.get(TOKEN_NAME)?.value;
+  const userCookie = cookieStore.get(USER_DETAILS)?.value;
 
   if (userCookie) {
     const user: User = JSON.parse(userCookie);

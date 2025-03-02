@@ -19,9 +19,9 @@ export const metadata: Metadata = {
 const PostSearchResults = async ({
   searchParams,
 }: {
-  searchParams: { q: string };
+  searchParams: Promise<{ q: string }>;
 }) => {
-  const query = searchParams.q;
+  const { q: query } = await searchParams;
   const posts: Post[] = await getPosts();
 
   let filteredResults: Post[] = [];

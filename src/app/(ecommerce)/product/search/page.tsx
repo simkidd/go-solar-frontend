@@ -1,16 +1,22 @@
-import SearchResultsComp from "../../components/SearchResultsComp";
+import Cta from "../../components/shop/Cta";
+import ProductsList from "../../components/shop/ProductsList";
 
 const SearchResults = async ({
   searchParams,
 }: {
-  searchParams: { q: string };
+  searchParams: Promise<{ q: string }>;
 }) => {
-  const query = searchParams.q;
+  const { q } = await searchParams;
 
   return (
     <div className="w-full font-dmsans">
       <section className="w-full">
-        <SearchResultsComp query={query} />
+        <div className="container mx-auto px-2 py-8">
+          <div className="mb-6">
+            <Cta />
+          </div>
+          <ProductsList query={q} />
+        </div>
       </section>
     </div>
   );

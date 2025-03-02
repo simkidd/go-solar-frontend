@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
+import { Breadcrumbs, BreadcrumbItem } from "@heroui/react";
 import { usePathname } from "next/navigation";
 
 const BreadcrumbComp: React.FC<{ name: string }> = ({ name }) => {

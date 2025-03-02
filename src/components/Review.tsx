@@ -58,6 +58,8 @@ const Review = () => {
               src={ReviewData[selected]?.image}
               alt="author image"
               className="w-full h-full object-cover"
+              width={300}
+              height={300}
             />
           </motion.div>
           <div className="absolute top-0 right-0 w-1/2 h-full light bg-[#f1f1f1] dark:bg-[#2a2b2f] z-[-1]"></div>
@@ -98,6 +100,8 @@ const Review = () => {
                 src={ReviewData[selected]?.image}
                 alt="author image"
                 className="w-full h-full object-cover"
+                width={300}
+                height={300}
               />
             </div>
             <div className="flex flex-col">

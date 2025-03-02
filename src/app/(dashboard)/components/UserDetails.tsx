@@ -1,7 +1,7 @@
 "use client";
 import { User } from "@/interfaces/auth.interface";
 import { axiosInstance } from "@/lib/axios";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 
 const UserDetails: React.FC<{ id: string }> = ({ id }) => {

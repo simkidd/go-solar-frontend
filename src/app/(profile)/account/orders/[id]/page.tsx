@@ -2,7 +2,7 @@ import AccountOrderDetails from "@/app/(profile)/components/AccountOrderDetails"
 import type { Metadata } from "next";
 
 interface IOrder {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const pageTitle = "Order Details";
@@ -13,10 +13,11 @@ export const metadata: Metadata = {
   },
 };
 
-const UserOrderPage = ({ params }: IOrder) => {
+const UserOrderPage = async ({ params }: IOrder) => {
+  const { id } = await params;
   return (
     <div>
-      <AccountOrderDetails id={params?.id} />
+      <AccountOrderDetails id={id} />
     </div>
   );
 };

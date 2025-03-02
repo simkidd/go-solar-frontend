@@ -1,5 +1,7 @@
 "use client";
 import AppModal from "@/components/AppModal";
+import useCategories from "@/hooks/useCategories";
+import useProducts from "@/hooks/useProducts";
 import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
@@ -26,7 +28,7 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   EllipsisVertical,
@@ -38,7 +40,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 const columns = [
   {
@@ -94,15 +96,7 @@ const columns = [
 ];
 
 const ProductsTable = () => {
-  const {
-    products,
-    loading,
-    categories,
-    deleteProduct,
-    fetchProducts,
-    addToOffer,
-    offers,
-  } = useProductStore();
+  const { loading, deleteProduct, addToOffer, offers } = useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
@@ -132,6 +126,9 @@ const ProductsTable = () => {
   const router = useRouter();
 
   const hasSearchFilter = Boolean(filterValue);
+
+  const { products, isError, isLoading, refetch } = useProducts();
+  const { categories } = useCategories();
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -251,12 +248,14 @@ const ProductsTable = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
+                  key={"view_details"}
                   startContent={<Eye size={16} />}
                   onPress={() => router.push(`/admin/products/${product?._id}`)}
                 >
                   View details
                 </DropdownItem>
                 <DropdownItem
+                  key={"edit_product"}
                   onPress={() => {
                     setSelectedProduct(product);
                     onOpen();
@@ -625,7 +624,7 @@ const ProductsTable = () => {
               onChange={(e) => setInput({ ...input, offer: e.target.value })}
             >
               {(offer) => (
-                <SelectItem key={offer?._id} value={offer?._id}>
+                <SelectItem key={offer?._id} textValue={offer?.name}>
                   {offer?.name}
                 </SelectItem>
               )}
@@ -652,7 +651,7 @@ const ProductsTable = () => {
         <Button
           variant="solid"
           color="warning"
-          onPress={fetchProducts}
+          onPress={() => refetch()}
           startContent={<RefreshCcw size={16} />}
           size="sm"
         >
@@ -690,7 +689,7 @@ const ProductsTable = () => {
         <TableBody
           emptyContent={"No products found"}
           items={sortedItems}
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={
             <Card className="dark:bg-[#222327]">
               <CardBody className="p-6">

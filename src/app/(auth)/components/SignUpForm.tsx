@@ -1,7 +1,7 @@
 "use client";
 import { SignUpInput } from "@/interfaces/auth.interface";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
-import HeaderShop from "../(ecommerce)/components/HeaderShop";
+import HeaderShop from "../(ecommerce)/components/shop/HeaderShop";
 import "../globals.scss";
 import { Providers } from "../providers";
 import ProfileSidebar from "./components/ProfileSidebar";

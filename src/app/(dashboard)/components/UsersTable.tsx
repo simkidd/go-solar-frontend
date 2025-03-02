@@ -20,7 +20,7 @@ import {
   Spinner,
   Card,
   CardBody,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   EllipsisVertical,
@@ -179,6 +179,7 @@ const UsersTable = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
+                  key={"view"}
                   onPress={() => router.push(`/admin/users/${user?._id}`)}
                 >
                   View

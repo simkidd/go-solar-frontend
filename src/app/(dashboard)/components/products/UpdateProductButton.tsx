@@ -1,11 +1,14 @@
 "use client";
 import AppModal from "@/components/AppModal";
 import { Product } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { ErrorResponse } from "@/interfaces/types";
+import { updateProduct } from "@/lib/api/products";
+import { Button, useDisclosure } from "@heroui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { Edit } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import UpdateProductForm from "./UpdateProductForm";
 
 const UpdateProductButton: React.FC<{
@@ -42,6 +45,7 @@ const UpdateProductButton: React.FC<{
       >
         {product?.isPublished ? "Draft" : "Publish"}
       </Button>
+
       <AppModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -73,20 +77,35 @@ export const PublishPopup: React.FC<{
   product: Product;
   onClose: () => void;
 }> = ({ onClose, product }) => {
-  const { loading, updateProduct } = useProductStore();
+  const queryClient = useQueryClient();
+
   const [input, setInput] = useState({
     productId: product?._id,
     isPublished: product?.isPublished,
   });
-  const router = useRouter();
+
+  const publishProductMutation = useMutation({
+    mutationFn: updateProduct,
+    onSuccess: (data) => {
+      toast.success(
+        data?.product?.isPublished ? "Product Published" : "Product Drafted"
+      );
+      queryClient.invalidateQueries({
+        queryKey: ["getProductById", product?._id],
+      });
+      onClose();
+    },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      const resError = error.response?.data;
+      console.error(resError);
+      const errorMessage = resError?.message ? resError?.message : resError;
+      toast.error(`Error: ${errorMessage}`);
+    },
+  });
 
   const handlePublish = async () => {
     const newPublishState = !input.isPublished;
-    setInput((prevInput) => ({ ...prevInput, isPublished: newPublishState }));
-
-    await updateProduct({ ...input, isPublished: newPublishState })
-      .then(() => router.refresh())
-      .finally(() => onClose());
+    publishProductMutation.mutate({ ...input, isPublished: newPublishState });
   };
 
   return (
@@ -102,8 +121,8 @@ export const PublishPopup: React.FC<{
           variant="solid"
           color="danger"
           type="submit"
-          isDisabled={loading}
-          isLoading={loading}
+          isDisabled={publishProductMutation.isPending}
+          isLoading={publishProductMutation.isPending}
           onPress={handlePublish}
         >
           Yes, {product.isPublished ? "draft" : "publish"}

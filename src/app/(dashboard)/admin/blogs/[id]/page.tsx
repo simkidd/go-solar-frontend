@@ -9,13 +9,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface IPost {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: IPost): Promise<Metadata> => {
-  const post: Post = await getPost(params.id);
+  const { id } = await params;
+  const post: Post = await getPost(id);
 
   return {
     title: post?.title,
@@ -36,7 +37,8 @@ export const generateStaticParams = async () => {
 };
 
 const SinglePostPage = async ({ params }: IPost) => {
-  const post: Post = await getPost(params.id);
+  const { id } = await params;
+  const post: Post = await getPost(id);
 
   if (!post) {
     notFound();

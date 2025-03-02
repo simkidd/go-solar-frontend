@@ -2,7 +2,12 @@ import UserDetails from "@/app/(dashboard)/components/UserDetails";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-const SingleUserPage = ({ params }: { params: { id: string } }) => {
+const SingleUserPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const { id } = await params;
   return (
     <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
       <div className="flex items-center justify-between mb-4">
@@ -16,7 +21,7 @@ const SingleUserPage = ({ params }: { params: { id: string } }) => {
       </div>
 
       <div className="w-full bg-white dark:bg-[#222327] py-16 px-6 shadow rounded">
-        <UserDetails id={params.id} />
+        <UserDetails id={id} />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 import { Post } from "@/interfaces/post.interface";
 import { useBlogStore } from "@/lib/stores/blog.store";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@heroui/react";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AppModal from "../../../components/AppModal";

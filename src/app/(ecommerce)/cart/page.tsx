@@ -8,7 +8,7 @@ import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
-import CartItemCard from "../components/CartItemCard";
+import CartItemCard from "../components/shop/CartItemCard";
 
 const CartPage = () => {
   const { user } = useAuthStore();

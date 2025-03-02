@@ -1,19 +1,17 @@
-import SingleProductComp from "@/app/(dashboard)/components/SingleProductComp";
+import SingleProductComp from "@/app/(dashboard)/components/products/SingleProductComp";
 import { Product } from "@/interfaces/product.interface";
-import { getProduct, getProducts } from "@/lib/data";
-import { Button } from "@nextui-org/react";
-import { ArrowLeft } from "lucide-react";
+import { getProductById, getProducts } from "@/lib/api/products";
 import { Metadata } from "next";
-import Link from "next/link";
 
 interface IProduct {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
-  const product: Product = await getProduct(params.id);
+  const { id } = await params;
+  const product: Product = await getProductById(id);
 
   return {
     title: product?.name,
@@ -33,23 +31,12 @@ export const generateStaticParams = async () => {
   }
 };
 
-const SingleProductPage = ({ params }: IProduct) => {
-  return (
-    <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
-      <div className="flex items-center justify-between mb-4">
-        <Link href="/admin/products">
-          <Button
-            variant="light"
-            color="default"
-            startContent={<ArrowLeft size={16} />}
-            className="dark:text-white"
-          >
-            Go back
-          </Button>
-        </Link>
-      </div>
+const SingleProductPage = async ({ params }: IProduct) => {
+  const { id } = await params;
 
-      <SingleProductComp id={params.id} />
+  return (
+    <div className="w-full container mx-auto py-4 font-inter">
+      <SingleProductComp id={id} />
     </div>
   );
 };
