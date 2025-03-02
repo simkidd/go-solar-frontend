@@ -193,7 +193,7 @@ const ProductsList = ({
   };
 
   // Loading state
-  if (!productsLoading || !categoriesLoading) {
+  if (productsLoading || categoriesLoading) {
     return (
       <div className="grid lg:grid-cols-9 grid-cols-1 gap-8">
         {/* Sidebar Skeletons */}
