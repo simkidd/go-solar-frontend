@@ -1,11 +1,10 @@
 "use client";
 import useCategories from "@/hooks/useCategories";
 import useProducts from "@/hooks/useProducts";
-import { Product } from "@/interfaces/product.interface";
 import { Pagination, Skeleton } from "@heroui/react";
 import { ArrowLeftCircleIcon, FilterIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import FilterComp from "./FilterComp";
 import ProductCard from "./ProductCard";
 
@@ -194,7 +193,7 @@ const ProductsList = ({
   };
 
   // Loading state
-  if (productsLoading || categoriesLoading) {
+  if (!productsLoading || !categoriesLoading) {
     return (
       <div className="grid lg:grid-cols-9 grid-cols-1 gap-8">
         {/* Sidebar Skeletons */}

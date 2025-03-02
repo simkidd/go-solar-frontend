@@ -45,6 +45,7 @@ const UpdateProductButton: React.FC<{
       >
         {product?.isPublished ? "Draft" : "Publish"}
       </Button>
+
       <AppModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -83,16 +84,11 @@ export const PublishPopup: React.FC<{
     isPublished: product?.isPublished,
   });
 
-  const handlePublish = async () => {
-    const newPublishState = !input.isPublished;
-    publishProductMutation.mutate({ ...input, isPublished: newPublishState });
-  };
-
   const publishProductMutation = useMutation({
     mutationFn: updateProduct,
     onSuccess: (data) => {
       toast.success(
-        data?.isPublished ? "Product published" : "Product drafted"
+        data?.product?.isPublished ? "Product Published" : "Product Drafted"
       );
       queryClient.invalidateQueries({
         queryKey: ["getProductById", product?._id],
@@ -106,6 +102,11 @@ export const PublishPopup: React.FC<{
       toast.error(`Error: ${errorMessage}`);
     },
   });
+
+  const handlePublish = async () => {
+    const newPublishState = !input.isPublished;
+    publishProductMutation.mutate({ ...input, isPublished: newPublishState });
+  };
 
   return (
     <div className="flex flex-col">

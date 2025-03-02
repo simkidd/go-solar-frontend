@@ -1,7 +1,7 @@
 "use client";
 import { Category } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import CategoryProductsTable from "./CategoryProductsTable";
+import CategoryProductsTable from "../CategoryProductsTable";
 
 const SingleCategoryProducts = ({ category }: { category: Category }) => {
   const { products } = useProductStore();

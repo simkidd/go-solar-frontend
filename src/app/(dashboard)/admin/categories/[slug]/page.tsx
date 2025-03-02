@@ -1,4 +1,4 @@
-import SingleCategoryProducts from "@/app/(dashboard)/components/SingleCategoryProducts";
+import SingleCategoryProducts from "@/app/(dashboard)/components/products/SingleCategoryProducts";
 import { Category } from "@/interfaces/product.interface";
 import { getCategories } from "@/lib/data";
 import { Button } from "@heroui/react";

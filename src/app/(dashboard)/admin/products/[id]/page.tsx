@@ -1,9 +1,7 @@
-import SingleProductComp from "@/app/(dashboard)/components/SingleProductComp";
+import SingleProductComp from "@/app/(dashboard)/components/products/SingleProductComp";
 import { Product } from "@/interfaces/product.interface";
 import { getProductById, getProducts } from "@/lib/api/products";
-import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
-import Link from "next/link";
 
 interface IProduct {
   params: Promise<{ id: string }>;
@@ -38,15 +36,6 @@ const SingleProductPage = async ({ params }: IProduct) => {
 
   return (
     <div className="w-full container mx-auto py-4 font-inter">
-      <div className="flex items-center justify-between mb-4">
-        <Link href="/admin/products">
-          <button className="inline-flex items-center gap-1">
-            <ArrowLeft size={16} />
-            Go back
-          </button>
-        </Link>
-      </div>
-
       <SingleProductComp id={id} />
     </div>
   );

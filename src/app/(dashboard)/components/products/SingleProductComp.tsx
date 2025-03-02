@@ -1,18 +1,19 @@
 "use client";
 import ProductDesc from "@/app/(ecommerce)/components/shop/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import { getProductById } from "@/lib/api/products";
 import { formatCurrency } from "@/utils/helpers";
 import { Card, CardBody } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
-import AddToOfferButton from "./AddToOfferButton";
+import AddToOfferButton from "../AddToOfferButton";
 import DeleteProduct from "./DeleteProduct";
+import SingleProductSkeleton from "./SingleProductSkeleton";
 import UpdateProductButton from "./UpdateProductButton";
 import UpdateProductImage from "./UpdateProductImage";
-import { Product } from "@/interfaces/product.interface";
 
 const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
   const {
@@ -26,7 +27,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
   });
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <SingleProductSkeleton />;
   }
 
   if (!product) {
@@ -45,6 +46,15 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <>
+      <div className="flex items-center justify-between mb-4">
+        <Link href="/admin/products">
+          <button className="inline-flex items-center gap-1">
+            <ArrowLeft size={16} />
+            Go back
+          </button>
+        </Link>
+      </div>
+
       <div className="flex items-center justify-between mb-6 flex-wrap">
         <h4 className="font-semibold text-2xl text-gray-800 dark:text-gray-200">
           Product Detail
@@ -90,9 +100,11 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
               {/* Offer Banner */}
               {product?.currentOffer?.isActive && (
-                <div className="bg-yellow-200 text-yellow-900 p-4 rounded-lg shadow-md">
-                  <p className="text-lg font-semibold">Limited Time Offer!</p>
-                  <p className="capitalize">{product?.currentOffer?.name}</p>
+                <div className="bg-yellow-200/25 text-yellow-500 p-4 rounded-lg border border-yellow-500/50">
+                  <p className="capitalize text-lg font-semibold">
+                    {product?.currentOffer?.name}
+                  </p>
+                  <p className="">Limited Time Offer!</p>
                 </div>
               )}
 

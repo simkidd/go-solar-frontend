@@ -1,16 +1,28 @@
 "use client";
+import useCategories from "@/hooks/useCategories";
 import { Product, UpdateProductInput } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
+import { ErrorResponse } from "@/interfaces/types";
+import { getOffers } from "@/lib/api/offers";
+import { updateProduct } from "@/lib/api/products";
 import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const UpdateProductForm: React.FC<{
   product: Product;
   onClose: () => void;
 }> = ({ product, onClose }) => {
-  const { loading, updateProduct, categories, offers } = useProductStore();
-  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const {
+    categories: allCategories,
+    isLoading: categoriesLoading,
+    isError: categoriesError,
+    refetch: refetchCategories,
+  } = useCategories();
+
   const [input, setInput] = useState<UpdateProductInput>({
     productId: product?._id,
     name: product?.name,
@@ -26,21 +38,47 @@ const UpdateProductForm: React.FC<{
     currentOffer: product?.currentOffer?._id,
   });
 
+  // get offers
+  const {
+    data: offers,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["alloffers"],
+    queryFn: async () => getOffers(),
+  });
+
+  const updateProductMutation = useMutation({
+    mutationFn: updateProduct,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({
+        queryKey: ["getProductById", product?._id],
+      });
+      onClose();
+    },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      const resError = error.response?.data;
+      console.error(resError);
+      const errorMessage = resError?.message ? resError?.message : resError;
+      toast.error(`Error: ${errorMessage}`);
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (input.category === "") {
       alert("Please select a category");
       return;
     }
 
-    await updateProduct(input);
-
-    router.refresh();
-    onClose();
+    updateProductMutation.mutate(input);
   };
 
-  const activeOffers = offers.filter((offer) => offer?.isActive);
+  // Get disabled keys based on the `isActive` property
+  const disabledKeys =
+    offers?.filter((offer) => !offer.isActive).map((offer) => offer._id) || [];
 
   return (
     <form className="w-full" onSubmit={handleSubmit}>
@@ -72,17 +110,17 @@ const UpdateProductForm: React.FC<{
           <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
             <div className="">
               <Select
-                items={categories}
+                items={allCategories}
                 label="Category"
                 placeholder="Select a category"
                 labelPlacement="outside"
-                value={input.category}
+                selectedKeys={input.category ? [input.category] : []} 
                 onChange={(e) =>
                   setInput({ ...input, category: e.target.value })
                 }
               >
                 {(cat) => (
-                  <SelectItem key={cat?._id} value={cat?._id}>
+                  <SelectItem key={cat?._id} textValue={cat?.name}>
                     {cat?.name}
                   </SelectItem>
                 )}
@@ -202,17 +240,20 @@ const UpdateProductForm: React.FC<{
 
             <div className="">
               <Select
-                items={activeOffers}
+                items={offers || []}
                 label="Add Offer to Product"
-                placeholder="Select an offer"
                 labelPlacement="outside"
-                value={input.currentOffer}
+                placeholder={
+                  isLoading ? "Loading offers..." : "Select an offer"
+                }
+                disabledKeys={disabledKeys}
+                selectedKeys={input.currentOffer ? [input.currentOffer] : []} 
                 onChange={(e) =>
                   setInput({ ...input, currentOffer: e.target.value })
                 }
               >
                 {(offer) => (
-                  <SelectItem key={offer?._id} value={offer?._id}>
+                  <SelectItem key={offer?._id} textValue={offer?.name}>
                     {offer?.name}
                   </SelectItem>
                 )}
@@ -245,8 +286,8 @@ const UpdateProductForm: React.FC<{
             variant="solid"
             color="primary"
             type="submit"
-            isDisabled={loading}
-            isLoading={loading}
+            isDisabled={updateProductMutation.isPending}
+            isLoading={updateProductMutation.isPending}
           >
             Save
           </Button>

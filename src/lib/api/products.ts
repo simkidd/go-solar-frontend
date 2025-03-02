@@ -1,4 +1,7 @@
-import { Product, UpdateProductInput } from "@/interfaces/product.interface";
+import {
+  Product,
+  UpdateProductInput
+} from "@/interfaces/product.interface";
 import { axiosInstance } from "../axios";
 
 export const getProducts = async () => {
@@ -30,10 +33,23 @@ export const deleteProduct = async (id: string) => {
   return data;
 };
 
-export const updateProduct = async (input: UpdateProductInput): Promise<Product> => {
+export const updateProduct = async (input: UpdateProductInput) => {
   const { data } = await axiosInstance.patch(
     "/admin/update-product-details",
     input
   );
-  return data.product;
+  return data;
+};
+
+export const createProduct = async (
+  formData: FormData,
+  config: any
+): Promise<Product> => {
+  const { data } = await axiosInstance.post(
+    "/admin/add-product",
+    formData,
+    config
+  );
+
+  return data;
 };

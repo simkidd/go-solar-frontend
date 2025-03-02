@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import CreateProductButton from "../../components/CreateProductButton";
-import ProductsTable from "../../components/ProductsTable";
+import CreateProductButton from "../../components/products/CreateProductButton";
+import ProductsTable from "../../components/products/ProductsTable";
 
 const pageTitle = "Products";
 
