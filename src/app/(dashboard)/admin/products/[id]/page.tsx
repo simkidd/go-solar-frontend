@@ -1,6 +1,6 @@
 import SingleProductComp from "@/app/(dashboard)/components/SingleProductComp";
 import { Product } from "@/interfaces/product.interface";
-import { getProduct, getProducts } from "@/lib/api/products";
+import { getProductById, getProducts } from "@/lib/api/products";
 import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -13,7 +13,7 @@ export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
   const { id } = await params;
-  const product: Product = await getProduct(id);
+  const product: Product = await getProductById(id);
 
   return {
     title: product?.name,

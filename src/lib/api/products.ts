@@ -6,7 +6,7 @@ export const getProducts = async () => {
   return data.products;
 };
 
-export const getProduct = async (id: string) => {
+export const getProductById = async (id: string) => {
   const { data } = await axiosInstance.get(`/products/${id}`);
   return data.product;
 };

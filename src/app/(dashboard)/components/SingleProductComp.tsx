@@ -2,41 +2,30 @@
 import ProductDesc from "@/app/(ecommerce)/components/shop/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { getProductById } from "@/lib/api/products";
 import { getProduct } from "@/lib/data";
-import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency } from "@/utils/helpers";
 import { Card, CardBody } from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import AddToOfferButton from "./AddToOfferButton";
 import DeleteProduct from "./DeleteProduct";
 import UpdateProductButton from "./UpdateProductButton";
 import UpdateProductImage from "./UpdateProductImage";
 
 const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
-  const { product, setProduct } = useProductStore();
-  const [loading, setLoading] = useState(true);
+  const {
+    data: product,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["getProductById", id],
+    queryFn: async () => getProductById(id),
+  });
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      if (id) {
-        try {
-          const data = await getProduct(id);
-          setProduct(data);
-        } catch (error) {
-          console.error("Error fetching product:", error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [id]);
-
-  if (loading) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 
