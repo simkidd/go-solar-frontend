@@ -37,7 +37,7 @@ const SingleProductPage = async ({ params }: IProduct) => {
   const { id } = await params;
 
   return (
-    <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
+    <div className="w-full container mx-auto py-4 font-inter">
       <div className="flex items-center justify-between mb-4">
         <Link href="/admin/products">
           <button className="inline-flex items-center gap-1">

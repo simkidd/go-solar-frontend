@@ -3,16 +3,16 @@ import ProductDesc from "@/app/(ecommerce)/components/shop/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { getProductById } from "@/lib/api/products";
-import { getProduct } from "@/lib/data";
 import { formatCurrency } from "@/utils/helpers";
 import { Card, CardBody } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
-import React, { useEffect } from "react";
+import React from "react";
 import AddToOfferButton from "./AddToOfferButton";
 import DeleteProduct from "./DeleteProduct";
 import UpdateProductButton from "./UpdateProductButton";
 import UpdateProductImage from "./UpdateProductImage";
+import { Product } from "@/interfaces/product.interface";
 
 const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
   const {
@@ -45,22 +45,22 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-4 flex-wrap">
-        <h4 className="font-semibold text-xl">Product Detail</h4>
+      <div className="flex items-center justify-between mb-6 flex-wrap">
+        <h4 className="font-semibold text-2xl text-gray-800 dark:text-gray-200">
+          Product Detail
+        </h4>
 
         <div className="flex items-center gap-2 flex-wrap">
           <DeleteProduct product={product} />
-
           <UpdateProductButton product={product} />
-
           <AddToOfferButton product={product} />
         </div>
       </div>
 
-      <Card className="dark:bg-[#222327] dark:text-white mb-8">
+      <Card className="dark:bg-[#222327] dark:text-white mb-8 shadow-lg rounded-lg">
         <CardBody>
-          <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
-            {/* product images */}
+          <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
+            {/* Product Images */}
             <div className="w-full">
               <ProductImages images={product?.images} />
 
@@ -69,53 +69,87 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
               </div>
             </div>
 
-            {/* product details */}
-            <div className="w-full flex flex-col">
-              <h2 className="font-bold text-2xl mb-4">{product?.name}</h2>
-              <h3 className="font-bold text-2xl mb-5 space-x-2">
-                <span className="font-semibold">
+            {/* Product Details */}
+            <div className="w-full flex flex-col space-y-6">
+              <h2 className="font-bold text-3xl text-gray-900 dark:text-gray-100">
+                {product?.name}
+              </h2>
+
+              {/* Price Section */}
+              <div className="flex items-center space-x-4">
+                <span className="font-bold text-3xl text-primary">
                   {formatCurrency(newPrice, "NGN")}
                 </span>
                 {product?.currentOffer?.isActive &&
                   product?.currentOffer?.percentageOff && (
-                    <span className="line-through text-gray-500 text-xl">
+                    <span className="line-through text-gray-500 text-2xl">
                       {formatCurrency(product?.price, "NGN")}
                     </span>
-                  )}{" "}
-              </h3>
+                  )}
+              </div>
 
+              {/* Offer Banner */}
               {product?.currentOffer?.isActive && (
-                <div className="bg-yellow-200 text-yellow-900 p-4 rounded-md shadow-md">
+                <div className="bg-yellow-200 text-yellow-900 p-4 rounded-lg shadow-md">
                   <p className="text-lg font-semibold">Limited Time Offer!</p>
                   <p className="capitalize">{product?.currentOffer?.name}</p>
                 </div>
               )}
 
-              <div className="mt-5">
-                <p className="font-medium">Quantity in stock:</p>{" "}
-                <span className="font-bold text-lg">
-                  {product?.quantityInStock}
-                </span>
-                <p className="font-medium">Category:</p>{" "}
-                <span className="font-bold text-lg">
-                  {product?.category?.name}
-                </span>
-                <p className="font-medium">Brand:</p>{" "}
-                <span className="font-bold text-lg">{product?.brand}</span>
-                <p className="font-medium">
-                  Delivery fee within Location:
-                </p>{" "}
-                <span className="font-bold text-lg">
-                  {formatCurrency(product?.withinLocationDeliveryFee, "NGN")}
-                </span>
-                <p className="font-medium">Delivery fee outside Location:</p>{" "}
-                <span className="font-bold text-lg">
-                  {formatCurrency(product?.outsideLocationDeliveryFee, "NGN")}
-                </span>
+              {/* Product Metadata */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <p className="font-medium text-gray-700 dark:text-gray-300">
+                    Quantity in stock:
+                  </p>
+                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                    {product?.quantityInStock}
+                  </span>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <p className="font-medium text-gray-700 dark:text-gray-300">
+                    Category:
+                  </p>
+                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                    {product?.category?.name}
+                  </span>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <p className="font-medium text-gray-700 dark:text-gray-300">
+                    Brand:
+                  </p>
+                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                    {product?.brand}
+                  </span>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <p className="font-medium text-gray-700 dark:text-gray-300">
+                    Delivery fee within Location:
+                  </p>
+                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                    {formatCurrency(product?.withinLocationDeliveryFee, "NGN")}
+                  </span>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <p className="font-medium text-gray-700 dark:text-gray-300">
+                    Delivery fee outside Location:
+                  </p>
+                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                    {formatCurrency(product?.outsideLocationDeliveryFee, "NGN")}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-          <ProductDesc product={product} />
+
+          {/* Product Description */}
+          <div className="mt-8">
+            <ProductDesc product={product} />
+          </div>
         </CardBody>
       </Card>
     </>
