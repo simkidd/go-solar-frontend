@@ -1,12 +1,9 @@
-"use client";
-import { useProductStore } from "@/lib/stores/product.store";
+
 import Cta from "../components/Cta";
 import ProductsList from "../components/ProductsList";
 
 const ProductListPage = () => {
-  const { products, categories } = useProductStore();
-
-  const publishedProducts = products.filter((product) => product.isPublished);
+ 
 
   return (
     <div className="w-full font-dmsans">
@@ -15,7 +12,7 @@ const ProductListPage = () => {
           <div className="mb-6">
             <Cta />
           </div>
-          <ProductsList categories={categories} products={publishedProducts} />
+          <ProductsList />
         </div>
       </section>
     </div>

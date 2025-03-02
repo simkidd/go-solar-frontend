@@ -8,7 +8,6 @@ import "../globals.scss";
 import { Providers } from "../providers";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { config } from "@/utils/config";
-import { HotJar } from "@/utils/Hotjar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -90,7 +89,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <HotJar />
       <body className={inter.className}>
         <NextTopLoader
           color="#08AA08"

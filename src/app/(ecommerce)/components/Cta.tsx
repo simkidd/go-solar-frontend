@@ -4,13 +4,14 @@ import banner from "@/assets/images/G11.jpg";
 
 const Cta: React.FC = () => {
   return (
-    <div>
-      <div className="w-full bg-gray-500 lg:h-[180px]">
+    <div className="container">
+      <div className="flex mx-auto w-fit">
         <Image
           src={banner.src}
           alt="cta-image"
           width={banner.width}
           height={banner.height}
+          className=""
         />
       </div>
     </div>

@@ -1,14 +1,13 @@
+import Footer from "@/components/Footer";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import Navbar from "@/components/Navbar";
+import { config } from "@/utils/config";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
+import { Suspense } from "react";
 import "../globals.scss";
 import { Providers } from "../providers";
-import Navbar from "@/components/Navbar";
-import NextTopLoader from "nextjs-toploader";
-import Footer from "@/components/Footer";
-import { Suspense } from "react";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { config } from "@/utils/config";
-import { HotJar } from "@/utils/Hotjar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -90,7 +89,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="light" suppressHydrationWarning>
-      <HotJar />
       <body className={inter.className}>
         <NextTopLoader
           color="#08AA08"

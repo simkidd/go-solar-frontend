@@ -1,5 +1,7 @@
 "use client";
 import AppModal from "@/components/AppModal";
+import useCategories from "@/hooks/useCategories";
+import useProducts from "@/hooks/useProducts";
 import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
@@ -38,7 +40,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 const columns = [
   {
@@ -94,15 +96,8 @@ const columns = [
 ];
 
 const ProductsTable = () => {
-  const {
-    products,
-    loading,
-    categories,
-    deleteProduct,
-    fetchProducts,
-    addToOffer,
-    offers,
-  } = useProductStore();
+  const { loading, deleteProduct, addToOffer, offers } =
+    useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
@@ -132,6 +127,9 @@ const ProductsTable = () => {
   const router = useRouter();
 
   const hasSearchFilter = Boolean(filterValue);
+
+  const { products, isError, isLoading, refetch } = useProducts();
+  const { categories } = useCategories();
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -652,7 +650,7 @@ const ProductsTable = () => {
         <Button
           variant="solid"
           color="warning"
-          onPress={fetchProducts}
+          onPress={() => refetch()}
           startContent={<RefreshCcw size={16} />}
           size="sm"
         >
@@ -690,7 +688,7 @@ const ProductsTable = () => {
         <TableBody
           emptyContent={"No products found"}
           items={sortedItems}
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={
             <Card className="dark:bg-[#222327]">
               <CardBody className="p-6">
