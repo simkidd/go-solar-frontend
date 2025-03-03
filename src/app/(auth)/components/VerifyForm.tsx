@@ -2,7 +2,8 @@
 /* eslint-disable react/no-unescaped-entities */
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Input } from "@heroui/react";
+import { Button, Input, Spinner } from "@heroui/react";
+import { MailIcon, XCircleIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -53,9 +54,12 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
 
   if (loadingVerify) {
     return (
-      <div className="text-center">
-        <h3 className="font-medium text-xl">Verifying...</h3>
-        <p>This won't take long.</p>
+      <div className="text-center py-4">
+        <Spinner size="lg" />
+        <h3 className="font-medium text-xl mt-3">Verifying...</h3>
+        <p className="text-gray-500 dark:text-gray-500">
+          This won't take long.
+        </p>
       </div>
     );
   }
@@ -64,34 +68,39 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
     return (
       <div className="login-form-container gap-2 pe-md-5">
         {!showInput ? (
-          <>
+          <div className="flex flex-col items-center gap-4">
+          <XCircleIcon size={50} className="text-center text-red-400" />
             <p className="text-center mb-4 text-red-400">
               Invalid or expired verification code
             </p>
-            {/* <p className="text-primary text-center cursor-pointer" onClick={() => setShowInput(true)}>
+            {/* <p
+              className="text-primary text-center cursor-pointer"
+              onClick={() => setShowInput(true)}
+            >
               Resend verification
             </p> */}
-          </>
+          </div>
         ) : (
           <>
             {resend ? (
               <p>We've sent a verification link to your email.</p>
             ) : (
               <>
-                <h4 className="mb-2 text-center text-xl font-semibold">
+                <h4 className="mb-4 text-center text-xl font-semibold">
                   Request verification
                 </h4>
                 <form onSubmit={handleSubmit} className="mb-8">
                   <div className="input-group mb-3">
                     <Input
                       type="email"
-                      variant="underlined"
-                      label="Email"
-                      size="lg"
+                      placeholder="Enter email address"
                       className="w-full"
-                      classNames={{
-                        label: "text-black/50 dark:text-white/90",
-                      }}
+                      startContent={
+                        <MailIcon
+                          size={16}
+                          className="text-default-400 pointer-events-none flex-shrink-0"
+                        />
+                      }
                       errorMessage={
                         isEmailInvalid && "Please enter a valid email address"
                       }
@@ -102,9 +111,13 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
                     />
                   </div>
 
-                  <button className="w-full bg-primary text-white py-2 px-8 mt-8">
-                    {loading ? "Sending..." : "Resend"}
-                  </button>
+                  <Button
+                    isLoading={loading}
+                    className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:!bg-gray-400"
+                    disabled={!input.email || loading}
+                  >
+                    Resend
+                  </Button>
                 </form>
               </>
             )}

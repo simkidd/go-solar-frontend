@@ -1,6 +1,7 @@
 "use client";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Button, Input } from "@heroui/react";
+import { MailIcon } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
 const ForgetPswForm = () => {
@@ -30,14 +31,13 @@ const ForgetPswForm = () => {
       <div className="input-group mb-3">
         <Input
           type="email"
-          label="Email"
           labelPlacement="outside"
           placeholder="Enter your email address"
           name="email"
           className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
+          startContent={
+            <MailIcon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+          }
           errorMessage={isEmailInvalid && "Please enter a valid email address"}
           value={input?.email}
           onChange={(e) => setInput({ ...input, email: e.target.value })}

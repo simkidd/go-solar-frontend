@@ -85,8 +85,7 @@ const SignUpForm = () => {
       errors.push("Password must include at least 1 symbol.");
     }
 
-    // await signup(input);
-    console.log("signup input>>>", input);
+    await signup(input);
 
     setInput({
       email: "",
