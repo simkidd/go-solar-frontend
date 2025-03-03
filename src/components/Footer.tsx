@@ -99,17 +99,29 @@ const Footer = () => {
               <ul className="space-y-2">
                 <li className="flex ">
                   <MapPin size={16} className="text-primary mr-2" />
-                  Opp. Rosco Filling Station, <br />
-                  Eneka/Igwuruta Road, <br />
-                  Port Harcourt.
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=gosolar+4+Eneka,+Igwuruta+Road,+Airport+road,+Port+Harcourt"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    4 Eneka, Igwuruta Road, Airport road, Port Harcourt
+                  </a>
                 </li>
                 <li className="flex ">
                   <Phone size={16} className="text-primary mr-2" />
-                  0706 276 2879
+                  <a href="tel:+2347062762879" className="hover:underline">
+                    0706 276 2879
+                  </a>
                 </li>
                 <li className="flex ">
                   <Mail size={16} className="text-primary mr-2" />
-                  gosolardotng@gmail.com
+                  <a
+                    href="mailto:gosolardotng@gmail.com"
+                    className="hover:underline"
+                  >
+                    gosolardotng@gmail.com
+                  </a>
                 </li>
                 <li className="flex items-start">
                   <CalendarDays size={16} className="text-primary mr-2" />
