@@ -17,7 +17,11 @@ export const metadata: Metadata = {
 const AboutUsPage = () => {
   return (
     <div className="w-full font-inter">
-      <PageHeader name="About Us" heading="About Us" />
+      <PageHeader
+        name="About Us"
+        heading="About Us"
+        className="bg-about-us-bg bg-no-repeat bg-center bg-cover text-white"
+      />
       {/* about us */}
       <section className="w-full py-20">
         <div className="container mx-auto px-2">
@@ -76,7 +80,7 @@ const AboutUsPage = () => {
       </section>
 
       {/* quote section */}
-      <section className="w-full py-20 bg-gray-500">
+      <section className="w-full py-20 bg-blog-bg bg-no-repeat bg-bottom bg-cover">
         <div className="container mx-auto px-2">
           <div className="grid lg:grid-cols-2 grid-cols-1">
             <div className="hidden lg:block"></div>

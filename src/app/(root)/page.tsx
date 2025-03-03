@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import BlogCard from "@/components/BlogCard";
+import HomeContactCta from "@/components/home/HomeContactCta";
 import MarqueeComp from "@/components/MarqueeComp";
 import Review from "@/components/Review";
 import { Post } from "@/interfaces/post.interface";
@@ -16,8 +17,9 @@ const page = async () => {
   return (
     <div className="w-full font-inter">
       {/* hero section */}
-      <section className="w-full py-16">
-        <div className="container mx-auto px-2">
+      <section className="w-full relative py-16 bg-hero-bg bg-center bg-cover bg-no-repeat">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-black/80 z-10" />
+        <div className="container mx-auto px-2 drop-shadow-md relative z-10 text-white">
           <div className="grid grid-cols-1 lg:grid-cols-2 py-16">
             <div className="w-full px-4">
               <h2 className="text-2xl text-primary font-bold mb-4">GoSolar</h2>
@@ -106,15 +108,15 @@ const page = async () => {
         <div className="container mx-auto px-2 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-4">
             <div className="w-full p-2 flex flex-col items-center lg:border-r-gray-400 lg:border-r ">
-              <span className="text-5xl leading-normal">48+</span>
+              <span className="text-5xl leading-normal">10+</span>
               <p className="text-lg text-primary">Years Experience</p>
             </div>
             <div className="w-full p-2 flex flex-col items-center lg:border-r-gray-400 lg:border-r ">
-              <span className="text-5xl leading-normal">2886+</span>
+              <span className="text-5xl leading-normal">1886+</span>
               <p className="text-lg text-primary">Projects Completed</p>
             </div>
             <div className="w-full p-2 flex flex-col items-center">
-              <span className="text-5xl leading-normal">48+</span>
+              <span className="text-5xl leading-normal">68+</span>
               <p className="text-lg text-primary">Happy Customers</p>
             </div>
           </div>
@@ -202,27 +204,7 @@ const page = async () => {
         </section>
       )}
       {/* contact section */}
-      <section className="w-full py-16">
-        <div className="container mx-auto px-2 py-16 border border-gray-400">
-          <div className="grid grid-cols-1 lg:grid-cols-3 lg:px-16">
-            <div className="col-span-2">
-              <h2 className="capitalize mb-4 text-2xl text-primary">
-                Need Assistance?
-              </h2>
-              <h2 className="lg:text-5xl text-4xl font-bold">
-                Contact Us Today
-              </h2>
-            </div>
-            <div className="col-span-1 flex items-center lg:justify-end justify-center mt-6 lg:mt-0">
-              <Link href="">
-                <button className="bg-primary text-white py-4 px-8">
-                  Get In Touch
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HomeContactCta />
     </div>
   );
 };
