@@ -1,3 +1,4 @@
+"use client"
 import { Input, Textarea } from "@heroui/react";
 import React from "react";
 

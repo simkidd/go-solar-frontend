@@ -2,20 +2,19 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import { USER_DETAILS } from "@/utils/constants";
 import Cookies from "js-cookie";
 import { createContext, ReactNode, useContext, useEffect } from "react";
-import { SignUpInput, User } from "../interfaces/auth.interface";
+import { User } from "../interfaces/auth.interface";
 
 interface SessionContextType {
   user: User | undefined;
-  loading: boolean;
   logout: () => void;
-  signup: (input: SignUpInput) => Promise<void>;
   setUser: (user: User) => void;
+  isAuthenticated: boolean;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
-  const { user, loading, logout, signup, setUser } = useAuthStore();
+  const { user, logout, setUser, isAuthenticated } = useAuthStore();
 
   // Initialize user from cookies on mount
   useEffect(() => {
@@ -30,10 +29,9 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     <SessionContext.Provider
       value={{
         user,
-        loading,
         logout,
-        signup,
         setUser,
+        isAuthenticated,
       }}
     >
       {children}

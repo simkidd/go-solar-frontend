@@ -10,9 +10,7 @@ import { notFound } from "next/navigation";
 const pageTitle = "Blogs";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: pageTitle,
-  },
+  title: pageTitle
 };
 
 const BlogsPage = async () => {

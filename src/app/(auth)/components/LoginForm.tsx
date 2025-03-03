@@ -1,10 +1,13 @@
 "use client";
+import { useSession } from "@/context/SessionContext";
 import { LoginInput } from "@/interfaces/auth.interface";
-import { LoginApiResponse } from "@/interfaces/types";
+import { ErrorResponse, LoginApiResponse } from "@/interfaces/types";
 import { axiosInstance } from "@/lib/axios";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { TOKEN_NAME, USER_DETAILS } from "@/utils/constants";
-import { Button, Input } from "@heroui/react";
+import { addToast, Button, Input } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -13,6 +16,7 @@ import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const searchParams = useSearchParams();
+  const { setUser, setIsAuthenticated } = useAuthStore();
   const [isVisible, setIsVisible] = useState(false);
   const [input, setInput] = useState<LoginInput>({
     email: "",
@@ -55,24 +59,47 @@ const LoginForm = () => {
         return;
       }
 
+      setUser(user);
+      setIsAuthenticated(true);
+
       const userToken = JSON.stringify(user);
       if (userToken) {
         Cookies.set(USER_DETAILS, userToken);
         Cookies.set(TOKEN_NAME, user.token);
-        toast.success(data.message);
-        window.location.href = redirectUrl;
+        // toast.success(data.message);
+        addToast({
+          title: "Success",
+          description: data.message,
+          color:"success"
+        });
+        router.push(redirectUrl);
       }
+    },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      const resError = error.response?.data;
+      console.error(resError);
+      const errorMessage = resError?.message ? resError?.message : resError;
+      // toast.error(`Error: ${errorMessage}`);
+      addToast({
+        title: "Error",
+        description: errorMessage as string,
+        color:"danger"
+      });
     },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.email || !input.password) {
-      alert("All fields are required");
+      addToast({
+        title: "Attention",
+        description: "All fields are required",
+        color:"warning"
+      });
       return;
     }
 
-    await loginMutation.mutateAsync({
+    loginMutation.mutate({
       email: input.email,
       password: input.password,
     });
@@ -83,15 +110,12 @@ const LoginForm = () => {
       <div className="input-group mb-3">
         <Input
           type="email"
-          variant="underlined"
           label="Email"
           name="email"
-          size="lg"
           className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
-          color={isEmailInvalid ? "danger" : "success"}
+          labelPlacement="outside"
+          placeholder="Enter email address"
+          // color={isEmailInvalid ? "danger" : "success"}
           errorMessage={isEmailInvalid && "Please enter a valid email address"}
           value={input?.email}
           onChange={(e) => setInput({ ...input, email: e.target.value })}
@@ -100,14 +124,10 @@ const LoginForm = () => {
       <div className="input-group mb-4">
         <Input
           type={isVisible ? "text" : "password"}
-          variant="underlined"
           label="Password"
           name="password"
-          size="lg"
           className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
+          labelPlacement="outside"
           endContent={
             <button
               className="focus:outline-none"
@@ -127,7 +147,7 @@ const LoginForm = () => {
               )}
             </button>
           }
-          color={isPasswordInvalid ? "danger" : "success"}
+          // color={isPasswordInvalid ? "danger" : "success"}
           errorMessage={
             isPasswordInvalid && "Password must be at least 6 characters"
           }
@@ -139,11 +159,9 @@ const LoginForm = () => {
         variant="solid"
         color="primary"
         type="submit"
-        className="w-full rounded-none disabled:!bg-gray-400 mt-4"
+        className="w-full disabled:!bg-gray-400 mt-4"
         isLoading={loginMutation.isPending}
-        isDisabled={
-          !input.password || isPasswordInvalid || loginMutation.isPending
-        }
+        isDisabled={!input.password || loginMutation.isPending}
       >
         Login
       </Button>

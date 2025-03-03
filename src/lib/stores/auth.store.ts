@@ -26,12 +26,16 @@ interface IAuthStore {
   setShowSidebar: (showSidebar: boolean) => void;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
 }
 
 export const useAuthStore = create<IAuthStore>((set) => ({
   loading: false,
+  isAuthenticated: false,
   user: undefined,
   users: [],
+  setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
   setUser: (user: User) => set({ user }),
   setUsers: (users: User[]) => set({ users }),
   showSidebar: false,
@@ -42,6 +46,7 @@ export const useAuthStore = create<IAuthStore>((set) => ({
     window.location.href = "/account/login";
     Cookies.remove(TOKEN_NAME);
     Cookies.remove(USER_DETAILS);
+    set({ user: undefined, isAuthenticated: false });
   },
 
   signup: async (input) => {

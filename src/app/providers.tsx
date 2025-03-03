@@ -3,7 +3,7 @@
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SessionProvider } from "@/context/SessionContext";
 import QueryProvider from "@/providers/Queryprovider";
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,6 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               pauseOnHover
               theme="dark"
             />
+            <ToastProvider placement="top-center" />
           </ThemeProvider>
         </HeroUIProvider>
       </QueryProvider>

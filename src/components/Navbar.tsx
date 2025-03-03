@@ -13,7 +13,7 @@ import MenuItem from "./MenuItem";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const Navbar = () => {
-  const { user, logout } = useSession();
+  const { isAuthenticated, user, logout } = useSession();
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
 
@@ -57,7 +57,7 @@ const Navbar = () => {
           </div>
 
           <div className=" ml-auto flex items-center gap-8">
-            {user ? (
+            {isAuthenticated ? (
               <>
                 {user?.isAdmin ||
                   (user?.isSuperAdmin && (
@@ -201,7 +201,7 @@ const Navbar = () => {
             </ul>
 
             <div className="flex flex-col items-center space-y-6">
-              {user ? (
+              {isAuthenticated ? (
                 <>
                   {user?.isAdmin ||
                     (user?.isSuperAdmin && (
