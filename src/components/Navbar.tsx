@@ -1,7 +1,7 @@
 "use client";
 import LogoIcon from "@/assets/gosolar-logo-icon.svg";
+import { useSession } from "@/context/SessionContext";
 import { navlist } from "@/data/menuData";
-import { useAuthStore } from "@/lib/stores/auth.store";
 import { Mail, Menu, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +13,7 @@ import MenuItem from "./MenuItem";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const Navbar = () => {
-  const { user, logout } = useAuthStore();
+  const { user, logout } = useSession();
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
 
