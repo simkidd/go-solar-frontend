@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 
 const HeroSection = () => {
   return (
-    <section className="w-full relative py-16 bg-hero-bg bg-center bg-cover bg-no-repeat">
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-black/80 z-10" />
-      <div className="container mx-auto px-2 drop-shadow-md relative z-10 text-white">
-        <div className="grid grid-cols-1 lg:grid-cols-2 py-16">
+    <section className="w-full relative py-16 bg-hero-bg bg-center bg-cover bg-no-repeat min-h-dvh flex flex-col justify-center">
+      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-black/80 z-10" />
+      <div className="container mx-auto px-2 drop-shadow-md relative z-10 text-white ">
+        <div className="grid grid-cols-1 lg:grid-cols-2 py-16 pb-8">
           <div className="w-full px-4">
             {/* GoSolar Heading */}
             <motion.h2

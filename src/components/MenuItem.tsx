@@ -13,8 +13,8 @@ const MenuItem: React.FC<{
         <div className="w-full h-full">
           <Link
             href={href}
-            className={`h-full flex justify-center items-center border-b-2 border-b-transparent hover:text-primary transition-all duration-300 ease-in-out ${
-              isActive(href) ? "!border-b-primary text-primary" : ""
+            className={`h-full flex justify-center items-center border-b-2 border-b-transparent hover:text-primary transition-all duration-300 ease-in-out font-medium ${
+              isActive(href) ? " text-primary" : ""
             }`}
           >
             {label}
