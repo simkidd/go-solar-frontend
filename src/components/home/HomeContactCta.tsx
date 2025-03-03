@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@heroui/react";
 import Link from "next/link";
 import React from "react";
@@ -10,14 +10,18 @@ const HomeContactCta = () => {
       <div className="container mx-auto px-2 py-16 drop-shadow-md relative z-10 text-white">
         <div className="grid grid-cols-1 lg:grid-cols-3 lg:px-16">
           <div className="col-span-2">
-            <h2 className="capitalize mb-4 text-2xl text-primary">
+            <h2 className="capitalize mb-4 text-2xl text-primary text-center lg:text-left">
               Need Assistance?
             </h2>
-            <h2 className="lg:text-5xl text-4xl font-bold">Contact Us Today</h2>
+            <h2 className="lg:text-5xl text-4xl font-bold text-center lg:text-left">
+              Contact Us Today
+            </h2>
           </div>
           <div className="col-span-1 flex items-center lg:justify-end justify-center mt-6 lg:mt-0">
             <Link href="/contact-us">
-              <Button color="primary" size="lg" className="">Get In Touch</Button>
+              <Button color="primary" size="lg" className="">
+                Get In Touch
+              </Button>
             </Link>
           </div>
         </div>
