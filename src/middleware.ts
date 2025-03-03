@@ -54,7 +54,7 @@ export default async function middleware(req: NextRequest) {
       // User is authenticated, check if they are an admin
       if (!isAdminUser(user)) {
         // User is not an admin, restrict access
-        return NextResponse.redirect(new URL("/account/login", req.nextUrl));
+        return NextResponse.redirect(new URL("/unauthorized", req.nextUrl));
       }
     } else {
       // User is not authenticated, redirect to login with redirectUrl
