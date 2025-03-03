@@ -1,6 +1,6 @@
 "use client";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Input } from "@heroui/react";
+import { Button, Input } from "@heroui/react";
 import React, { useMemo, useState } from "react";
 
 const ForgetPswForm = () => {
@@ -30,10 +30,10 @@ const ForgetPswForm = () => {
       <div className="input-group mb-3">
         <Input
           type="email"
-          variant="underlined"
           label="Email"
+          labelPlacement="outside"
+          placeholder="Enter your email address"
           name="email"
-          size="lg"
           className="w-full"
           classNames={{
             label: "text-black/50 dark:text-white/90",
@@ -44,12 +44,14 @@ const ForgetPswForm = () => {
         />
       </div>
 
-      <button
-        className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:bg-gray-400"
-        disabled={!input.email || isEmailInvalid}
+      <Button
+       color="primary"
+        className="w-full mt-8 disabled:bg-gray-400"
+        disabled={!input.email}
+        isLoading={loading}
       >
-        {loading ? "Loading..." : "Send"}
-      </button>
+        Send
+      </Button>
     </form>
   );
 };

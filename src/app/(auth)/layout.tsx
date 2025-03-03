@@ -43,7 +43,7 @@ export default function RootLayout({
               </span> */}
             </Link>
             <div className="w-full max-w-md p-4 mx-auto">
-              <div className="w-full light bg-white dark:bg-[#222327] shadow-lg">
+              <div className="w-full light bg-white dark:bg-[#222327] shadow-lg rounded-lg">
                 <div className="flex flex-col items-center py-8 px-6">
                   <div className="w-full ">{children}</div>
                 </div>
