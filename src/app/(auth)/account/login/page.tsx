@@ -3,7 +3,7 @@
 import LoginForm from "@/app/(auth)/components/LoginForm";
 import { Metadata } from "next";
 import Link from "next/link";
-import SignUpButton from "../../components/SignUpButton";
+import SignUpLinkButton from "../../components/SignUpLinkButton";
 
 const pageTitle = "Log into an account";
 
@@ -31,7 +31,7 @@ const LoginPage = () => {
       <div className="flex flex-col mt-2">
         <p className="text-sm text-center mb-2">Don't have an account?</p>
         <Link href="/account/register">
-          <SignUpButton />
+          <SignUpLinkButton />
         </Link>
       </div>
     </div>

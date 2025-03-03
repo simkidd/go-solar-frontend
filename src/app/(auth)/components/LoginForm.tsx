@@ -9,7 +9,7 @@ import { addToast, Button, Input } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import Cookies from "js-cookie";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LockIcon, MailIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -107,10 +107,10 @@ const LoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="mb-8">
-      <div className="input-group mb-3">
+      <div className="input-group mb-4">
         <Input
           type="email"
-          label="Email"
+          // label="Email"
           name="email"
           className="w-full"
           labelPlacement="outside"
@@ -119,15 +119,22 @@ const LoginForm = () => {
           errorMessage={isEmailInvalid && "Please enter a valid email address"}
           value={input?.email}
           onChange={(e) => setInput({ ...input, email: e.target.value })}
+          startContent={
+            <MailIcon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+          }
         />
       </div>
       <div className="input-group mb-4">
         <Input
           type={isVisible ? "text" : "password"}
-          label="Password"
+          // label="Password"
           name="password"
           className="w-full"
           labelPlacement="outside"
+          placeholder="Enter password"
+          startContent={
+            <LockIcon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+          }
           endContent={
             <button
               className="focus:outline-none"
@@ -148,6 +155,7 @@ const LoginForm = () => {
             </button>
           }
           // color={isPasswordInvalid ? "danger" : "success"}
+          isInvalid={isPasswordInvalid}
           errorMessage={
             isPasswordInvalid && "Password must be at least 6 characters"
           }

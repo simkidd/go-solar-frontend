@@ -1,5 +1,6 @@
 "use client";
 
+import 'react-phone-number-input/style.css'
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SessionProvider } from "@/context/SessionContext";
 import QueryProvider from "@/providers/Queryprovider";

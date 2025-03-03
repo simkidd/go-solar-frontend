@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import React from "react";
 import SignUpForm from "@/app/(auth)/components/SignUpForm";
 import Link from "next/link";
+import LoginLinkButton from "../../components/LoginLinkButton";
 
 const pageTitle = "Create an account";
 
@@ -18,11 +19,8 @@ const RegisterPage = () => {
       <SignUpForm />
       <div className="flex flex-col">
         <p className="text-sm text-center mb-2">Already have an account? </p>
-        <Link
-          href="/account/login"
-          className="font-medium border border-primary text-primary hover:bg-primary hover:text-white transition-colors transition-background py-2 px-8 flex justify-center items-center"
-        >
-          Login
+        <Link href="/account/login">
+          <LoginLinkButton />
         </Link>
       </div>
     </div>
