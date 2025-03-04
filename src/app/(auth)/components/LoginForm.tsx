@@ -70,7 +70,7 @@ const LoginForm = () => {
         addToast({
           title: "Success",
           description: data.message,
-          color:"success"
+          color: "success",
         });
         router.push(redirectUrl);
       }
@@ -83,7 +83,7 @@ const LoginForm = () => {
       addToast({
         title: "Error",
         description: errorMessage as string,
-        color:"danger"
+        color: "danger",
       });
     },
   });
@@ -94,7 +94,7 @@ const LoginForm = () => {
       addToast({
         title: "Attention",
         description: "All fields are required",
-        color:"warning"
+        color: "warning",
       });
       return;
     }
@@ -120,8 +120,15 @@ const LoginForm = () => {
           value={input?.email}
           onChange={(e) => setInput({ ...input, email: e.target.value })}
           startContent={
-            <MailIcon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+            <MailIcon
+              size={16}
+              className="text-default-400 pointer-events-none flex-shrink-0"
+            />
           }
+          classNames={{
+            inputWrapper:
+              "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-0",
+          }}
         />
       </div>
       <div className="input-group mb-4">
@@ -132,8 +139,15 @@ const LoginForm = () => {
           className="w-full"
           labelPlacement="outside"
           placeholder="Enter password"
+          classNames={{
+            inputWrapper:
+              "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-0",
+          }}
           startContent={
-            <LockIcon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+            <LockIcon
+              size={16}
+              className="text-default-400 pointer-events-none flex-shrink-0"
+            />
           }
           endContent={
             <button
@@ -167,7 +181,7 @@ const LoginForm = () => {
         variant="solid"
         color="primary"
         type="submit"
-        className="w-full disabled:!bg-gray-400 mt-4"
+        className="w-full disabled:!bg-gray-400 mt-4 data-[focus-visible=true]:outline-primary"
         isLoading={loginMutation.isPending}
         isDisabled={!input.password || loginMutation.isPending}
       >
