@@ -6,6 +6,8 @@ import Link from "next/link";
 import NextTopLoader from "nextjs-toploader";
 import "../globals.scss";
 import { Providers } from "../providers";
+import { Suspense } from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,6 +37,7 @@ export default function RootLayout({
           speed={200}
         />
         <Providers>
+        <Suspense fallback={<LoadingSpinner />}>
           <div className="w-full min-h-dvh light bg-[#f2f2f2] dark:bg-[#2a2b2f] relative flex items-center justify-center flex-col font-dmsans py-10">
             <Link href="/" className="flex items-center gap-1">
               <Image src={LogoIcon} alt="logo" width={80} height={80} />
@@ -50,6 +53,7 @@ export default function RootLayout({
               </div>
             </div>
           </div>
+        </Suspense>
         </Providers>
       </body>
     </html>
