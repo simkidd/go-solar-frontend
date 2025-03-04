@@ -58,7 +58,10 @@ const SingleBlogPage = async ({ params }: IPost) => {
 
   return (
     <div className="w-full">
-      <PageHeader name={post?.title} heading={post?.title} />
+      <PageHeader
+        heading={post?.title}
+        className="bg-blog-bg bg-no-repeat bg-bottom bg-cover text-white"
+      />
       <div className="container mx-auto px-2 py-16">
         <div className="max-w-[1100px] mx-auto px-2">
           <div className="grid lg:grid-cols-3 grid-cols-1 ">

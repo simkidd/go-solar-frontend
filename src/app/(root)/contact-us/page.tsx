@@ -1,6 +1,6 @@
 import ContactForm from "@/components/ContactForm";
 import PageHeader from "@/components/PageHeader";
-import { CalendarDays, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { Metadata } from "next";
 
 const pageTitle = "Contact Us";
@@ -13,7 +13,6 @@ const ContactUsPage = () => {
   return (
     <div className="w-full font-inter">
       <PageHeader
-        name="Contact Us"
         heading="Contact Us"
         className="bg-contact-us-bg bg-no-repeat bg-top bg-cover text-white"
       />

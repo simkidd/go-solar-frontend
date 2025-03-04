@@ -1,4 +1,3 @@
-import BlogList from "@/app/(dashboard)/components/BlogList";
 import PageHeader from "@/components/PageHeader";
 import PostsList from "@/components/PostsList";
 import Search from "@/components/Search";
@@ -6,7 +5,6 @@ import { Post } from "@/interfaces/post.interface";
 import { getPosts } from "@/lib/data";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import React from "react";
 
 const pageTitle = "Blogs Search";
 
@@ -49,19 +47,10 @@ const PostSearchResults = async ({
 
   return (
     <div className="w-full font-dmsans">
-      {query ? (
-        <PageHeader
-          name={query}
-          heading={`Search results for ${query}`}
-          className="text-white bg-search-bg bg-no-repeat bg-center bg-cover grayscale"
-        />
-      ) : (
-        <PageHeader
-          name={pageTitle}
-          heading={pageTitle}
-          className="text-white bg-search-bg bg-no-repeat bg-center bg-cover grayscale"
-        />
-      )}
+      <PageHeader
+        heading={query ? `Search results for ${query}` : pageTitle}
+        className="text-white bg-search-bg bg-no-repeat bg-center bg-cover grayscale"
+      />
 
       <section className="w-full">
         <div className="container mx-auto px-2 pt-8">

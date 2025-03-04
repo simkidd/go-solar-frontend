@@ -6,13 +6,11 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 interface PageHeaderProps {
-  name: string;
   heading: string;
   className?: string;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
-  name,
   heading,
   className = "",
 }) => {
@@ -70,8 +68,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             <Breadcrumbs
               size="lg"
               itemClasses={{
-                separator: "px-2",
-                item: "",
+                separator: "px-2 text-default-400 dark:text-default-500",
+                item: "text-default-400 dark:text-default-500 data-[current=true]:text-white dark:data-[current=true]:text-white",
               }}
               separator="/"
             >

@@ -23,7 +23,6 @@ const BlogsPage = async () => {
   return (
     <div className="w-full font-inter">
       <PageHeader
-        name="Blog"
         heading="Blog"
         className="bg-blog-bg bg-no-repeat bg-bottom bg-cover text-white"
       />

@@ -20,7 +20,6 @@ const AboutUsPage = () => {
   return (
     <div className="w-full font-inter">
       <PageHeader
-        name="About Us"
         heading="About Us"
         className="bg-about-us-bg bg-no-repeat bg-center bg-cover text-white"
       />
