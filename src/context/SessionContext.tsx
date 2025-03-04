@@ -14,7 +14,8 @@ interface SessionContextType {
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
-  const { user, logout, setUser, isAuthenticated } = useAuthStore();
+  const { user, logout, setUser, isAuthenticated, setIsAuthenticated } =
+    useAuthStore();
 
   // Initialize user from cookies on mount
   useEffect(() => {
@@ -22,8 +23,9 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     if (userCookie) {
       const parsedUser = JSON.parse(userCookie) as User;
       setUser(parsedUser);
+      setIsAuthenticated(true);
     }
-  }, [setUser]);
+  }, [setUser, setIsAuthenticated]);
 
   return (
     <SessionContext.Provider

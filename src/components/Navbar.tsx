@@ -2,6 +2,7 @@
 import LogoIcon from "@/assets/gosolar-logo-icon.svg";
 import { useSession } from "@/context/SessionContext";
 import { navlist } from "@/data/menuData";
+import { Button } from "@heroui/react";
 import { Mail, Menu, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,10 +12,10 @@ import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { MdClose } from "react-icons/md";
 import MenuItem from "./MenuItem";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import { Button } from "@heroui/react";
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useSession();
+
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -65,7 +66,7 @@ const Navbar = () => {
         }`}
       >
         {/* top header */}
-        <div className="w-full h-14 hidden lg:flex bg-white/10 backdrop-blur-md border-b border-white/10">
+        <div className="w-full h-10 hidden lg:flex bg-white/10 backdrop-blur-md border-b border-white/10">
           <div className="grid lg:grid-cols-2 grid-cols-1 items-center container mx-auto px-2 w-full h-full">
             <div className="flex items-center gap-4 mr-auto text-sm">
               <span className="flex items-center">
