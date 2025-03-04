@@ -31,6 +31,7 @@ const config: Config = {
         "contact-us-bg-2": "url(/images/bg/contact-bg-2.jpg)",
         "blog-bg": "url(/images/bg/blog-bg.jpg)",
         "search-bg": "url(/images/bg/search.jpg)",
+        "not-found-bg": "url(/images/bg/not-found.jpg)",
       },
       screens: {
         sm: "576px", // Small - ≥576px

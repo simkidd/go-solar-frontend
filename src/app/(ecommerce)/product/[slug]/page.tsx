@@ -1,7 +1,6 @@
 import ProductDesc from "@/app/(ecommerce)/components/shop/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
 import RelatedProducts from "@/app/(ecommerce)/components/shop/RelatedProducts";
-import Breadcrumb from "@/components/Breadcrumb";
 import { Product } from "@/interfaces/product.interface";
 import { getProductCodeFromSlug } from "@/utils/helpers";
 import { Metadata } from "next";
@@ -10,6 +9,7 @@ import ProductDetail from "../../components/shop/ProductDetail";
 import { RefreshCcw, Truck } from "lucide-react";
 import ViewHistoryComp from "../../components/ViewHistory";
 import { getProducts, getPubilshedProducts } from "@/lib/api/products";
+import Breadcrumbs from "@/components/BreadcrumbsComp";
 
 interface IProduct {
   params: Promise<{ slug: string }>;
@@ -63,7 +63,7 @@ const ProductPage = async ({ params }: IProduct) => {
   return (
     <div className="w-full font-inter py-20 pt-10">
       <div className="container mx-auto px-2 mb-8">
-        <Breadcrumb name={product?.name} />
+        <Breadcrumbs />
       </div>
       <section className="w-full mb-6">
         <div className="container mx-auto px-2">

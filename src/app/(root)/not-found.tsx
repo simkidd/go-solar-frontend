@@ -6,7 +6,7 @@ export default function NotFound() {
     <div className="font-inter pb-20 flex items-center justify-center w-full min-h-dvh flex-col">
       <PageHeader
         heading="Oops!"
-        className="text-white bg-search-bg bg-no-repeat bg-center bg-cover grayscale"
+        className="text-white bg-not-found-bg bg-no-repeat bg-center bg-cover "
       />
       <div className="container mx-auto px-2 mb-8 flex items-center justify-center flex-col pt-20">
         <h2 className="text-3xl font-medium mb-8">Not Found</h2>
