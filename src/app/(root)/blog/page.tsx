@@ -25,7 +25,7 @@ const BlogsPage = async () => {
       <PageHeader
         name="Blog"
         heading="Blog"
-        className="bg-blog-bg bg-no-repeat bg-bottom bg-cover"
+        className="bg-blog-bg bg-no-repeat bg-bottom bg-cover text-white"
       />
 
       <div className="container mx-auto px-2 pt-8 lg:hidden">

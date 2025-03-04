@@ -50,9 +50,17 @@ const PostSearchResults = async ({
   return (
     <div className="w-full font-dmsans">
       {query ? (
-        <PageHeader name={query} heading={`Search results for ${query}`} />
+        <PageHeader
+          name={query}
+          heading={`Search results for ${query}`}
+          className="text-white bg-search-bg bg-no-repeat bg-center bg-cover grayscale"
+        />
       ) : (
-        <PageHeader name={pageTitle} heading={pageTitle} />
+        <PageHeader
+          name={pageTitle}
+          heading={pageTitle}
+          className="text-white bg-search-bg bg-no-repeat bg-center bg-cover grayscale"
+        />
       )}
 
       <section className="w-full">

@@ -7,6 +7,8 @@ import { TeamMember } from "@/data/team";
 import { Metadata } from "next";
 import Image from "next/image";
 import { GiCheckMark } from "react-icons/gi";
+import WhoImg from "../../../../public/images/bulb-1.jpg";
+import WhoImg2 from "../../../../public/images/sun-field.jpg";
 
 const pageTitle = "About Us ";
 
@@ -28,13 +30,25 @@ const AboutUsPage = () => {
           <div className="grid lg:grid-cols-2 grid-cols-1">
             <div className="relative">
               <div className="absolute top-0 lg:right-12 right-0 border-l-8 border-primary w-[70%] h-[90%] pl-6 z-[-1]">
-                <div className="bg-gray-500 w-full h-full">
-                  <Image src="" alt="" />
+                <div className="bg-gray-300 w-full h-full">
+                  <Image
+                    src={WhoImg.src}
+                    alt="who we are"
+                    width={500}
+                    height={500}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
-              <div className="lg:absolute bottom-0 left-0 w-[250px] lg:w-[300px] h-[250px] bg-gray-700">
-                <Image src="" alt="" />
-              </div>
+              {/* <div className="lg:absolute bottom-0 left-0 w-[250px] lg:w-[300px] h-[250px] bg-gray-700">
+                <Image
+                  src={WhoImg2.src}
+                  alt=""
+                  width={500}
+                  height={500}
+                  className="w-full h-full object-cover"
+                />
+              </div> */}
               <div className="w-52 grid grid-cols-12 gap-2 moving-div absolute bottom-0 z-[-2]">
                 {[...Array(96)].map((_, i) => (
                   <span key={i} className="w-1 h-1 bg-primary"></span>

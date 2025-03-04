@@ -1,8 +1,9 @@
 "use client";
-import { Avatar, AvatarGroup } from "@heroui/react";
+import { Avatar, AvatarGroup, Button } from "@heroui/react";
 import Image from "next/image";
 import React from "react";
 import { GiCheckMark } from "react-icons/gi";
+import WorkersImg from '../../../public/images/workers.jpg'
 
 const ConsultantSection = () => {
   return (
@@ -11,8 +12,14 @@ const ConsultantSection = () => {
         <div className="grid lg:grid-cols-2 grid-cols-1">
           <div className="relative p-2 h-[400px] lg:h-full">
             <div className="ml-auto lg:mr-10 border-l-8 border-primary lg:w-[70%] w-[85%] h-full pl-6 z-[-1]">
-              <div className="bg-gray-500 w-full h-full">
-                <Image src="" alt="" />
+              <div className="bg-gray-300 w-full h-full rounded-br-[100px] lg:rounded-br-[150px] overflow-hidden">
+                <Image
+                  src={WorkersImg.src}
+                  alt="workers"
+                  width={500}
+                  height={500}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
             <div className="absolute bottom-6 lg:bottom-10 left-10 w-[250px] light bg-white dark:bg-[#2a2b2f] px-8 py-6 shadow-lg font-dmsans flex flex-col space-y-4">
@@ -73,9 +80,9 @@ const ConsultantSection = () => {
               </li>
             </ul>
 
-            <button className="bg-primary text-white px-8 py-4 mt-10">
+            <Button color="primary" size="lg" className="px-8 mt-10">
               Get Consultation
-            </button>
+            </Button>
           </div>
         </div>
       </div>

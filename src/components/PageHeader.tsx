@@ -34,8 +34,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
     // Add "Home" as the first breadcrumb
     breadcrumbs.push(
-      <BreadcrumbItem key="home">
-        <Link href="/">Home</Link>
+      <BreadcrumbItem key="home" href="/">
+        Home
       </BreadcrumbItem>
     );
 
@@ -44,8 +44,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     paths.forEach((path, index) => {
       currentPath += `/${path}`;
       breadcrumbs.push(
-        <BreadcrumbItem key={path}>
-          <a href={currentPath}>{formatLabel(path)}</a>
+        <BreadcrumbItem key={path} href={currentPath}>
+          {formatLabel(path)}
         </BreadcrumbItem>
       );
     });
@@ -71,6 +71,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               size="lg"
               itemClasses={{
                 separator: "px-2",
+                item: "",
               }}
               separator="/"
             >
