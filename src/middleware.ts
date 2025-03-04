@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { TOKEN_NAME, USER_DETAILS } from "./utils/constants";
 import { User } from "./interfaces/auth.interface";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 // Specify protected and public routes
 const adminRoutes = ["/admin"];
@@ -18,9 +19,16 @@ const authRoutes = [
   "/account/forgot-password",
 ];
 
+// Utility function to check user roles
+const isAdminUser = (user: User | null): boolean => {
+  return user?.isSuperAdmin || user?.isAdmin || false;
+};
+
 export default async function middleware(req: NextRequest) {
+  const cookieStore = await cookies();
   // Check if the current route is protected or public
   const path = req.nextUrl.pathname;
+
   // const isProtectedRoute = protectedRoutes.includes(path);
   const isAdminRoute = adminRoutes.some((route) => path.startsWith(route));
   // const isPublicRoute = publicRoutes.includes(path);
@@ -28,33 +36,49 @@ export default async function middleware(req: NextRequest) {
   const isPrivateRoute = privateRoutes.some((route) => path.startsWith(route));
   const isAuthRoute = authRoutes.some((route) => path.startsWith(route));
 
-  const cookieStore = await cookies();
-  const cookie = cookieStore.get(TOKEN_NAME)?.value;
+  const token = cookieStore.get(TOKEN_NAME)?.value;
   const userCookie = cookieStore.get(USER_DETAILS)?.value;
 
+  // Parse user details if available
+  let user: User | null = null;
   if (userCookie) {
-    const user: User = JSON.parse(userCookie);
-
-    // restrict users from admin routes
-    if (isAdminRoute && !user?.isSuperAdmin && !user.isAdmin) {
-      return NextResponse.redirect(new URL("/account/login", req.nextUrl));
+    try {
+      user = JSON.parse(userCookie) as User;
+    } catch (error) {
+      console.error("Failed to parse user details:", error);
     }
   }
 
-  // Redirect to /login if the user is not authenticated
-  if (isAdminRoute && !cookie) {
-    return NextResponse.redirect(new URL("/account/login", req.nextUrl));
+  if (isAdminRoute) {
+    if (token) {
+      // User is authenticated, check if they are an admin
+      if (!isAdminUser(user)) {
+        // User is not an admin, restrict access
+        return NextResponse.redirect(new URL("/unauthorized", req.nextUrl));
+      }
+    } else {
+      // User is not authenticated, redirect to login with redirectUrl
+      const redirectUrl = encodeURIComponent(path);
+      return NextResponse.redirect(
+        new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl)
+      );
+    }
   }
 
-  if (isPrivateRoute && !cookie) {
-    return NextResponse.redirect(new URL("/account/login", req.nextUrl));
+  // Redirect to login if the user is not authenticated and trying to access protected routes
+  if (isPrivateRoute && !token) {
+    const redirectUrl = encodeURIComponent(path);
+    return NextResponse.redirect(
+      new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl)
+    );
   }
 
-  // Redirect to homepage if the user is authenticated and trying to access auth routes
-  if (isAuthRoute && cookie) {
+  // Redirect authenticated users away from auth routes
+  if (isAuthRoute && token) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
+  // Allow access to public routes
   return NextResponse.next();
 }
 

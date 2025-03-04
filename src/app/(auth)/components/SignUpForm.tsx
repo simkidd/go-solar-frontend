@@ -2,9 +2,10 @@
 import { SignUpInput } from "@/interfaces/auth.interface";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Button, Input } from "@heroui/react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LockIcon, MailIcon, User2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 
 const SignUpForm = () => {
   const { loading, signup } = useAuthStore();
@@ -19,6 +20,8 @@ const SignUpForm = () => {
     lastName: "",
     confirmPassword: "",
   });
+
+  const errors: string[] = [];
 
   input.fullname = input.firstName + " " + input.lastName;
 
@@ -45,13 +48,7 @@ const SignUpForm = () => {
   const isLastNameValid = useMemo(() => {
     if (input.lastName === "") return false;
   }, [input.lastName]);
-
-  const validatePhoneNumber = (input: string) => input.match(/^[0-9]{10,15}$/);
-
-  const isPhoneInvalid = useMemo(() => {
-    if (input.phonenumber === "") return false;
-    return !validatePhoneNumber(input.phonenumber);
-  }, [input.phonenumber]);
+  
 
   const isConfirmPasswordInvalid = useMemo(() => {
     if (input.confirmPassword === "") return false;
@@ -78,6 +75,16 @@ const SignUpForm = () => {
       return;
     }
 
+    if (input.password.length < 4) {
+      errors.push("Password must be 4 characters or more.");
+    }
+    if ((input.password.match(/[A-Z]/g) || []).length < 1) {
+      errors.push("Password must include at least 1 upper case letter");
+    }
+    if ((input.password.match(/[^a-z0-9]/gi) || []).length < 1) {
+      errors.push("Password must include at least 1 symbol.");
+    }
+
     await signup(input);
 
     setInput({
@@ -93,156 +100,158 @@ const SignUpForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="mb-8">
-      <div className="input-group mb-3">
-        <Input
-          type="text"
-          variant="underlined"
-          label="First Name"
-          name="firstName"
-          size="lg"
-          className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
-          color={isFirstNameValid ? "danger" : "success"}
-          value={input?.firstName}
-          onChange={(e) => setInput({ ...input, firstName: e.target.value })}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 mb-4 gap-3">
+        <div className="input-group">
+          <Input
+            type="text"
+            placeholder="First Name"
+            labelPlacement="outside"
+            name="firstName"
+            className="w-full"
+            value={input?.firstName}
+            onChange={(e) => setInput({ ...input, firstName: e.target.value })}
+            startContent={
+            <User2Icon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+          }
+          />
+        </div>
+        <div className="input-group">
+          <Input
+            type="text"
+            placeholder="Last Name"
+            labelPlacement="outside"
+            name="lastName"
+            className="w-full"
+            value={input?.lastName}
+            onChange={(e) => setInput({ ...input, lastName: e.target.value })}
+            startContent={
+            <User2Icon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+          }
+          />
+        </div>
       </div>
-      <div className="input-group mb-3">
-        <Input
-          type="text"
-          variant="underlined"
-          label="Last Name"
-          name="lastName"
-          size="lg"
-          className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
-          color={isLastNameValid ? "danger" : "success"}
-          value={input?.lastName}
-          onChange={(e) => setInput({ ...input, lastName: e.target.value })}
-        />
-      </div>
-      <div className="input-group mb-3">
+
+      <div className="input-group mb-4">
         <Input
           type="email"
-          variant="underlined"
-          label="Email"
+          placeholder="Email"
           name="email"
-          size="lg"
           className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
-          color={isEmailInvalid ? "danger" : "success"}
+          labelPlacement="outside"
           errorMessage={isEmailInvalid && "Please enter a valid email address"}
           value={input?.email}
           onChange={(e) => setInput({ ...input, email: e.target.value })}
+          startContent={
+            <MailIcon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+          }
         />
       </div>
-      <div className="input-group mb-3">
-        <Input
-          type="number"
-          variant="underlined"
-          label="Phone"
-          name="phone"
-          size="lg"
-          className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
-          color={isPhoneInvalid ? "danger" : "success"}
-          errorMessage={isPhoneInvalid && "Please enter a valid phone number"}
+      <div className="input-group mb-4">
+        <PhoneInput
+          international
+          countryCallingCodeEditable={false}
+          defaultCountry="NG"
+          placeholder="Enter phone number"
           value={input?.phonenumber}
-          onChange={(e) => setInput({ ...input, phonenumber: e.target.value })}
+          onChange={(value) => setInput({ ...input, phonenumber: value || "" })}
+          error={
+            input?.phonenumber
+              ? isValidPhoneNumber(input?.phonenumber)
+                ? undefined
+                : "Invalid phone number"
+              : "Phone number required"
+          }
+          className="bg-[#f4f4f5] rounded-[12px] h-10 px-3 text-sm focus:outline-none [&>input]:bg-transparent [&>input]:px-1 [&>input]:outline-0 [&>input]:h-full [&>input]:text-black"
         />
       </div>
-      <div className="input-group mb-4">
-        <Input
-          type={isVisible ? "text" : "password"}
-          variant="underlined"
-          label="Password"
-          name="password"
-          size="lg"
-          className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
-          endContent={
-            <button
-              className="focus:outline-none"
-              type="button"
-              onClick={toggleVisibility}
-            >
-              {isVisible ? (
-                <EyeOff
-                  size={20}
-                  className="text-default-400 pointer-events-none"
-                />
-              ) : (
-                <Eye
-                  size={20}
-                  className="text-default-400 pointer-events-none"
-                />
-              )}
-            </button>
-          }
-          color={isPasswordInvalid ? "danger" : "success"}
-          errorMessage={
-            isPasswordInvalid && "Password must be at least 6 characters"
-          }
-          value={input?.password}
-          onChange={(e) => setInput({ ...input, password: e.target.value })}
-        />
-      </div>
-      <div className="input-group mb-4">
-        <Input
-          type={confirmPasswordVisible ? "text" : "password"}
-          variant="underlined"
-          label="Confirm Password"
-          name="confirmPassword"
-          size="lg"
-          className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
-          endContent={
-            <button
-              className="focus:outline-none"
-              type="button"
-              onClick={toggleConfirmPasswordVisibility}
-            >
-              {confirmPasswordVisible ? (
-                <EyeOff
-                  size={20}
-                  className="text-default-400 pointer-events-none"
-                />
-              ) : (
-                <Eye
-                  size={20}
-                  className="text-default-400 pointer-events-none"
-                />
-              )}
-            </button>
-          }
-          color={isConfirmPasswordInvalid ? "danger" : "success"}
-          errorMessage={isConfirmPasswordInvalid && "Passwords do not match"}
-          value={input?.confirmPassword}
-          onChange={(e) =>
-            setInput({ ...input, confirmPassword: e.target.value })
-          }
-        />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 mb-4 gap-3">
+        <div className="input-group">
+          <Input
+            type={isVisible ? "text" : "password"}
+            placeholder="Password"
+            name="password"
+            className="w-full"
+            labelPlacement="outside"
+            startContent={
+              <LockIcon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+            }
+            endContent={
+              <button
+                className="focus:outline-none"
+                type="button"
+                onClick={toggleVisibility}
+              >
+                {isVisible ? (
+                  <EyeOff
+                    size={20}
+                    className="text-default-400 pointer-events-none"
+                  />
+                ) : (
+                  <Eye
+                    size={20}
+                    className="text-default-400 pointer-events-none"
+                  />
+                )}
+              </button>
+            }
+            isInvalid={errors.length > 0}
+            errorMessage={() => (
+              <ul>
+                {errors.map((error, i) => (
+                  <li key={i}>{error}</li>
+                ))}
+              </ul>
+            )}
+            value={input?.password}
+            onChange={(e) => setInput({ ...input, password: e.target.value })}
+          />
+        </div>
+        <div className="input-group">
+          <Input
+            type={confirmPasswordVisible ? "text" : "password"}
+            placeholder="Confirm Password"
+            name="confirmPassword"
+            className="w-full"
+            labelPlacement="outside"
+            startContent={
+              <LockIcon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+            }
+            endContent={
+              <button
+                className="focus:outline-none"
+                type="button"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {confirmPasswordVisible ? (
+                  <EyeOff
+                    size={20}
+                    className="text-default-400 pointer-events-none"
+                  />
+                ) : (
+                  <Eye
+                    size={20}
+                    className="text-default-400 pointer-events-none"
+                  />
+                )}
+              </button>
+            }
+            errorMessage={isConfirmPasswordInvalid && "Passwords do not match"}
+            value={input?.confirmPassword}
+            onChange={(e) =>
+              setInput({ ...input, confirmPassword: e.target.value })
+            }
+          />
+        </div>
       </div>
 
       <Button
         variant="solid"
         color="primary"
         type="submit"
-        className="w-full rounded-none disabled:!bg-gray-400 mt-4"
+        className="w-full disabled:!bg-gray-400 mt-4"
         isLoading={loading}
-        isDisabled={!input.password || isPasswordInvalid || loading}
+        isDisabled={!input.password || loading}
       >
         Sign Up
       </Button>

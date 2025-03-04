@@ -103,7 +103,7 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={<LoadingSpinner />}>
             <Navbar />
-            <main>{children}</main>
+            <main className="min-h-dvh">{children}</main>
             <Footer />
           </Suspense>
         </Providers>

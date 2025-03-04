@@ -25,7 +25,12 @@ const config: Config = {
         background: "transparent",
       },
       backgroundImage: {
-        "auth-bg": "red",
+        "hero-bg": "url(/images/bg/hero-bg.jpg)",
+        "about-us-bg": "url(/images/bg/about-us.jpg)",
+        "contact-us-bg": "url(/images/bg/contact-bg.jpg)",
+        "contact-us-bg-2": "url(/images/bg/contact-bg-2.jpg)",
+        "blog-bg": "url(/images/bg/blog-bg.jpg)",
+        "search-bg": "url(/images/bg/search.jpg)",
       },
       screens: {
         sm: "576px", // Small - ≥576px

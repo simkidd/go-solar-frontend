@@ -10,9 +10,11 @@ import {
 } from "@heroui/react";
 import { Bell, Menu } from "lucide-react";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
+import { useSession } from "@/context/SessionContext";
 
 const AdminHeader = () => {
-  const { user, logout, setShowSidebar } = useAuthStore();
+  const { user, logout } = useSession();
+  const { setShowSidebar } = useAuthStore();
 
   return (
     <div className="h-14 md:h-16 w-full flex bg-white dark:bg-[#222327] shadow-md sticky top-0 right-0 left-0 z-40">

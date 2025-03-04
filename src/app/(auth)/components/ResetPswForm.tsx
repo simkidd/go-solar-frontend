@@ -1,7 +1,7 @@
 "use client";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Input } from "@heroui/react";
-import { Eye, EyeOff } from "lucide-react";
+import { Button, Input } from "@heroui/react";
+import { Eye, EyeOff, LockIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 
@@ -34,14 +34,9 @@ const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
       <div className="input-group mb-4">
         <Input
           type={isVisible ? "text" : "password"}
-          variant="underlined"
-          label="Password"
+          placeholder="Password"
           name="password"
-          size="lg"
           className="w-full"
-          classNames={{
-            label: "text-black/50 dark:text-white/90",
-          }}
           endContent={
             <button
               className="focus:outline-none"
@@ -61,21 +56,28 @@ const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
               )}
             </button>
           }
-          color={isPasswordInvalid ? "danger" : "success"}
           errorMessage={
             isPasswordInvalid && "Password must be at least 6 characters"
           }
           value={input?.password}
           onChange={(e) => setInput({ ...input, password: e.target.value })}
+          startContent={
+            <LockIcon
+              size={16}
+              className="text-default-400 pointer-events-none flex-shrink-0"
+            />
+          }
         />
       </div>
 
-      <button
-        className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:bg-gray-400"
+      <Button
+        color="primary"
+        className="w-full mt-8 disabled:bg-gray-400"
         disabled={!input.password || isPasswordInvalid}
+        isLoading={loading}
       >
-        {loading ? "Loading..." : "Reset"}
-      </button>
+        Reset
+      </Button>
     </form>
   );
 };

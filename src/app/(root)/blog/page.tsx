@@ -10,9 +10,7 @@ import { notFound } from "next/navigation";
 const pageTitle = "Blogs";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: pageTitle,
-  },
+  title: pageTitle,
 };
 
 const BlogsPage = async () => {
@@ -24,7 +22,10 @@ const BlogsPage = async () => {
 
   return (
     <div className="w-full font-inter">
-      <PageHeader name="Blog" heading="Blog" />
+      <PageHeader
+        heading="Blog"
+        className="bg-blog-bg bg-no-repeat bg-bottom bg-cover text-white"
+      />
 
       <div className="container mx-auto px-2 pt-8 lg:hidden">
         <div className="max-w-xl">
