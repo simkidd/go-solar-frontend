@@ -18,7 +18,6 @@ interface IAuthStore {
   setUser: (user: User) => void;
   setUsers: (users: User[]) => void;
   logout: () => void;
-  login: (input: LoginInput) => Promise<void>;
   signup: (input: SignUpInput) => Promise<void>;
   resendVerification: (input: EmailInput) => Promise<void>;
   forgotPassword: (input: EmailInput) => Promise<void>;
@@ -27,12 +26,16 @@ interface IAuthStore {
   setShowSidebar: (showSidebar: boolean) => void;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
 }
 
 export const useAuthStore = create<IAuthStore>((set) => ({
   loading: false,
+  isAuthenticated: false,
   user: undefined,
   users: [],
+  setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
   setUser: (user: User) => set({ user }),
   setUsers: (users: User[]) => set({ users }),
   showSidebar: false,
@@ -43,42 +46,9 @@ export const useAuthStore = create<IAuthStore>((set) => ({
     window.location.href = "/account/login";
     Cookies.remove(TOKEN_NAME);
     Cookies.remove(USER_DETAILS);
+    set({ user: undefined, isAuthenticated: false });
   },
-  login: async (input) => {
-    try {
-      set({ loading: true });
-      const { data } = await axiosInstance.post("/auth/login", input);
-      const user: User = data.data.user;
 
-      if (!user?.token || !user) return;
-
-      if (!user?.is_verified) {
-        toast.warn("Please verify your email to login");
-        return;
-      }
-
-      const userToken = JSON.stringify(user);
-      if (userToken) {
-        Cookies.set(USER_DETAILS, userToken);
-        Cookies.set(TOKEN_NAME, data.data.user.token);
-        toast.success(data.message);
-      }
-
-      if (user?.isAdmin || user?.isSuperAdmin) {
-        window.location.href = "/";
-      } else {
-        window.location.href = "/";
-      }
-
-      set({ user });
-    } catch (error) {
-      const errorMsg = error as any;
-      toast.error(errorMsg?.response.data.message);
-      console.log(errorMsg?.response.data.message);
-    } finally {
-      set({ loading: false });
-    }
-  },
   signup: async (input) => {
     try {
       set({ loading: true });
