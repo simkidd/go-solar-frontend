@@ -34,6 +34,7 @@ import Link from "next/link";
 import { User } from "@/interfaces/auth.interface";
 import { formatDate } from "@/utils/helpers";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import useUsers from "@/hooks/useUsers";
 
 // Define columns based on provided fields
 const columns = [
@@ -48,7 +49,7 @@ const columns = [
 ];
 
 const UsersTable = () => {
-  const { users, loading, fetchUsers } = useUserStore();
+  const { users, isLoading, refetch } = useUsers();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
@@ -431,7 +432,7 @@ const UsersTable = () => {
         <Button
           variant="solid"
           color="warning"
-          onPress={fetchUsers}
+          onPress={() => refetch()}
           startContent={<RefreshCcw size={16} />}
           size="sm"
         >
@@ -468,7 +469,7 @@ const UsersTable = () => {
         <TableBody
           emptyContent={"No users found"}
           items={sortedItems}
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={
             <Card className="dark:bg-[#222327]">
               <CardBody className="p-6">

@@ -1,10 +1,10 @@
 "use client";
+import useProducts from "@/hooks/useProducts";
 import { Category } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
 import CategoryProductsTable from "../CategoryProductsTable";
 
 const SingleCategoryProducts = ({ category }: { category: Category }) => {
-  const { products } = useProductStore();
+  const { products } = useProducts();
 
   const catProducts = category
     ? products.filter((product) => product?.category?._id === category?._id)

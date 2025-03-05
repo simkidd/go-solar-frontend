@@ -38,6 +38,11 @@ const ProductsList = ({
     [allProducts]
   );
 
+  console.log("result: ", {
+    query,
+    categorySlug,
+  })
+
   // Find the category based on the categorySlug
   const category = useMemo(
     () => allCategories.find((cat) => cat.slug === categorySlug),
@@ -86,6 +91,8 @@ const ProductsList = ({
     () => Array.from(new Set(filteredProducts.map((product) => product.brand))),
     [filteredProducts]
   );
+
+  console.log("filtered products", filteredProducts);
 
   // Apply filters and sorting
   const finalFilteredProducts = useMemo(() => {
@@ -276,7 +283,7 @@ const ProductsList = ({
             </p>
             <div className="flex items-center gap-4">
               {/* Sort By Dropdown */}
-              <span className="hidden md:block">Sort By</span>
+              <span className="hidden md:block">Sort By:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}

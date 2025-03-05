@@ -25,7 +25,7 @@ export const generateStaticParams = async () => {
   try {
     const categories = await getCategories();
 
-    return categories.map((category: any) => ({
+    return categories?.map((category: any) => ({
       slug: category?.slug,
     }));
   } catch (error) {

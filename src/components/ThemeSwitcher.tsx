@@ -6,6 +6,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Skeleton,
 } from "@heroui/react";
 import { MoonStar, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -20,12 +21,12 @@ export function ThemeSwitcher() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) return <Skeleton className="w-8 h-8 rounded-md" />;
 
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Button variant="flat" size="sm" isIconOnly>
+        <Button variant="light" size="sm" isIconOnly>
           {theme === "light" && (
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           )}
@@ -39,9 +40,15 @@ export function ThemeSwitcher() {
         </Button>
       </DropdownTrigger>
       <DropdownMenu>
-      <DropdownItem key='light' onPress={() => setTheme("light")}>Light</DropdownItem>
-        <DropdownItem key='dark' onPress={() => setTheme("dark")}>Dark</DropdownItem>
-        <DropdownItem key='system' onPress={() => setTheme("system")}>System</DropdownItem>
+        <DropdownItem key="light" onPress={() => setTheme("light")}>
+          Light
+        </DropdownItem>
+        <DropdownItem key="dark" onPress={() => setTheme("dark")}>
+          Dark
+        </DropdownItem>
+        <DropdownItem key="system" onPress={() => setTheme("system")}>
+          System
+        </DropdownItem>
       </DropdownMenu>
     </Dropdown>
   );

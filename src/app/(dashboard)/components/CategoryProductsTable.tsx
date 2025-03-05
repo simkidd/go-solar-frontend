@@ -1,3 +1,4 @@
+import useProducts from "@/hooks/useProducts";
 import { Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
@@ -85,7 +86,7 @@ const columns = [
 const CategoryProductsTable: React.FC<{ products: Product[] }> = ({
   products,
 }) => {
-  const { loading, fetchProducts } = useProductStore();
+  const { isLoading, refetch } = useProducts();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
@@ -102,6 +103,7 @@ const CategoryProductsTable: React.FC<{ products: Product[] }> = ({
   const [publishFilter, setPublishFilter] = useState(
     searchParams.get("published") || "All"
   );
+
 
   const router = useRouter();
 
@@ -443,7 +445,7 @@ const CategoryProductsTable: React.FC<{ products: Product[] }> = ({
         <Button
           variant="solid"
           color="warning"
-          onPress={fetchProducts}
+          onPress={() => refetch()}
           startContent={<RefreshCcw size={16} />}
           size="sm"
         >
@@ -481,7 +483,7 @@ const CategoryProductsTable: React.FC<{ products: Product[] }> = ({
         <TableBody
           emptyContent={"No products found"}
           items={sortedItems}
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={
             <Card className="dark:bg-[#222327]">
               <CardBody className="p-6">

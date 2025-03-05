@@ -43,7 +43,7 @@ export const useAuthStore = create<IAuthStore>((set) => ({
   collapsed: false,
   setCollapsed: (collapsed: boolean) => set({ collapsed }),
   logout: () => {
-    window.location.href = "/account/login";
+    // window.location.href = "/account/login";
     Cookies.remove(TOKEN_NAME);
     Cookies.remove(USER_DETAILS);
     set({ user: undefined, isAuthenticated: false });
