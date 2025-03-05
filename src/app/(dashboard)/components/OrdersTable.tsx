@@ -1,4 +1,5 @@
 "use client";
+import useOrders from "@/hooks/useOrders";
 import { Order, TrackingStatus } from "@/interfaces/order.interface";
 import { useOrderStore } from "@/lib/stores/order.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
@@ -69,7 +70,7 @@ export const getChipColor = (status: TrackingStatus) => {
 };
 
 const OrdersTable = () => {
-  const { orders, loading, fetchOrders } = useOrderStore();
+  const { orders, isLoading, refetch } = useOrders();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -429,7 +430,7 @@ const OrdersTable = () => {
         <Button
           variant="solid"
           color="warning"
-          onPress={fetchOrders}
+          onPress={() => refetch}
           startContent={<RefreshCcw size={16} />}
           size="sm"
         >
@@ -466,7 +467,7 @@ const OrdersTable = () => {
         <TableBody
           emptyContent={"No orders found"}
           items={sortedItems}
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={
             <Card className="dark:bg-[#222327]">
               <CardBody className="p-6">

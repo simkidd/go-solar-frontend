@@ -37,6 +37,7 @@ import {
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
 import UpdateCategoryForm from "./UpdateCategoryForm";
+import useCategories from "@/hooks/useCategories";
 
 const columns = [
   { name: "Name", uid: "name", minWidth: "200px", sortable: true },
@@ -48,7 +49,6 @@ const columns = [
 
 const CategoryTable = () => {
   const {
-    categories,
     loading,
     deleteCategory,
     products,
@@ -79,6 +79,8 @@ const CategoryTable = () => {
   const [selectedCat, setSelectedCat] = useState<Category | null>(null);
 
   const hasSearchFilter = Boolean(filterValue);
+
+  const { categories, isLoading } = useCategories();
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -452,9 +454,9 @@ const CategoryTable = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No products found"}
+          emptyContent={"No category found"}
           items={sortedItems}
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={
             <Card className="dark:bg-[#222327]">
               <CardBody className="p-6">

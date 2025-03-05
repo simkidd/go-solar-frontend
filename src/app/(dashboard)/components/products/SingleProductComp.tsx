@@ -50,7 +50,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
         <Link href="/admin/products">
           <button className="inline-flex items-center gap-1">
             <ArrowLeft size={16} />
-            Go back
+            Products
           </button>
         </Link>
       </div>

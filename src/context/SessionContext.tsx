@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { User } from "../interfaces/auth.interface";
+import { useRouter } from "next/navigation";
 
 interface SessionContextType {
   loading: boolean;
@@ -20,14 +21,21 @@ interface SessionContextType {
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
+const userCookie = Cookies.get(USER_DETAILS);
+
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
-  const { user, logout, setUser, isAuthenticated, setIsAuthenticated } =
-    useAuthStore();
+  const {
+    user,
+    logout: storeLogout,
+    setUser,
+    isAuthenticated,
+    setIsAuthenticated,
+  } = useAuthStore();
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   // Initialize user from cookies on mount
   useEffect(() => {
-    const userCookie = Cookies.get(USER_DETAILS);
     if (userCookie) {
       const parsedUser = JSON.parse(userCookie) as User;
       setUser(parsedUser);
@@ -36,6 +44,11 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 
     setLoading(false);
   }, [setUser, setIsAuthenticated]);
+
+  const logout = () => {
+    router.push("/account/login"); // Redirect to login page after logout
+    storeLogout();
+  };
 
   return (
     <SessionContext.Provider
