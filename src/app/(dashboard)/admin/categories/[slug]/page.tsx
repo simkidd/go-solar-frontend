@@ -44,14 +44,10 @@ const SingleCatgory = async ({ params }: IProp) => {
     <div className="w-full font-inter">
       <div className="flex items-center justify-between mb-4">
         <Link href="/admin/categories">
-          <Button
-            variant="light"
-            color="default"
-            startContent={<ArrowLeft size={16} />}
-            className="dark:text-white"
-          >
-            Go back categories
-          </Button>
+          <button className="inline-flex items-center gap-1">
+            <ArrowLeft size={16} />
+            Categories
+          </button>
         </Link>
       </div>
 

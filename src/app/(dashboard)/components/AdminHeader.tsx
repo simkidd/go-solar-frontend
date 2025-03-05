@@ -7,13 +7,14 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Skeleton,
 } from "@heroui/react";
 import { Bell, Menu } from "lucide-react";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
 import { useSession } from "@/context/SessionContext";
 
 const AdminHeader = () => {
-  const { user, logout } = useSession();
+  const { user, logout, loading } = useSession();
   const { setShowSidebar } = useAuthStore();
 
   return (
@@ -23,45 +24,49 @@ const AdminHeader = () => {
           <Menu />
         </button>
         <div className="ms-auto flex items-center space-x-4">
-          <Button variant="flat" size="sm" isIconOnly>
+          <Button variant="light" size="sm" isIconOnly>
             <Bell className="h-[1.2rem] w-[1.2rem] dark:text-white" />
           </Button>
           <ThemeSwitcher />
           <div>
-            <Dropdown placement="bottom-end">
-              <DropdownTrigger>
-                <Avatar
-                  as="button"
-                  className="transition-transform"
-                  src=""
-                  size="md"
-                  showFallback
-                  fallback={
-                    <p className="font-bold text-lg">{user?.firstname[0]}</p>
-                  }
-                />
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Profile Actions"
-                variant="flat"
-                disabledKeys={["profile"]}
-              >
-                <DropdownItem key="profile" className="h-14 gap-2">
-                  <p className="font-semibold">Signed in as</p>
-                  <p className="font-semibold">
-                    {user?.firstname + " " + user?.lastname}
-                  </p>
-                </DropdownItem>
-                <DropdownItem key="settings">My Settings</DropdownItem>
-                <DropdownItem
-                  key="logout"
-                  color="danger"
-                  onPress={() => logout()}
+            {loading ? (
+              <Skeleton className="rounded-full h-10 w-10" />
+            ) : (
+              <Dropdown placement="bottom-end">
+                <DropdownTrigger>
+                  <Avatar
+                    as="button"
+                    className="transition-transform"
+                    src=""
+                    size="md"
+                    showFallback
+                    fallback={
+                      <p className="font-bold text-lg">{user?.firstname[0]}</p>
+                    }
+                  />
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Profile Actions"
+                  variant="flat"
+                  disabledKeys={["profile"]}
                 >
-                  Log Out
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+                  <DropdownItem key="profile" className="h-14 gap-2">
+                    <p className="font-semibold">Signed in as</p>
+                    <p className="font-semibold">
+                      {user?.firstname + " " + user?.lastname}
+                    </p>
+                  </DropdownItem>
+                  <DropdownItem key="settings">My Settings</DropdownItem>
+                  <DropdownItem
+                    key="logout"
+                    color="danger"
+                    onPress={() => logout()}
+                  >
+                    Log Out
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            )}
           </div>
         </div>
       </div>
