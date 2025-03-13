@@ -7,11 +7,12 @@ import {
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
-import { Spinner } from "@heroui/react";
-import { CheckCircle, CircleX } from "lucide-react";
+import { Button, Spinner } from "@heroui/react";
+import { CircleX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { usePaystackPayment } from "react-paystack";
+import { toast } from "react-toastify";
 
 const Payment = () => {
   const {
@@ -78,11 +79,13 @@ const Payment = () => {
             setPaymentMethod("");
             setPaymentData("");
 
-            router.push('/orders/success')
+            toast.success("Order placed successfully!");
+            router.push("/orders/success");
           }
         } catch (error: any) {
           console.log(error?.response?.data.message);
           setError(error?.response?.data.message);
+          toast.error("Failed to place order. Please try again.");
         } finally {
           setLoading(false);
         }
@@ -93,7 +96,7 @@ const Payment = () => {
   };
 
   const onClose = () => {
-    setErrorMsg("Your payment was unsuccessful, try again later!");
+    setErrorMsg("Your payment was unsuccessful. Please try again later.");
   };
 
   const initializePayment = usePaystackPayment(config);
@@ -118,7 +121,9 @@ const Payment = () => {
           <div className="flex flex-col items-center">
             <CircleX size={60} className="text-red-600" />
             <p className="text-lg font-semibold my-4 text-center">{error}</p>
-            <button onClick={() => router.push("/payment")}>Go back</button>
+            <Button variant="faded" onPress={() => setError("")}>
+              Go back
+            </Button>
           </div>
         </div>
       </div>
@@ -127,12 +132,13 @@ const Payment = () => {
 
   return (
     <div>
-      <button
-        className="bg-primary text-white px-8 py-2"
-        onClick={() => initializePayment({ onSuccess, onClose })}
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => initializePayment({ onSuccess, onClose })}
       >
         Proceed to payment
-      </button>
+      </Button>
 
       {errorMsg && (
         <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
@@ -142,12 +148,9 @@ const Payment = () => {
               <p className="text-lg font-semibold my-4 text-center">
                 {errorMsg}
               </p>
-              <button
-                className="border border-primary mt-2 text-primary px-4 py-2 rounded-md"
-                onClick={() => setErrorMsg("")}
-              >
+              <Button variant="faded" onPress={() => setErrorMsg("")}>
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         </div>

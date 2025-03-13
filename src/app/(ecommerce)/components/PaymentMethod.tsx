@@ -8,6 +8,7 @@ import { IconType } from "react-icons";
 import { BiCreditCard, BiWallet } from "react-icons/bi";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
 import StepButton from "./StepButtons";
+import { toast } from "react-toastify";
 
 interface PaymentType {
   name: string;
@@ -16,7 +17,7 @@ interface PaymentType {
   disabled: boolean;
 }
 
-const paymentType: PaymentType[] = [
+const paymentTypes: PaymentType[] = [
   {
     name: "Cash on delivery",
     value: "cashOnDelivery",
@@ -36,66 +37,85 @@ const PaymentMethod = () => {
   const { setPaymentMethod, setCurrentStep, paymentMethod, deliveryDetails } =
     useCartStore();
   const router = useRouter();
-  const [input, setInput] = useState({
-    paymentMethod: paymentMethod || "",
-  });
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
+    paymentMethod || ""
+  );
 
+  // Redirect to login if user is not authenticated or delivery details are missing
   useEffect(() => {
     if (!user) {
-      setCurrentStep(1);
       router.push("/account/login");
       return;
-    } else if (!deliveryDetails.streetAddress) {
+    }
+    if (!deliveryDetails.streetAddress) {
       setCurrentStep(1);
       return;
     }
-  }, [router, deliveryDetails, user]);
+  }, [user, deliveryDetails, router, setCurrentStep]);
 
-  const handlePayment = (e: React.FormEvent) => {
+  // Handle payment method selection
+  const handlePaymentMethodChange = (value: string) => {
+    setSelectedPaymentMethod(value);
+  };
+
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (input.paymentMethod) {
-      setPaymentMethod(input.paymentMethod);
-      setCurrentStep(3);
+    if (!selectedPaymentMethod) {
+      toast.error("Please select a payment method.");
+      return;
     }
+
+    setPaymentMethod(selectedPaymentMethod);
+    setCurrentStep(3);
   };
 
   return (
-    <form onSubmit={handlePayment}>
+    <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
       <h2 className="text-3xl font-bold mb-8">Payment Method</h2>
-      <p className="mb-2">Select a payment method</p>
+      <p className="mb-4">Select a payment method</p>
+
       <ul className="w-full mb-8">
-        {paymentType.map((payment) => (
-          <li key={payment.value} className="mb-4 flex">
+        {paymentTypes.map((payment) => (
+          <li key={payment.value} className="mb-4">
             <input
               name="paymentMethod"
               className="hidden peer"
               id={payment.value}
               type="radio"
               value={payment.value}
-              checked={input.paymentMethod === payment.value}
-              onChange={() => setInput({ paymentMethod: payment.value })}
-              required
+              checked={selectedPaymentMethod === payment.value}
+              onChange={() => handlePaymentMethodChange(payment.value)}
               disabled={payment.disabled}
+              required
             />
 
             <label
               htmlFor={payment.value}
-              className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-primary peer-checked:border-primary peer-checked:text-primary hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-[#2A2B2F] dark:hover:bg-gray-700"
+              className={`flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer transition-all ${
+                selectedPaymentMethod === payment.value
+                  ? "border-primary text-primary"
+                  : "hover:border-gray-400 hover:text-gray-600"
+              } ${
+                payment.disabled
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-50"
+              }`}
             >
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-3">
                 <payment.icon size={24} />
-                <p>{payment.name}</p>
+                <span>{payment.name}</span>
               </div>
 
               <div className="flex items-center">
                 {payment.disabled && (
-                  <span className="text-sm">Unavailable</span>
+                  <span className="text-sm text-gray-400">Unavailable</span>
                 )}
-                {input.paymentMethod === payment.value ? (
-                  <MdRadioButtonChecked className="w-5 h-5 ms-3 flex-shrink-0" />
+                {selectedPaymentMethod === payment.value ? (
+                  <MdRadioButtonChecked className="w-5 h-5 ml-3 text-primary" />
                 ) : (
-                  <MdRadioButtonUnchecked className="w-5 h-5 ms-3 flex-shrink-0" />
+                  <MdRadioButtonUnchecked className="w-5 h-5 ml-3 text-gray-400" />
                 )}
               </div>
             </label>
@@ -103,7 +123,7 @@ const PaymentMethod = () => {
         ))}
       </ul>
 
-      <StepButton nextDisabled={!input.paymentMethod} />
+      <StepButton nextDisabled={!selectedPaymentMethod} />
     </form>
   );
 };

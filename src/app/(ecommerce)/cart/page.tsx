@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
 import CartItemCard from "../components/shop/CartItemCard";
+import { Button } from "@heroui/react";
 
 const CartPage = () => {
   const { user } = useAuthStore();
@@ -93,16 +94,22 @@ const CartPage = () => {
                     </div>
                     <hr className="border-t border-gray-300 my-2" />
                     <div className="px-4">
-                      <button
-                        onClick={handleCheckout}
-                        className="w-full bg-primary text-white py-2 shadow-md hover:bg-primary-dark transition"
+                      <Button
+                        variant="solid"
+                        color="primary"
+                        type="submit"
+                        className="w-full disabled:!bg-gray-400 mt-4 data-[focus-visible=true]:outline-primary"
+                        onPress={handleCheckout}
                       >
                         Proceed to Checkout
-                      </button>
+                      </Button>
                       <Link href="/shop">
-                        <button className="w-full py-2 transition mt-2">
+                        <Button
+                          variant="faded"
+                          className="w-full py-2 transition mt-2"
+                        >
                           Continue Shopping
-                        </button>
+                        </Button>
                       </Link>
                     </div>
                   </div>

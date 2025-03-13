@@ -1,4 +1,5 @@
 import useCartStore from "@/lib/stores/cart.store";
+import { Button } from "@heroui/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React from "react";
 
@@ -11,25 +12,29 @@ const StepButtons: React.FC<{
   return (
     <div className="flex justify-between items-center">
       {currentStep > 1 && (
-        <button
-          onClick={() => setCurrentStep(currentStep - 1)}
+        <Button
+          variant="solid"
+          color="primary"
           type="submit"
-          className="bg-primary px-4 py-2 text-white hover:bg-primary-dark transition duration-300 flex items-center disabled:bg-gray-400"
-          disabled={prevDisabled}
+          className="disabled:!bg-gray-400 mt-4 data-[focus-visible=true]:outline-primary"
+          onPress={() => setCurrentStep(currentStep - 1)}
+          isDisabled={prevDisabled}
         >
           <ChevronLeft className="w-5 h-5 mr-2" />
           <span>Previous</span>
-        </button>
+        </Button>
       )}
 
-      <button
+      <Button
         type="submit"
-        className="bg-primary px-4 py-2 text-white hover:bg-primary-dark transition duration-300 flex items-center disabled:bg-gray-400 disabled:text-gray-800"
-        disabled={nextDisabled}
+        variant="solid"
+        color="primary"
+        className="disabled:!bg-gray-400 mt-4 data-[focus-visible=true]:outline-primary"
+        isDisabled={nextDisabled}
       >
         <span>Next</span>
         <ChevronRight className="w-5 h-5 ml-2" />
-      </button>
+      </Button>
     </div>
   );
 };

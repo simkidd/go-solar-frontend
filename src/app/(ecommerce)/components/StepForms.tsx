@@ -5,7 +5,19 @@ import PaymentMethod from "./PaymentMethod";
 import ShippingDetailsForm from "./ShippingDetailsForm";
 
 const StepForms = () => {
-  const { currentStep } = useCartStore();
+  const { currentStep, setCurrentStep } = useCartStore();
+
+  const handleNext = () => {
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
 
   const renderFormByStep = (step: number) => {
     switch (step) {

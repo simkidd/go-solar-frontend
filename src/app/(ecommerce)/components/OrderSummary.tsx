@@ -6,6 +6,8 @@ import Payment from "./Payment";
 import { useRouter } from "next/navigation";
 import { DeliveryDetails } from "@/interfaces/product.interface";
 import Image from "next/image";
+import { toast } from "react-toastify";
+import { Button } from "@heroui/react";
 
 const OrderSummary = () => {
   const {
@@ -19,20 +21,24 @@ const OrderSummary = () => {
   } = useCartStore();
   const router = useRouter();
 
+  // Redirect if payment method is not selected
   useEffect(() => {
     if (!paymentMethod) {
       setCurrentStep(1);
-      return;
+      router.push("/checkout");
     }
-  }, [paymentMethod]);
+  }, [paymentMethod, setCurrentStep, router]);
 
+  // Handle cancel and reset checkout process
   const handleCancel = () => {
     router.push("/cart");
     setCurrentStep(1);
     setDeliveryDetails({} as DeliveryDetails);
     setPaymentMethod("");
+    toast.info("Checkout process canceled.");
   };
 
+  // Calculate order totals
   const calculateTotals = (cartItems: CartItem[]) => {
     const subtotal = cartItems.reduce(
       (acc, cartItem) => acc + cartItem.product.price * cartItem.qty,
@@ -49,14 +55,16 @@ const OrderSummary = () => {
   const { subtotal, deliveryFee } = calculateTotals(cartItems);
 
   return (
-    <div className="py-6 px-2">
-      <h3 className="text-xl font-bold mb-4">Order Summary</h3>
-      <div className="mb-6">
-        <h4 className="text-lg font-semibold mb-2">Items:</h4>
+    <div className="py-6 px-2 max-w-4xl mx-auto">
+      <h3 className="text-2xl font-bold mb-6">Order Summary</h3>
+
+      {/* Items List */}
+      <div className="mb-8">
+        <h4 className="text-lg font-semibold mb-4">Items:</h4>
         <ul className="divide-y divide-gray-200">
           {cartItems.map((cartItem, index) => (
-            <li key={index} className="py-4 grid grid-cols-[80px_auto] gap-2">
-              <div className="w-20 h-20 rounded overflow-hidden">
+            <li key={index} className="py-4 grid grid-cols-[80px_auto] gap-4">
+              <div className="w-20 h-20 rounded-md overflow-hidden">
                 <Image
                   src={cartItem?.product?.images[0].url}
                   alt={cartItem?.product?.name}
@@ -66,18 +74,21 @@ const OrderSummary = () => {
                 />
               </div>
               <div className="flex flex-col flex-grow">
-                <span className="mb-2">{cartItem?.product?.name}</span>
+                <span className="font-medium mb-1">
+                  {cartItem?.product?.name}
+                </span>
+                <span className="text-sm text-gray-500 mb-2">
+                  Quantity: {cartItem.qty}
+                </span>
                 <span className="font-medium">
                   {formatCurrency(
                     cartItem?.product?.price * cartItem.qty,
                     "NGN"
                   )}
                 </span>
-                <span className="text-sm text-gray-500">
-                  Quantity: {cartItem.qty}
-                </span>
                 <span className="text-sm text-primary font-medium">
-                  + Delivery fee: {formatCurrency(cartItem.deliveryFee * cartItem.qty, "NGN")}
+                  + Delivery fee:{" "}
+                  {formatCurrency(cartItem.deliveryFee * cartItem.qty, "NGN")}
                 </span>
               </div>
             </li>
@@ -85,25 +96,28 @@ const OrderSummary = () => {
         </ul>
       </div>
 
-      <div className="mb-6">
-        <h4 className="text-lg font-semibold mb-2">Delivery Address:</h4>
-        <div className="p-4 light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-md">
+      {/* Delivery Address */}
+      <div className="mb-8">
+        <h4 className="text-lg font-semibold mb-4">Delivery Address:</h4>
+        <div className="p-4 bg-gray-100 dark:bg-[#2a2b2f] rounded-md">
           <p>{deliveryDetails.streetAddress},</p>
           <p>{deliveryDetails.city},</p>
           <p>{deliveryDetails.zipCode}</p>
         </div>
       </div>
 
-      <div className="mb-6">
-        <h4 className="text-lg font-semibold mb-2">Payment Method:</h4>
-        <div className="p-4 light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-md capitalize">
+      {/* Payment Method */}
+      <div className="mb-8">
+        <h4 className="text-lg font-semibold mb-4">Payment Method:</h4>
+        <div className="p-4 bg-gray-100 dark:bg-[#2a2b2f] rounded-md capitalize">
           <p>{paymentMethod}</p>
         </div>
       </div>
 
-      <div className="mb-6">
-        <h4 className="text-lg font-semibold mb-2">Order Details:</h4>
-        <div className="p-4 light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-md">
+      {/* Order Details */}
+      <div className="mb-8">
+        <h4 className="text-lg font-semibold mb-4">Order Details:</h4>
+        <div className="p-4 bg-gray-100 dark:bg-[#2a2b2f] rounded-md">
           <div className="flex justify-between mb-2">
             <span>Subtotal:</span>
             <span>{formatCurrency(subtotal, "NGN")}</span>
@@ -119,14 +133,11 @@ const OrderSummary = () => {
         </div>
       </div>
 
-      <div className="flex justify-between mt-6">
-        <button
-          className="bg-gray-300 dark:bg-gray-600 px-6 py-2 hover:bg-gray-400 transition duration-300 dark:text-white"
-          type="button"
-          onClick={handleCancel}
-        >
+      {/* Action Buttons */}
+      <div className="flex justify-between mt-8">
+        <Button type="button" onPress={handleCancel}>
           Back to Cart
-        </button>
+        </Button>
 
         <Payment />
       </div>
