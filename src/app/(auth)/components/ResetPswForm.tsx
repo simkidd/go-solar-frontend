@@ -71,6 +71,7 @@ const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
       </div>
 
       <Button
+        type="submit"
         color="primary"
         className="w-full mt-8 disabled:bg-gray-400"
         disabled={!input.password || isPasswordInvalid}

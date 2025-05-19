@@ -36,7 +36,10 @@ const ForgetPswForm = () => {
           name="email"
           className="w-full"
           startContent={
-            <MailIcon size={16} className="text-default-400 pointer-events-none flex-shrink-0" />
+            <MailIcon
+              size={16}
+              className="text-default-400 pointer-events-none flex-shrink-0"
+            />
           }
           errorMessage={isEmailInvalid && "Please enter a valid email address"}
           value={input?.email}
@@ -45,7 +48,8 @@ const ForgetPswForm = () => {
       </div>
 
       <Button
-       color="primary"
+        type="submit"
+        color="primary"
         className="w-full mt-8 disabled:bg-gray-400"
         disabled={!input.email}
         isLoading={loading}
