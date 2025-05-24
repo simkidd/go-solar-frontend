@@ -34,19 +34,39 @@ const SignUpForm = () => {
     return validateEmail(input.email) ? false : true;
   }, [input.email]);
 
-  const validatePassword = (input: string) => input.length >= 6;
+  const validatePassword = (input: string) => {
+    const hasUpperCase = /[A-Z]/.test(input);
+    const hasSymbol = /[^a-z0-9]/i.test(input);
+    const hasMinLength = input.length >= 6;
+    return hasUpperCase && hasSymbol && hasMinLength;
+  };
 
-  const isPasswordInvalid = useMemo(() => {
-    if (input.password === "") return false;
-    return !validatePassword(input.password);
+  const passwordErrors = useMemo(() => {
+    const errors: string[] = [];
+    if (input.password === "") return errors;
+
+    if (input.password.length < 6) {
+      errors.push("Password must be 6 characters or more.");
+    }
+    if (!/[A-Z]/.test(input.password)) {
+      errors.push("Password must include at least 1 upper case letter");
+    }
+    if (!/[^a-z0-9]/i.test(input.password)) {
+      errors.push("Password must include at least 1 symbol.");
+    }
+    return errors;
   }, [input.password]);
+
+  const isPasswordInvalid = passwordErrors.length > 0;
 
   const isFirstNameValid = useMemo(() => {
     if (input.firstName === "") return false;
+    return input.firstName && input.firstName.length > 0;
   }, [input.firstName]);
 
   const isLastNameValid = useMemo(() => {
     if (input.lastName === "") return false;
+    return input.lastName && input.lastName.length > 0;
   }, [input.lastName]);
 
   const isConfirmPasswordInvalid = useMemo(() => {
@@ -74,14 +94,9 @@ const SignUpForm = () => {
       return;
     }
 
-    if (input.password.length < 4) {
-      errors.push("Password must be 4 characters or more.");
-    }
-    if ((input.password.match(/[A-Z]/g) || []).length < 1) {
-      errors.push("Password must include at least 1 upper case letter");
-    }
-    if ((input.password.match(/[^a-z0-9]/gi) || []).length < 1) {
-      errors.push("Password must include at least 1 symbol.");
+    if (isEmailInvalid || isPasswordInvalid || isConfirmPasswordInvalid) {
+      toast.warning("Please fix the validation errors");
+      return;
     }
 
     await signup(input);
@@ -222,14 +237,18 @@ const SignUpForm = () => {
                 )}
               </button>
             }
-            isInvalid={errors.length > 0}
-            errorMessage={() => (
-              <ul>
-                {errors.map((error, i) => (
-                  <li key={i}>{error}</li>
-                ))}
-              </ul>
-            )}
+            isInvalid={isPasswordInvalid}
+            errorMessage={
+              isPasswordInvalid && (
+                <ul className="list-disc pl-4">
+                  {passwordErrors.map((error, i) => (
+                    <li key={i} className="text-xs">
+                      {error}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
             value={input?.password}
             onChange={(e) => setInput({ ...input, password: e.target.value })}
           />
@@ -270,6 +289,7 @@ const SignUpForm = () => {
                 )}
               </button>
             }
+            isInvalid={isConfirmPasswordInvalid}
             errorMessage={isConfirmPasswordInvalid && "Passwords do not match"}
             value={input?.confirmPassword}
             onChange={(e) =>
@@ -285,7 +305,18 @@ const SignUpForm = () => {
         type="submit"
         className="w-full disabled:!bg-gray-400 mt-4 data-[focus-visible=true]:outline-primary"
         isLoading={loading}
-        isDisabled={!input.password || loading}
+        isDisabled={
+          loading ||
+          !input.email ||
+          !input.password ||
+          !input.phonenumber ||
+          !input.firstName ||
+          !input.lastName ||
+          !input.confirmPassword ||
+          isEmailInvalid ||
+          isPasswordInvalid ||
+          isConfirmPasswordInvalid
+        }
       >
         Sign Up
       </Button>
