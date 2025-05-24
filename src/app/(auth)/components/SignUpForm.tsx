@@ -134,6 +134,7 @@ const SignUpForm = () => {
               inputWrapper:
                 "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-0",
             }}
+            errorMessage={isFirstNameValid && "Please enter a first name"}
           />
         </div>
         <div className="input-group">
@@ -155,6 +156,7 @@ const SignUpForm = () => {
               inputWrapper:
                 "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-0",
             }}
+            errorMessage={isLastNameValid && "Please enter a last name"}
           />
         </div>
       </div>
