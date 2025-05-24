@@ -1,10 +1,20 @@
 // components/home/ShopSection.tsx
 "use client";
 import ProductCard from "@/app/(ecommerce)/components/shop/ProductCard";
+import useProducts from "@/hooks/useProducts";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useMemo } from "react";
 
-const ShopSection = ({ products }: { products: any[] }) => {
+const ShopSection = () => {
+  const { products: allProducts } = useProducts();
+
+  // Memoize publishedProducts to avoid unnecessary recalculations
+  const products = useMemo(
+    () => allProducts.filter((product) => product.isPublished),
+    [allProducts]
+  );
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}

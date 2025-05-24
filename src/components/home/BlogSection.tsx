@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import BlogCard from "@/components/BlogCard";
 import Link from "next/link";
 
-const BlogSection = ({ posts }: { posts: any[] }) => {
+const BlogSection = ({ posts }: { posts?: any[] }) => {
+
+  if(!posts) return null
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}

@@ -605,48 +605,6 @@ const ProductsTable = () => {
         </div>
       </AppModal>
 
-      <AppModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        title="Add Offer"
-        isDismissable={false}
-        hideCloseButton
-        scrollBehavior="inside"
-      >
-        <form className="w-full" onSubmit={handleAddOffer}>
-          <div className="">
-            <Select
-              items={offers}
-              label="Add Offer to Product"
-              placeholder="Select an offer"
-              labelPlacement="outside"
-              value={input.offer}
-              onChange={(e) => setInput({ ...input, offer: e.target.value })}
-            >
-              {(offer) => (
-                <SelectItem key={offer?._id} textValue={offer?.name}>
-                  {offer?.name}
-                </SelectItem>
-              )}
-            </Select>
-          </div>
-          <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-            <Button variant="light" color="default" onPress={onClose}>
-              Close
-            </Button>
-            <Button
-              variant="solid"
-              color="primary"
-              type="submit"
-              isDisabled={loading}
-              isLoading={loading}
-            >
-              Save
-            </Button>
-          </div>
-        </form>
-      </AppModal>
-
       <div className="w-full flex justify-end mb-4">
         <Button
           variant="solid"
@@ -667,7 +625,6 @@ const ProductsTable = () => {
         bottomContentPlacement="outside"
         classNames={classNames}
         selectedKeys={selectedKeys}
-        selectionMode="multiple"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"

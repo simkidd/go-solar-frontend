@@ -1,26 +1,16 @@
 /* eslint-disable react/no-unescaped-entities */
 
-import BlogCard from "@/components/BlogCard";
-import HomeContactCta from "@/components/home/HomeContactCta";
-import MarqueeComp from "@/components/MarqueeComp";
-import Review from "@/components/Review";
-import { Post } from "@/interfaces/post.interface";
-import { Product } from "@/interfaces/product.interface";
-import { getPosts, getPubilshedProducts } from "@/lib/data";
-import Link from "next/link";
-import ProductCard from "../(ecommerce)/components/shop/ProductCard";
-import HeroSection from "@/components/home/HeroSection";
-import VisionSection from "@/components/home/VisionSection";
 import AboutSection from "@/components/home/AboutSection";
-import CounterSection from "@/components/home/CounterSection";
-import TestimonialSection from "@/components/home/TestimonialSection";
 import BlogSection from "@/components/home/BlogSection";
+import CounterSection from "@/components/home/CounterSection";
+import HeroSection from "@/components/home/HeroSection";
+import HomeContactCta from "@/components/home/HomeContactCta";
 import ShopSection from "@/components/home/ShopSection";
+import TestimonialSection from "@/components/home/TestimonialSection";
+import VisionSection from "@/components/home/VisionSection";
+import MarqueeComp from "@/components/MarqueeComp";
 
 const page = async () => {
-  const posts: Post[] = await getPosts();
-  const products: Product[] = await getPubilshedProducts();
-
   return (
     <div className="w-full font-inter">
       {/* hero section */}
@@ -40,9 +30,9 @@ const page = async () => {
       {/* testimonial section */}
       <TestimonialSection />
       {/* blog section */}
-      {posts && posts.length > 0 && <BlogSection posts={posts} />}
+      <BlogSection />
       {/* shop section */}
-      {products && posts.length > 0 && <ShopSection products={products} />}
+      <ShopSection />
       {/* contact section */}
       <HomeContactCta />
     </div>
