@@ -73,7 +73,7 @@ export const shopNavlist: Menu[] = [
   // { label: "Services", href: "/services" },
   // { label: "Projects", href: "/projects" },
   {
-    label: "Products",
+    label: "All Products",
     href: "/product",
   },
   { label: "Blog", href: "/blog" },

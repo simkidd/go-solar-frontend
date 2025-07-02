@@ -84,7 +84,7 @@ const ProductsList = ({
   const initialPage = parseInt(searchParams.get("page") || "1", 10);
   const [page, setPage] = useState<number>(initialPage);
   const [openFilter, setOpenFilter] = useState(false);
-  const itemPerPage = 10;
+  const itemPerPage = 20;
   const totalPages = Math.ceil(filteredProducts.length / itemPerPage);
 
   const brands = useMemo(
@@ -92,7 +92,7 @@ const ProductsList = ({
     [filteredProducts]
   );
 
-  // console.log("filtered products", filteredProducts);
+  console.log("filtered products", filteredProducts);
 
   // Apply filters and sorting
   const finalFilteredProducts = useMemo(() => {
@@ -138,6 +138,8 @@ const ProductsList = ({
     return filtered;
   }, [filteredProducts, priceRange, selectedBrands, sortBy]);
   
+    console.log("filtered products", finalFilteredProducts);
+
 
   // Handle brand selection
   const handleBrandChange = (brand: string) => {
