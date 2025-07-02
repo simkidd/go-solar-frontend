@@ -38,10 +38,10 @@ const ProductsList = ({
     [allProducts]
   );
 
-  console.log("result: ", {
-    query,
-    categorySlug,
-  })
+  // console.log("result: ", {
+  //   query,
+  //   categorySlug,
+  // })
 
   // Find the category based on the categorySlug
   const category = useMemo(
@@ -84,7 +84,7 @@ const ProductsList = ({
   const initialPage = parseInt(searchParams.get("page") || "1", 10);
   const [page, setPage] = useState<number>(initialPage);
   const [openFilter, setOpenFilter] = useState(false);
-  const itemPerPage = 4;
+  const itemPerPage = 10;
   const totalPages = Math.ceil(filteredProducts.length / itemPerPage);
 
   const brands = useMemo(
@@ -92,7 +92,7 @@ const ProductsList = ({
     [filteredProducts]
   );
 
-  console.log("filtered products", filteredProducts);
+  // console.log("filtered products", filteredProducts);
 
   // Apply filters and sorting
   const finalFilteredProducts = useMemo(() => {

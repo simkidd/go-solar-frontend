@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 import BlogCard from "@/components/BlogCard";
 import Link from "next/link";
+import { Button } from "@heroui/react";
 
 const BlogSection = ({ posts }: { posts?: any[] }) => {
-
-  if(!posts) return null
+  if (!posts) return null;
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -29,9 +29,9 @@ const BlogSection = ({ posts }: { posts?: any[] }) => {
           </div>
 
           <Link href="/blog" className="ml-auto mt-auto">
-            <button className="bg-primary text-white py-4 px-8">
+            <Button size="lg" className="bg-primary text-white px-8">
               All Articles
-            </button>
+            </Button>
           </Link>
         </div>
 
