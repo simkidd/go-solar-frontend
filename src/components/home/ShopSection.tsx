@@ -2,6 +2,7 @@
 "use client";
 import ProductCard from "@/app/(ecommerce)/components/shop/ProductCard";
 import useProducts from "@/hooks/useProducts";
+import { Button } from "@heroui/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useMemo } from "react";
@@ -35,7 +36,7 @@ const ShopSection = () => {
           </div>
 
           <Link href="/shop" className="ml-auto mt-auto">
-            <button className="bg-primary text-white py-4 px-8">Go Shop</button>
+            <Button size="lg" className="bg-primary text-white px-8">Go Shop</Button>
           </Link>
         </div>
 

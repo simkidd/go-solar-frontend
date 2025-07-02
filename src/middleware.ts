@@ -19,6 +19,8 @@ const authRoutes = [
   "/account/forgot-password",
 ];
 
+const checkoutRoutes = ["/checkout"];
+
 // Utility function to check user roles
 const isAdminUser = (user: User | null): boolean => {
   return user?.isSuperAdmin || user?.isAdmin || false;
@@ -35,6 +37,9 @@ export default async function middleware(req: NextRequest) {
   const isPublicRoute = publicRoutes.some((route) => path.startsWith(route));
   const isPrivateRoute = privateRoutes.some((route) => path.startsWith(route));
   const isAuthRoute = authRoutes.some((route) => path.startsWith(route));
+  const ischeckoutRoute = checkoutRoutes.some((route) =>
+    path.startsWith(route)
+  );
 
   const token = cookieStore.get(TOKEN_NAME)?.value;
   const userCookie = cookieStore.get(USER_DETAILS)?.value;
@@ -67,6 +72,13 @@ export default async function middleware(req: NextRequest) {
 
   // Redirect to login if the user is not authenticated and trying to access protected routes
   if (isPrivateRoute && !token) {
+    const redirectUrl = encodeURIComponent(path);
+    return NextResponse.redirect(
+      new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl)
+    );
+  }
+
+  if (ischeckoutRoute && !token) {
     const redirectUrl = encodeURIComponent(path);
     return NextResponse.redirect(
       new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl)

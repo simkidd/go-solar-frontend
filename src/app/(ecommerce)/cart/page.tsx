@@ -1,9 +1,9 @@
 "use client";
 
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore, { CartItem } from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
+import { Button } from "@heroui/react";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,6 @@ import { Suspense } from "react";
 import CartItemCard from "../components/shop/CartItemCard";
 
 const CartPage = () => {
-  const { user } = useAuthStore();
   const { cartItems, setTotalPricePaid } = useCartStore();
   const router = useRouter();
 
@@ -31,12 +30,8 @@ const CartPage = () => {
   const { total, subtotal, deliveryFee } = calculateTotals(cartItems);
 
   const handleCheckout = () => {
-    if (!user) {
-      router.push("/account/login");
-    } else {
-      setTotalPricePaid(total);
-      router.push("/checkout");
-    }
+    setTotalPricePaid(total);
+    router.push("/checkout");
   };
 
   return (
@@ -69,7 +64,7 @@ const CartPage = () => {
                   ))}
                 </div>
                 <div className="lg:col-span-2 space-y-4 ">
-                  <div className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] py-2 sticky top-48">
+                  <div className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] py-2 sticky top-48 rounded-md">
                     <h3 className="text-lg font-bold px-4">Cart Summary</h3>
                     <hr className="border-t border-gray-300 my-2" />
                     <div className="flex justify-between px-4 ">
@@ -93,16 +88,19 @@ const CartPage = () => {
                     </div>
                     <hr className="border-t border-gray-300 my-2" />
                     <div className="px-4">
-                      <button
-                        onClick={handleCheckout}
+                      <Button
+                        onPress={handleCheckout}
                         className="w-full bg-primary text-white py-2 shadow-md hover:bg-primary-dark transition"
                       >
                         Proceed to Checkout
-                      </button>
+                      </Button>
                       <Link href="/shop">
-                        <button className="w-full py-2 transition mt-2">
+                        <Button
+                          variant="light"
+                          className="w-full py-2 transition mt-2"
+                        >
                           Continue Shopping
-                        </button>
+                        </Button>
                       </Link>
                     </div>
                   </div>

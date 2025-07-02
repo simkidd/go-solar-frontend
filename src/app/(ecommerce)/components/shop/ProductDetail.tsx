@@ -3,6 +3,7 @@ import SocialShare from "@/components/SocialShare";
 import { Product } from "@/interfaces/product.interface";
 import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
+import { Button } from "@heroui/react";
 import { Minus, Plus } from "lucide-react";
 import React, { useState } from "react";
 import { BsCartPlus } from "react-icons/bs";
@@ -65,32 +66,46 @@ const ProductDetail: React.FC<{
         </h3>
 
         <p className="text-gray-500">
-          Stock:{" "}
-          <span className="font-semibold">{product?.quantityInStock}</span>
+          {product?.quantityInStock > 0 ? (
+            <span className="text-green-600">
+              {product?.quantityInStock < 5
+                ? `Only (${product?.quantityInStock} left)`
+                : "In Stock"}
+            </span>
+          ) : (
+            <span className="text-red-500">Out of stock</span>
+          )}
         </p>
       </div>
 
       <div className="flex gap-8 mb-6">
         <div className="flex items-center ">
-          <button
-            className="disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed cursor-pointer h-8 w-8 flex items-center justify-center rounded-sm bg-primary text-white"
-            onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+          <Button
+            isIconOnly
+            className="disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed  bg-primary text-white"
+            disabled={quantity <= 1}
+            onPress={() => quantity > 1 && setQuantity(quantity - 1)}
           >
             <Minus size={18} />
-          </button>
+          </Button>
           <span className="px-4 text-sm">{quantity}</span>
-          <button
-            className="h-8 w-8 flex items-center justify-center rounded-sm bg-primary text-white"
-            onClick={() => setQuantity(quantity + 1)}
+          <Button
+            isIconOnly
+            className="bg-primary text-white disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed"
+            disabled={quantity >= product.quantityInStock}
+            onPress={() => {
+              if (quantity < product.quantityInStock) setQuantity(quantity + 1);
+            }}
           >
             <Plus size={18} />
-          </button>
+          </Button>
         </div>
 
         <div>
-          <button
+          <Button
+            size="lg"
             className="bg-primary text-white py-3 px-6 flex items-center gap-2"
-            onClick={() =>
+            onPress={() =>
               addItem({
                 product: {
                   ...product,
@@ -103,7 +118,7 @@ const ProductDetail: React.FC<{
           >
             Add To Cart
             <BsCartPlus size={18} />
-          </button>
+          </Button>
         </div>
       </div>
 

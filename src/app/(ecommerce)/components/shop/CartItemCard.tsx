@@ -1,6 +1,7 @@
 "use client";
 import useCartStore, { CartItem } from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
+import { Button } from "@heroui/react";
 import { Minus, Plus, Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -46,20 +47,28 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
           Remove
         </button>
         <div className="flex items-center">
-          <button
-            className="disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed cursor-pointer h-8 w-8 flex items-center justify-center rounded-sm bg-primary text-white"
-            onClick={() => decreaseQuantity(cartItem?.product?._id)}
-            disabled={cartItem?.qty < 2}
+          <Button
+            isIconOnly
+            className="disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center  bg-primary text-white"
+            onPress={() =>
+              cartItem.qty > 1 && decreaseQuantity(cartItem?.product?._id)
+            }
+            disabled={cartItem?.qty <= 1}
           >
             <Minus size={18} />
-          </button>
+          </Button>
           <span className="px-4 text-sm">{cartItem?.qty}</span>
-          <button
-            className="h-8 w-8 flex items-center justify-center rounded-sm bg-primary text-white"
-            onClick={() => increaseQuantity(cartItem?.product?._id)}
+          <Button
+            isIconOnly
+            className=" flex items-center justify-center  bg-primary text-white disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed"
+            disabled={cartItem.qty >= cartItem.product.quantityInStock}
+            onPress={() => {
+              if (cartItem.qty < cartItem.product.quantityInStock)
+                increaseQuantity(cartItem?.product?._id);
+            }}
           >
             <Plus size={18} />
-          </button>
+          </Button>
         </div>
       </div>
     </div>
