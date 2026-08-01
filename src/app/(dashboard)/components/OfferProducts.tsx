@@ -1,21 +1,18 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import { Offer, OfferType, Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency } from "@/utils/helpers";
 import {
-  Card,
-  CardBody,
-  Chip,
-  Spinner,
   Table,
   TableBody,
   TableCell,
-  TableColumn,
+  TableHead,
   TableHeader,
-  TableRow
-} from "@heroui/react";
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
 
 const OfferProducts: React.FC<{
   offer: Offer;
@@ -34,97 +31,84 @@ const OfferProducts: React.FC<{
     }
   }, [products, offer]);
 
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["min-h-fit", "bg-white", "dark:bg-[#222327]"],
-      th: ["dark:bg-transparent"],
-      td: ["text-sm"],
-    }),
-    []
-  );
-
   return (
-    <div className="w-full">
-      <div className="mb-4 flex justify-between">
+    <div className="w-full space-y-6">
+      {/* Header Info */}
+      <div className="bg-white dark:bg-[#222327] p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">{offer?.name}</h1>
-          <p className="">{offer?.description}</p>
-
-          <div>
-            {offer?.type === OfferType.PercentageOff && (
-              <Chip color="success" variant="flat" size="sm">
-                {offer?.percentageOff}% Off
-              </Chip>
-            )}
-            {offer?.type === OfferType.PriceSlash && (
-              <Chip color="warning" variant="flat" size="sm">
-                {formatCurrency(offer?.priceSlash, "NGN")}
-              </Chip>
-            )}
-          </div>
+          <h1 className="text-xl font-bold text-zinc-950 dark:text-white">{offer?.name}</h1>
+          <p className="text-sm text-zinc-500 mt-1">{offer?.description}</p>
         </div>
-
+        <div>
+          {offer?.type === OfferType.PercentageOff && (
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/50">
+              {offer?.percentageOff}% Off
+            </span>
+          )}
+          {offer?.type === OfferType.PriceSlash && (
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50">
+              {formatCurrency(offer?.priceSlash, "NGN")}
+            </span>
+          )}
+        </div>
       </div>
 
       {loading ? (
-        <div className="py-4 flex justify-center">
-          <Card className="dark:bg-[#222327]">
-            <CardBody className="p-6">
-              <Spinner size="lg" />
-            </CardBody>
-          </Card>
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-20 w-full rounded-lg" />
         </div>
       ) : filteredProducts && filteredProducts.length > 0 ? (
-        <Table
-          aria-label="Products with offer"
-          isCompact
-          isHeaderSticky
-          classNames={classNames}
-        >
-          <TableHeader>
-            <TableColumn>Product</TableColumn>
-            <TableColumn>Price</TableColumn>
-            <TableColumn>Discount</TableColumn>
-          </TableHeader>
-          <TableBody>
-            {filteredProducts.map((product: Product) => (
-              <TableRow key={product._id}>
-                <TableCell>
-                  <div className="grid grid-cols-[55px_auto] gap-2 w-full py-2">
-                    <div className="w-10 h-10">
-                      <Image
-                        src={product?.images[0]?.url}
-                        alt={product?.name}
-                        width={80}
-                        height={80}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="text-wrap">{product?.name}</span>
-                  </div>
-                </TableCell>
-                <TableCell>{formatCurrency(product?.price, "NGN")}</TableCell>
-                <TableCell>
-                  {product?.currentOffer?.percentageOff ? (
-                    <Chip
-                      color="success"
-                      variant="flat"
-                      size="sm"
-                    >{`${product?.currentOffer?.percentageOff}% off`}</Chip>
-                  ) : product?.currentOffer?.priceSlash ? (
-                    <Chip color="warning" variant="flat" size="sm">
-                      {formatCurrency(product?.currentOffer?.priceSlash, "NGN")}
-                    </Chip>
-                  ) : (
-                    "N/A"
-                  )}
-                </TableCell>
+        <div className="bg-white dark:bg-[#222327] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-zinc-50/50 dark:bg-zinc-900/20 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-800">
+                <TableHead className="font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs">Product</TableHead>
+                <TableHead className="font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs">Price</TableHead>
+                <TableHead className="font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs">Discount</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredProducts.map((product: Product) => (
+                <TableRow key={product._id} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/30 dark:hover:bg-zinc-800/10">
+                  <TableCell className="py-3 text-sm text-zinc-850 dark:text-zinc-200">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 min-w-10 rounded-lg overflow-hidden border border-zinc-100 dark:border-zinc-800 relative bg-zinc-50 dark:bg-zinc-900">
+                        <Image
+                          src={product?.images?.[0]?.url || "/placeholder-product.jpg"}
+                          alt={product?.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <span className="font-medium text-zinc-900 dark:text-white line-clamp-2">{product?.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-3 text-sm font-semibold">
+                    {formatCurrency(product?.price, "NGN")}
+                  </TableCell>
+                  <TableCell className="py-3 text-sm">
+                    {product?.currentOffer?.percentageOff ? (
+                      <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/50">
+                        {product?.currentOffer?.percentageOff}% off
+                      </span>
+                    ) : product?.currentOffer?.priceSlash ? (
+                      <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50">
+                        {formatCurrency(product?.currentOffer?.priceSlash, "NGN")}
+                      </span>
+                    ) : (
+                      <span className="text-zinc-400">-</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       ) : (
-        <p>No products found for this offer.</p>
+        <div className="bg-white dark:bg-[#222327] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm p-12 text-center text-sm text-zinc-500 dark:text-zinc-400">
+          No products found for this offer.
+        </div>
       )}
     </div>
   );

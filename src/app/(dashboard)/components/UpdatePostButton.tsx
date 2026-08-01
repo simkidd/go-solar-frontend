@@ -1,35 +1,33 @@
 "use client";
+import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
 import { Post } from "@/interfaces/post.interface";
-import { Button, useDisclosure } from "@heroui/react";
-import React from "react";
+import { Button } from "@/components/ui/button";
 import UpdateBlogPostForm from "./UpdateBlogPostForm";
 import { Edit } from "lucide-react";
 
 const UpdatePostButton: React.FC<{ post: Post }> = ({ post }) => {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div>
       <AppModal
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
+        onOpenChange={setIsOpen}
         title="Update Post"
         isDismissable={false}
         hideCloseButton
         size="2xl"
         scrollBehavior="inside"
       >
-        <UpdateBlogPostForm onClose={onClose} post={post} />
+        <UpdateBlogPostForm onClose={() => setIsOpen(false)} post={post} />
       </AppModal>
 
       <Button
-        variant="solid"
-        color="primary"
-        type="submit"
-        startContent={<Edit size={16} />}
-        onPress={onOpen}
+        onClick={() => setIsOpen(true)}
+        className="gap-2 bg-primary hover:bg-primary/95 text-white"
       >
+        <Edit size={16} />
         Update
       </Button>
     </div>

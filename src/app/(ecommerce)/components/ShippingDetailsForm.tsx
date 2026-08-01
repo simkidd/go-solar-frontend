@@ -3,7 +3,7 @@ import { DeliveryDetails } from "@/interfaces/product.interface";
 import React, { useEffect, useState } from "react";
 import StepButton from "./StepButtons";
 import useCartStore from "@/lib/stores/cart.store";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { useRouter } from "next/navigation";
 

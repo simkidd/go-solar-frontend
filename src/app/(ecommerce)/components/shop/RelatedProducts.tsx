@@ -15,11 +15,11 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
     const fetchData = async () => {
       try {
         const publishedProducts = products.filter(
-          (product) => product.isPublished
+          (product) => product.isPublished,
         );
         const filteredProducts = publishedProducts.filter(
           (p) =>
-            p.category?._id === product.category?._id && p._id !== product._id
+            p.category?._id === product.category?._id && p._id !== product._id,
         );
 
         // Limit the number of related products
@@ -53,7 +53,7 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
                   slidesPerView: 3,
                 },
                 1024: {
-                  slidesPerView: 6,
+                  slidesPerView: 5,
                 },
               }}
             >

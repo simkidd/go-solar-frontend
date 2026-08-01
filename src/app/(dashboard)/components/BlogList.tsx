@@ -1,17 +1,13 @@
 "use client";
+import React, { useMemo, useState, useCallback } from "react";
 import { BlogCardAdmin } from "@/components/BlogCard";
 import { useBlogStore } from "@/lib/stores/blog.store";
-import {
-  Button,
-  Card,
-  CardBody,
-  Input,
-  Pagination,
-  Spinner,
-} from "@heroui/react";
-import { RefreshCcw, SearchIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { RefreshCw, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useMemo, useState } from "react";
 
 const BlogList = () => {
   const { posts, loading, fetchPosts } = useBlogStore();
@@ -22,7 +18,6 @@ const BlogList = () => {
   const [page, setPage] = useState(1);
 
   const postsPerPage = 3;
-
   const totalPages = Math.ceil(posts.length / postsPerPage);
 
   const filteredPosts = useMemo(() => {
@@ -45,116 +40,107 @@ const BlogList = () => {
     return filteredPosts.slice(startIndex, endIndex);
   }, [page, filteredPosts]);
 
-  const handleSearch = useCallback(
-    (value?: string) => {
-      const params = new URLSearchParams(searchParams);
-      if (value) {
-        params.set("q", value);
-        setSearchTerm(value);
-      } else {
-        params.delete("q");
-        setSearchTerm("");
-      }
-      replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, replace, searchParams]
-  );
+  const handleSearch = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set("q", value);
+      setSearchTerm(value);
+    } else {
+      params.delete("q");
+      setSearchTerm("");
+    }
+    replace(`${pathname}?${params.toString()}`);
+  };
 
-  const onClear = useCallback(() => {
+  const onClear = () => {
     setSearchTerm("");
     setPage(1);
-  }, []);
+  };
 
-  const handlePageChange = useCallback((page: number) => {
-    setPage(page);
-    scrollTo(0, 0);
-  }, []);
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
-    <div className="w-full">
-      <div className="w-full flex justify-end mb-4">
+    <div className="w-full space-y-4">
+      {/* Search Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+          <Input
+            placeholder="Search posts..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="pl-9 bg-white dark:bg-[#222327]/40 border-zinc-200 dark:border-zinc-800"
+          />
+        </div>
+
         <Button
-          variant="solid"
-          color="warning"
-          onPress={fetchPosts}
-          startContent={<RefreshCcw size={16} />}
+          variant="outline"
           size="sm"
+          onClick={() => fetchPosts()}
+          className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
+          <RefreshCw className="h-4 w-4" />
           Refresh
         </Button>
       </div>
 
-      <div className="flex justify-between gap-3 items-end lg:flex-row flex-col mb-4">
-        <Input
-          isClearable
-          className="w-full lg:max-w-[44%]"
-          classNames={{
-            input: ["bg-transparent"],
-            innerWrapper: "bg-transparent ",
-            inputWrapper: [
-              "border-1",
-              "bg-white",
-              "dark:bg-[#222327]",
-              "hover:bg-default-200/70",
-              "focus-within:!bg-default-200/50",
-              "dark:hover:bg-default/70",
-              "dark:focus-within:!bg-default/60",
-            ],
-          }}
-          variant="bordered"
-          placeholder="Search..."
-          startContent={<SearchIcon />}
-          value={searchTerm}
-          onClear={() => onClear()}
-          onValueChange={handleSearch}
-          defaultValue={searchParams.get("q")?.toString()}
-        />
-      </div>
-
       {loading ? (
-        <div className="py-4 flex justify-center">
-          <Card className="dark:bg-[#222327]">
-            <CardBody className="p-6">
-              <Spinner size="lg" />
-            </CardBody>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i} className="dark:bg-[#222327] border-zinc-100 dark:border-zinc-800">
+              <CardContent className="p-4 space-y-3">
+                <Skeleton className="h-48 w-full rounded-xl" />
+                <Skeleton className="h-5 w-3/4 rounded" />
+                <Skeleton className="h-4 w-1/2 rounded" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       ) : paginatedPosts?.length === 0 ? (
-        <Card className="dark:bg-[#222327]">
-          <CardBody className="p-6">
-            <p className="text-center dark:text-white">No post found</p>
-          </CardBody>
+        <Card className="dark:bg-[#222327] border-zinc-100 dark:border-zinc-800">
+          <CardContent className="p-12 text-center text-sm text-zinc-500 dark:text-zinc-400">
+            No posts found
+          </CardContent>
         </Card>
       ) : (
-        <div className="flex flex-col gap-5">
-          <Card className="dark:bg-[#222327]">
-            <CardBody>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                {paginatedPosts?.map((post) => (
-                  <BlogCardAdmin key={post._id} post={post} />
-                ))}
-              </div>
-            </CardBody>
-          </Card>
-
-          <div className="flex justify-end">
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              initialPage={1}
-              total={totalPages}
-              page={page}
-              onChange={handlePageChange}
-              classNames={{
-                wrapper: "bg-white dark:bg-[#222327]",
-                item: "bg-transparent dark:text-white",
-                prev: "bg-white dark:bg-[#222327]",
-                next: "bg-white dark:bg-[#222327]",
-                cursor: "",
-              }}
-            />
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedPosts?.map((post) => (
+              <BlogCardAdmin key={post._id} post={post} />
+            ))}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between py-2 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="text-sm text-zinc-500 dark:text-zinc-400">
+                Page {page} of {totalPages}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page === 1}
+                  onClick={() => handlePageChange(page - 1)}
+                  className="border-zinc-200 dark:border-zinc-800"
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page === totalPages}
+                  onClick={() => handlePageChange(page + 1)}
+                  className="border-zinc-200 dark:border-zinc-800"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

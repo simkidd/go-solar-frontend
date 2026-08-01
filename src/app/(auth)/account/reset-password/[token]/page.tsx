@@ -15,11 +15,14 @@ const ResetPassword = async ({
 }) => {
   const { token } = await params;
   return (
-    <div className="w-full">
-      <h3 className="mb-2 text-center text-2xl font-semibold">
-        Reset your password
-      </h3>
-      <p className="text-sm text-center mb-8">Please enter a new password.</p>
+    <div className="w-full space-y-6">
+      <div>
+        <h2 className="text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight">Create new password</h2>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+          Please enter your new password below. Ensure it is secure and easy to remember.
+        </p>
+      </div>
+
       <ResetPswForm token={token} />
     </div>
   );

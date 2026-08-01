@@ -7,7 +7,7 @@ import {
 } from "@/interfaces/auth.interface";
 import { create } from "zustand";
 import { axiosInstance } from "../axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { TOKEN_NAME, USER_DETAILS } from "@/utils/constants";
 

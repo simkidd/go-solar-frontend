@@ -1,46 +1,42 @@
 "use client";
+import React, { useCallback, useState } from "react";
 import AppModal from "@/components/AppModal";
-import { IImage, Product } from "@/interfaces/product.interface";
-import { axiosInstance } from "@/lib/axios";
+import { Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button, useDisclosure } from "@heroui/react";
-import { Edit, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Edit, Trash2, Upload } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { GrCloudUpload } from "react-icons/gr";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const UpdateProductImage: React.FC<{
   product: Product;
 }> = ({ product }) => {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div>
       <Button
+        variant="outline"
         size="sm"
-        variant="faded"
-        color="default"
-        type="submit"
-        className="rounded-md "
-        startContent={<Edit size={16} />}
-        onPress={onOpen}
+        onClick={() => setIsOpen(true)}
+        className="gap-2 border-zinc-200 dark:border-zinc-800 dark:text-zinc-300"
       >
+        <Edit className="h-4 w-4" />
         Update Images
       </Button>
 
       <AppModal
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
+        onOpenChange={setIsOpen}
         title="Update Product Images"
         isDismissable={false}
         hideCloseButton
         size="md"
         scrollBehavior="inside"
       >
-        <ProductImagesForm onClose={onClose} product={product} />
+        <ProductImagesForm onClose={() => setIsOpen(false)} product={product} />
       </AppModal>
     </div>
   );
@@ -73,12 +69,10 @@ export const ProductImagesForm: React.FC<{
         })
       );
 
-      // Create an array of new image URLs
       const newImageUrls = acceptedFiles.map((file) =>
         URL.createObjectURL(file)
       );
 
-      // Update the images state with new URLs
       setImages((prevFiles) => [...prevFiles, ...newImageUrls]);
       setSelectedImage(newFiles[0]);
     },
@@ -86,24 +80,24 @@ export const ProductImagesForm: React.FC<{
   );
 
   const thumbs = images.map((image, i) => (
-    <div key={i} className="relative m-2 w-20 h-20">
+    <div key={i} className="relative w-20 h-20 group rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800">
       <Image
-        src={image} // Directly use the image URL
+        src={image}
         alt={`Product Image ${i + 1}`}
-        className="w-full h-full object-cover rounded-lg"
+        className="w-full h-full object-cover"
         width={80}
         height={80}
       />
       <button
         type="button"
-        className="absolute top-1 right-1 bg-white text-red-600 rounded-full p-1"
+        className="absolute top-1 right-1 bg-white/90 text-red-600 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={() => {
           setImages(images.filter((f) => f !== image));
           setSelectedImage(null);
           setSelectedImgId(null);
         }}
       >
-        <Trash2 size={16} />
+        <Trash2 size={14} />
       </button>
     </div>
   ));
@@ -114,7 +108,7 @@ export const ProductImagesForm: React.FC<{
       "image/jpeg": [],
       "image/png": [],
     },
-    multiple: false, // Allow only one image at a time
+    multiple: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,7 +121,7 @@ export const ProductImagesForm: React.FC<{
 
     const formData = new FormData();
     formData.append("productId", product?._id);
-    formData.append("imgId", selectedImgId); // Replace with actual imgId
+    formData.append("imgId", selectedImgId);
     formData.append("updateImg", selectedImage);
 
     const config = { headers: { "Content-Type": "multipart/form-data" } };
@@ -139,12 +133,13 @@ export const ProductImagesForm: React.FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full font-inter">
-      <div className="w-full">
-        {/* Existing Images (You'll need to fetch these from your database) */}
+    <form onSubmit={handleSubmit} className="w-full font-inter space-y-6 pt-2">
+      <div className="w-full space-y-4">
         {product.images && product.images.length > 0 && (
-          <div className="col-span-1 mb-4">
-            <h3 className="mb-2">Select an image to update</h3>
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+              Select an image to update
+            </h3>
             <div className="flex flex-wrap gap-2">
               {thumbs.map((thumb, i) => (
                 <div
@@ -152,10 +147,9 @@ export const ProductImagesForm: React.FC<{
                   onClick={() => {
                     setSelectedImgId(product?.images[i].public_id);
                   }}
-                  className={`cursor-pointer border-2 ${
-                    selectedImgId &&
-                    product?.images[i]?.public_id === selectedImgId
-                      ? "border-primary rounded"
+                  className={`cursor-pointer rounded-lg p-0.5 border-2 transition-all ${
+                    selectedImgId && product?.images[i]?.public_id === selectedImgId
+                      ? "border-primary"
                       : "border-transparent"
                   }`}
                 >
@@ -169,47 +163,50 @@ export const ProductImagesForm: React.FC<{
         {/* Image Upload Area */}
         <div
           {...getRootProps()}
-          className={`col-span-1 border-dashed border-1 rounded-lg py-16 px-4 flex gap-2 flex-wrap cursor-pointer bg-[#f4f4f5] dark:bg-[#27272A] ${
-            isDragActive ? "border-primary" : ""
+          className={`border-2 border-dashed rounded-xl py-12 px-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-zinc-50/50 dark:bg-zinc-900/10 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/10 ${
+            isDragActive ? "border-primary bg-primary/5" : "border-zinc-200 dark:border-zinc-800"
           }`}
         >
           <input {...getInputProps()} />
           {isDragActive ? (
-            <p className="text-primary">Drop files here...</p>
+            <p className="text-primary text-sm font-medium">Drop file here...</p>
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center">
-              <GrCloudUpload size={20} />
-              <p className="text-gray-500">
-                Drag & drop image here, or click to select a file
+            <div className="flex flex-col items-center justify-center text-center space-y-2">
+              <Upload className="h-6 w-6 text-zinc-400" />
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Drag & drop image here, or <span className="text-primary font-medium">browse</span>
               </p>
+              <p className="text-xs text-zinc-400">JPEG, PNG only (1 file at a time)</p>
             </div>
           )}
-          {selectedImage && (
-            <div className="w-48 h-48 overflow-hidden rounded">
+        </div>
+
+        {selectedImage && (
+          <div className="space-y-2">
+            <h4 className="text-xs font-semibold text-zinc-500">Selected File Preview:</h4>
+            <div className="w-24 h-24 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
               <Image
                 src={URL.createObjectURL(selectedImage)}
                 alt="Selected Image"
                 className="w-full h-full object-cover"
-                width={80}
-                height={80}
+                width={96}
+                height={96}
               />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-        <Button variant="light" color="default" onPress={onClose}>
+      <div className="flex items-center gap-2 mt-8 justify-end">
+        <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
           Close
         </Button>
         <Button
-          variant="solid"
-          color="primary"
           type="submit"
-          isDisabled={imageLoading || !selectedImgId}
-          isLoading={imageLoading}
+          disabled={imageLoading || !selectedImgId || !selectedImage}
+          className="bg-primary hover:bg-primary/95 text-white"
         >
-          Update Image
+          {imageLoading ? "Updating..." : "Update Image"}
         </Button>
       </div>
     </form>

@@ -1,14 +1,14 @@
 "use client";
+import React, { useState } from "react";
 import MultipleSelectChip from "@/components/MultipleSelectChip";
 import { Post, UpdatePostInput } from "@/interfaces/post.interface";
 import { useBlogStore } from "@/lib/stores/blog.store";
-import { Button, Input, Textarea } from "@heroui/react";
-import { Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Plus, Trash2, Upload } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { GrCloudUpload } from "react-icons/gr";
-import { HiXMark } from "react-icons/hi2";
 
 const tagsList = [
   "HBL OPTIMUZ",
@@ -59,7 +59,6 @@ const UpdateBlogPostForm: React.FC<{
   const [imagePreview, setImagePreview] = useState<string | File>(
     input?.image || ""
   );
-  // const [newTag, setNewTag] = useState("");
   const router = useRouter();
 
   const handleTagChange = (tags: string[]) => {
@@ -69,42 +68,11 @@ const UpdateBlogPostForm: React.FC<{
     });
   };
 
-  // const handleAddTag = () => {
-  //   if (newTag.trim() !== "") {
-  //     const newTags = newTag
-  //       .split(",")
-  //       .map((t) => t.trim())
-  //       .filter((t) => t !== "");
-  //     const updatedTags = Array.from(new Set([...input.tags, ...newTags])); // Convert Set to array
-
-  //     setInput({
-  //       ...input,
-  //       tags: updatedTags,
-  //     });
-  //     setNewTag("");
-  //   }
-  // };
-
-  // const handleDeleteTag = (tagToDelete: string) => {
-  //   setInput((tagInput) => ({
-  //     ...tagInput,
-  //     tags: tagInput.tags.filter((tag) => tag !== tagToDelete),
-  //   }));
-  // };
-
-  // const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === "Enter") {
-  //     e.preventDefault();
-  //     handleAddTag();
-  //   }
-  // };
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
     if (!files?.length) return;
     const file = files[0];
 
-    // Check if the file type is PNG or JPEG
     const extension = file.name.split(".").pop()?.toLowerCase();
     if (
       !extension ||
@@ -114,31 +82,17 @@ const UpdateBlogPostForm: React.FC<{
       return;
     }
 
-    // Check if the file size exceeds 5MB
-    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       alert("Please select an image file smaller than 5MB.");
       return;
     }
 
     setImagePreview(file);
-
     setInput({
       ...input,
       image: file,
     });
-
-    // const reader = new FileReader();
-
-    // reader.onloadend = () => {
-    //   const imagePreviewUrl = reader.result as string;
-    //   setImagePreview(imagePreviewUrl);
-    //   setInput({
-    //     ...input,
-    //     image: reader.result as string,
-    //   });
-    // };
-    // reader.readAsDataURL(file);
   };
 
   const removeImage = () => {
@@ -146,8 +100,6 @@ const UpdateBlogPostForm: React.FC<{
       ...input,
       image: "",
     });
-
-    // Clear the image preview
     setImagePreview("");
   };
 
@@ -165,123 +117,113 @@ const UpdateBlogPostForm: React.FC<{
     const config = { headers: { "Content-Type": "multipart/form-data" } };
 
     await updatePost(formData, config);
-
     onClose();
   };
 
   return (
-    <form className="w-full" onSubmit={handleSubmit}>
-      <div>
-        <div className="mb-3">
-          <Input
-            type="text"
-            label="Title"
-            labelPlacement="outside"
-            placeholder="Enter post title"
-            value={input.title}
-            onChange={(e) => setInput({ ...input, title: e.target.value })}
-          />
-        </div>
-        <div className="mb-3">
-          <Textarea
-            label="Content"
-            labelPlacement="outside"
-            placeholder="Enter post content here..."
-            value={input.content}
-            onChange={(e) => setInput({ ...input, content: e.target.value })}
-            minRows={8}
-            maxRows={15}
-          />
-        </div>
-        <div className="mb-3">
-          <MultipleSelectChip
-            tags={tagsList}
-            label="Select tags"
-            selectedTags={input.tags}
-            onTagChange={handleTagChange}
-          />
-        </div>
+    <form className="w-full font-inter space-y-4 pt-2" onSubmit={handleSubmit}>
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Title</label>
+        <Input
+          type="text"
+          placeholder="Enter post title"
+          value={input.title}
+          onChange={(e) => setInput({ ...input, title: e.target.value })}
+          className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+          required
+        />
+      </div>
 
-        <div className="mb-3">
-          <Input
-            type="text"
-            label="Author"
-            labelPlacement="outside"
-            placeholder="Enter author name"
-            value={input.author}
-            onChange={(e) => setInput({ ...input, author: e.target.value })}
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="" className="">
-            Images
-          </label>
-          <div className="flex gap-2 flex-wrap mt-1">
-            {/* upload button */}
-            <div
-              className="size-20 overflow-hidden rounded border hover:bg-gray-400 "
-              style={{ transition: "background .3s ease" }}
-            >
-              <label htmlFor="image" className="cursor-pointer">
-                <div className="w-full h-full flex flex-col items-center justify-center">
-                  <GrCloudUpload size={20} />
-                  <span className="text-sm">Upload</span>
-                </div>
-              </label>
-              <input
-                type="file"
-                id="image"
-                className="hidden"
-                onChange={handleImageUpload}
-                accept="image/*"
-              />
-            </div>
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Content</label>
+        <Textarea
+          placeholder="Enter post content here..."
+          value={input.content}
+          onChange={(e) => setInput({ ...input, content: e.target.value })}
+          rows={8}
+          className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+          required
+        />
+      </div>
 
-            {/* selected image */}
-            {imagePreview && (
-              <div className="size-20 overflow-hidden rounded relative group">
-                <Image
-                  src={
-                    typeof imagePreview === "string"
-                      ? imagePreview
-                      : URL.createObjectURL(imagePreview)
-                  }
-                  alt=""
-                  className="w-full h-full object-cover"
-                  width={80}
-                  height={80}
-                />
-                <div
-                  className="bg-[#2424243a] w-full h-full absolute top-0 left-0 flex group-hover:opacity-100 opacity-0"
-                  style={{ transition: "opacity .3s ease" }}
-                >
-                  <button
-                    className="mt-auto ml-[50%] -translate-x-1/2 mb-1 text-white bg-danger p-1 rounded"
-                    onClick={removeImage}
-                    type="button"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </div>
-            )}
+      <div className="space-y-1.5">
+        <MultipleSelectChip
+          tags={tagsList}
+          label="Select tags"
+          selectedTags={input.tags}
+          onTagChange={handleTagChange}
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Author</label>
+        <Input
+          type="text"
+          placeholder="Enter author name"
+          value={input.author}
+          onChange={(e) => setInput({ ...input, author: e.target.value })}
+          className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+          required
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Image</label>
+        <div className="flex gap-3 items-center flex-wrap">
+          {/* Upload Button */}
+          <div className="h-20 w-20 rounded-lg border-2 border-dashed border-zinc-200 dark:border-zinc-800 hover:border-primary/50 transition-colors flex items-center justify-center bg-zinc-50/50 dark:bg-zinc-900/10 cursor-pointer relative">
+            <label htmlFor="image-update" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
+              <Upload className="h-4 w-4 text-zinc-400" />
+              <span className="text-xs text-zinc-400 mt-1">Upload</span>
+            </label>
+            <input
+              type="file"
+              id="image-update"
+              className="hidden"
+              onChange={handleImageUpload}
+              accept="image/*"
+            />
           </div>
-        </div>
 
-        <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-          <Button variant="light" color="default" onPress={onClose}>
-            Close
-          </Button>
-          <Button
-            variant="solid"
-            color="primary"
-            type="submit"
-            isDisabled={loading}
-            isLoading={loading}
-          >
-            Save
-          </Button>
+          {/* Selected Image Preview */}
+          {imagePreview && (
+            <div className="h-20 w-20 rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 relative group">
+              <Image
+                src={
+                  typeof imagePreview === "string"
+                    ? imagePreview
+                    : URL.createObjectURL(imagePreview)
+                }
+                alt="Preview"
+                className="w-full h-full object-cover"
+                width={80}
+                height={80}
+              />
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
+      </div>
+
+      <div className="flex items-center gap-2 mt-8 justify-end">
+        <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
+          Close
+        </Button>
+        <Button
+          type="submit"
+          disabled={loading}
+          className="bg-primary hover:bg-primary/95 text-white"
+        >
+          {loading ? "Saving..." : "Save"}
+        </Button>
       </div>
     </form>
   );

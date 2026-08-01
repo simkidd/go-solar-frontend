@@ -1,72 +1,99 @@
 "use client";
-import React from "react";
-import banner1 from "@/assets/images/G33333333333.jpg";
-import banner2 from "@/assets/images/G33jpg.jpg";
-import banner3 from "@/assets/images/G22.jpg";
-import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
-import "@/styles/banner.scss";
 
-import "swiper/css";
-import "swiper/css/autoplay";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import "swiper/css/effect-fade";
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
 
 const Banner = () => {
-  const bannerImages = [banner1, banner2, banner3];
+  const plugin = React.useRef(
+    Autoplay({ delay: 6000, stopOnInteraction: false })
+  );
+
+  const slides = [
+    {
+      image: "/images/bg/hero-bg.jpg",
+      badge: "Commercial & Residential Deals",
+      title: "Empower Your Home & Business With Solar Uptime",
+      desc: "Get customized hybrid inverter setups and Lithium battery walls with comprehensive 5-year hardware warranties.",
+      cta: "Configure Package",
+      link: "/energy-calculator",
+    },
+    {
+      image: "/images/bg/about-us.jpg",
+      badge: "Tier-1 Certified Hardware",
+      title: "High Efficiency Monocrystalline Solar Panels",
+      desc: "Buy premium high-yield monocrystalline panels directly from certified manufacturers in Nigeria.",
+      cta: "Shop Hardware",
+      link: "/shop?category=solar-panels",
+    },
+    {
+      image: "/images/bg/contact-bg-2.jpg",
+      badge: "Flexible Starter Options",
+      title: "Affordable Solar Energy Starting from ₦950k",
+      desc: "Power your apartment or workspace with our Campus Lite package backup solutions.",
+      cta: "View Offers",
+      link: "/shop?category=packages",
+    },
+  ];
 
   return (
-    <div className="w-full lg:h-[400px]">
-      <div className="w-full h-full grid grid-cols-12">
-        <div className="col-span-12 lg:col-span-8 w-full h-full lg:pr-2 overflow-hidden">
-          <Swiper
-            spaceBetween={10}
-            slidesPerView={1}
-            modules={[Autoplay, Pagination, Navigation, EffectFade]}
-            navigation={true}
-            pagination={{ clickable: true }}
-            loop={true}
-            autoplay={{ delay: 5000, disableOnInteraction: false }}
-            effect={"fade"}
-          >
-            {bannerImages.map((banner, i) => (
-              <SwiperSlide key={i}>
-                <div className="w-full">
-                  <Image
-                    src={banner.src}
-                    alt="main banner"
-                    width={500}
-                    height={500}
-                    className="object-cover w-full h-full"
-                  />
+    <div className="w-full relative rounded-3xl overflow-hidden shadow-md border border-zinc-150 dark:border-zinc-800 bg-zinc-950 font-inter">
+      <Carousel
+        plugins={[plugin.current]}
+        opts={{
+          loop: true,
+        }}
+        className="w-full"
+      >
+        <CarouselContent>
+          {slides.map((slide, index) => (
+            <CarouselItem key={index} className="relative w-full aspect-[21/9] min-h-[300px] sm:min-h-[360px] md:min-h-[400px]">
+              {/* Background slide image */}
+              <div
+                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-60 transition-transform duration-10000 hover:scale-105"
+                style={{ backgroundImage: `url('${slide.image}')` }}
+              />
+              {/* Dark overlay */}
+              <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+
+              {/* Text content block */}
+              <div className="absolute inset-0 z-20 flex flex-col justify-center items-start px-8 sm:px-16 md:px-20 max-w-xl space-y-4">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-[#08AA08]/90 text-white shadow-sm">
+                  <Sparkles className="h-3 w-3" />
+                  {slide.badge}
+                </span>
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight">
+                  {slide.title}
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-medium line-clamp-2 sm:line-clamp-none">
+                  {slide.desc}
+                </p>
+                <div className="pt-2">
+                  <Link href={slide.link} className="inline-block">
+                    <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-widest rounded-full px-6 h-10 gap-1.5 hover:scale-105 transition-all shadow-md">
+                      {slide.cta}
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </Link>
                 </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-        <div className="col-span-4 w-full lg:h-[400px] md:h-[300px] h-[300px] lg:flex flex-col pl-2 gap-4 hidden">
-          <div className="h-full w-full box-border overflow-hidden">
-            <Image
-              src={banner2.src}
-              alt=""
-              width={banner2.width}
-              height={banner2.height}
-              className="object-cover w-full h-full"
-            />
-          </div>
-          <div className="h-full w-full box-border overflow-hidden">
-            <Image
-              src={banner3.src}
-              alt=""
-              width={banner3.width}
-              height={banner3.height}
-              className="object-cover w-full h-full"
-            />
-          </div>
-        </div>
-      </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        {/* Carousel buttons */}
+        <CarouselPrevious className="hidden sm:flex hover:scale-110 transition-transform" />
+        <CarouselNext className="hidden sm:flex hover:scale-110 transition-transform" />
+      </Carousel>
     </div>
   );
 };

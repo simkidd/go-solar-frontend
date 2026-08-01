@@ -1,7 +1,7 @@
 import OfferProducts from "@/app/(dashboard)/components/OfferProducts";
 import { Offer } from "@/interfaces/product.interface";
 import { getOffer, getOffers } from "@/lib/data";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -48,11 +48,10 @@ const SingleOfferPage = async ({ params }: IOffer) => {
       <div className="flex items-center justify-between mb-4">
         <Link href="/admin/sales-offers">
           <Button
-            variant="light"
-            color="default"
-            startContent={<ArrowLeft size={16} />}
-            className="dark:text-white"
+            variant="outline"
+            className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
+            <ArrowLeft size={16} />
             Go back
           </Button>
         </Link>

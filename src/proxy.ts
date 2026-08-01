@@ -26,7 +26,7 @@ const isAdminUser = (user: User | null): boolean => {
   return user?.isSuperAdmin || user?.isAdmin || false;
 };
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const cookieStore = await cookies();
   // Check if the current route is protected or public
   const path = req.nextUrl.pathname;

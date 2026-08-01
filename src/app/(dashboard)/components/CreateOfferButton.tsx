@@ -1,34 +1,32 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
-import { Button, useDisclosure } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import CreateOfferForm from "./CreateOfferForm";
 
 const CreateOfferButton = () => {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div>
       <AppModal
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
+        onOpenChange={setIsOpen}
         title="Create Offer"
         isDismissable={false}
         hideCloseButton
         size="xl"
         scrollBehavior="inside"
       >
-        <CreateOfferForm onClose={onClose} />
+        <CreateOfferForm onClose={() => setIsOpen(false)} />
       </AppModal>
 
       <Button
-        variant="solid"
-        color="primary"
-        type="submit"
-        startContent={<Plus size={16} />}
-        onPress={onOpen}
+        onClick={() => setIsOpen(true)}
+        className="gap-2 bg-primary hover:bg-primary/95 text-white"
       >
+        <Plus size={16} />
         Add Offer
       </Button>
     </div>

@@ -1,8 +1,10 @@
 "use client";
+import React, { useState } from "react";
 import { CreateOfferInput, OfferType } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
-import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const CreateOfferForm: React.FC<{
   onClose: () => void;
@@ -18,119 +20,64 @@ const CreateOfferForm: React.FC<{
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     await createOffer(input);
     onClose();
   };
 
   return (
-    <form className="w-full font-inter" onSubmit={handleSubmit}>
-      <div className="w-full grid grid-cols-1">
-        <div className="mb-3">
-          <Input
-            type="text"
-            label="Title"
-            labelPlacement="outside"
-            placeholder="Enter offer name"
-            value={input.name}
-            onChange={(e) => setInput({ ...input, name: e.target.value })}
-          />
-        </div>
-        <div className="mb-3">
-          <Textarea
-            label="Description"
-            labelPlacement="outside"
-            placeholder="Enter offer description"
-            value={input.description}
-            onChange={(e) =>
-              setInput({ ...input, description: e.target.value })
-            }
-            minRows={4}
-            maxRows={8}
-          />
-        </div>
-        {/* <div className="mb-3">
-          <Select
-            label="Offer Type"
-            placeholder="Select an offer type"
-            labelPlacement="outside"
-            onChange={(e) =>
-              setInput({ ...input, type: e.target.value as OfferType })
-            }
-            isRequired
-          >
-            <SelectItem
-              key={OfferType.PercentageOff}
-              value={OfferType.PercentageOff}
-              
-            >
-              Percentage Off
-            </SelectItem>
-            <SelectItem key={OfferType.PriceSlash} value={OfferType.PriceSlash}>
-              Price Slash
-            </SelectItem>
-          </Select>
-        </div> */}
+    <form className="w-full font-inter space-y-4 pt-2" onSubmit={handleSubmit}>
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Title</label>
+        <Input
+          type="text"
+          placeholder="Enter offer name"
+          value={input.name}
+          onChange={(e) => setInput({ ...input, name: e.target.value })}
+          className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+          required
+        />
+      </div>
 
-        <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
-          <div className="">
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Description</label>
+        <Textarea
+          placeholder="Enter offer description"
+          value={input.description}
+          onChange={(e) => setInput({ ...input, description: e.target.value })}
+          rows={4}
+          className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Percentage Off (%)</label>
+          <div className="relative">
             <Input
               type="number"
-              label="Percentage Off"
-              labelPlacement="outside"
               placeholder="Enter percentage off"
-              value={String(input.percentageOff)}
-              onChange={(e) => {
-                const newValue = e.target.valueAsNumber;
-                if (!isNaN(newValue)) {
-                  setInput({ ...input, percentageOff: newValue });
-                }
-              }}
-              isDisabled={input.type !== OfferType.PercentageOff}
-              endContent={
-                <div className="pointer-events-none flex items-center">
-                  <span className="text-default-400 text-small">%</span>
-                </div>
-              }
+              value={input.percentageOff || ""}
+              onChange={(e) => setInput({ ...input, percentageOff: Number(e.target.value) })}
+              disabled={input.type !== OfferType.PercentageOff}
+              className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800 pr-8"
+              required
             />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">%</span>
           </div>
-
-          {/* <div className="">
-            <Input
-              type="number"
-              label="Price Slash"
-              labelPlacement="outside"
-              placeholder="Enter price slash"
-              value={String(input.priceSlash)}
-              onChange={(e) => {
-                const newValue = e.target.valueAsNumber;
-                if (!isNaN(newValue)) {
-                  setInput({ ...input, priceSlash: newValue });
-                }
-              }}
-              isDisabled={input.type !== OfferType.PriceSlash}
-              startContent={
-                <div className="pointer-events-none flex items-center">
-                  <span className="text-default-400 text-small">₦</span>
-                </div>
-              }
-            />
-          </div> */}
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-        <Button variant="light" color="default" onPress={onClose}>
+      <div className="flex items-center gap-2 mt-8 justify-end">
+        <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
           Close
         </Button>
         <Button
-          variant="solid"
-          color="primary"
           type="submit"
-          isDisabled={loading}
-          isLoading={loading}
+          disabled={loading}
+          className="bg-primary hover:bg-primary/95 text-white"
         >
-          Create
+          {loading ? "Creating..." : "Create"}
         </Button>
       </div>
     </form>

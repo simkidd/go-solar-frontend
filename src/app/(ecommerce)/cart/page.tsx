@@ -1,33 +1,40 @@
 "use client";
 
-import LoadingSpinner from "@/components/LoadingSpinner";
+import React, { Suspense } from "react";
 import useCartStore, { CartItem } from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
-import { Button } from "@heroui/react";
-import { ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Check, Trash2, Minus, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Suspense } from "react";
-import CartItemCard from "../components/shop/CartItemCard";
+import Image from "next/image";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const CartPage = () => {
-  const { cartItems, setTotalPricePaid } = useCartStore();
+  const {
+    cartItems,
+    setTotalPricePaid,
+    increaseQuantity,
+    decreaseQuantity,
+    removeItem,
+  } = useCartStore();
   const router = useRouter();
 
-  const calculateTotals = (cartItems: CartItem[]) => {
-    const subtotal = cartItems.reduce(
-      (acc, cartItem) => acc + cartItem.product.price * cartItem.qty,
-      0
+  const calculateTotals = (items: CartItem[]) => {
+    const subtotal = items.reduce(
+      (acc, item) => acc + item.product.price * item.qty,
+      0,
     );
-    const deliveryFee = cartItems.reduce(
-      (acc, cartItem) => acc + cartItem.deliveryFee * cartItem.qty,
-      0
+    const deliveryFee = items.reduce(
+      (acc, item) => acc + item.deliveryFee * item.qty,
+      0,
     );
-    const total = subtotal + deliveryFee;
-    return { total, subtotal, deliveryFee };
+    const tax = Math.round(subtotal * 0.05); // 5% VAT
+    const total = subtotal + deliveryFee + tax;
+    return { total, subtotal, deliveryFee, tax };
   };
 
-  const { total, subtotal, deliveryFee } = calculateTotals(cartItems);
+  const { total, subtotal, deliveryFee, tax } = calculateTotals(cartItems);
 
   const handleCheckout = () => {
     setTotalPricePaid(total);
@@ -36,72 +43,232 @@ const CartPage = () => {
 
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-[1000px] mx-auto">
+      <div className="w-full font-inter bg-white dark:bg-zinc-950 min-h-screen pb-16">
+        {/* Hero Diagonal Stripes Banner */}
+        <div className="w-full bg-[#08AA08] relative overflow-hidden py-16 flex flex-col justify-center items-center text-center text-white">
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,#079907_25%,transparent_25%,transparent_50%,#079907_50%,#079907_75%,transparent_75%,transparent)] bg-[length:40px_40px] opacity-25 z-0" />
+          <h1 className="text-4xl font-extrabold tracking-tight relative z-10">
+            Your Cart
+          </h1>
+        </div>
+
+        <div className="container mx-auto px-6 mt-8 max-w-6xl space-y-6">
+          {/* Breadcrumbs */}
+          <div className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 font-semibold">
+            <Link href="/shop" className="hover:underline">
+              Store
+            </Link>
+            <span>/</span>
+            <span className="text-zinc-900 dark:text-white">Cart</span>
+          </div>
+
           {cartItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
-              <h2 className="text-5xl font-bold mb-8">Cart is empty</h2>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
+              <div className="h-16 w-16 bg-zinc-100 dark:bg-zinc-900 text-zinc-400 rounded-full flex items-center justify-center">
+                <ShoppingCart className="h-8 w-8" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
+                  Your Cart is Empty
+                </h2>
+                <p className="text-sm text-zinc-500 max-w-sm leading-relaxed">
+                  Looks like you haven't added anything to your cart yet. Head
+                  back to the store to configure your solar setups.
+                </p>
+              </div>
               <Link href="/shop">
-                <button className="flex items-center bg-primary text-white px-8 py-2 text-lg hover:bg-opacity-80">
-                  <ShoppingCart size={18} className="mr-2" />
+                <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold rounded-xl gap-2 px-6">
                   Go Shopping
-                </button>
+                </Button>
               </Link>
             </div>
           ) : (
             <>
-              <div className="flex items-center mb-6">
-                <h2 className="text-3xl font-bold">Cart</h2>
-                <div className="ml-2 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-medium">
-                  {cartItems.length}
-                </div>
+              <div className="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-3">
+                <span className="text-xs font-bold text-zinc-400 tracking-wider uppercase">
+                  Manage items
+                </span>
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                  {cartItems.length} {cartItems.length === 1 ? "Item" : "Items"}
+                </span>
               </div>
 
-              <div className="grid lg:grid-cols-6 gap-6 relative">
-                <div className="lg:col-span-4 space-y-4 lg:pr-6 divide-y-1">
-                  {cartItems.map((cartItem, i) => (
-                    <CartItemCard key={i} cartItem={cartItem} />
-                  ))}
-                </div>
-                <div className="lg:col-span-2 space-y-4 ">
-                  <div className="light bg-[#f1f1f1] dark:bg-[#2a2b2f] py-2 sticky top-48 rounded-md">
-                    <h3 className="text-lg font-bold px-4">Cart Summary</h3>
-                    <hr className="border-t border-gray-300 my-2" />
-                    <div className="flex justify-between px-4 ">
-                      <span>Subtotal</span>
-                      <span className="font-bold">
-                        {formatCurrency(subtotal, "NGN")}
-                      </span>
-                    </div>
-                    <div className="flex justify-between px-4">
-                      <span>Shipping</span>
-                      <span className="font-bold">
-                        {formatCurrency(deliveryFee, "NGN")}
-                      </span>
-                    </div>
-                    <hr className="border-t border-gray-300 my-2" />
-                    <div className="flex justify-between mb-3 px-4">
-                      <span>Total</span>
-                      <span className="font-bold">
-                        {formatCurrency(total, "NGN")}
-                      </span>
-                    </div>
-                    <hr className="border-t border-gray-300 my-2" />
-                    <div className="px-4">
-                      <Button
-                        onPress={handleCheckout}
-                        className="w-full bg-primary text-white py-2 shadow-md hover:bg-primary-dark transition"
+              {/* Grid content */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                {/* Left pane: Items lists & Shipping announcement */}
+                <div className="lg:col-span-8 space-y-6">
+                  <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
+                    {cartItems.map((cartItem) => (
+                      <div
+                        key={cartItem.product._id}
+                        className="py-6 border-b border-zinc-100 dark:border-zinc-800/80 flex gap-4 sm:gap-6 items-start justify-between"
                       >
-                        Proceed to Checkout
+                        <div className="flex gap-4 sm:gap-6">
+                          {/* Image */}
+                          <div className="h-20 w-20 min-w-20 rounded-xl overflow-hidden bg-zinc-50 dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-855 relative">
+                            <Image
+                              src={
+                                cartItem.product.images?.[0]?.url ||
+                                "/placeholder-product.jpg"
+                              }
+                              alt={cartItem.product.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+
+                          {/* Details */}
+                          <div className="space-y-2">
+                            <h3 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
+                              {cartItem.product.name}
+                            </h3>
+
+                            {/* Quantity buttons */}
+                            <div className="flex items-center gap-1 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-150 dark:border-zinc-800 rounded-xl w-fit p-1 select-none mt-1.5">
+                              <button
+                                onClick={() => {
+                                  if (cartItem.qty > 1) {
+                                    decreaseQuantity(cartItem.product._id);
+                                  }
+                                }}
+                                disabled={cartItem.qty <= 1}
+                                className="h-6 w-6 rounded-lg flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                              >
+                                <Minus className="h-3 w-3" />
+                              </button>
+                              <span className="text-xs font-bold w-6 text-center text-zinc-800 dark:text-zinc-200">
+                                {cartItem.qty}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  if (
+                                    cartItem.qty <
+                                    (cartItem.product.quantityInStock || 10)
+                                  ) {
+                                    increaseQuantity(cartItem.product._id);
+                                  }
+                                }}
+                                className="h-6 w-6 rounded-lg flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                              >
+                                <Plus className="h-3 w-3" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Price & Delete */}
+                        <div className="flex items-center gap-4 shrink-0">
+                          <p className="font-extrabold text-sm sm:text-base text-zinc-900 dark:text-white">
+                            {formatCurrency(
+                              cartItem.product.price * cartItem.qty,
+                              "NGN",
+                            )}
+                          </p>
+                          <button
+                            onClick={() => removeItem(cartItem.product._id)}
+                            className="text-zinc-400 hover:text-rose-500 transition-colors"
+                            aria-label="Remove item"
+                          >
+                            <Trash2 className="h-4.5 w-4.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Shipping Banner indicator */}
+                  <div className="bg-emerald-50/30 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-900/40 p-4 rounded-xl flex items-center justify-between text-emerald-800 dark:text-emerald-400">
+                    <div className="flex items-center gap-2">
+                      <div className="h-5 w-5 bg-emerald-500/20 rounded-full flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <p className="text-xs font-bold">
+                        Standard Shipping Within Nigeria
+                      </p>
+                    </div>
+                    <p className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+                      (4-5 Working Days)
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right pane: Checkout details summaries */}
+                <div className="lg:col-span-4">
+                  {/* Summary card */}
+                  <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 p-6 rounded-3xl space-y-6">
+                    <div className="space-y-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                      <div className="flex justify-between items-center">
+                        <span>Sub Total</span>
+                        <span className="text-zinc-900 dark:text-white font-extrabold text-sm">
+                          {formatCurrency(subtotal, "NGN")}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span>Shipping</span>
+                        <span className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 rounded-full px-2 py-0.5 text-[10px] font-extrabold">
+                          Free
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span>Tax</span>
+                        <span className="text-zinc-900 dark:text-white font-extrabold text-sm">
+                          {formatCurrency(tax, "NGN")}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-4 border-t dark:border-zinc-800 text-sm font-extrabold text-zinc-900 dark:text-white">
+                        <span>Total</span>
+                        <span className="text-lg font-extrabold">
+                          {formatCurrency(total, "NGN")}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="space-y-3 pt-4 border-t dark:border-zinc-800">
+                      <div className="grid ">
+                        <Link href="/shop" className="w-full">
+                          <Button
+                            variant="outline"
+                            className="w-full border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold rounded-xl h-11 text-xs"
+                          >
+                            Continue Shopping
+                          </Button>
+                        </Link>
+                      </div>
+
+                      <Button
+                        variant="default"
+                        onClick={handleCheckout}
+                        className="w-full font-bold rounded-xl h-11 text-xs text-white"
+                      >
+                        Checkout
                       </Button>
-                      <Link href="/shop">
-                        <Button
-                          variant="light"
-                          className="w-full py-2 transition mt-2"
+                    </div>
+
+                    {/* Good to Know Disclaimer */}
+                    <div className="space-y-2 pt-4 border-t dark:border-zinc-800">
+                      <h4 className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
+                        Good to know
+                      </h4>
+                      <h5 className="text-[11px] font-bold text-zinc-900 dark:text-white">
+                        This Product Requires Installation
+                      </h5>
+                      <p className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        Get this product as part of a complete solar setup that
+                        includes panels, batteries, and expert installation all
+                        optimized for performance and savings. Installation is
+                        completely free.{" "}
+                        <Link
+                          href="/energy-calculator"
+                          className="text-zinc-950 dark:text-white font-bold hover:underline inline-flex items-center gap-0.5"
                         >
-                          Continue Shopping
-                        </Button>
-                      </Link>
+                          Get Quote <span className="text-[8px]">↗</span>
+                        </Link>{" "}
+                        to see what's included.
+                      </p>
                     </div>
                   </div>
                 </div>

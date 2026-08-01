@@ -1,11 +1,12 @@
 "use client";
-import { Button, Chip } from "@heroui/react";
 import React, {
   useState,
   useEffect,
   useRef,
   MouseEvent as ReactMouseEvent,
 } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface SelectProps {
   tags: string[];
@@ -60,44 +61,38 @@ const MultipleSelectChip: React.FC<SelectProps> = ({
 
   return (
     <div className="w-full">
-      <label htmlFor="multiple-chip" className="text-sm">
+      <label htmlFor="multiple-chip" className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-1">
         {label}
       </label>
       <div className="relative mt-1" ref={dropdownRef}>
         <Button
-          variant="flat"
-          className="w-full p-2 flex justify-start"
+          variant="outline"
+          className="w-full p-2 flex justify-start items-center h-auto min-h-10 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl"
           onClick={handleButtonClick}
         >
           {selectedTags.length === 0 ? (
-            <span className="text-sm">Select...</span>
+            <span className="text-xs text-zinc-400 font-semibold pl-1">Select tags...</span>
           ) : (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {selectedTags.map((value) => (
-                // <div
-                //   key={value}
-                //   className="inline-flex items-center px-2 py-1 text-primary bg-primary bg-opacity-10 rounded-full text-sm"
-                // >
-                //   {value}
-                // </div>
-                <Chip key={value} variant="flat" size="sm" color="primary">
+                <Badge key={value} variant="secondary" className="bg-primary/10 text-primary border-transparent hover:bg-primary/20 text-[10px] font-bold px-2 py-0.5 rounded-md">
                   {value}
-                </Chip>
+                </Badge>
               ))}
             </div>
           )}
         </Button>
         {dropdownOpen && (
-          <ul className="absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto border rounded z-30 bg-white dark:bg-[#222327]">
+          <ul className="absolute left-0 right-0 mt-1.5 max-h-40 overflow-y-auto border border-zinc-200 dark:border-zinc-800 rounded-xl z-30 bg-white dark:bg-zinc-950 shadow-md p-1.5 space-y-0.5">
             {tags.map((name) => (
               <li
                 key={name}
                 data-value={name}
                 onClick={handleChange}
-                className={`px-2 py-1 cursor-pointer ${
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg cursor-pointer transition-colors ${
                   selectedTags.includes(name)
-                    ? "text-primary bg-primary bg-opacity-10"
-                    : "hover:text-primary hover:bg-primary hover:bg-opacity-10"
+                    ? "text-primary bg-primary/10"
+                    : "hover:text-primary hover:bg-primary/10 text-zinc-700 dark:text-zinc-300"
                 }`}
               >
                 {name}

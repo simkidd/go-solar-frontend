@@ -1,39 +1,50 @@
 /* eslint-disable react/no-unescaped-entities */
-
 import AboutSection from "@/components/home/AboutSection";
 import BlogSection from "@/components/home/BlogSection";
-import CounterSection from "@/components/home/CounterSection";
+import StatsSection from "@/components/home/StatsSection";
 import HeroSection from "@/components/home/HeroSection";
 import HomeContactCta from "@/components/home/HomeContactCta";
-import ShopSection from "@/components/home/ShopSection";
+import PackagesSection from "@/components/home/PackagesSection";
+import HowItWorks from "@/components/home/HowItWorks";
 import TestimonialSection from "@/components/home/TestimonialSection";
 import VisionSection from "@/components/home/VisionSection";
-import MarqueeComp from "@/components/MarqueeComp";
+import CounterSection from "@/components/home/CounterSection";
+import FaqNewsletterSection from "@/components/home/FaqNewsletterSection";
 
 const page = async () => {
   return (
-    <div className="w-full font-inter">
-      {/* hero section */}
+    <div className="w-full font-inter overflow-hidden bg-white dark:bg-zinc-950">
+      {/* Hero Sliders Banner */}
       <HeroSection />
 
-      <section className="w-full">
-        <div className="h-20 font-dmsans bg-primary flex items-center text-white text-xl">
-          <MarqueeComp />
-        </div>
-      </section>
-      {/* our vision section */}
-      <VisionSection />
-      {/* about section */}
+      {/* Stats Counter metrics */}
+      <StatsSection />
+
+      {/* About Section */}
       <AboutSection />
-      {/* counter section */}
+
+      {/* Packages Grid layout */}
+      <PackagesSection />
+
+      {/* Vision & Brand Message */}
+      <VisionSection />
+
+      {/* How it works steps layout */}
+      <HowItWorks />
+
+      {/* Partner Logos cluster */}
       <CounterSection />
-      {/* testimonial section */}
+
+      {/* Testimonials Review Slider */}
       <TestimonialSection />
-      {/* blog section */}
+
+      {/* Blog list updates */}
       <BlogSection />
-      {/* shop section */}
-      <ShopSection />
-      {/* contact section */}
+
+      {/* FAQ & Newsletter segment */}
+      <FaqNewsletterSection />
+
+      {/* Footer Contact CTA banner */}
       <HomeContactCta />
     </div>
   );

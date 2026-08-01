@@ -1,5 +1,5 @@
 import { DeliveryDetails, Product } from "@/interfaces/product.interface";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 

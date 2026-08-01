@@ -1,9 +1,10 @@
 "use client";
+import React, { useMemo, useState } from "react";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Button, Input } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
 
 const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
   const { loading, resetPassword } = useAuthStore();
@@ -30,54 +31,37 @@ const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-8">
-      <div className="input-group mb-4">
+    <form onSubmit={handleSubmit} className="space-y-4 font-inter">
+      <div className="relative">
         <Input
           type={isVisible ? "text" : "password"}
-          placeholder="Password"
+          placeholder="New Password"
           name="password"
-          className="w-full"
-          endContent={
-            <button
-              className="focus:outline-none"
-              type="button"
-              onClick={toggleVisibility}
-            >
-              {isVisible ? (
-                <EyeOff
-                  size={20}
-                  className="text-default-400 pointer-events-none"
-                />
-              ) : (
-                <Eye
-                  size={20}
-                  className="text-default-400 pointer-events-none"
-                />
-              )}
-            </button>
-          }
-          errorMessage={
-            isPasswordInvalid && "Password must be at least 6 characters"
-          }
+          className="w-full h-11 pl-10 pr-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
           value={input?.password}
           onChange={(e) => setInput({ ...input, password: e.target.value })}
-          startContent={
-            <LockIcon
-              size={16}
-              className="text-default-400 pointer-events-none flex-shrink-0"
-            />
-          }
+          required
         />
+        <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+        <button
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650"
+          type="button"
+          onClick={toggleVisibility}
+        >
+          {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+        </button>
       </div>
+
+      {isPasswordInvalid && (
+        <p className="text-[11px] text-rose-500 font-semibold pl-1">Password must be at least 6 characters</p>
+      )}
 
       <Button
         type="submit"
-        color="primary"
-        className="w-full mt-8 disabled:bg-gray-400"
-        disabled={!input.password || isPasswordInvalid}
-        isLoading={loading}
+        className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11"
+        disabled={!input.password || isPasswordInvalid || loading}
       >
-        Reset
+        {loading ? "Resetting..." : "Reset Password"}
       </Button>
     </form>
   );

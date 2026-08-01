@@ -31,43 +31,45 @@ const ProductImages: React.FC<{
   };
 
   return (
-    <div className="w-fit lg:w-full mx-auto">
+    <div className="flex flex-col-reverse lg:flex-row gap-4 w-full">
+      {/* Thumbnails */}
+      {images && images.length > 0 && (
+        <div className="flex lg:flex-col gap-2.5 overflow-x-auto lg:overflow-y-auto scrollbar-hide shrink-0 lg:w-20">
+          {images.map((img, index) => (
+            <div
+              key={index}
+              className={`relative w-16 h-16 lg:w-20 lg:h-20 shrink-0 rounded-xl overflow-hidden cursor-pointer border-2 transition-all duration-200 ${
+                selectedImage === index
+                  ? "border-[#08AA08] dark:border-white shadow-xs"
+                  : "border-zinc-100 dark:border-zinc-800 hover:border-zinc-300"
+              }`}
+              onClick={() => handleThumbnailClick(index)}
+            >
+              <Image
+                src={img?.url || "/placeholder-image.jpg"}
+                alt={`Thumbnail ${index + 1}`}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Main Image */}
-      <div className="relative h-96 aspect-square rounded-lg overflow-hidden cursor-pointer">
+      <div className="relative flex-1 aspect-[4/5] sm:aspect-square rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/30 cursor-pointer">
         <Image
           src={images[selectedImage]?.url || "/placeholder-image.jpg"}
           alt={`Product Image ${selectedImage + 1}`}
-          width={300}
-          height={300}
-          className="object-cover w-full h-full"
+          fill
+          className="object-contain p-6"
           onClick={openModal}
           priority
         />
 
-        <div className="absolute bottom-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-colors">
-          <FullscreenIcon className="w-5 h-5" />
+        <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-xs text-white p-2.5 rounded-full hover:bg-black/85 transition-colors">
+          <FullscreenIcon className="w-4 h-4" />
         </div>
-      </div>
-
-      {/* Thumbnails */}
-      <div className="mt-4 flex gap-2 overflow-x-auto scrollbar-hide">
-        {images.map((img, index) => (
-          <div
-            key={index}
-            className={`relative w-20 h-20 shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 ${
-              selectedImage === index ? "border-primary" : "border-transparent"
-            }`}
-            onClick={() => handleThumbnailClick(index)}
-          >
-            <Image
-              src={img.url}
-              alt={`Thumbnail ${index + 1}`}
-              width={80}
-              height={80}
-              className="object-cover"
-            />
-          </div>
-        ))}
       </div>
 
       {/* Full-Screen Modal */}

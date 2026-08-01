@@ -1,141 +1,95 @@
 "use client";
-import AppModal from "@/components/AppModal";
 import useCategories from "@/hooks/useCategories";
 import useProducts from "@/hooks/useProducts";
 import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
-  Button,
-  Card,
-  CardBody,
-  Chip,
-  Dropdown,
-  DropdownItem,
   DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Pagination,
-  Select,
-  Selection,
-  SelectItem,
-  SortDescriptor,
-  Spinner,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Table,
   TableBody,
   TableCell,
-  TableColumn,
+  TableHead,
   TableHeader,
   TableRow,
-  useDisclosure,
-} from "@heroui/react";
+} from "@/components/ui/table";
 import {
-  ChevronDownIcon,
-  EllipsisVertical,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  ChevronDown,
+  MoreVertical,
   Eye,
-  RefreshCcw,
-  SearchIcon,
+  RefreshCw,
+  Search,
   Trash,
-  Trash2,
+  Settings2,
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 const columns = [
-  {
-    name: "Product",
-    uid: "name",
-    minWidth: 400,
-    sortable: true,
-  },
-  {
-    name: "Price",
-    uid: "price",
-    minWidth: 150,
-    sortable: true,
-  },
-  {
-    name: "Discount",
-    uid: "discount",
-    minWidth: 150,
-    sortable: true,
-  },
-  {
-    name: "Quantity",
-    uid: "quantity",
-  },
-  {
-    name: "Offer",
-    uid: "offer",
-  },
-  {
-    name: "Category",
-    uid: "category",
-  },
-  {
-    name: "Brand",
-    uid: "brand",
-  },
-  {
-    name: "Status",
-    uid: "status",
-    sortable: true,
-  },
-  {
-    name: "Date added",
-    uid: "dateAdded",
-    minWidth: 150,
-    sortable: true,
-  },
-  {
-    name: "Actions",
-    uid: "actions",
-    minWidth: 80,
-  },
+  { name: "Product", uid: "name", sortable: true },
+  { name: "Price", uid: "price", sortable: true },
+  { name: "Discount", uid: "discount", sortable: true },
+  { name: "Quantity", uid: "quantity" },
+  { name: "Offer", uid: "offer" },
+  { name: "Category", uid: "category" },
+  { name: "Brand", uid: "brand" },
+  { name: "Status", uid: "status", sortable: true },
+  { name: "Date added", uid: "dateAdded", sortable: true },
+  { name: "Actions", uid: "actions" },
 ];
 
 const ProductsTable = () => {
   const { loading, deleteProduct, addToOffer, offers } = useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const router = useRouter();
+
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [visibleColumns, setVisibleColumns] = useState<Selection>(
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
     new Set(columns.map((col) => col.uid))
   );
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
+  const [sortColumn, setSortColumn] = useState<string>("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(1);
+  
   const [publishFilter, setPublishFilter] = useState(
     searchParams.get("published") || "All"
   );
   const [categoryFilter, setCategoryFilter] = useState(
     searchParams.get("category") || "All"
   );
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [input, setInput] = useState<AddOfferProductDTO>({
-    offer: "",
-    products: [],
-  });
 
-  const router = useRouter();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const hasSearchFilter = Boolean(filterValue);
-
   const { products, isError, isLoading, refetch } = useProducts();
   const { categories } = useCategories();
 
   const headerColumns = useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
+    return columns.filter((column) => visibleColumns.has(column.uid));
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
@@ -171,499 +125,413 @@ const ProductsTable = () => {
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
     const sorted = [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column as keyof typeof a];
-      const second = b[sortDescriptor.column as keyof typeof b];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+      let first = a[sortColumn as keyof typeof a];
+      let second = b[sortColumn as keyof typeof b];
 
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      // Handle nested values
+      if (sortColumn === "category") {
+        first = a.category?.name || "";
+        second = b.category?.name || "";
+      }
+
+      const cmp = (first ?? "") < (second ?? "") ? -1 : (first ?? "") > (second ?? "") ? 1 : 0;
+      return sortDirection === "desc" ? -cmp : cmp;
     });
-
     return sorted;
-  }, [sortDescriptor, items]);
+  }, [sortColumn, sortDirection, items]);
 
-  const renderCell = useCallback((product: Product, columnKey: React.Key) => {
-    switch (columnKey) {
-      case "name":
-        return (
-          <div className="grid grid-cols-[55px_auto] gap-2 w-full py-2">
-            <div className="w-10 h-10">
-              <Image
-                src={product?.images[0].url}
-                alt={product?.name}
-                width={80}
-                height={80}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <span className="text-wrap">{product?.name}</span>
-          </div>
-        );
-      case "price":
-        return <div>{formatCurrency(product?.price, "NGN")}</div>;
-      case "discount":
-        return (
-          <div>
-            {product?.currentOffer?.isActive &&
-              product?.currentOffer?.percentageOff && (
-                <Chip color="success" variant="flat" size="sm">
-                  {product?.currentOffer?.percentageOff}% Off
-                </Chip>
-              )}
-          </div>
-        );
-      case "quantity":
-        return <div>{product?.quantityInStock}</div>;
-      case "offer":
-        return <div>{product?.currentOffer?.name}</div>;
-      case "category":
-        return <div>{product?.category?.name}</div>;
-      case "brand":
-        return <div>{product?.brand}</div>;
-      case "status":
-        return (
-          <Chip
-            color={product.isPublished ? "success" : "default"}
-            variant="flat"
-            size="sm"
-          >
-            {product.isPublished ? "Published" : "Draft"}
-          </Chip>
-        );
-      case "dateAdded":
-        return <div>{formatDate(product?.createdAt)}</div>;
-      case "actions":
-        return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <EllipsisVertical className="text-default-300" size={16} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem
-                  key={"view_details"}
-                  startContent={<Eye size={16} />}
-                  onPress={() => router.push(`/admin/products/${product?._id}`)}
-                >
-                  View details
-                </DropdownItem>
-                <DropdownItem
-                  key={"edit_product"}
-                  onPress={() => {
-                    setSelectedProduct(product);
-                    onOpen();
-                  }}
-                  startContent={<Trash size={16} />}
-                >
-                  Delete
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return null;
+  const handleSort = (columnKey: string) => {
+    if (sortColumn === columnKey) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(columnKey);
+      setSortDirection("asc");
     }
-  }, []);
+  };
 
   const handleDelete = () => {
     if (selectedProduct) {
-      deleteProduct(selectedProduct?._id);
+      deleteProduct(selectedProduct._id);
+      setIsDeleteDialogOpen(false);
+      setSelectedProduct(null);
       router.refresh();
-      onClose();
     }
   };
 
-  const onRowsPerPageChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
-    },
-    []
-  );
-
-  const onSearchChange = useCallback(
-    (value?: string) => {
-      const params = new URLSearchParams(searchParams);
-      if (value) {
-        params.set("q", value);
-        setFilterValue(value);
-        setPage(1);
-      } else {
-        params.delete("q");
-        setFilterValue("");
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onClear = useCallback(() => {
-    setFilterValue("");
+  const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(Number(e.target.value));
     setPage(1);
-  }, []);
-
-  const onPublishFilterChange = useCallback(
-    (keys: Selection) => {
-      const selectedStatus = Array.from(keys).join(", ");
-      const params = new URLSearchParams(searchParams);
-      if (selectedStatus) {
-        params.set("status", selectedStatus);
-        setPublishFilter(selectedStatus);
-      } else {
-        params.delete("status");
-        setPage(1);
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onCatFilterChange = useCallback(
-    (keys: Selection) => {
-      const selectedCat = Array.from(keys).join(", ");
-      const params = new URLSearchParams(searchParams);
-      if (selectedCat) {
-        params.set("category", selectedCat);
-        setCategoryFilter(selectedCat);
-      } else {
-        params.delete("category");
-        setPage(1);
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onResetFilters = useCallback(() => {
-    setFilterValue("");
-    setPublishFilter("All");
-    setPage(1);
-    setCategoryFilter("All");
-    const params = new URLSearchParams();
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [pathname, router]);
-
-  const handleAddOffer = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Convert selectedKeys (Set of Key) to an array of strings
-    const productIds = Array.from(selectedKeys).map((key: any) =>
-      // Ensure the key is a string before adding
-      typeof key === "string" ? key : key.toString()
-    );
-    const offerPayload: AddOfferProductDTO = {
-      offer: input.offer,
-      products: productIds,
-    };
-
-    await addToOffer(offerPayload);
-    router.refresh();
-    onClose();
   };
 
-  const topContent = useMemo(() => {
-    const hasFilters =
-      filterValue || publishFilter !== "All" || categoryFilter !== "All";
+  const onSearchChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set("q", value);
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      params.delete("q");
+      setFilterValue("");
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end lg:flex-row flex-col">
-          <Input
-            isClearable
-            className="w-full lg:max-w-[44%]"
-            classNames={{
-              input: ["bg-transparent"],
-              innerWrapper: "bg-transparent ",
-              inputWrapper: [
-                "border-1",
-                "bg-white",
-                "dark:bg-[#222327]",
-                "hover:bg-default-200/70",
-                "focus-within:!bg-default-200/50",
-                "dark:hover:bg-default/70",
-                "dark:focus-within:!bg-default/60",
-              ],
-            }}
-            variant="bordered"
-            placeholder="Search..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-          <div className="flex items-center gap-3">
-            {hasFilters && (
-              <Button variant="flat" color="danger" onPress={onResetFilters}>
-                Reset
-              </Button>
-            )}
+  const onClear = () => {
+    setFilterValue("");
+    const params = new URLSearchParams(searchParams);
+    params.delete("q");
+    router.replace(`${pathname}?${params.toString()}`);
+    setPage(1);
+  };
 
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  variant="flat"
-                  className="truncate"
-                  endContent={<ChevronDownIcon className="text-small" />}
-                >
-                  {categoryFilter === "All" ? "All Categories" : categoryFilter}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Select Category"
-                disallowEmptySelection
-                variant="flat"
-                selectionMode="single"
-                selectedKeys={categoryFilter}
-                onSelectionChange={onCatFilterChange}
-              >
-                {categories.map((category) => (
-                  <DropdownItem key={category?.name}>
-                    {category?.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+  const onPublishFilterChange = (status: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (status && status !== "All") {
+      params.set("status", status);
+      setPublishFilter(status);
+    } else {
+      params.delete("status");
+      setPublishFilter("All");
+    }
+    setPage(1);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  {publishFilter}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Published"
-                disallowEmptySelection
-                selectionMode="single"
-                selectedKeys={publishFilter}
-                onSelectionChange={onPublishFilterChange}
-              >
-                <DropdownItem key="All">All</DropdownItem>
-                <DropdownItem key="published">Published</DropdownItem>
-                <DropdownItem key="draft">Draft</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {products.length} products
-          </span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="30">30</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    );
-  }, [
-    filterValue,
-    visibleColumns,
-    onSearchChange,
-    onRowsPerPageChange,
-    products.length,
-    hasSearchFilter,
-    publishFilter,
-  ]);
+  const onCatFilterChange = (category: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (category && category !== "All") {
+      params.set("category", category);
+      setCategoryFilter(category);
+    } else {
+      params.delete("category");
+      setCategoryFilter("All");
+    }
+    setPage(1);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
-  const bottomContent = useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center md:flex-row flex-col gap-4">
-        <div className="flex gap-4 items-center">
-          <span className="text-small text-default-400">
-            {selectedKeys === "all"
-              ? "All items selected"
-              : `${selectedKeys.size} of ${filteredItems.length} selected`}
-          </span>
-          {/* {selectedKeys && (
-            <AddProductsToOffer
-              productIds={Array.from(selectedKeys) as unknown as string[]}
-            />
-          )} */}
-        </div>
+  const onResetFilters = () => {
+    setFilterValue("");
+    setPublishFilter("All");
+    setCategoryFilter("All");
+    setPage(1);
+    router.replace(pathname);
+  };
 
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          initialPage={1}
-          page={page}
-          total={pages}
-          onChange={setPage}
-          classNames={{
-            wrapper: "bg-white dark:bg-[#222327]",
-            item: "bg-transparent dark:text-white",
-            prev: "bg-white dark:bg-[#222327]",
-            next: "bg-white dark:bg-[#222327]",
-            cursor: "",
-          }}
-        />
-        {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div> */}
-      </div>
-    );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["min-h-fit", "bg-white", "dark:bg-[#222327]"],
-      th: ["dark:bg-transparent"],
-      td: ["text-sm"],
-    }),
-    []
-  );
+  const toggleColumnVisibility = (columnUid: string) => {
+    const newVisible = new Set(visibleColumns);
+    if (newVisible.has(columnUid)) {
+      if (newVisible.size > 1) { // keep at least one column
+        newVisible.delete(columnUid);
+      }
+    } else {
+      newVisible.add(columnUid);
+    }
+    setVisibleColumns(newVisible);
+  };
 
   return (
-    <div className="w-full">
-      <AppModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        title="Confirmation"
-        isDismissable={false}
-        hideCloseButton
-      >
-        <div className="flex flex-col">
-          <p>
-            Are you sure you want to delete <b>{selectedProduct?.name}</b>?
-          </p>
-          <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-            <Button variant="light" color="default" onPress={onClose}>
+    <div className="w-full space-y-4">
+      {/* Delete confirmation dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] dark:bg-[#222327] dark:border-zinc-800">
+          <DialogHeader>
+            <DialogTitle className="dark:text-white">Delete Product</DialogTitle>
+            <DialogDescription className="text-zinc-500 dark:text-zinc-400 mt-2">
+              Are you sure you want to delete <b>{selectedProduct?.name}</b>? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4 flex gap-2">
+            <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(false)} className="dark:text-zinc-300">
               Cancel
             </Button>
-            <Button
-              variant="solid"
-              color="danger"
-              type="submit"
-              isDisabled={loading}
-              isLoading={loading}
-              onPress={handleDelete}
-              endContent={<Trash2 size={16} />}
-            >
-              Delete
+            <Button variant="destructive" onClick={handleDelete} disabled={loading}>
+              {loading ? "Deleting..." : "Delete"}
             </Button>
-          </div>
-        </div>
-      </AppModal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      <div className="w-full flex justify-end mb-4">
+      {/* Top action block */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Products</h2>
         <Button
-          variant="solid"
-          color="warning"
-          onPress={() => refetch()}
-          startContent={<RefreshCcw size={16} />}
+          variant="outline"
           size="sm"
+          onClick={() => refetch()}
+          className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
+          <RefreshCw className="h-4 w-4" />
           Refresh
         </Button>
       </div>
 
-      <Table
-        isCompact
-        aria-label="Example table with custom cells, pagination and sorting"
-        isHeaderSticky
-        bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        classNames={classNames}
-        selectedKeys={selectedKeys}
-        sortDescriptor={sortDescriptor}
-        topContent={topContent}
-        topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
-        onSortChange={setSortDescriptor}
-      >
-        <TableHeader columns={headerColumns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-              allowsSorting={column.sortable}
-              minWidth={column.minWidth}
+      {/* Search & Filters */}
+      <div className="flex flex-col gap-4 bg-white dark:bg-[#222327] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+            <Input
+              placeholder="Search products..."
+              value={filterValue}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="pl-9 bg-zinc-50/50 dark:bg-zinc-900/20 border-zinc-200 dark:border-zinc-800"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {(hasSearchFilter || publishFilter !== "All" || categoryFilter !== "All") && (
+              <Button variant="ghost" onClick={onResetFilters} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20">
+                Reset
+              </Button>
+            )}
+
+            {/* Categories filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="border-zinc-200 dark:border-zinc-800">
+                  {categoryFilter === "All" ? "All Categories" : categoryFilter}
+                  <ChevronDown className="ml-2 h-4 w-4 text-zinc-400" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="max-h-60 overflow-y-auto w-48">
+                <DropdownMenuItem onClick={() => onCatFilterChange("All")}>All Categories</DropdownMenuItem>
+                {categories.map((category) => (
+                  <DropdownMenuItem key={category?._id} onClick={() => onCatFilterChange(category?.name)}>
+                    {category?.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Status filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="border-zinc-200 dark:border-zinc-800">
+                  {publishFilter === "All" ? "All Status" : publishFilter === "published" ? "Published" : "Draft"}
+                  <ChevronDown className="ml-2 h-4 w-4 text-zinc-400" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-36">
+                <DropdownMenuItem onClick={() => onPublishFilterChange("All")}>All Status</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onPublishFilterChange("published")}>Published</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onPublishFilterChange("draft")}>Draft</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Columns visibility toggle */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 border-zinc-200 dark:border-zinc-800">
+                  <Settings2 className="h-4 w-4 text-zinc-400" />
+                  Columns
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {columns.map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.uid}
+                    checked={visibleColumns.has(column.uid)}
+                    onCheckedChange={() => toggleColumnVisibility(column.uid)}
+                  >
+                    {column.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Counter and row switcher */}
+        <div className="flex justify-between items-center text-xs text-zinc-400 dark:text-zinc-500 border-t border-zinc-100 dark:border-zinc-800/80 pt-3">
+          <span>Total {products.length} products</span>
+          <div className="flex items-center gap-1">
+            <span>Rows per page:</span>
+            <select
+              className="bg-transparent text-zinc-500 dark:text-zinc-400 outline-none cursor-pointer font-medium"
+              value={rowsPerPage}
+              onChange={onRowsPerPageChange}
             >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          emptyContent={"No products found"}
-          items={sortedItems}
-          isLoading={isLoading}
-          loadingContent={
-            <Card className="dark:bg-[#222327]">
-              <CardBody className="p-6">
-                <Spinner size="lg" />
-              </CardBody>
-            </Card>
-          }
-        >
-          {(item) => (
-            <TableRow key={item?._id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
+              <option value="5" className="dark:bg-[#222327]">5</option>
+              <option value="10" className="dark:bg-[#222327]">10</option>
+              <option value="15" className="dark:bg-[#222327]">15</option>
+              <option value="20" className="dark:bg-[#222327]">20</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Table */}
+      <div className="bg-white dark:bg-[#222327] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-zinc-50/50 dark:bg-zinc-900/20 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-800">
+              {headerColumns.map((col) => (
+                <TableHead
+                  key={col.uid}
+                  onClick={() => col.sortable && handleSort(col.uid)}
+                  className={`font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs select-none ${
+                    col.sortable ? "cursor-pointer hover:text-zinc-800 dark:hover:text-white" : ""
+                  } ${col.uid === "actions" ? "text-right" : ""}`}
+                >
+                  <div className="flex items-center gap-1">
+                    {col.name}
+                    {col.sortable && sortColumn === col.uid && (
+                      <span className="text-[10px] text-zinc-400">{sortDirection === "asc" ? "▲" : "▼"}</span>
+                    )}
+                  </div>
+                </TableHead>
+              ))}
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={headerColumns.length} className="h-32 text-center">
+                  <div className="space-y-2 flex flex-col justify-center items-center py-8">
+                    <Skeleton className="h-5 w-4/5" />
+                    <Skeleton className="h-5 w-3/5" />
+                    <Skeleton className="h-5 w-4/5" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : sortedItems.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={headerColumns.length} className="h-24 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                  No products found
+                </TableCell>
+              </TableRow>
+            ) : (
+              sortedItems.map((product) => (
+                <TableRow key={product?._id} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/30 dark:hover:bg-zinc-800/10">
+                  {headerColumns.map((col) => {
+                    const columnKey = col.uid;
+                    return (
+                      <TableCell key={columnKey} className="py-3 text-sm text-zinc-800 dark:text-zinc-200">
+                        {columnKey === "name" && (
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 min-w-10 rounded-lg overflow-hidden border border-zinc-100 dark:border-zinc-800 relative bg-zinc-50 dark:bg-zinc-900">
+                              <Image
+                                src={product?.images?.[0]?.url || "/placeholder-product.jpg"}
+                                alt={product?.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <span className="font-medium text-zinc-900 dark:text-white line-clamp-2">{product?.name}</span>
+                          </div>
+                        )}
+                        {columnKey === "price" && (
+                          <span>{formatCurrency(product?.price, "NGN")}</span>
+                        )}
+                        {columnKey === "discount" && (
+                          <div>
+                            {product?.currentOffer?.isActive && product?.currentOffer?.percentageOff ? (
+                              <span className="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50 rounded-full px-2 py-0.5 text-xs font-medium">
+                                {product.currentOffer.percentageOff}% Off
+                              </span>
+                            ) : (
+                              <span className="text-zinc-400">-</span>
+                            )}
+                          </div>
+                        )}
+                        {columnKey === "quantity" && (
+                          <span>{product?.quantityInStock}</span>
+                        )}
+                        {columnKey === "offer" && (
+                          <span className="text-xs text-zinc-500 dark:text-zinc-400">{product?.currentOffer?.name || "-"}</span>
+                        )}
+                        {columnKey === "category" && (
+                          <span>{product?.category?.name || "-"}</span>
+                        )}
+                        {columnKey === "brand" && (
+                          <span>{product?.brand || "-"}</span>
+                        )}
+                        {columnKey === "status" && (
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                            product.isPublished 
+                              ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50"
+                              : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700"
+                          }`}>
+                            {product.isPublished ? "Published" : "Draft"}
+                          </span>
+                        )}
+                        {columnKey === "dateAdded" && (
+                          <span>{formatDate(product?.createdAt)}</span>
+                        )}
+                        {columnKey === "actions" && (
+                          <div className="flex justify-end">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-36">
+                                <DropdownMenuItem onClick={() => router.push(`/admin/products/${product?._id}`)} className="cursor-pointer">
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  <span>Details</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem 
+                                  onClick={() => {
+                                    setSelectedProduct(product);
+                                    setIsDeleteDialogOpen(true);
+                                  }}
+                                  className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20"
+                                >
+                                  <Trash className="mr-2 h-4 w-4" />
+                                  <span>Delete</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      {pages > 1 && (
+        <div className="flex items-center justify-between py-2 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="text-sm text-zinc-500 dark:text-zinc-400">
+            Page {page} of {pages}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 1}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              className="border-zinc-200 dark:border-zinc-800"
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === pages}
+              onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
+              className="border-zinc-200 dark:border-zinc-800"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

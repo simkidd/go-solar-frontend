@@ -1,479 +1,418 @@
 "use client";
+import React, { useCallback, useMemo, useState } from "react";
 import AppModal from "@/components/AppModal";
 import { Category } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
 import { formatDate } from "@/utils/helpers";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  Button,
-  Card,
-  CardBody,
-  Dropdown,
-  DropdownItem,
   DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Pagination,
-  Selection,
-  SortDescriptor,
-  Spinner,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
   TableBody,
   TableCell,
-  TableColumn,
+  TableHead,
   TableHeader,
   TableRow,
-  useDisclosure,
-  Table,
-} from "@heroui/react";
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ChevronDownIcon,
-  EllipsisVertical,
+  ChevronDown,
+  MoreVertical,
   Eye,
-  PencilLine,
-  RefreshCcw,
-  SearchIcon,
+  RefreshCw,
+  Search,
+  Settings2,
   Trash,
-  Trash2,
+  Pencil,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useMemo, useState } from "react";
 import UpdateCategoryForm from "./UpdateCategoryForm";
 import useCategories from "@/hooks/useCategories";
 
 const columns = [
-  { name: "Name", uid: "name", minWidth: "200px", sortable: true },
-  { name: "Description", uid: "description", minWidth: "300px" },
-  // { name: "Products", uid: "products", minWidth: "150px" },
-  { name: "Date added", uid: "dateAdded", minWidth: "150px", sortable: true },
-  { name: "Actions", uid: "actions", width: "80px" },
+  { name: "Name", uid: "name", sortable: true },
+  { name: "Description", uid: "description" },
+  { name: "Date added", uid: "dateAdded", sortable: true },
+  { name: "Actions", uid: "actions" },
 ];
 
 const CategoryTable = () => {
   const {
     loading,
     deleteCategory,
-    products,
     fetchCategories,
-    fetchProducts,
   } = useProductStore();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [visibleColumns, setVisibleColumns] = useState<Selection>(
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
     new Set(columns.map((col) => col.uid))
   );
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const {
-    isOpen: isUpdateOpen,
-    onOpen: onUpdateOpen,
-    onOpenChange: onUpdateOpenChange,
-    onClose: onUpdateClose,
-  } = useDisclosure();
+  const [sortColumn, setSortColumn] = useState<string>("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [selectedCat, setSelectedCat] = useState<Category | null>(null);
 
   const hasSearchFilter = Boolean(filterValue);
-
   const { categories, isLoading } = useCategories();
 
   const headerColumns = useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
+    return columns.filter((column) => visibleColumns.has(column.uid));
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
     let filteredCat = [...categories];
-
     if (hasSearchFilter) {
       filteredCat = filteredCat.filter((cat) =>
         cat?.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-
     return filteredCat;
-  }, [categories, filterValue, hasSearchFilter]);
+  }, [categories, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
     const sorted = [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column as keyof typeof a];
-      const second = b[sortDescriptor.column as keyof typeof b];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      const first = a[sortColumn as keyof typeof a];
+      const second = b[sortColumn as keyof typeof b];
+      const cmp = (first ?? "") < (second ?? "") ? -1 : (first ?? "") > (second ?? "") ? 1 : 0;
+      return sortDirection === "desc" ? -cmp : cmp;
     });
-
     return sorted;
-  }, [sortDescriptor, items]);
+  }, [sortColumn, sortDirection, items]);
 
-  const catProducts = useCallback(
-    (category: Category) =>
-      category
-        ? products.filter((product) => product?.category?._id === category?._id)
-        : [],
-    [products]
-  );
-
-  const renderCell = useCallback((cat: Category, columnKey: React.Key) => {
-    switch (columnKey) {
-      case "name":
-        return cat?.name;
-      case "description":
-        return (
-          <div className="text-ellipsis line-clamp-2">{cat?.description}</div>
-        );
-      // case "products":
-      //   return <div>{catProducts(cat).length}</div>;
-      case "dateAdded":
-        return formatDate(cat?.createdAt);
-      case "actions":
-        return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <EllipsisVertical className="text-default-300" size={16} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem
-                  key={"see_products"}
-                  startContent={<Eye size={16} />}
-                  onPress={() => router.push(`/admin/categories/${cat?.slug}`)}
-                >
-                  See products
-                </DropdownItem>
-                <DropdownItem
-                  key={"update"}
-                  onPress={() => {
-                    setSelectedCat(cat);
-                    onUpdateOpen();
-                  }}
-                  startContent={<PencilLine size={16} />}
-                >
-                  Update
-                </DropdownItem>
-                <DropdownItem
-                  key={"delete"}
-                  onPress={() => {
-                    setSelectedCat(cat);
-                    onOpen();
-                  }}
-                  startContent={<Trash size={16} />}
-                >
-                  Delete
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return null;
+  const handleSort = (columnKey: string) => {
+    if (sortColumn === columnKey) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(columnKey);
+      setSortDirection("asc");
     }
-  }, []);
+  };
 
   const handleDelete = () => {
     if (selectedCat) {
       deleteCategory(selectedCat?._id);
+      setIsDeleteOpen(false);
+      setSelectedCat(null);
       router.refresh();
-      onClose();
     }
   };
 
-  const onRowsPerPageChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
+  const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(Number(e.target.value));
+    setPage(1);
+  };
+
+  const onSearchChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set("q", value);
+      setFilterValue(value);
       setPage(1);
-    },
-    []
-  );
+    } else {
+      params.delete("q");
+      setFilterValue("");
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
-  const onSearchChange = useCallback(
-    (value?: string) => {
-      const params = new URLSearchParams(searchParams);
-      if (value) {
-        params.set("q", value);
-        setFilterValue(value);
-        setPage(1);
-      } else {
-        params.delete("q");
-        setFilterValue("");
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onClear = useCallback(() => {
+  const onResetFilters = () => {
     setFilterValue("");
     setPage(1);
-  }, []);
+    router.replace(pathname);
+  };
 
-  const topContent = useMemo(() => {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end lg:flex-row flex-col">
-          <Input
-            isClearable
-            className="w-full lg:max-w-[44%]"
-            classNames={{
-              input: ["bg-transparent"],
-              innerWrapper: "bg-transparent ",
-              inputWrapper: [
-                "border-1",
-                "bg-white",
-                "dark:bg-[#222327]",
-                "hover:bg-default-200/70",
-                "focus-within:!bg-default-200/50",
-                "dark:hover:bg-default/70",
-                "dark:focus-within:!bg-default/60",
-              ],
-            }}
-            variant="bordered"
-            placeholder="Search..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-
-          <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {categories.length} categories
-          </span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="30">30</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    );
-  }, [
-    filterValue,
-    visibleColumns,
-    onSearchChange,
-    onRowsPerPageChange,
-    categories.length,
-    onClear,
-  ]);
-
-  const bottomContent = useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center md:flex-row flex-col gap-4">
-        <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          initialPage={1}
-          page={page}
-          total={pages}
-          onChange={setPage}
-          classNames={{
-            wrapper: "bg-white dark:bg-[#222327]",
-            item: "bg-transparent dark:text-white",
-            prev: "bg-white dark:bg-[#222327]",
-            next: "bg-white dark:bg-[#222327]",
-            cursor: "",
-          }}
-        />
-        {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div> */}
-      </div>
-    );
-  }, [selectedKeys, filteredItems.length, page, pages]);
-
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["min-h-fit", "bg-white", "dark:bg-[#222327]"],
-      th: ["dark:bg-transparent"],
-      td: ["text-sm"],
-    }),
-    []
-  );
+  const toggleColumnVisibility = (columnUid: string) => {
+    const newVisible = new Set(visibleColumns);
+    if (newVisible.has(columnUid)) {
+      if (newVisible.size > 1) {
+        newVisible.delete(columnUid);
+      }
+    } else {
+      newVisible.add(columnUid);
+    }
+    setVisibleColumns(newVisible);
+  };
 
   return (
-    <div>
+    <div className="w-full space-y-4">
+      {/* Delete Confirmation Modal */}
       <AppModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        title="Confirmation"
+        isOpen={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        title="Delete Category"
         isDismissable={false}
         hideCloseButton
       >
-        <div className="flex flex-col">
-          <p>
-            Are you sure you want to delete <b>{selectedCat?.name}</b>?
+        <div className="flex flex-col pt-2">
+          <p className="text-sm text-zinc-600 dark:text-zinc-300">
+            Are you sure you want to delete category <b>{selectedCat?.name}</b>?
           </p>
           <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-            <Button variant="light" color="default" onPress={onClose}>
+            <Button variant="ghost" onClick={() => setIsDeleteOpen(false)} className="dark:text-zinc-300">
               Cancel
             </Button>
             <Button
-              variant="solid"
-              color="danger"
-              type="submit"
-              isDisabled={loading}
-              isLoading={loading}
-              onPress={handleDelete}
-              endContent={<Trash2 size={16} />}
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={loading}
             >
-              Delete
+              {loading ? "Deleting..." : "Delete"}
             </Button>
           </div>
         </div>
       </AppModal>
 
-      {/* Update Offer Modal */}
+      {/* Update Category Modal */}
       <AppModal
         isOpen={isUpdateOpen}
-        onOpenChange={onUpdateOpenChange}
-        title="Update Offer"
+        onOpenChange={setIsUpdateOpen}
+        title="Update Category"
         isDismissable={false}
         hideCloseButton
+        size="md"
+        scrollBehavior="inside"
       >
-        <UpdateCategoryForm
-          onClose={onUpdateClose}
-          category={selectedCat as Category}
-        />
+        {selectedCat && (
+          <UpdateCategoryForm
+            onClose={() => setIsUpdateOpen(false)}
+            category={selectedCat}
+          />
+        )}
       </AppModal>
 
-      <div className="w-full flex justify-end mb-4">
+      {/* Action Header */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Categories</h2>
         <Button
-          variant="solid"
-          color="warning"
-          onPress={() => {
-            fetchCategories();
-            fetchProducts();
-          }}
-          startContent={<RefreshCcw size={16} />}
+          variant="outline"
           size="sm"
+          onClick={() => fetchCategories()}
+          className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
+          <RefreshCw className="h-4 w-4" />
           Refresh
         </Button>
       </div>
 
-      <Table
-        isCompact
-        aria-label="Example table with custom cells, pagination and sorting"
-        isHeaderSticky
-        bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        classNames={classNames}
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
-        sortDescriptor={sortDescriptor}
-        topContent={topContent}
-        topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
-        onSortChange={setSortDescriptor}
-      >
-        <TableHeader columns={headerColumns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-              allowsSorting={column.sortable}
+      {/* Search & Filters */}
+      <div className="flex flex-col gap-4 bg-white dark:bg-[#222327] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+            <Input
+              placeholder="Search categories..."
+              value={filterValue}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="pl-9 bg-zinc-50/50 dark:bg-zinc-900/20 border-zinc-200 dark:border-zinc-800"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {hasSearchFilter && (
+              <Button variant="ghost" onClick={onResetFilters} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20">
+                Reset
+              </Button>
+            )}
+
+            {/* Columns visibility toggle */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 border-zinc-200 dark:border-zinc-800">
+                  <Settings2 className="h-4 w-4 text-zinc-400" />
+                  Columns
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {columns.map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.uid}
+                    checked={visibleColumns.has(column.uid)}
+                    onCheckedChange={() => toggleColumnVisibility(column.uid)}
+                  >
+                    {column.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Counter and row switcher */}
+        <div className="flex justify-between items-center text-xs text-zinc-400 dark:text-zinc-500 border-t border-zinc-100 dark:border-zinc-800/80 pt-3">
+          <span>Total {categories.length} categories</span>
+          <div className="flex items-center gap-1">
+            <span>Rows per page:</span>
+            <select
+              className="bg-transparent text-zinc-500 dark:text-zinc-400 outline-none cursor-pointer font-medium"
+              value={rowsPerPage}
+              onChange={onRowsPerPageChange}
             >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          emptyContent={"No category found"}
-          items={sortedItems}
-          isLoading={isLoading}
-          loadingContent={
-            <Card className="dark:bg-[#222327]">
-              <CardBody className="p-6">
-                <Spinner size="lg" />
-              </CardBody>
-            </Card>
-          }
-        >
-          {(item) => (
-            <TableRow key={item?._id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
+              <option value="5" className="dark:bg-[#222327]">5</option>
+              <option value="10" className="dark:bg-[#222327]">10</option>
+              <option value="15" className="dark:bg-[#222327]">15</option>
+              <option value="20" className="dark:bg-[#222327]">20</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Table */}
+      <div className="bg-white dark:bg-[#222327] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-zinc-50/50 dark:bg-zinc-900/20 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-800">
+              {headerColumns.map((col) => (
+                <TableHead
+                  key={col.uid}
+                  onClick={() => col.sortable && handleSort(col.uid)}
+                  className={`font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs select-none ${
+                    col.sortable ? "cursor-pointer hover:text-zinc-800 dark:hover:text-white" : ""
+                  } ${col.uid === "actions" ? "text-right" : ""}`}
+                >
+                  <div className="flex items-center gap-1">
+                    {col.name}
+                    {col.sortable && sortColumn === col.uid && (
+                      <span className="text-[10px] text-zinc-400">{sortDirection === "asc" ? "▲" : "▼"}</span>
+                    )}
+                  </div>
+                </TableHead>
+              ))}
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={headerColumns.length} className="h-32">
+                  <div className="space-y-2 flex flex-col justify-center items-center py-8">
+                    <Skeleton className="h-5 w-4/5" />
+                    <Skeleton className="h-5 w-3/5" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : sortedItems.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={headerColumns.length} className="h-24 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                  No categories found
+                </TableCell>
+              </TableRow>
+            ) : (
+              sortedItems.map((cat) => (
+                <TableRow key={cat?._id} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/30 dark:hover:bg-zinc-800/10">
+                  {headerColumns.map((col) => {
+                    const columnKey = col.uid;
+                    return (
+                      <TableCell key={columnKey} className="py-3.5 text-sm text-zinc-800 dark:text-zinc-200">
+                        {columnKey === "name" && (
+                          <span className="font-semibold text-zinc-900 dark:text-white">{cat?.name}</span>
+                        )}
+                        {columnKey === "description" && (
+                          <span className="text-zinc-500 dark:text-zinc-400 line-clamp-2 max-w-lg">{cat?.description || "-"}</span>
+                        )}
+                        {columnKey === "dateAdded" && (
+                          <span>{formatDate(cat?.createdAt)}</span>
+                        )}
+                        {columnKey === "actions" && (
+                          <div className="flex justify-end">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-36">
+                                <DropdownMenuItem onClick={() => router.push(`/admin/categories/${cat?.slug}`)} className="cursor-pointer">
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  <span>Products</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setSelectedCat(cat);
+                                    setIsUpdateOpen(true);
+                                  }}
+                                  className="cursor-pointer"
+                                >
+                                  <Pencil className="mr-2 h-4 w-4" />
+                                  <span>Update</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setSelectedCat(cat);
+                                    setIsDeleteOpen(true);
+                                  }}
+                                  className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20"
+                                >
+                                  <Trash className="mr-2 h-4 w-4" />
+                                  <span>Delete</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      {pages > 1 && (
+        <div className="flex items-center justify-between py-2 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="text-sm text-zinc-500 dark:text-zinc-400">
+            Page {page} of {pages}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 1}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              className="border-zinc-200 dark:border-zinc-800"
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === pages}
+              onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
+              className="border-zinc-200 dark:border-zinc-800"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import SingleCategoryProducts from "@/app/(dashboard)/components/products/SingleCategoryProducts";
 import { Category } from "@/interfaces/product.interface";
 import { getCategories } from "@/lib/data";
-import { Button } from "@heroui/react";
 import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -43,11 +42,12 @@ const SingleCatgory = async ({ params }: IProp) => {
   return (
     <div className="w-full font-inter">
       <div className="flex items-center justify-between mb-4">
-        <Link href="/admin/categories">
-          <button className="inline-flex items-center gap-1">
-            <ArrowLeft size={16} />
-            Categories
-          </button>
+        <Link 
+          href="/admin/categories"
+          className="text-sm font-medium flex items-center gap-1.5 text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors"
+        >
+          <ArrowLeft size={16} />
+          Categories
         </Link>
       </div>
 

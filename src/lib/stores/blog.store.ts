@@ -1,6 +1,6 @@
 import { Post } from "@/interfaces/post.interface";
 import { create } from "zustand";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { axiosInstance } from "../axios";
 
 interface IBlog {

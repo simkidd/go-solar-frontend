@@ -1,7 +1,7 @@
 import { Order, UpdateTrackingStatus } from "@/interfaces/order.interface";
 import { create } from "zustand";
 import { axiosInstance } from "../axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 interface IOrderStore {
   loading: boolean;

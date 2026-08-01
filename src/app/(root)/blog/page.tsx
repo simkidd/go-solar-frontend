@@ -23,8 +23,11 @@ const BlogsPage = async () => {
   return (
     <div className="w-full font-inter">
       <PageHeader
-        heading="Blog"
-        className="bg-blog-bg bg-no-repeat bg-bottom bg-cover text-white"
+        badge="Insights & Updates"
+        heading="The GoSolar Blog"
+        subtitle="Stay informed with the latest solar energy guides, industry insights, calculation tips, and clean energy news from Nigeria's top engineers."
+        image="/images/bg/blog-bg.jpg"
+        minHeight="min-h-[420px] md:min-h-[460px]"
       />
 
       <div className="container mx-auto px-2 pt-8 lg:hidden">

@@ -1,10 +1,11 @@
 "use client";
+import React, { useMemo, useState } from "react";
 import { SignUpInput } from "@/interfaces/auth.interface";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Button, Input } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, LockIcon, MailIcon, User2Icon } from "lucide-react";
-import { useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 
 const SignUpForm = () => {
@@ -21,8 +22,6 @@ const SignUpForm = () => {
     confirmPassword: "",
   });
 
-  const errors: string[] = [];
-
   input.fullname = input.firstName + " " + input.lastName;
 
   const validateEmail = (input: string) =>
@@ -33,13 +32,6 @@ const SignUpForm = () => {
 
     return validateEmail(input.email) ? false : true;
   }, [input.email]);
-
-  const validatePassword = (input: string) => {
-    const hasUpperCase = /[A-Z]/.test(input);
-    const hasSymbol = /[^a-z0-9]/i.test(input);
-    const hasMinLength = input.length >= 6;
-    return hasUpperCase && hasSymbol && hasMinLength;
-  };
 
   const passwordErrors = useMemo(() => {
     const errors: string[] = [];
@@ -58,16 +50,6 @@ const SignUpForm = () => {
   }, [input.password]);
 
   const isPasswordInvalid = passwordErrors.length > 0;
-
-  const isFirstNameValid = useMemo(() => {
-    if (input.firstName === "") return false;
-    return input.firstName && input.firstName.length > 0;
-  }, [input.firstName]);
-
-  const isLastNameValid = useMemo(() => {
-    if (input.lastName === "") return false;
-    return input.lastName && input.lastName.length > 0;
-  }, [input.lastName]);
 
   const isConfirmPasswordInvalid = useMemo(() => {
     if (input.confirmPassword === "") return false;
@@ -112,78 +94,69 @@ const SignUpForm = () => {
     });
   };
 
+  const isFormDisabled =
+    loading ||
+    !input.email ||
+    !input.password ||
+    !input.phonenumber ||
+    !input.firstName ||
+    !input.lastName ||
+    !input.confirmPassword ||
+    isEmailInvalid ||
+    isPasswordInvalid ||
+    isConfirmPasswordInvalid;
+
   return (
-    <form onSubmit={handleSubmit} className="mb-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 mb-4 gap-3">
-        <div className="input-group">
+    <form onSubmit={handleSubmit} className="space-y-4 font-inter">
+      
+      {/* First/Last name inputs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="relative">
           <Input
             type="text"
             placeholder="First Name"
-            labelPlacement="outside"
             name="firstName"
-            className="w-full"
+            className="w-full h-11 pl-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
             value={input?.firstName}
             onChange={(e) => setInput({ ...input, firstName: e.target.value })}
-            startContent={
-              <User2Icon
-                size={16}
-                className="text-default-400 pointer-events-none flex-shrink-0"
-              />
-            }
-            classNames={{
-              inputWrapper:
-                "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-0",
-            }}
-            errorMessage={isFirstNameValid && "Please enter a first name"}
+            required
           />
+          <User2Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
         </div>
-        <div className="input-group">
+
+        <div className="relative">
           <Input
             type="text"
             placeholder="Last Name"
-            labelPlacement="outside"
             name="lastName"
-            className="w-full"
+            className="w-full h-11 pl-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
             value={input?.lastName}
             onChange={(e) => setInput({ ...input, lastName: e.target.value })}
-            startContent={
-              <User2Icon
-                size={16}
-                className="text-default-400 pointer-events-none flex-shrink-0"
-              />
-            }
-            classNames={{
-              inputWrapper:
-                "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-0",
-            }}
-            errorMessage={isLastNameValid && "Please enter a last name"}
+            required
           />
+          <User2Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
         </div>
       </div>
 
-      <div className="input-group mb-4">
+      {/* Email input */}
+      <div className="relative">
         <Input
           type="email"
-          placeholder="Email"
+          placeholder="Email Address"
           name="email"
-          className="w-full"
-          labelPlacement="outside"
-          errorMessage={isEmailInvalid && "Please enter a valid email address"}
+          className="w-full h-11 pl-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
           value={input?.email}
           onChange={(e) => setInput({ ...input, email: e.target.value })}
-          startContent={
-            <MailIcon
-              size={16}
-              className="text-default-400 pointer-events-none flex-shrink-0"
-            />
-          }
-          classNames={{
-            inputWrapper:
-              "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-0",
-          }}
+          required
         />
+        <MailIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
       </div>
-      <div className="input-group mb-4">
+      {isEmailInvalid && (
+        <p className="text-[11px] text-rose-500 font-semibold pl-1">Please enter a valid email address</p>
+      )}
+
+      {/* Phone input */}
+      <div>
         <PhoneInput
           international
           countryCallingCodeEditable={false}
@@ -191,137 +164,82 @@ const SignUpForm = () => {
           placeholder="Enter phone number"
           value={input?.phonenumber}
           onChange={(value) => setInput({ ...input, phonenumber: value || "" })}
-          error={
-            input?.phonenumber
-              ? isValidPhoneNumber(input?.phonenumber)
-                ? undefined
-                : "Invalid phone number"
-              : "Phone number required"
-          }
-          className="bg-[#f4f4f5] rounded-[12px] h-10 px-3 text-sm focus:outline-none [&>input]:bg-transparent [&>input]:px-1 [&>input]:outline-0 [&>input]:h-full [&>input]:text-black"
+          className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl h-11 px-3 text-xs focus-within:ring-2 focus-within:ring-emerald-500 [&>input]:bg-transparent [&>input]:px-2 [&>input]:outline-0 [&>input]:h-full [&>input]:text-zinc-800 dark:[&>input]:text-white [&>input]:text-xs font-semibold"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 mb-4 gap-3">
-        <div className="input-group">
+      {/* Password inputs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        
+        {/* Password */}
+        <div className="relative">
           <Input
             type={isVisible ? "text" : "password"}
             placeholder="Password"
             name="password"
-            className="w-full"
-            labelPlacement="outside"
-            classNames={{
-              inputWrapper:
-                "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-0",
-            }}
-            startContent={
-              <LockIcon
-                size={16}
-                className="text-default-400 pointer-events-none flex-shrink-0"
-              />
-            }
-            endContent={
-              <button
-                className="focus:outline-none"
-                type="button"
-                onClick={toggleVisibility}
-              >
-                {isVisible ? (
-                  <EyeOff
-                    size={20}
-                    className="text-default-400 pointer-events-none"
-                  />
-                ) : (
-                  <Eye
-                    size={20}
-                    className="text-default-400 pointer-events-none"
-                  />
-                )}
-              </button>
-            }
-            isInvalid={isPasswordInvalid}
-            errorMessage={
-              isPasswordInvalid && (
-                <ul className="list-disc pl-4">
-                  {passwordErrors.map((error, i) => (
-                    <li key={i} className="text-xs">
-                      {error}
-                    </li>
-                  ))}
-                </ul>
-              )
-            }
+            className="w-full h-11 pl-10 pr-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
             value={input?.password}
             onChange={(e) => setInput({ ...input, password: e.target.value })}
+            required
           />
+          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+          <button
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650"
+            type="button"
+            onClick={toggleVisibility}
+          >
+            {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
         </div>
-        <div className="input-group">
+
+        {/* Confirm password */}
+        <div className="relative">
           <Input
             type={confirmPasswordVisible ? "text" : "password"}
             placeholder="Confirm Password"
             name="confirmPassword"
-            className="w-full"
-            labelPlacement="outside"
-            startContent={
-              <LockIcon
-                size={16}
-                className="text-default-400 pointer-events-none flex-shrink-0"
-              />
-            }
-            classNames={{
-              inputWrapper:
-                "group-data-[focus-visible=true]:ring-primary group-data-[focus-visible=true]:ring-0",
-            }}
-            endContent={
-              <button
-                className="focus:outline-none"
-                type="button"
-                onClick={toggleConfirmPasswordVisibility}
-              >
-                {confirmPasswordVisible ? (
-                  <EyeOff
-                    size={20}
-                    className="text-default-400 pointer-events-none"
-                  />
-                ) : (
-                  <Eye
-                    size={20}
-                    className="text-default-400 pointer-events-none"
-                  />
-                )}
-              </button>
-            }
-            isInvalid={isConfirmPasswordInvalid}
-            errorMessage={isConfirmPasswordInvalid && "Passwords do not match"}
+            className="w-full h-11 pl-10 pr-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
             value={input?.confirmPassword}
             onChange={(e) =>
               setInput({ ...input, confirmPassword: e.target.value })
             }
+            required
           />
+          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+          <button
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650"
+            type="button"
+            onClick={toggleConfirmPasswordVisibility}
+          >
+            {confirmPasswordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
         </div>
+
       </div>
 
+      {isPasswordInvalid && (
+        <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/50 p-3 rounded-xl text-rose-600 dark:text-rose-450 text-[11px] leading-relaxed pl-6">
+          <ul className="list-disc space-y-0.5">
+            {passwordErrors.map((error, i) => (
+              <li key={i} className="font-semibold">{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {isConfirmPasswordInvalid && (
+        <p className="text-[11px] text-rose-500 font-semibold pl-1">Passwords do not match</p>
+      )}
+
+      {/* Submit */}
       <Button
-        variant="solid"
-        color="primary"
         type="submit"
-        className="w-full disabled:!bg-gray-400 mt-4 data-[focus-visible=true]:outline-primary"
-        isLoading={loading}
-        isDisabled={
-          loading ||
-          !input.email ||
-          !input.password ||
-          !input.phonenumber ||
-          !input.firstName ||
-          !input.lastName ||
-          !input.confirmPassword ||
-          isEmailInvalid ||
-          isPasswordInvalid ||
-          isConfirmPasswordInvalid
-        }
+        className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11"
+        disabled={isFormDisabled}
       >
-        Sign Up
+        {loading ? "Creating Account..." : "Sign Up"}
       </Button>
+
     </form>
   );
 };

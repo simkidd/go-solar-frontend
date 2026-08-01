@@ -1,7 +1,7 @@
 import { User } from "@/interfaces/auth.interface";
 import { create } from "zustand";
 import { axiosInstance } from "../axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 interface IUserStore {
   loading: boolean;

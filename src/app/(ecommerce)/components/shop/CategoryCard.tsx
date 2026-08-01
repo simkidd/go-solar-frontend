@@ -14,12 +14,12 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   link,
 }) => {
   return (
-    <Link href={link} className="group">
-      <div className="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-[#f1f1f1] dark:border-[#2a2b2f] group-hover:border-primary group-hover:border-2 transition-colors duration-300 ease-in-out">
-        <div className="text-3xl mb-4 flex items-center justify-center rounded-full bg-[#f1f1f1] dark:bg-[#2a2b2f] w-14 h-14">
-          <Icon />
+    <Link href={link} className="group font-inter block">
+      <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800/80 shadow-xs hover:border-[#08AA08] hover:shadow-md transition-all duration-300">
+        <div className="text-2xl mb-4 flex items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-850 group-hover:bg-[#08AA08]/10 group-hover:text-[#08AA08] w-12 h-12 transition-all duration-300">
+          <Icon className="group-hover:scale-110 transition-transform duration-300" />
         </div>
-        <p className="font-medium text-sm">{name}</p>
+        <p className="font-bold text-xs text-zinc-800 dark:text-zinc-200 text-center tracking-wide line-clamp-1">{name}</p>
       </div>
     </Link>
   );

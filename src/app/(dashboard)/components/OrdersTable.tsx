@@ -1,60 +1,59 @@
 "use client";
 import useOrders from "@/hooks/useOrders";
 import { Order, TrackingStatus } from "@/interfaces/order.interface";
-import { useOrderStore } from "@/lib/stores/order.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  Button,
-  Card,
-  CardBody,
-  Chip,
-  Dropdown,
-  DropdownItem,
   DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Pagination,
-  Selection,
-  SortDescriptor,
-  Spinner,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Table,
   TableBody,
   TableCell,
-  TableColumn,
+  TableHead,
   TableHeader,
   TableRow,
-} from "@heroui/react";
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ChevronDownIcon,
-  EllipsisVertical,
+  ChevronDown,
+  MoreVertical,
   Eye,
-  RefreshCcw,
-  SearchIcon,
+  RefreshCw,
+  Search,
+  Settings2,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
 
 const columns = [
-  { name: "Order ID", uid: "orderId", minWidth: "200px" },
-  {
-    name: "Billing Name",
-    uid: "billingName",
-    minWidth: "200px",
-    sortable: true,
-  },
-  { name: "Date", uid: "dateOrdered", minWidth: "300px" },
-  { name: "Total", uid: "total", minWidth: "150px" },
-  {
-    name: "Tracking Status",
-    uid: "trackingStatus",
-    minWidth: "150px",
-    sortable: true,
-  },
-  {
-    name: "Actions",
-    uid: "actions",
-  },
+  { name: "Order ID", uid: "orderId" },
+  { name: "Billing Name", uid: "billingName", sortable: true },
+  { name: "Date", uid: "dateOrdered" },
+  { name: "Total", uid: "total" },
+  { name: "Tracking Status", uid: "trackingStatus", sortable: true },
+  { name: "Actions", uid: "actions" },
 ];
+
+export const getChipStyles = (status: TrackingStatus) => {
+  switch (status) {
+    case TrackingStatus.Processing:
+      return "bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50";
+    case TrackingStatus.Delivered:
+      return "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/50";
+    case TrackingStatus.Received:
+      return "bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50";
+    default:
+      return "bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700";
+  }
+};
 
 export const getChipColor = (status: TrackingStatus) => {
   switch (status) {
@@ -74,17 +73,15 @@ const OrdersTable = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [visibleColumns, setVisibleColumns] = useState<Selection>(
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
     new Set(columns.map((col) => col.uid))
   );
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
+  const [sortColumn, setSortColumn] = useState<string>("billingName");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [statusFilter, setStatusFilter] = useState(
     searchParams.get("status") || "All"
   );
@@ -92,11 +89,7 @@ const OrdersTable = () => {
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
+    return columns.filter((column) => visibleColumns.has(column.uid));
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
@@ -105,15 +98,9 @@ const OrdersTable = () => {
     if (hasSearchFilter) {
       filteredOrders = filteredOrders.filter(
         (order) =>
-          order?.user?.firstname
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          order?.user?.lastname
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          order?.trackingId?.tracking_id
-            .toLowerCase()
-            .includes(filterValue.toLowerCase())
+          order?.user?.firstname.toLowerCase().includes(filterValue.toLowerCase()) ||
+          order?.user?.lastname.toLowerCase().includes(filterValue.toLowerCase()) ||
+          order?.trackingId?.tracking_id.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
@@ -124,367 +111,307 @@ const OrdersTable = () => {
     }
 
     return filteredOrders;
-  }, [orders, filterValue, statusFilter, hasSearchFilter]);
+  }, [orders, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
     const sorted = [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column as keyof typeof a];
-      const second = b[sortDescriptor.column as keyof typeof b];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+      let first = a[sortColumn as keyof typeof a];
+      let second = b[sortColumn as keyof typeof b];
 
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      // Handle nested properties
+      if (sortColumn === "billingName") {
+        first = `${a?.user?.firstname} ${a?.user?.lastname}`;
+        second = `${b?.user?.firstname} ${b?.user?.lastname}`;
+      }
+
+      const cmp = (first ?? "") < (second ?? "") ? -1 : (first ?? "") > (second ?? "") ? 1 : 0;
+      return sortDirection === "desc" ? -cmp : cmp;
     });
-
     return sorted;
-  }, [sortDescriptor, items]);
+  }, [sortColumn, sortDirection, items]);
 
-  const renderCell = useCallback((order: Order, columnKey: React.Key) => {
-    switch (columnKey) {
-      case "orderId":
-        return order?.trackingId?.tracking_id;
-      case "billingName":
-        return (
-          <div>{order?.user?.firstname + " " + order?.user?.lastname}</div>
-        );
-      case "dateOrdered":
-        return formatDate(order?.createdAt);
-      case "total":
-        return <div>{formatCurrency(order?.totalPricePaid, "NGN")}</div>;
-      case "trackingStatus":
-        return (
-          <Chip
-            color={getChipColor(order?.trackingStatus)}
-            size="sm"
-            variant="flat"
-          >
-            {order?.trackingStatus}
-          </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <EllipsisVertical className="text-default-300" size={16} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem
-                  key={"view"}
-                  startContent={<Eye size={16} />}
-                  onPress={() => router.push(`/admin/orders/${order?._id}`)}
-                >
-                  View
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return null;
+  const handleSort = (columnKey: string) => {
+    if (sortColumn === columnKey) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(columnKey);
+      setSortDirection("asc");
     }
-  }, []);
+  };
 
-  const onRowsPerPageChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
-    },
-    []
-  );
-
-  const onSearchChange = useCallback(
-    (value?: string) => {
-      const params = new URLSearchParams(searchParams);
-      if (value) {
-        params.set("q", value);
-        setFilterValue(value);
-        setPage(1);
-      } else {
-        params.delete("q");
-        setFilterValue("");
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onClear = useCallback(() => {
-    setFilterValue("");
+  const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(Number(e.target.value));
     setPage(1);
-  }, []);
+  };
 
-  const onStatusFilterChange = useCallback(
-    (keys: Selection) => {
-      const selectedStatus = Array.from(keys).join(", ");
-      const params = new URLSearchParams(searchParams);
-      if (selectedStatus) {
-        params.set("status", selectedStatus);
-        setStatusFilter(selectedStatus);
-      } else {
-        params.delete("status");
-        setPage(1);
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
+  const onSearchChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set("q", value);
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      params.delete("q");
+      setFilterValue("");
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
-  const onResetFilters = useCallback(() => {
+  const onStatusFilterChange = (status: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (status && status !== "All") {
+      params.set("status", status);
+      setStatusFilter(status);
+    } else {
+      params.delete("status");
+      setStatusFilter("All");
+    }
+    setPage(1);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  const onResetFilters = () => {
     setFilterValue("");
     setStatusFilter("All");
     setPage(1);
-    const params = new URLSearchParams();
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [pathname, router]);
+    router.replace(pathname);
+  };
 
-  const topContent = useMemo(() => {
-    const hasFilters = filterValue || statusFilter !== "All";
-
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end lg:flex-row flex-col">
-          <Input
-            isClearable
-            className="w-full lg:max-w-[44%]"
-            classNames={{
-              input: ["bg-transparent"],
-              innerWrapper: "bg-transparent ",
-              inputWrapper: [
-                "border-1",
-                "bg-white",
-                "dark:bg-[#222327]",
-                "hover:bg-default-200/70",
-                "focus-within:!bg-default-200/50",
-                "dark:hover:bg-default/70",
-                "dark:focus-within:!bg-default/60",
-              ],
-            }}
-            variant="bordered"
-            placeholder="Search..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-
-          <div className="flex gap-3">
-            {hasFilters && (
-              <Button variant="flat" color="danger" onPress={onResetFilters}>
-                Reset
-              </Button>
-            )}
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  {statusFilter}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Role Filter"
-                onSelectionChange={onStatusFilterChange}
-                selectionMode="single"
-              >
-                <DropdownItem key="All">All</DropdownItem>
-                <DropdownItem key={TrackingStatus.Processing}>
-                  Processing
-                </DropdownItem>
-                <DropdownItem key={TrackingStatus.Delivered}>
-                  Delivered
-                </DropdownItem>
-                <DropdownItem key={TrackingStatus.Received}>
-                  Recieved
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {orders.length} orders
-          </span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    );
-  }, [
-    filterValue,
-    visibleColumns,
-    onSearchChange,
-    onRowsPerPageChange,
-    orders.length,
-    hasSearchFilter,
-    onResetFilters,
-    statusFilter,
-    onClear,
-    onStatusFilterChange,
-  ]);
-
-  const bottomContent = useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center md:flex-row flex-col gap-4">
-        <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          initialPage={1}
-          page={page}
-          total={pages}
-          onChange={setPage}
-          classNames={{
-            wrapper: "bg-white dark:bg-[#222327]",
-            item: "bg-transparent dark:text-white",
-            prev: "bg-white dark:bg-[#222327]",
-            next: "bg-white dark:bg-[#222327]",
-            cursor: "",
-          }}
-        />
-        {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div> */}
-      </div>
-    );
-  }, [selectedKeys, page, pages, filteredItems.length]);
-
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["min-h-fit", "bg-white", "dark:bg-[#222327]"],
-      th: ["dark:bg-transparent"],
-      td: ["text-sm"],
-    }),
-    []
-  );
+  const toggleColumnVisibility = (columnUid: string) => {
+    const newVisible = new Set(visibleColumns);
+    if (newVisible.has(columnUid)) {
+      if (newVisible.size > 1) {
+        newVisible.delete(columnUid);
+      }
+    } else {
+      newVisible.add(columnUid);
+    }
+    setVisibleColumns(newVisible);
+  };
 
   return (
-    <div className="w-full">
-      <div className="w-full flex justify-end mb-4">
+    <div className="w-full space-y-4">
+      {/* Top action block */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Orders</h2>
         <Button
-          variant="solid"
-          color="warning"
-          onPress={() => refetch}
-          startContent={<RefreshCcw size={16} />}
+          variant="outline"
           size="sm"
+          onClick={() => refetch()}
+          className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
+          <RefreshCw className="h-4 w-4" />
           Refresh
         </Button>
       </div>
 
-      <Table
-        isCompact
-        aria-label="Example table with custom cells, pagination and sorting"
-        isHeaderSticky
-        bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        classNames={classNames}
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
-        sortDescriptor={sortDescriptor}
-        topContent={topContent}
-        topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
-        onSortChange={setSortDescriptor}
-      >
-        <TableHeader columns={headerColumns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-              allowsSorting={column.sortable}
+      {/* Search & Filters */}
+      <div className="flex flex-col gap-4 bg-white dark:bg-[#222327] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+            <Input
+              placeholder="Search by name or tracking ID..."
+              value={filterValue}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="pl-9 bg-zinc-50/50 dark:bg-zinc-900/20 border-zinc-200 dark:border-zinc-800"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {(hasSearchFilter || statusFilter !== "All") && (
+              <Button variant="ghost" onClick={onResetFilters} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20">
+                Reset
+              </Button>
+            )}
+
+            {/* Status filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="border-zinc-200 dark:border-zinc-800">
+                  {statusFilter === "All" ? "All Status" : statusFilter}
+                  <ChevronDown className="ml-2 h-4 w-4 text-zinc-400" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-40">
+                <DropdownMenuItem onClick={() => onStatusFilterChange("All")}>All Status</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onStatusFilterChange("Processing")}>Processing</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onStatusFilterChange("Delivered")}>Delivered</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onStatusFilterChange("Received")}>Received</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Columns visibility toggle */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 border-zinc-200 dark:border-zinc-800">
+                  <Settings2 className="h-4 w-4 text-zinc-400" />
+                  Columns
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {columns.map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.uid}
+                    checked={visibleColumns.has(column.uid)}
+                    onCheckedChange={() => toggleColumnVisibility(column.uid)}
+                  >
+                    {column.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Counter and row switcher */}
+        <div className="flex justify-between items-center text-xs text-zinc-400 dark:text-zinc-500 border-t border-zinc-100 dark:border-zinc-800/80 pt-3">
+          <span>Total {orders.length} orders</span>
+          <div className="flex items-center gap-1">
+            <span>Rows per page:</span>
+            <select
+              className="bg-transparent text-zinc-500 dark:text-zinc-400 outline-none cursor-pointer font-medium"
+              value={rowsPerPage}
+              onChange={onRowsPerPageChange}
             >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          emptyContent={"No orders found"}
-          items={sortedItems}
-          isLoading={isLoading}
-          loadingContent={
-            <Card className="dark:bg-[#222327]">
-              <CardBody className="p-6">
-                <Spinner size="lg" />
-              </CardBody>
-            </Card>
-          }
-        >
-          {(item) => (
-            <TableRow key={item?._id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
+              <option value="5" className="dark:bg-[#222327]">5</option>
+              <option value="10" className="dark:bg-[#222327]">10</option>
+              <option value="15" className="dark:bg-[#222327]">15</option>
+              <option value="20" className="dark:bg-[#222327]">20</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Table */}
+      <div className="bg-white dark:bg-[#222327] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-zinc-50/50 dark:bg-zinc-900/20 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-800">
+              {headerColumns.map((col) => (
+                <TableHead
+                  key={col.uid}
+                  onClick={() => col.sortable && handleSort(col.uid)}
+                  className={`font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs select-none ${
+                    col.sortable ? "cursor-pointer hover:text-zinc-800 dark:hover:text-white" : ""
+                  } ${col.uid === "actions" ? "text-right" : ""}`}
+                >
+                  <div className="flex items-center gap-1">
+                    {col.name}
+                    {col.sortable && sortColumn === col.uid && (
+                      <span className="text-[10px] text-zinc-400">{sortDirection === "asc" ? "▲" : "▼"}</span>
+                    )}
+                  </div>
+                </TableHead>
+              ))}
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={headerColumns.length} className="h-32">
+                  <div className="space-y-2 flex flex-col justify-center items-center py-8">
+                    <Skeleton className="h-5 w-4/5" />
+                    <Skeleton className="h-5 w-3/5" />
+                    <Skeleton className="h-5 w-4/5" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : sortedItems.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={headerColumns.length} className="h-24 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                  No orders found
+                </TableCell>
+              </TableRow>
+            ) : (
+              sortedItems.map((order) => (
+                <TableRow key={order?._id} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/30 dark:hover:bg-zinc-800/10">
+                  {headerColumns.map((col) => {
+                    const columnKey = col.uid;
+                    return (
+                      <TableCell key={columnKey} className="py-3.5 text-sm text-zinc-800 dark:text-zinc-200">
+                        {columnKey === "orderId" && (
+                          <span className="font-semibold text-zinc-900 dark:text-white">{order?.trackingId?.tracking_id}</span>
+                        )}
+                        {columnKey === "billingName" && (
+                          <span className="font-medium">{order?.user?.firstname + " " + order?.user?.lastname}</span>
+                        )}
+                        {columnKey === "dateOrdered" && (
+                          <span>{formatDate(order?.createdAt)}</span>
+                        )}
+                        {columnKey === "total" && (
+                          <span className="font-bold">{formatCurrency(order?.totalPricePaid, "NGN")}</span>
+                        )}
+                        {columnKey === "trackingStatus" && (
+                          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getChipStyles(order?.trackingStatus)}`}>
+                            {order?.trackingStatus}
+                          </span>
+                        )}
+                        {columnKey === "actions" && (
+                          <div className="flex justify-end">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-32">
+                                <DropdownMenuItem onClick={() => router.push(`/admin/orders/${order?._id}`)} className="cursor-pointer">
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  <span>Details</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      {pages > 1 && (
+        <div className="flex items-center justify-between py-2 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="text-sm text-zinc-500 dark:text-zinc-400">
+            Page {page} of {pages}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 1}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              className="border-zinc-200 dark:border-zinc-800"
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === pages}
+              onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
+              className="border-zinc-200 dark:border-zinc-800"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

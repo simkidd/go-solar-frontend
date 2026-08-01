@@ -3,7 +3,7 @@ import ProductDesc from "@/app/(ecommerce)/components/shop/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
 import { getProductById } from "@/lib/api/products";
 import { formatCurrency } from "@/utils/helpers";
-import { Card, CardBody } from "@heroui/react";
+import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -47,16 +47,14 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
   return (
     <>
       <div className="flex items-center justify-between mb-4">
-        <Link href="/admin/products">
-          <button className="inline-flex items-center gap-1">
-            <ArrowLeft size={16} />
-            Products
-          </button>
+        <Link href="/admin/products" className="text-sm font-medium flex items-center gap-1.5 text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors">
+          <ArrowLeft size={16} />
+          Back to products
         </Link>
       </div>
 
-      <div className="flex items-center justify-between mb-6 flex-wrap">
-        <h4 className="font-semibold text-2xl text-gray-800 dark:text-gray-200">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <h4 className="font-bold text-2xl text-zinc-900 dark:text-white">
           Product Detail
         </h4>
 
@@ -67,8 +65,8 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
         </div>
       </div>
 
-      <Card className="dark:bg-[#222327] dark:text-white mb-8 shadow-lg rounded-lg">
-        <CardBody>
+      <Card className="dark:bg-[#222327] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
+        <CardContent className="p-6">
           <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
             {/* Product Images */}
             <div className="w-full">
@@ -81,18 +79,18 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
             {/* Product Details */}
             <div className="w-full flex flex-col space-y-6">
-              <h2 className="font-bold text-3xl text-gray-900 dark:text-gray-100">
+              <h2 className="font-extrabold text-3xl text-zinc-900 dark:text-white">
                 {product?.name}
               </h2>
 
               {/* Price Section */}
               <div className="flex items-center space-x-4">
-                <span className="font-bold text-3xl text-primary">
+                <span className="font-black text-3xl text-primary">
                   {formatCurrency(newPrice, "NGN")}
                 </span>
                 {product?.currentOffer?.isActive &&
                   product?.currentOffer?.percentageOff && (
-                    <span className="line-through text-gray-500 text-2xl">
+                    <span className="line-through text-zinc-400 text-xl font-medium">
                       {formatCurrency(product?.price, "NGN")}
                     </span>
                   )}
@@ -100,57 +98,57 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
               {/* Offer Banner */}
               {product?.currentOffer?.isActive && (
-                <div className="bg-yellow-200/25 text-yellow-500 p-4 rounded-lg border border-yellow-500/50">
-                  <p className="capitalize text-lg font-semibold">
+                <div className="bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 p-4 rounded-xl border border-amber-200 dark:border-amber-900/50">
+                  <p className="capitalize text-lg font-bold">
                     {product?.currentOffer?.name}
                   </p>
-                  <p className="">Limited Time Offer!</p>
+                  <p className="text-sm mt-0.5">Limited Time Offer!</p>
                 </div>
               )}
 
               {/* Product Metadata */}
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <p className="font-medium text-gray-700 dark:text-gray-300">
+              <div className="space-y-4 border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
+                <div className="flex items-center justify-between sm:justify-start sm:gap-12">
+                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
                     Quantity in stock:
                   </p>
-                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                  <span className="font-bold text-zinc-900 dark:text-white">
                     {product?.quantityInStock}
                   </span>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <p className="font-medium text-gray-700 dark:text-gray-300">
+                <div className="flex items-center justify-between sm:justify-start sm:gap-12">
+                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
                     Category:
                   </p>
-                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                  <span className="font-bold text-zinc-900 dark:text-white">
                     {product?.category?.name}
                   </span>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <p className="font-medium text-gray-700 dark:text-gray-300">
+                <div className="flex items-center justify-between sm:justify-start sm:gap-12">
+                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
                     Brand:
                   </p>
-                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                  <span className="font-bold text-zinc-900 dark:text-white">
                     {product?.brand}
                   </span>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <p className="font-medium text-gray-700 dark:text-gray-300">
-                    Delivery fee within Location:
+                <div className="flex items-center justify-between sm:justify-start sm:gap-12">
+                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
+                    Delivery within Location:
                   </p>
-                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                  <span className="font-bold text-zinc-900 dark:text-white">
                     {formatCurrency(product?.withinLocationDeliveryFee, "NGN")}
                   </span>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <p className="font-medium text-gray-700 dark:text-gray-300">
-                    Delivery fee outside Location:
+                <div className="flex items-center justify-between sm:justify-start sm:gap-12">
+                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
+                    Delivery outside Location:
                   </p>
-                  <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                  <span className="font-bold text-zinc-900 dark:text-white">
                     {formatCurrency(product?.outsideLocationDeliveryFee, "NGN")}
                   </span>
                 </div>
@@ -159,10 +157,10 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
           </div>
 
           {/* Product Description */}
-          <div className="mt-8">
+          <div className="mt-8 border-t border-zinc-100 dark:border-zinc-800/80 pt-6">
             <ProductDesc product={product} />
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </>
   );

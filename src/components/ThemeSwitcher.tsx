@@ -1,13 +1,13 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
   DropdownMenu,
-  DropdownTrigger,
-  Skeleton,
-} from "@heroui/react";
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MoonStar, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -21,35 +21,35 @@ export function ThemeSwitcher() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <Skeleton className="w-8 h-8 rounded-md" />;
+  if (!mounted) return <Skeleton className="w-8 h-8 rounded-full" />;
 
   return (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button variant="light" size="sm" isIconOnly>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="w-9 h-9 rounded-full">
           {theme === "light" && (
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           )}
           {theme === "dark" && (
-            <MoonStar className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 dark:text-white" />
+            <MoonStar className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:text-white" />
           )}
           {theme === "system" && (
-            <BiDesktop className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:rotate-0 dark:scale-100 dark:text-white" />
+            <BiDesktop className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:text-white" />
           )}
           <span className="sr-only">Toggle theme</span>
         </Button>
-      </DropdownTrigger>
-      <DropdownMenu>
-        <DropdownItem key="light" onPress={() => setTheme("light")}>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
           Light
-        </DropdownItem>
-        <DropdownItem key="dark" onPress={() => setTheme("dark")}>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
           Dark
-        </DropdownItem>
-        <DropdownItem key="system" onPress={() => setTheme("system")}>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
           System
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

@@ -1,22 +1,22 @@
 "use client";
+import React, { useCallback, useEffect, useState } from "react";
 import { CreateProductInput } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  Button,
-  Checkbox,
-  Input,
   Select,
+  SelectContent,
   SelectItem,
-  Textarea,
-  divider,
-} from "@heroui/react";
-import { Trash2 } from "lucide-react";
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Trash2, Upload } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { GrCloudUpload } from "react-icons/gr";
 import { useDropzone } from "react-dropzone";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -39,6 +39,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     currentOffer: "",
   });
   const [files, setFiles] = useState<FileWithPreview[]>([]);
+  const router = useRouter();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -64,11 +65,11 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   );
 
   const thumbs = files.map((file) => (
-    <div key={file.name} className="relative m-2 w-20 h-20">
+    <div key={file.name} className="relative w-20 h-20 rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800">
       <Image
         src={file.preview}
         alt={file.name}
-        className="w-full h-full object-cover rounded-lg"
+        className="w-full h-full object-cover"
         width={80}
         height={80}
         onLoad={() => {
@@ -77,7 +78,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       />
       <button
         type="button"
-        className="absolute top-1 right-1 bg-white text-red-600 rounded-full p-1"
+        className="absolute top-1 right-1 bg-white/90 text-red-600 rounded-full p-1 shadow-sm"
         onClick={() => {
           setFiles(files.filter((f) => f !== file));
           setInput((prevInput: any) => ({
@@ -86,13 +87,12 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           }));
         }}
       >
-        <Trash2 size={16} />
+        <Trash2 size={14} />
       </button>
     </div>
   ));
 
   useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
   }, [files]);
 
@@ -130,6 +130,9 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       "withinLocationDeliveryFee",
       input.withinLocationDeliveryFee.toString()
     );
+    if (input.currentOffer) {
+      formData.append("currentOffer", input.currentOffer);
+    }
     input.images.forEach((image) => {
       formData.append("images", image);
     });
@@ -146,232 +149,184 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const activeOffers = offers.filter((offer) => offer?.isActive);
 
   return (
-    <form className="w-full font-inter" onSubmit={handleSubmit}>
-      <div className="w-full grid lg:grid-cols-2 grid-cols-1">
-        <div className="col-span-1 lg:pr-4">
-          <div className="mb-3">
+    <form className="w-full font-inter space-y-6 pt-2" onSubmit={handleSubmit}>
+      <div className="w-full grid lg:grid-cols-2 grid-cols-1 gap-6">
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Title</label>
             <Input
               type="text"
-              label="Title"
-              labelPlacement="outside"
               placeholder="Enter product name"
               value={input.name}
               onChange={(e) => setInput({ ...input, name: e.target.value })}
+              className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+              required
             />
           </div>
-          <div className="mb-3">
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Description</label>
             <Textarea
-              label="Description"
-              labelPlacement="outside"
               placeholder="Enter product description"
               value={input.description}
-              onChange={(e) =>
-                setInput({ ...input, description: e.target.value })
-              }
-              minRows={4}
-              maxRows={8}
+              onChange={(e) => setInput({ ...input, description: e.target.value })}
+              rows={4}
+              className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+              required
             />
           </div>
-          <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
-            <div className="">
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Category</label>
               <Select
-                items={categories}
-                label="Category"
-                placeholder="Select a category"
-                labelPlacement="outside"
-                onChange={(e) =>
-                  setInput({ ...input, category: e.target.value })
-                }
+                value={input.category}
+                onValueChange={(val) => setInput({ ...input, category: val })}
               >
-                {(cat) => (
-                  <SelectItem key={cat?._id} textValue={cat?.name}>
-                    {cat?.name}
-                  </SelectItem>
-                )}
+                <SelectTrigger className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800">
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat?._id} value={cat?._id}>
+                      {cat?.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
-            <div className="">
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Brand</label>
               <Input
                 type="text"
-                label="Brand"
-                labelPlacement="outside"
-                placeholder="Enter a brand name"
+                placeholder="Brand name"
                 value={input.brand}
                 onChange={(e) => setInput({ ...input, brand: e.target.value })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
               />
             </div>
           </div>
 
-          <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
-            <div className="">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Price (₦)</label>
               <Input
                 type="number"
-                label="Price"
-                labelPlacement="outside"
-                placeholder="0.00"
-                value={String(input.price)}
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({ ...input, price: newValue });
-                  }
-                }}
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">₦</span>
-                  </div>
-                }
+                placeholder="0"
+                value={input.price || ""}
+                onChange={(e) => setInput({ ...input, price: Number(e.target.value) })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+                required
               />
             </div>
-            <div className="">
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Quantity in Stock</label>
               <Input
                 type="number"
-                label="Quantity in stock"
-                labelPlacement="outside"
-                placeholder="0.00"
-                value={String(input.quantityInStock)}
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({ ...input, quantityInStock: newValue });
-                  }
-                }}
+                placeholder="0"
+                value={input.quantityInStock || ""}
+                onChange={(e) => setInput({ ...input, quantityInStock: Number(e.target.value) })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+                required
               />
             </div>
           </div>
 
-          <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
-            <div className="">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Delivery within PH (₦)</label>
               <Input
                 type="number"
-                label="Within Port Harcourt"
-                labelPlacement="outside"
-                placeholder="0.00"
-                value={String(input.withinLocationDeliveryFee)}
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({ ...input, withinLocationDeliveryFee: newValue });
-                  }
-                }}
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">₦</span>
-                  </div>
-                }
-              />
-            </div>
-            <div className="">
-              <Input
-                type="number"
-                label="Outside Port Harcourt"
-                labelPlacement="outside"
-                placeholder="0.00"
-                value={String(input.outsideLocationDeliveryFee)}
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({
-                      ...input,
-                      outsideLocationDeliveryFee: newValue,
-                    });
-                  }
-                }}
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">₦</span>
-                  </div>
-                }
+                placeholder="0"
+                value={input.withinLocationDeliveryFee || ""}
+                onChange={(e) => setInput({ ...input, withinLocationDeliveryFee: Number(e.target.value) })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
               />
             </div>
 
-            <div className="">
-              <Select
-                items={activeOffers}
-                label="Add Offer to Product"
-                placeholder="Select an offer"
-                labelPlacement="outside"
-                onChange={(e) =>
-                  setInput({ ...input, currentOffer: e.target.value })
-                }
-              >
-                {(offer) => (
-                  <SelectItem key={offer?._id} textValue={offer?.name}>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Delivery outside PH (₦)</label>
+              <Input
+                type="number"
+                placeholder="0"
+                value={input.outsideLocationDeliveryFee || ""}
+                onChange={(e) => setInput({ ...input, outsideLocationDeliveryFee: Number(e.target.value) })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Add Offer to Product</label>
+            <Select
+              value={input.currentOffer}
+              onValueChange={(val) => setInput({ ...input, currentOffer: val })}
+            >
+              <SelectTrigger className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800">
+                <SelectValue placeholder="Select an offer (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                {activeOffers.map((offer) => (
+                  <SelectItem key={offer?._id} value={offer?._id}>
                     {offer?.name}
                   </SelectItem>
-                )}
-              </Select>
-            </div>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
-        <div className="col-span-1 lg:pl-4">
-          <div className="mb-3">
-            <label htmlFor="image" className="">
-              Images
-            </label>
+
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Images</label>
             <div
-              {...getRootProps({
-                className:
-                  "w-full h-40 border-dashed border-1 border-gray-300 dark:border-gray-700 p-4 rounded-lg mt-1 cursor-pointer flex items-center justify-center bg-[#f4f4f5] dark:bg-[#27272A]",
-              })}
+              {...getRootProps()}
+              className={`border-2 border-dashed rounded-xl py-10 px-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-zinc-50/50 dark:bg-zinc-900/10 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/10 ${
+                isDragActive ? "border-primary bg-primary/5" : "border-zinc-200 dark:border-zinc-800"
+              }`}
             >
               <input {...getInputProps()} />
               {isDragActive ? (
-                <p>Drop the files here ...</p>
+                <p className="text-primary text-sm font-medium">Drop the files here...</p>
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center">
-                  <GrCloudUpload size={20} />
-                  <p className="text-sm">
-                    Drag & drop some files here, or click to select files
+                <div className="flex flex-col items-center justify-center text-center space-y-2">
+                  <Upload className="h-5 w-5 text-zinc-400" />
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Drag & drop files here, or <span className="text-primary font-medium">browse</span>
                   </p>
-                  <em className="text-[12px]">(Maximum of 3 files allowed)</em>
+                  <p className="text-xs text-zinc-400">(Maximum of 3 files allowed)</p>
                 </div>
               )}
             </div>
-
-            <aside className="mt-2 flex flex-wrap">{thumbs}</aside>
+            <div className="flex flex-wrap gap-2 mt-2">{thumbs}</div>
           </div>
-          <div className="mb-3">
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Additional Information</label>
             <Textarea
-              label="Additional Information"
-              labelPlacement="outside"
-              placeholder="Enter additional information"
+              placeholder="Enter additional details"
               value={input.additionalInfo}
-              onChange={(e) =>
-                setInput({ ...input, additionalInfo: e.target.value })
-              }
-              minRows={4}
-              maxRows={8}
+              onChange={(e) => setInput({ ...input, additionalInfo: e.target.value })}
+              rows={4}
+              className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
             />
           </div>
         </div>
       </div>
-      <div>
-        {/* <div className="mb-6">
-          <Checkbox
-            isSelected={input.isPublished}
-            onChange={(e) =>
-              setInput({ ...input, isPublished: e })
-            }
-          >
-            Publish
-          </Checkbox>
-        </div> */}
 
-        <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-          <Button variant="light" color="default" onPress={onClose}>
-            Close
-          </Button>
-          <Button
-            variant="solid"
-            color="primary"
-            type="submit"
-            isDisabled={loading}
-            isLoading={loading}
-          >
-            Create
-          </Button>
-        </div>
+      <div className="flex items-center gap-2 mt-8 justify-end">
+        <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
+          Close
+        </Button>
+        <Button
+          type="submit"
+          disabled={loading}
+          className="bg-primary hover:bg-primary/95 text-white"
+        >
+          {loading ? "Creating..." : "Create"}
+        </Button>
       </div>
     </form>
   );

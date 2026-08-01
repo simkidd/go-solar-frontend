@@ -1,36 +1,43 @@
 "use client";
+import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
 import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
 import { ErrorResponse } from "@/interfaces/types";
 import { addToOffer, getOffers } from "@/lib/api/offers";
-import { useProductStore } from "@/lib/stores/product.store";
-import { Button, Select, SelectItem, useDisclosure } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const AddToOfferButton: React.FC<{
   product: Product;
 }> = ({ product }) => {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <AppModal
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
+        onOpenChange={setIsOpen}
         title="Add Offer"
         isDismissable={false}
         hideCloseButton
         scrollBehavior="inside"
       >
-        <Popup product={product} onClose={onClose} />
+        <Popup product={product} onClose={() => setIsOpen(false)} />
       </AppModal>
 
-      <Button variant="solid" color="primary" type="submit" onPress={onOpen}>
+      <Button
+        onClick={() => setIsOpen(true)}
+        className="bg-primary hover:bg-primary/95 text-white"
+      >
         Add To Offer
       </Button>
     </>
@@ -47,15 +54,12 @@ export const Popup: React.FC<{
 
   const {
     data: offers,
-    isLoading,
-    isError,
-    refetch,
+    isLoading: offersLoading,
   } = useQuery({
     queryKey: ["alloffers"],
     queryFn: async () => getOffers(),
   });
 
-  const router = useRouter();
   const [input, setInput] = useState<AddOfferProductDTO>({
     offer: "",
     products: [product?._id],
@@ -73,7 +77,7 @@ export const Popup: React.FC<{
     onError: (error: AxiosError<ErrorResponse>) => {
       const resError = error.response?.data;
       console.error(resError);
-      const errorMessage = resError?.message ? resError?.message : resError;
+      const errorMessage = resError && typeof resError === "object" && "message" in resError ? resError.message : String(resError);
       toast.error(`Error: ${errorMessage}`);
     },
   });
@@ -88,41 +92,38 @@ export const Popup: React.FC<{
     addToOfferMutation.mutate(input);
   };
 
-  // Get disabled keys based on the `isActive` property
-  const disabledKeys =
-    offers?.filter((offer) => !offer.isActive).map((offer) => offer._id) || [];
+  const activeOffers = offers?.filter((offer) => offer.isActive) || [];
 
   return (
-    <form className="w-full" onSubmit={handleSubmit}>
-      <div className="">
+    <form className="w-full space-y-6 pt-2 font-inter" onSubmit={handleSubmit}>
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Add Offer to Product</label>
         <Select
-          items={offers || []}
-          label="Add Offer to Product"
-          placeholder={isLoading ? "Loading offers..." : "Select an offer"}
-          labelPlacement="outside"
-          disabledKeys={disabledKeys}
           value={input.offer}
-          onChange={(e) => setInput({ ...input, offer: e.target.value })}
+          onValueChange={(val) => setInput({ ...input, offer: val })}
         >
-          {(offer) => (
-            <SelectItem key={offer?._id} textValue={offer?.name}>
-              {offer?.name}
-            </SelectItem>
-          )}
+          <SelectTrigger className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800">
+            <SelectValue placeholder={offersLoading ? "Loading offers..." : "Select an offer"} />
+          </SelectTrigger>
+          <SelectContent>
+            {activeOffers.map((offer) => (
+              <SelectItem key={offer?._id} value={offer?._id}>
+                {offer?.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
       </div>
-      <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-        <Button variant="light" color="default" onPress={onClose}>
+      <div className="flex items-center gap-2 mt-8 justify-end">
+        <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
           Close
         </Button>
         <Button
-          variant="solid"
-          color="primary"
           type="submit"
-          isDisabled={isLoading || addToOfferMutation.isPending || !input.offer}
-          isLoading={addToOfferMutation.isPending}
+          disabled={offersLoading || addToOfferMutation.isPending || !input.offer}
+          className="bg-primary hover:bg-primary/95 text-white"
         >
-          Save
+          {addToOfferMutation.isPending ? "Saving..." : "Save"}
         </Button>
       </div>
     </form>

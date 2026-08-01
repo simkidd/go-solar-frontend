@@ -1,15 +1,14 @@
 "use client";
-import { Button } from "@heroui/react";
 import React from "react";
+import { Button } from "@/components/ui/button";
 
 const SignUpLinkButton = () => {
   return (
     <Button
-      variant="bordered"
-      color="primary"
-      className="w-full data-[focus-visible=true]:outline-primary"
+      variant="outline"
+      className="w-full border-primary text-primary hover:bg-primary/5 font-bold text-xs uppercase tracking-wider rounded-xl h-10"
     >
-      Signup
+      Sign Up
     </Button>
   );
 };

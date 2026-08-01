@@ -1,14 +1,23 @@
 "use client";
+import React, { useState } from "react";
 import useCategories from "@/hooks/useCategories";
 import { Product, UpdateProductInput } from "@/interfaces/product.interface";
 import { ErrorResponse } from "@/interfaces/types";
 import { getOffers } from "@/lib/api/offers";
 import { updateProduct } from "@/lib/api/products";
-import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const UpdateProductForm: React.FC<{
   product: Product;
@@ -18,9 +27,6 @@ const UpdateProductForm: React.FC<{
 
   const {
     categories: allCategories,
-    isLoading: categoriesLoading,
-    isError: categoriesError,
-    refetch: refetchCategories,
   } = useCategories();
 
   const [input, setInput] = useState<UpdateProductInput>({
@@ -38,12 +44,9 @@ const UpdateProductForm: React.FC<{
     currentOffer: product?.currentOffer?._id,
   });
 
-  // get offers
   const {
     data: offers,
-    isLoading,
-    isError,
-    refetch,
+    isLoading: offersLoading,
   } = useQuery({
     queryKey: ["alloffers"],
     queryFn: async () => getOffers(),
@@ -61,237 +64,178 @@ const UpdateProductForm: React.FC<{
     onError: (error: AxiosError<ErrorResponse>) => {
       const resError = error.response?.data;
       console.error(resError);
-      const errorMessage = resError?.message ? resError?.message : resError;
+      const errorMessage = resError && typeof resError === "object" && "message" in resError ? resError.message : String(resError);
       toast.error(`Error: ${errorMessage}`);
     },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.category === "") {
-      alert("Please select a category");
+    if (!input.category) {
+      toast.error("Please select a category");
       return;
     }
 
     updateProductMutation.mutate(input);
   };
 
-  // Get disabled keys based on the `isActive` property
-  const disabledKeys =
-    offers?.filter((offer) => !offer.isActive).map((offer) => offer._id) || [];
+  const activeOffers = offers?.filter((offer) => offer.isActive) || [];
 
   return (
-    <form className="w-full" onSubmit={handleSubmit}>
-      <div className="w-full grid lg:grid-cols-2 grid-cols-1">
-        <div className="col-span-1 lg:pr-4">
-          <div className="mb-3">
+    <form className="w-full font-inter space-y-6 pt-2" onSubmit={handleSubmit}>
+      <div className="w-full grid lg:grid-cols-2 grid-cols-1 gap-6">
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Title</label>
             <Input
               type="text"
-              label="Title"
-              labelPlacement="outside"
               placeholder="Enter product name"
               value={input.name}
               onChange={(e) => setInput({ ...input, name: e.target.value })}
+              className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+              required
             />
           </div>
-          <div className="mb-3">
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Description</label>
             <Textarea
-              label="Description"
-              labelPlacement="outside"
               placeholder="Enter product description"
               value={input.description}
-              onChange={(e) =>
-                setInput({ ...input, description: e.target.value })
-              }
-              minRows={4}
-              maxRows={8}
+              onChange={(e) => setInput({ ...input, description: e.target.value })}
+              rows={4}
+              className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+              required
             />
           </div>
-          <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
-            <div className="">
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Category</label>
               <Select
-                items={allCategories}
-                label="Category"
-                placeholder="Select a category"
-                labelPlacement="outside"
-                selectedKeys={input.category ? [input.category] : []} 
-                onChange={(e) =>
-                  setInput({ ...input, category: e.target.value })
-                }
+                value={input.category}
+                onValueChange={(val) => setInput({ ...input, category: val })}
               >
-                {(cat) => (
-                  <SelectItem key={cat?._id} textValue={cat?.name}>
-                    {cat?.name}
-                  </SelectItem>
-                )}
+                <SelectTrigger className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800">
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {allCategories.map((cat) => (
+                    <SelectItem key={cat?._id} value={cat?._id}>
+                      {cat?.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
-            <div className="">
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Brand</label>
               <Input
                 type="text"
-                label="Brand"
-                labelPlacement="outside"
-                placeholder="Enter a brand name"
+                placeholder="Brand name"
                 value={input.brand}
                 onChange={(e) => setInput({ ...input, brand: e.target.value })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
               />
             </div>
           </div>
-          <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
-            <div className="">
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Price (₦)</label>
               <Input
                 type="number"
-                label="Price"
-                labelPlacement="outside"
-                placeholder="0.00"
-                value={String(input.price)}
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({ ...input, price: newValue });
-                  }
-                }}
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">₦</span>
-                  </div>
-                }
+                placeholder="0"
+                value={input.price || ""}
+                onChange={(e) => setInput({ ...input, price: Number(e.target.value) })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+                required
               />
             </div>
-            <div className="">
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Quantity in Stock</label>
               <Input
                 type="number"
-                label="Quantity in stock"
-                labelPlacement="outside"
-                placeholder="0.00"
-                value={String(input.quantityInStock)}
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({ ...input, quantityInStock: newValue });
-                  }
-                }}
+                placeholder="0"
+                value={input.quantityInStock || ""}
+                onChange={(e) => setInput({ ...input, quantityInStock: Number(e.target.value) })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+                required
               />
             </div>
           </div>
         </div>
 
-        <div className="col-span-1 lg:pl-4">
-          <div className="mb-3">
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Additional Information</label>
             <Textarea
-              label="Additional Information"
-              labelPlacement="outside"
-              placeholder="Enter additional information"
+              placeholder="Enter additional details"
               value={input.additionalInfo}
-              onChange={(e) =>
-                setInput({ ...input, additionalInfo: e.target.value })
-              }
-              minRows={4}
-              maxRows={8}
+              onChange={(e) => setInput({ ...input, additionalInfo: e.target.value })}
+              rows={4}
+              className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
             />
           </div>
-          <div className="mb-3 grid lg:grid-cols-2 grid-cols-1 lg:gap-4 gap-3">
-            <div className="">
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Delivery within PH (₦)</label>
               <Input
                 type="number"
-                label="Within Port Harcourt"
-                labelPlacement="outside"
-                placeholder="0.00"
-                value={String(input.withinLocationDeliveryFee)}
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({
-                      ...input,
-                      withinLocationDeliveryFee: newValue,
-                    });
-                  }
-                }}
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">₦</span>
-                  </div>
-                }
-              />
-            </div>
-            <div className="">
-              <Input
-                type="number"
-                label="Outside Port Harcourt"
-                labelPlacement="outside"
-                placeholder="0.00"
-                value={String(input.outsideLocationDeliveryFee)}
-                onChange={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (!isNaN(newValue) && newValue > 0) {
-                    setInput({
-                      ...input,
-                      outsideLocationDeliveryFee: newValue,
-                    });
-                  }
-                }}
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">₦</span>
-                  </div>
-                }
+                placeholder="0"
+                value={input.withinLocationDeliveryFee || ""}
+                onChange={(e) => setInput({ ...input, withinLocationDeliveryFee: Number(e.target.value) })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
               />
             </div>
 
-            <div className="">
-              <Select
-                items={offers || []}
-                label="Add Offer to Product"
-                labelPlacement="outside"
-                placeholder={
-                  isLoading ? "Loading offers..." : "Select an offer"
-                }
-                disabledKeys={disabledKeys}
-                selectedKeys={input.currentOffer ? [input.currentOffer] : []} 
-                onChange={(e) =>
-                  setInput({ ...input, currentOffer: e.target.value })
-                }
-              >
-                {(offer) => (
-                  <SelectItem key={offer?._id} textValue={offer?.name}>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Delivery outside PH (₦)</label>
+              <Input
+                type="number"
+                placeholder="0"
+                value={input.outsideLocationDeliveryFee || ""}
+                onChange={(e) => setInput({ ...input, outsideLocationDeliveryFee: Number(e.target.value) })}
+                className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Add Offer to Product</label>
+            <Select
+              value={input.currentOffer}
+              onValueChange={(val) => setInput({ ...input, currentOffer: val })}
+            >
+              <SelectTrigger className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800">
+                <SelectValue placeholder={offersLoading ? "Loading offers..." : "Select an offer (optional)"} />
+              </SelectTrigger>
+              <SelectContent>
+                {activeOffers.map((offer) => (
+                  <SelectItem key={offer?._id} value={offer?._id}>
                     {offer?.name}
                   </SelectItem>
-                )}
-              </Select>
-            </div>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
-      <div>
-        <div className="mb-6">
-          {/* <input
-              type="checkbox"
-              name=""
-              id="publish"
-              className="accent-current mr-1 cursor-pointer"
-              checked={input.isPublished}
-              onChange={(e) =>
-                setInput({ ...input, isPublished: e.target.checked })
-              }
-            />
-            <label htmlFor="publish" className="cursor-pointer">
-              Publish on site
-            </label> */}
-        </div>
-        <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-          <Button variant="light" color="default" onPress={onClose}>
-            Close
-          </Button>
-          <Button
-            variant="solid"
-            color="primary"
-            type="submit"
-            isDisabled={updateProductMutation.isPending}
-            isLoading={updateProductMutation.isPending}
-          >
-            Save
-          </Button>
-        </div>
+
+      <div className="flex items-center gap-2 mt-8 justify-end">
+        <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
+          Close
+        </Button>
+        <Button
+          type="submit"
+          disabled={updateProductMutation.isPending}
+          className="bg-primary hover:bg-primary/95 text-white"
+        >
+          {updateProductMutation.isPending ? "Saving..." : "Save"}
+        </Button>
       </div>
     </form>
   );

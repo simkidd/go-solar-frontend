@@ -1,9 +1,11 @@
 "use client";
+import React, { useState } from "react";
 import { Category, UpdateCategoryInput } from "@/interfaces/product.interface";
 import { useProductStore } from "@/lib/stores/product.store";
-import { Button, Input, Textarea } from "@heroui/react";
-import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 const UpdateCategoryForm: React.FC<{
   category: Category;
@@ -29,44 +31,39 @@ const UpdateCategoryForm: React.FC<{
   };
 
   return (
-    <form className="w-full" onSubmit={handleSubmit}>
-      <div className="mb-3">
+    <form className="w-full space-y-4 pt-2 font-inter" onSubmit={handleSubmit}>
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Name</label>
         <Input
           type="text"
-          label="Name"
-          labelPlacement="outside"
           placeholder="Enter category name"
           value={input.name}
           onChange={(e) => setInput({ ...input, name: e.target.value })}
+          className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+          required
         />
       </div>
-      <div className="mb-3">
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Description</label>
         <Textarea
-          label="Description"
-          labelPlacement="outside"
           placeholder="Enter category description"
           value={input.description}
           onChange={(e) => setInput({ ...input, description: e.target.value })}
-          minRows={4}
-          maxRows={8}
+          rows={4}
+          className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
+          required
         />
       </div>
-      <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-        <Button
-          variant="light"
-          color="default"
-          onPress={onClose}
-        >
+      <div className="flex items-center gap-2 mt-8 justify-end">
+        <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
           Close
         </Button>
         <Button
-          variant="solid"
-          color="primary"
           type="submit"
-          isDisabled={loading}
-          isLoading={loading}
+          disabled={loading}
+          className="bg-primary hover:bg-primary/95 text-white"
         >
-          Save
+          {loading ? "Saving..." : "Save"}
         </Button>
       </div>
     </form>

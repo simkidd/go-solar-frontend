@@ -6,7 +6,7 @@ const SpecialOffers: React.FC<{ offers: Offer[] }> = ({ offers }) => {
   return (
     <>
       {offers && offers.length > 0 && (
-        <section className="w-full bg-gradient-to-r from-gray-100 to-gray-200 dark:from-[#27282b] dark:to-[#2a2b2f] py-10">
+        <section className="w-full bg-linear-to-r from-gray-100 to-gray-200 dark:from-[#27282b] dark:to-[#2a2b2f] py-10">
           <div className="flex items-center justify-between bg-red-600 text-white px-6 py-3 rounded-lg shadow-md">
             <h3 className="text-2xl font-semibold">Special Offers</h3>
             <FaTag className="text-3xl" />

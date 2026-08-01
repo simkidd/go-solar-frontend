@@ -1,75 +1,86 @@
 "use client";
+import React from "react";
 import useCartStore, { CartItem } from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
-import { Button } from "@heroui/react";
-import { Minus, Plus, Trash } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
   const { increaseQuantity, decreaseQuantity, removeItem } = useCartStore();
 
   return (
-    <div className="w-full p-4">
-      <div className="grid grid-cols-[80px_auto] gap-4">
-        <div className="size-20 rounded-md overflow-hidden">
+    <div className="w-full py-6 border-b border-zinc-100 dark:border-zinc-800/80 first:pt-0">
+      <div className="flex gap-4 sm:gap-6">
+        
+        {/* Item Image */}
+        <div className="h-20 w-20 min-w-20 rounded-xl overflow-hidden border border-zinc-100 dark:border-zinc-800 relative bg-zinc-50 dark:bg-zinc-900">
           <Image
-            src={cartItem?.product?.images[0]?.url}
+            src={cartItem?.product?.images?.[0]?.url || "/placeholder-product.jpg"}
             alt={cartItem?.product?.name}
-            className="w-full h-full object-cover"
-            width={70}
-            height={70}
+            fill
+            className="object-cover"
           />
         </div>
-        <div className="w-full flex gap-1">
-          <div className="w-3/4">
-            <Link href={`/product/${cartItem?.product?.slug}`}>
-              <h3 className="text-base font-bold">{cartItem.product.name}</h3>
+
+        {/* Item Details */}
+        <div className="flex-1 flex flex-col sm:flex-row justify-between gap-4">
+          <div className="space-y-1">
+            <Link href={`/product/${cartItem?.product?.slug}`} className="group">
+              <h3 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-white group-hover:text-primary transition-colors">
+                {cartItem.product.name}
+              </h3>
             </Link>
-            <p className="text-sm text-gray-600 text-ellipsis line-clamp-1 my-1">
+            <p className="text-xs text-zinc-400 dark:text-zinc-500 line-clamp-2 max-w-md">
               {cartItem.product.description}
             </p>
           </div>
-          <div className="w-auto ms-auto">
-            <p className="font-semibold">
+
+          <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2 shrink-0">
+            {/* Price */}
+            <p className="font-extrabold text-sm sm:text-base text-zinc-900 dark:text-white">
               {formatCurrency(cartItem?.product?.price, "NGN")}
             </p>
+
+            {/* Quantity actions */}
+            <div className="flex items-center gap-2 border border-zinc-200 dark:border-zinc-800 p-0.5 rounded-lg">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => cartItem.qty > 1 && decreaseQuantity(cartItem?.product?._id)}
+                disabled={cartItem?.qty <= 1}
+                className="h-7 w-7 rounded-md"
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 px-1">{cartItem?.qty}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  if (cartItem.qty < cartItem.product.quantityInStock) {
+                    increaseQuantity(cartItem?.product?._id);
+                  }
+                }}
+                disabled={cartItem.qty >= cartItem.product.quantityInStock}
+                className="h-7 w-7 rounded-md"
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
+
+            {/* Remove Action */}
+            <button
+              onClick={() => removeItem(cartItem?.product?._id)}
+              className="text-xs font-semibold text-rose-500 hover:text-rose-700 transition flex items-center gap-1 mt-1"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Remove
+            </button>
           </div>
         </div>
-      </div>
-      <div className="w-full flex items-center justify-between mt-2">
-        <button
-          className="flex items-center text-red-500 hover:text-red-700 transition"
-          onClick={() => removeItem(cartItem?.product?._id)}
-        >
-          <Trash size={16} className="mr-1" />
-          Remove
-        </button>
-        <div className="flex items-center">
-          <Button
-            isIconOnly
-            className="disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center  bg-primary text-white"
-            onPress={() =>
-              cartItem.qty > 1 && decreaseQuantity(cartItem?.product?._id)
-            }
-            disabled={cartItem?.qty <= 1}
-          >
-            <Minus size={18} />
-          </Button>
-          <span className="px-4 text-sm">{cartItem?.qty}</span>
-          <Button
-            isIconOnly
-            className=" flex items-center justify-center  bg-primary text-white disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed"
-            disabled={cartItem.qty >= cartItem.product.quantityInStock}
-            onPress={() => {
-              if (cartItem.qty < cartItem.product.quantityInStock)
-                increaseQuantity(cartItem?.product?._id);
-            }}
-          >
-            <Plus size={18} />
-          </Button>
-        </div>
+
       </div>
     </div>
   );
