@@ -1,70 +1,98 @@
 "use client";
-import React, { useState } from "react";
-import { CreateOfferInput, OfferType } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { OfferType } from "@/interfaces/product.interface";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useCreateOfferMutation } from "@/hooks/mutations/useOfferMutations";
+
+interface FormValues {
+  name: string;
+  description: string;
+  type: OfferType;
+  percentageOff: number;
+}
 
 const CreateOfferForm: React.FC<{
   onClose: () => void;
 }> = ({ onClose }) => {
-  const { loading, createOffer } = useProductStore();
-  const [input, setInput] = useState<CreateOfferInput>({
-    name: "",
-    description: "",
-    type: OfferType.PercentageOff,
-    percentageOff: 0,
-    priceSlash: 0,
+  const createOfferMutation = useCreateOfferMutation({ onSuccess: onClose });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      description: "",
+      type: OfferType.PercentageOff,
+      percentageOff: undefined,
+    },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await createOffer(input);
-    onClose();
+  const onSubmit = (values: FormValues) => {
+    createOfferMutation.mutate({
+      name: values.name,
+      description: values.description,
+      type: values.type,
+      percentageOff: Number(values.percentageOff),
+      isActive: true,
+    });
   };
 
   return (
-    <form className="w-full font-inter space-y-4 pt-2" onSubmit={handleSubmit}>
+    <form className="w-full font-inter space-y-4 pt-2" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-1.5">
-        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Title</label>
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+          Title <span className="text-red-500">*</span>
+        </label>
         <Input
-          type="text"
           placeholder="Enter offer name"
-          value={input.name}
-          onChange={(e) => setInput({ ...input, name: e.target.value })}
+          {...register("name", { required: "Offer title is required" })}
           className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
-          required
         />
+        {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Description</label>
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+          Description <span className="text-red-500">*</span>
+        </label>
         <Textarea
           placeholder="Enter offer description"
-          value={input.description}
-          onChange={(e) => setInput({ ...input, description: e.target.value })}
           rows={4}
+          {...register("description", { required: "Offer description is required" })}
           className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
-          required
         />
+        {errors.description && (
+          <p className="text-xs text-red-500">{errors.description.message}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Percentage Off (%)</label>
+          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+            Percentage Off (%) <span className="text-red-500">*</span>
+          </label>
           <div className="relative">
             <Input
               type="number"
-              placeholder="Enter percentage off"
-              value={input.percentageOff || ""}
-              onChange={(e) => setInput({ ...input, percentageOff: Number(e.target.value) })}
-              disabled={input.type !== OfferType.PercentageOff}
+              placeholder="e.g. 15"
+              {...register("percentageOff", {
+                required: "Percentage is required",
+                min: { value: 1, message: "Minimum is 1%" },
+                max: { value: 100, message: "Maximum is 100%" },
+                valueAsNumber: true,
+              })}
               className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800 pr-8"
-              required
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">%</span>
           </div>
+          {errors.percentageOff && (
+            <p className="text-xs text-red-500">{errors.percentageOff.message}</p>
+          )}
         </div>
       </div>
 
@@ -74,10 +102,10 @@ const CreateOfferForm: React.FC<{
         </Button>
         <Button
           type="submit"
-          disabled={loading}
+          disabled={createOfferMutation.isPending}
           className="bg-primary hover:bg-primary/95 text-white"
         >
-          {loading ? "Creating..." : "Create"}
+          {createOfferMutation.isPending ? "Creating..." : "Create"}
         </Button>
       </div>
     </form>

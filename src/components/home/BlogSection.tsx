@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { useBlogStore } from "@/lib/stores/blog.store";
+import { useBlogPostsQuery } from "@/hooks/queries/useBlogQuery";
 import { Calendar, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,18 +13,18 @@ const MOCK_FALLBACK_POSTS = [
     title: "The Future of Solar Energy in Nigeria: 2026 Sizing Trends",
     content:
       "With grid tariffs rising, residential complexes are switching to smart hybrid lithium storage walls. Here is a breakdown of what sizing configurations offer the highest return on investment.",
-    image: "/images/bg/hero-bg.jpg",
-    slug: "future-of-solar-nigeria",
-    createdAt: "2026-07-24T12:00:00Z",
+    image: "/images/bg/commercial-solar.jpg",
+    slug: "the-future-of-solar-energy-in-nigeria",
+    createdAt: "2026-08-01T12:00:00Z",
   },
   {
     _id: "mock-2",
-    title: "Lithium vs AGM Batteries: Which Sizing Suits Your Workspace?",
+    title: "Why High-Capacity Lithium-Iron (LiFePO4) Outlasts Gel Batteries",
     content:
-      "Deep-cycle batteries are critical for offgrid security. We compare lifespan, DOD capabilities, and thermal safety under standard tropical environments.",
-    image: "/images/bg/about-us.jpg",
-    slug: "lithium-vs-agm-batteries",
-    createdAt: "2026-07-18T12:00:00Z",
+      "Modern solar designs require high DoD (Depth of Discharge). We test cycle degradation under Nigerian heat cycles to show why prismatic cells prevail.",
+    image: "/images/bg/residential-solar.jpg",
+    slug: "why-lifepo4-outlasts-gel-batteries",
+    createdAt: "2026-07-25T12:00:00Z",
   },
   {
     _id: "mock-3",
@@ -38,19 +38,13 @@ const MOCK_FALLBACK_POSTS = [
 ];
 
 const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
-  const { posts, fetchPosts } = useBlogStore();
-
-  useEffect(() => {
-    if (!initialPosts || initialPosts.length === 0) {
-      fetchPosts();
-    }
-  }, [initialPosts, fetchPosts]);
+  const { data: queryPosts = [] } = useBlogPostsQuery();
 
   const activePosts =
     initialPosts && initialPosts.length > 0
       ? initialPosts
-      : posts && posts.length > 0
-        ? posts
+      : queryPosts && queryPosts.length > 0
+        ? queryPosts
         : MOCK_FALLBACK_POSTS;
 
   return (

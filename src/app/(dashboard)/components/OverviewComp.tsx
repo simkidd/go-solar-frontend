@@ -1,9 +1,9 @@
 "use client";
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { useOrderStore } from "@/lib/stores/order.store";
-import { useProductStore } from "@/lib/stores/product.store";
-import { useUserStore } from "@/lib/stores/user.store";
+import { useAllUsersQuery } from "@/hooks/queries/useUsersQuery";
+import { useAllProductsQuery } from "@/hooks/queries/useProductsQuery";
+import { useAllOrdersQuery } from "@/hooks/queries/useOrdersQuery";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -79,9 +79,9 @@ const getStatusBadgeClass = (status: string) => {
 
 const OverviewComp = () => {
   const { user } = useAuthStore();
-  const { users } = useUserStore();
-  const { products } = useProductStore();
-  const { orders } = useOrders();
+  const { data: users = [] } = useAllUsersQuery();
+  const { data: products = [] } = useAllProductsQuery();
+  const { data: orders = [] } = useAllOrdersQuery();
   const [dashboardData, setDashboardData] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState("month");
@@ -288,7 +288,7 @@ const OverviewComp = () => {
             </div>
             <div className="flex items-center gap-1.5 mt-2">
               <Badge variant="secondary" className="bg-zinc-100 dark:bg-zinc-800 text-[10px] py-0.5">
-                {orders.filter(o => o.trackingStatus === "Processing").length} Processing
+                {orders.filter((o: any) => o.trackingStatus === "Processing").length} Processing
               </Badge>
             </div>
           </CardContent>
@@ -340,10 +340,10 @@ const OverviewComp = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-32">
-                  <DropdownMenuItem onClick={() => handlePeriodChange("month")}>
+                  <DropdownMenuItem onClick={() => setSelectedPeriod("month")}>
                     This Month
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handlePeriodChange("year")}>
+                  <DropdownMenuItem onClick={() => setSelectedPeriod("year")}>
                     This Year
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -505,7 +505,7 @@ const OverviewComp = () => {
                 <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
                   <span className="text-zinc-500">Pending Orders:</span>
                   <span className="text-amber-600 font-bold">
-                    {orders.filter((o) => o.trackingStatus === "Processing").length}
+                    {orders.filter((o: any) => o.trackingStatus === "Processing").length}
                   </span>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { TrackingStatus } from "@/interfaces/order.interface";
-import { useOrderStore } from "@/lib/stores/order.store";
+import { useUserOrdersQuery } from "@/hooks/queries/useOrdersQuery";
 import { formatDateTime } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Timeline } from "antd";
@@ -14,12 +14,12 @@ interface Status {
 }
 
 const OrderTimeline: React.FC<{ id: string }> = ({ id }) => {
-  const { userOrders } = useOrderStore();
+  const { data: userOrders = [] } = useUserOrdersQuery();
   const router = useRouter();
   const [statuses, setStatuses] = useState<Status[]>([]);
 
   const order = userOrders.find(
-    (order) => order?.trackingId?.tracking_id === id
+    (order: any) => order?.trackingId?.tracking_id === id
   );
 
   useEffect(() => {

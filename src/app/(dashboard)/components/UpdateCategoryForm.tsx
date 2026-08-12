@@ -1,69 +1,121 @@
 "use client";
-import React, { useState } from "react";
-import { Category, UpdateCategoryInput } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Category } from "@/interfaces/product.interface";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useCategoriesQuery } from "@/hooks/queries/useCategoriesQuery";
+import { useUpdateCategoryMutation } from "@/hooks/mutations/useCategoryMutations";
+
+interface FormValues {
+  name: string;
+  description: string;
+  parent?: string;
+}
 
 const UpdateCategoryForm: React.FC<{
-  category: Category;
+  category: Category & { parent?: any };
   onClose: () => void;
 }> = ({ category, onClose }) => {
-  const { loading, updateCategory } = useProductStore();
-  const [input, setInput] = useState<UpdateCategoryInput>({
-    categoryId: category?._id,
-    name: category?.name,
-    description: category?.description,
+  const { data: categories = [] } = useCategoriesQuery();
+  const updateCategoryMutation = useUpdateCategoryMutation({ onSuccess: onClose });
+
+  const parentId = typeof category?.parent === "object" ? category?.parent?._id : category?.parent;
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: category?.name || "",
+      description: category?.description || "",
+      parent: parentId || "none",
+    },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (input.description === "") {
-      toast.info("Description is required");
-      return;
-    }
-
-    await updateCategory(input);
-    onClose();
+  const onSubmit = (values: FormValues) => {
+    updateCategoryMutation.mutate({
+      categoryId: category._id,
+      name: values.name,
+      description: values.description,
+      parent: values.parent === "none" ? null : values.parent,
+    });
   };
 
+  // Exclude current category from parent list
+  const parentOptions = categories.filter(
+    (c: any) => !c.parent && c._id !== category._id
+  );
+
   return (
-    <form className="w-full space-y-4 pt-2 font-inter" onSubmit={handleSubmit}>
+    <form className="w-full space-y-4 pt-2 font-inter" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-1.5">
-        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Name</label>
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+          Name <span className="text-red-500">*</span>
+        </label>
         <Input
-          type="text"
           placeholder="Enter category name"
-          value={input.name}
-          onChange={(e) => setInput({ ...input, name: e.target.value })}
+          {...register("name", { required: "Category name is required" })}
           className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
-          required
+        />
+        {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+          Parent Category <span className="text-xs text-zinc-400 font-normal">(Leave empty for top-level)</span>
+        </label>
+        <Controller
+          control={control}
+          name="parent"
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800">
+                <SelectValue placeholder="Select Parent Category (Optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None (Top-Level Category)</SelectItem>
+                {parentOptions.map((cat) => (
+                  <SelectItem key={cat?._id} value={cat?._id}>
+                    {cat?.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         />
       </div>
+
       <div className="space-y-1.5">
         <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Description</label>
         <Textarea
           placeholder="Enter category description"
-          value={input.description}
-          onChange={(e) => setInput({ ...input, description: e.target.value })}
           rows={4}
+          {...register("description")}
           className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
-          required
         />
       </div>
+
       <div className="flex items-center gap-2 mt-8 justify-end">
         <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
           Close
         </Button>
         <Button
           type="submit"
-          disabled={loading}
+          disabled={updateCategoryMutation.isPending}
           className="bg-primary hover:bg-primary/95 text-white"
         >
-          {loading ? "Saving..." : "Save"}
+          {updateCategoryMutation.isPending ? "Saving..." : "Save"}
         </Button>
       </div>
     </form>

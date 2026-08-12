@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
 import { AddOfferProductDTO } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -11,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useRouter } from "next/navigation";
+import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
+import { useAddProductsToOfferMutation } from "@/hooks/mutations/useOfferMutations";
 
 const AddProductsToOffer: React.FC<{ productIds: string[] }> = ({
   productIds,
@@ -47,19 +47,20 @@ export const Popup: React.FC<{
   productIds: string[];
   onClose: () => void;
 }> = ({ onClose, productIds }) => {
-  const { loading, addToOffer, offers } = useProductStore();
-  const router = useRouter();
+  const { data: offers = [] } = useAllOffersQuery();
+  const addToOfferMutation = useAddProductsToOfferMutation({
+    onSuccess: onClose,
+  });
+
   const [input, setInput] = useState<AddOfferProductDTO>({
     offer: "",
     products: productIds,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.offer) return;
-    await addToOffer(input);
-    router.refresh();
-    onClose();
+    addToOfferMutation.mutate(input);
   };
 
   const activeOffers = offers.filter((offer) => offer.isActive);
@@ -90,10 +91,10 @@ export const Popup: React.FC<{
         </Button>
         <Button
           type="submit"
-          disabled={loading || !input.offer}
+          disabled={addToOfferMutation.isPending || !input.offer}
           className="bg-primary hover:bg-primary/95 text-white"
         >
-          {loading ? "Saving..." : "Save"}
+          {addToOfferMutation.isPending ? "Saving..." : "Save"}
         </Button>
       </div>
     </form>

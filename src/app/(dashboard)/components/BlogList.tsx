@@ -1,7 +1,7 @@
 "use client";
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState } from "react";
 import { BlogCardAdmin } from "@/components/BlogCard";
-import { useBlogStore } from "@/lib/stores/blog.store";
+import { useBlogPostsQuery } from "@/hooks/queries/useBlogQuery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,14 +10,14 @@ import { RefreshCw, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const BlogList = () => {
-  const { posts, loading, fetchPosts } = useBlogStore();
+  const { data: posts = [], isLoading: loading, refetch } = useBlogPostsQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
   const [page, setPage] = useState(1);
 
-  const postsPerPage = 3;
+  const postsPerPage = 6;
   const totalPages = Math.ceil(posts.length / postsPerPage);
 
   const filteredPosts = useMemo(() => {
@@ -52,11 +52,6 @@ const BlogList = () => {
     replace(`${pathname}?${params.toString()}`);
   };
 
-  const onClear = () => {
-    setSearchTerm("");
-    setPage(1);
-  };
-
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
     scrollTo({ top: 0, behavior: "smooth" });
@@ -79,7 +74,7 @@ const BlogList = () => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => fetchPosts()}
+          onClick={() => refetch()}
           className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
           <RefreshCw className="h-4 w-4" />

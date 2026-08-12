@@ -2,8 +2,9 @@
 import React, { useCallback, useMemo, useState } from "react";
 import AppModal from "@/components/AppModal";
 import { Category } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
 import { formatDate } from "@/utils/helpers";
+import { useCategoriesQuery } from "@/hooks/queries/useCategoriesQuery";
+import { useDeleteCategoryMutation } from "@/hooks/mutations/useCategoryMutations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -46,11 +47,14 @@ const columns = [
 ];
 
 const CategoryTable = () => {
-  const {
-    loading,
-    deleteCategory,
-    fetchCategories,
-  } = useProductStore();
+  const { data: categories = [], isLoading, refetch } = useCategoriesQuery();
+  const deleteCategoryMutation = useDeleteCategoryMutation({
+    onSuccess: () => {
+      setIsDeleteOpen(false);
+      setSelectedCat(null);
+    },
+  });
+
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -69,7 +73,6 @@ const CategoryTable = () => {
   const [selectedCat, setSelectedCat] = useState<Category | null>(null);
 
   const hasSearchFilter = Boolean(filterValue);
-  const { categories, isLoading } = useCategories();
 
   const headerColumns = useMemo(() => {
     return columns.filter((column) => visibleColumns.has(column.uid));
@@ -114,10 +117,7 @@ const CategoryTable = () => {
 
   const handleDelete = () => {
     if (selectedCat) {
-      deleteCategory(selectedCat?._id);
-      setIsDeleteOpen(false);
-      setSelectedCat(null);
-      router.refresh();
+      deleteCategoryMutation.mutate(selectedCat._id);
     }
   };
 
@@ -178,9 +178,9 @@ const CategoryTable = () => {
             <Button
               variant="destructive"
               onClick={handleDelete}
-              disabled={loading}
+              disabled={deleteCategoryMutation.isPending}
             >
-              {loading ? "Deleting..." : "Delete"}
+              {deleteCategoryMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </div>
         </div>
@@ -209,7 +209,7 @@ const CategoryTable = () => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => fetchCategories()}
+          onClick={() => refetch()}
           className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
           <RefreshCw className="h-4 w-4" />

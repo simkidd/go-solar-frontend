@@ -22,11 +22,25 @@ const ProductCard: React.FC<{
     return price - (price * percentageOff) / 100;
   };
 
-  const newPrice =
-    item?.currentOffer?.isActive &&
-    item?.currentOffer?.percentageOff !== undefined
-      ? calculateNewPrice(item?.price, item?.currentOffer?.percentageOff)
+  const hasDirectDiscount =
+    typeof item?.discountPrice === "number" &&
+    item.discountPrice > 0 &&
+    item.discountPrice < item.price;
+
+  const hasOfferDiscount =
+    Boolean(item?.currentOffer?.isActive && item?.currentOffer?.percentageOff);
+
+  const newPrice = hasDirectDiscount
+    ? item.discountPrice!
+    : hasOfferDiscount
+      ? calculateNewPrice(item?.price, item?.currentOffer!.percentageOff)
       : item?.price;
+
+  const discountPercentage = hasDirectDiscount
+    ? Math.round(((item.price - item.discountPrice!) / item.price) * 100)
+    : hasOfferDiscount
+      ? item.currentOffer!.percentageOff
+      : 0;
 
   const inStock = item?.quantityInStock > 0;
 
@@ -57,7 +71,7 @@ const ProductCard: React.FC<{
           )}
         </Link>
 
-        {/* Floating Stock Badge */}
+        {/* Floating Stock & Discount Badges */}
         <div className="absolute top-3 left-3 z-[2] flex flex-col gap-1.5">
           {inStock ? (
             <span className="text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-emerald-500 text-white shadow-sm tracking-wider">
@@ -68,9 +82,9 @@ const ProductCard: React.FC<{
               Out of Stock
             </span>
           )}
-          {item?.currentOffer?.isActive && item?.currentOffer?.percentageOff && (
+          {discountPercentage > 0 && (
             <span className="text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-500 text-white shadow-sm tracking-wider">
-              {item?.currentOffer?.percentageOff}% Off
+              {discountPercentage}% Off
             </span>
           )}
         </div>
@@ -117,7 +131,7 @@ const ProductCard: React.FC<{
             <span className="text-base font-extrabold text-primary">
               {formatCurrency(newPrice, "NGN")}
             </span>
-            {item?.currentOffer?.isActive && item?.currentOffer?.percentageOff && (
+            {newPrice < item?.price && (
               <span className="line-through text-zinc-400 text-xs font-semibold">
                 {formatCurrency(item?.price, "NGN")}
               </span>

@@ -29,11 +29,25 @@ const ProductDetail: React.FC<{
     return price - (price * percentageOff) / 100;
   };
 
-  const newPrice =
-    product?.currentOffer?.isActive &&
-    product?.currentOffer?.percentageOff !== undefined
-      ? calculateNewPrice(product?.price, product?.currentOffer?.percentageOff)
+  const hasDirectDiscount =
+    typeof product?.discountPrice === "number" &&
+    product.discountPrice > 0 &&
+    product.discountPrice < product.price;
+
+  const hasOfferDiscount =
+    Boolean(product?.currentOffer?.isActive && product?.currentOffer?.percentageOff);
+
+  const newPrice = hasDirectDiscount
+    ? product.discountPrice!
+    : hasOfferDiscount
+      ? calculateNewPrice(product?.price, product?.currentOffer!.percentageOff)
       : product?.price;
+
+  const discountPercentage = hasDirectDiscount
+    ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
+    : hasOfferDiscount
+      ? product.currentOffer!.percentageOff
+      : 0;
 
   return (
     <div className="w-full flex flex-col font-inter space-y-6">
@@ -105,13 +119,18 @@ const ProductDetail: React.FC<{
       </div>
 
       {/* Pricing block */}
-      <div className="flex items-baseline gap-3 pt-2">
+      <div className="flex items-center gap-3 pt-2">
         <h3 className="font-extrabold text-3xl tracking-tight text-zinc-900 dark:text-white">
           {formatCurrency(newPrice, "NGN")}
         </h3>
         {product?.price > newPrice && (
           <span className="line-through text-zinc-400 text-sm font-semibold">
             {formatCurrency(product?.price, "NGN")}
+          </span>
+        )}
+        {discountPercentage > 0 && (
+          <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-500 text-white shadow-xs tracking-wider">
+            {discountPercentage}% Off
           </span>
         )}
       </div>
@@ -133,7 +152,7 @@ const ProductDetail: React.FC<{
                   price: newPrice,
                 },
                 qty: quantity,
-                deliveryFee: selectedDeliveryFee,
+                deliveryFee: selectedDeliveryFee || 0,
               });
               toast.success("Item added to cart!");
             }}

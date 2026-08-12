@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
 import { Offer, OfferType } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
+import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
+import { useDeleteOfferMutation } from "@/hooks/mutations/useOfferMutations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import {
@@ -23,7 +24,13 @@ export const getOfferBadgeStyles = (active: boolean) => {
 };
 
 const OffersComp = () => {
-  const { loading, offers, deleteOffer, fetchOffers } = useProductStore();
+  const { data: offers = [], refetch } = useAllOffersQuery();
+  const deleteOfferMutation = useDeleteOfferMutation({
+    onSuccess: () => {
+      setIsDeleteOpen(false);
+      setSelectedOffer(null);
+    },
+  });
   const router = useRouter();
   
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -32,9 +39,7 @@ const OffersComp = () => {
 
   const handleDelete = () => {
     if (selectedOffer) {
-      deleteOffer(selectedOffer?._id);
-      setIsDeleteOpen(false);
-      router.refresh();
+      deleteOfferMutation.mutate(selectedOffer._id);
     }
   };
 
@@ -59,7 +64,7 @@ const OffersComp = () => {
             <Button
               variant="destructive"
               onClick={handleDelete}
-              disabled={loading}
+              disabled={deleteOfferMutation.isPending}
               className="gap-2"
             >
               <Trash2 size={16} />
@@ -91,7 +96,7 @@ const OffersComp = () => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => fetchOffers()}
+          onClick={() => refetch()}
           className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
           <RefreshCw className="h-4 w-4" />

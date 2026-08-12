@@ -39,6 +39,19 @@ export interface EmailInput {
   email: string;
 }
 
+export interface ForgetPasswordInput {
+  email: string;
+}
+
+export interface ResetPasswordInput {
+  password: string;
+  token?: string;
+}
+
+export interface VerifyAccountInput {
+  token: string;
+}
+
 export interface ChangePasswordInput {
   password: string;
 }

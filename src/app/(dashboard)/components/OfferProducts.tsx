@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Offer, OfferType, Product } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
+import { useAllProductsQuery } from "@/hooks/queries/useProductsQuery";
 import { formatCurrency } from "@/utils/helpers";
 import {
   Table,
@@ -17,19 +17,11 @@ import Image from "next/image";
 const OfferProducts: React.FC<{
   offer: Offer;
 }> = ({ offer }) => {
-  const { products } = useProductStore();
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: products = [], isLoading: loading } = useAllProductsQuery();
 
-  useEffect(() => {
-    if (products) {
-      const productsWithOffer = products.filter(
-        (product) => product?.currentOffer?._id === offer._id
-      );
-      setFilteredProducts(productsWithOffer);
-      setLoading(false);
-    }
-  }, [products, offer]);
+  const filteredProducts = products.filter(
+    (product) => product?.currentOffer?._id === offer._id
+  );
 
   return (
     <div className="w-full space-y-6">

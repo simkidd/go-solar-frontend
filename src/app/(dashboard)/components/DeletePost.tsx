@@ -1,10 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { Post } from "@/interfaces/post.interface";
-import { useBlogStore } from "@/lib/stores/blog.store";
+import { useDeleteBlogPostMutation } from "@/hooks/mutations/useBlogMutations";
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
 import AppModal from "../../../components/AppModal";
 
 const DeletePost: React.FC<{ post: Post }> = ({ post }) => {
@@ -39,13 +38,10 @@ export const DeletePopup: React.FC<{
   post: Post;
   onClose: () => void;
 }> = ({ post, onClose }) => {
-  const { loading, deletePost } = useBlogStore();
-  const router = useRouter();
+  const deleteBlogMutation = useDeleteBlogPostMutation({ onSuccess: onClose });
 
-  const handleDelete = async () => {
-    await deletePost(post?._id);
-    onClose();
-    router.push("/dashboard/blogs");
+  const handleDelete = () => {
+    deleteBlogMutation.mutate(post._id);
   };
 
   return (
@@ -59,10 +55,10 @@ export const DeletePopup: React.FC<{
         </Button>
         <Button
           variant="destructive"
-          disabled={loading}
+          disabled={deleteBlogMutation.isPending}
           onClick={handleDelete}
         >
-          {loading ? "Deleting..." : "Delete"}
+          {deleteBlogMutation.isPending ? "Deleting..." : "Delete"}
         </Button>
       </div>
     </div>

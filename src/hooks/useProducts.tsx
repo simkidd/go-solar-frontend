@@ -1,40 +1,20 @@
-import { Product } from "@/interfaces/product.interface";
-import { getProducts } from "@/lib/api/products";
-import { useProductStore } from "@/lib/stores/product.store";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
+"use client";
+import { useAllProductsQuery, usePublishedProductsQuery } from "./queries/useProductsQuery";
 
 const useProducts = () => {
-  const { products, setProducts } = useProductStore();
-
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["allProducts"],
-    queryFn: async () => getProducts(),
-  });
-
-  const { memoizedProducts } = useMemo(() => {
-    if (!data || isLoading || isError) {
-      return { memoizedProducts: [] };
-    }
-
-    return {
-      memoizedProducts: (data as Product[]) || [],
-    };
-  }, [data, isLoading, isError]);
-
-  useEffect(() => {
-    if (memoizedProducts.length > 0) {
-      setProducts(memoizedProducts);
-    } else {
-      setProducts([]);
-    }
-  }, [memoizedProducts, setProducts]);
+  const allQuery = useAllProductsQuery();
+  const publishedQuery = usePublishedProductsQuery();
 
   return {
-    products,
-    isLoading,
-    refetch,
-    isError,
+    products: allQuery.data || [],
+    publishedProducts: publishedQuery.data || [],
+    isLoading: allQuery.isLoading || publishedQuery.isLoading,
+    isError: allQuery.isError || publishedQuery.isError,
+    error: allQuery.error || publishedQuery.error,
+    refetch: () => {
+      allQuery.refetch();
+      publishedQuery.refetch();
+    },
   };
 };
 

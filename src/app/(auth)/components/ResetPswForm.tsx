@@ -1,67 +1,72 @@
 "use client";
-import React, { useMemo, useState } from "react";
-import { useAuthStore } from "@/lib/stores/auth.store";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useResetPasswordMutation } from "@/hooks/mutations/useAuthMutations";
+
+interface FormValues {
+  password: string;
+}
 
 const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
-  const { loading, resetPassword } = useAuthStore();
-  const [input, setInput] = useState({
-    password: "",
-  });
+  const resetPasswordMutation = useResetPasswordMutation();
   const [isVisible, setIsVisible] = useState(false);
-  const router = useRouter();
 
-  const toggleVisibility = () => setIsVisible(!isVisible);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: { password: "" },
+  });
 
-  const validatePassword = (input: string) => input.length >= 6;
-
-  const isPasswordInvalid = useMemo(() => {
-    if (input.password === "") return false;
-    return !validatePassword(input.password);
-  }, [input.password]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    await resetPassword(input, token);
-    setInput({ password: "" });
+  const onSubmit = (values: FormValues) => {
+    resetPasswordMutation.mutate({
+      password: values.password,
+      token,
+    } as any);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 font-inter">
-      <div className="relative">
-        <Input
-          type={isVisible ? "text" : "password"}
-          placeholder="New Password"
-          name="password"
-          className="w-full h-11 pl-10 pr-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
-          value={input?.password}
-          onChange={(e) => setInput({ ...input, password: e.target.value })}
-          required
-        />
-        <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
-        <button
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650"
-          type="button"
-          onClick={toggleVisibility}
-        >
-          {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
-        </button>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 font-inter">
+      <div className="space-y-1">
+        <div className="relative">
+          <Input
+            type={isVisible ? "text" : "password"}
+            placeholder="New Password"
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters",
+              },
+            })}
+            className="w-full h-11 pl-10 pr-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
+          />
+          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+          <button
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650"
+            type="button"
+            onClick={() => setIsVisible(!isVisible)}
+          >
+            {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
+        {errors.password && (
+          <p className="text-[11px] text-rose-500 font-semibold pl-1">
+            {errors.password.message}
+          </p>
+        )}
       </div>
-
-      {isPasswordInvalid && (
-        <p className="text-[11px] text-rose-500 font-semibold pl-1">Password must be at least 6 characters</p>
-      )}
 
       <Button
         type="submit"
         className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11"
-        disabled={!input.password || isPasswordInvalid || loading}
+        disabled={resetPasswordMutation.isPending}
       >
-        {loading ? "Resetting..." : "Reset Password"}
+        {resetPasswordMutation.isPending ? "Resetting..." : "Reset Password"}
       </Button>
     </form>
   );

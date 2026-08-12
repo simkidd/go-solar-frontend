@@ -2,13 +2,12 @@
 import React, { useCallback, useState } from "react";
 import AppModal from "@/components/AppModal";
 import { Product } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2, Upload } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
+import { useUpdateProductImageMutation } from "@/hooks/mutations/useProductMutations";
 
 const UpdateProductImage: React.FC<{
   product: Product;
@@ -48,13 +47,12 @@ export const ProductImagesForm: React.FC<{
   product: Product;
   onClose: () => void;
 }> = ({ onClose, product }) => {
-  const { updateImages, imageLoading } = useProductStore();
+  const updateImagesMutation = useUpdateProductImageMutation({ onSuccess: onClose });
   const [images, setImages] = useState<string[]>(
     product.images.map((img) => img.url)
   );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedImgId, setSelectedImgId] = useState<string | null>(null);
-  const router = useRouter();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -115,7 +113,7 @@ export const ProductImagesForm: React.FC<{
     e.preventDefault();
 
     if (!selectedImage || !selectedImgId) {
-      alert("Please select an image to update");
+      toast.warning("Please select an image to update");
       return;
     }
 
@@ -124,12 +122,7 @@ export const ProductImagesForm: React.FC<{
     formData.append("imgId", selectedImgId);
     formData.append("updateImg", selectedImage);
 
-    const config = { headers: { "Content-Type": "multipart/form-data" } };
-
-    await updateImages(formData, config);
-
-    router.refresh();
-    onClose();
+    updateImagesMutation.mutate(formData);
   };
 
   return (
@@ -138,45 +131,52 @@ export const ProductImagesForm: React.FC<{
         {product.images && product.images.length > 0 && (
           <div className="space-y-2">
             <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-              Select an image to update
+              Select an image to replace:
             </h3>
             <div className="flex flex-wrap gap-2">
-              {thumbs.map((thumb, i) => (
+              {product.images.map((img) => (
                 <div
-                  key={i}
-                  onClick={() => {
-                    setSelectedImgId(product?.images[i].public_id);
-                  }}
-                  className={`cursor-pointer rounded-lg p-0.5 border-2 transition-all ${
-                    selectedImgId && product?.images[i]?.public_id === selectedImgId
-                      ? "border-primary"
-                      : "border-transparent"
+                  key={img.public_id}
+                  onClick={() => setSelectedImgId(img.public_id)}
+                  className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${
+                    selectedImgId === img.public_id
+                      ? "border-primary ring-2 ring-primary/20"
+                      : "border-zinc-200 dark:border-zinc-800"
                   }`}
                 >
-                  {thumb}
+                  <Image
+                    src={img.url}
+                    alt="product image"
+                    className="w-full h-full object-cover"
+                    width={80}
+                    height={80}
+                  />
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Image Upload Area */}
-        <div
-          {...getRootProps()}
-          className={`border-2 border-dashed rounded-xl py-12 px-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-zinc-50/50 dark:bg-zinc-900/10 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/10 ${
-            isDragActive ? "border-primary bg-primary/5" : "border-zinc-200 dark:border-zinc-800"
-          }`}
-        >
-          <input {...getInputProps()} />
-          {isDragActive ? (
-            <p className="text-primary text-sm font-medium">Drop file here...</p>
-          ) : (
-            <div className="flex flex-col items-center justify-center text-center space-y-2">
-              <Upload className="h-6 w-6 text-zinc-400" />
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Drag & drop image here, or <span className="text-primary font-medium">browse</span>
-              </p>
-              <p className="text-xs text-zinc-400">JPEG, PNG only (1 file at a time)</p>
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+            Upload Replacement Image
+          </label>
+          <div
+            {...getRootProps()}
+            className={`border-2 border-dashed rounded-xl py-8 px-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-zinc-50/50 dark:bg-zinc-900/10 hover:bg-zinc-100/50 ${
+              isDragActive ? "border-primary bg-primary/5" : "border-zinc-200 dark:border-zinc-800"
+            }`}
+          >
+            <input {...getInputProps()} />
+            <div className="flex flex-col items-center justify-center text-center space-y-1">
+              <Upload className="h-5 w-5 text-zinc-400" />
+              <p className="text-xs text-zinc-500">Drag & drop or click to select new image</p>
+            </div>
+          </div>
+
+          {thumbs.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {thumbs}
             </div>
           )}
         </div>
@@ -203,10 +203,10 @@ export const ProductImagesForm: React.FC<{
         </Button>
         <Button
           type="submit"
-          disabled={imageLoading || !selectedImgId || !selectedImage}
+          disabled={updateImagesMutation.isPending || !selectedImgId || !selectedImage}
           className="bg-primary hover:bg-primary/95 text-white"
         >
-          {imageLoading ? "Updating..." : "Update Image"}
+          {updateImagesMutation.isPending ? "Updating..." : "Update Image"}
         </Button>
       </div>
     </form>

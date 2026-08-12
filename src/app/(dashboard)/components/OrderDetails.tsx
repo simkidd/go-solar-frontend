@@ -10,7 +10,7 @@ import { Mail, Phone, MapPin, CreditCard, ChevronRight, PackageCheck } from "luc
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getChipStyles } from "./OrdersTable";
-import { useOrderStore } from "@/lib/stores/order.store";
+import { useUpdateOrderStatusMutation } from "@/hooks/mutations/useOrderMutations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -24,7 +24,7 @@ import {
 const OrderDetails: React.FC<{
   order: Order;
 }> = ({ order }) => {
-  const { statusLoading, updateTrackingLevel } = useOrderStore();
+  const updateStatusMutation = useUpdateOrderStatusMutation();
   const router = useRouter();
   const [input, setInput] = useState<UpdateTrackingStatus>({
     trackingLevel: 1,
@@ -33,8 +33,7 @@ const OrderDetails: React.FC<{
 
   const handleUpdateTracking = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateTrackingLevel(input);
-    router.refresh();
+    updateStatusMutation.mutate(input);
   };
 
   return (
@@ -214,10 +213,10 @@ const OrderDetails: React.FC<{
 
               <Button
                 type="submit"
-                disabled={statusLoading}
+                disabled={updateStatusMutation.isPending}
                 className="w-full bg-primary hover:bg-primary/95 text-white"
               >
-                {statusLoading ? "Updating..." : "Save Tracking Status"}
+                {updateStatusMutation.isPending ? "Updating..." : "Save Tracking Status"}
               </Button>
             </form>
           </CardContent>

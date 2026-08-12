@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
 import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
-import { useOrderStore } from "@/lib/stores/order.store";
+import { useUserOrdersQuery } from "@/hooks/queries/useOrdersQuery";
+import { useUpdateOrderStatusMutation } from "@/hooks/mutations/useOrderMutations";
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/custom/Chip";
@@ -26,11 +27,12 @@ const getBadgeStyles = (status: string) => {
 const AccountOrderDetails: React.FC<{
   id: string;
 }> = ({ id }) => {
-  const { userOrders, updateTrackingLevel, statusLoading } = useOrderStore();
+  const { data: userOrders = [] } = useUserOrdersQuery();
+  const updateStatusMutation = useUpdateOrderStatusMutation();
   const router = useRouter();
 
   const order = userOrders.find(
-    (order) => order?.trackingId?.tracking_id === id
+    (order: any) => order?.trackingId?.tracking_id === id
   );
 
   if (!order) {
@@ -38,16 +40,15 @@ const AccountOrderDetails: React.FC<{
   }
 
   const totalDeliveryFee = order?.products.reduce(
-    (sum, item) => sum + (item?.deliveryFee || 0),
+    (sum: number, item: any) => sum + (item?.deliveryFee || 0),
     0
   );
 
-  const handleConfirmReceipt = async () => {
-    await updateTrackingLevel({
+  const handleConfirmReceipt = () => {
+    updateStatusMutation.mutate({
       trackingLevel: 3,
       trackingId: order?.trackingId?._id,
     });
-    router.refresh();
   };
 
   return (
@@ -156,7 +157,7 @@ const AccountOrderDetails: React.FC<{
           </div>
         </div>
         <ul className="divide-y divide-zinc-100 dark:divide-zinc-850/80">
-          {order?.products.map((item) => (
+          {order?.products.map((item: any) => (
             <li
               key={item?._id}
               className="flex gap-4 py-4 px-6 hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20 transition-colors"
@@ -192,7 +193,7 @@ const AccountOrderDetails: React.FC<{
           <p className="text-xs font-semibold text-zinc-400">Have you received your order?</p>
           <Button
             className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-6"
-            disabled={statusLoading}
+            disabled={updateStatusMutation.isPending}
             onClick={handleConfirmReceipt}
           >
             Confirm Receipt

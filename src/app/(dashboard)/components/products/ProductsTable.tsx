@@ -2,8 +2,10 @@
 import useCategories from "@/hooks/useCategories";
 import useProducts from "@/hooks/useProducts";
 import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
+import { useDeleteProductMutation } from "@/hooks/mutations/useProductMutations";
+import { useAddProductsToOfferMutation } from "@/hooks/mutations/useOfferMutations";
+import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -60,7 +62,14 @@ const columns = [
 ];
 
 const ProductsTable = () => {
-  const { loading, deleteProduct, addToOffer, offers } = useProductStore();
+  const { data: offers = [] } = useAllOffersQuery();
+  const deleteProductMutation = useDeleteProductMutation({
+    onSuccess: () => {
+      setIsDeleteDialogOpen(false);
+      setSelectedProduct(null);
+    },
+  });
+
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -156,10 +165,7 @@ const ProductsTable = () => {
 
   const handleDelete = () => {
     if (selectedProduct) {
-      deleteProduct(selectedProduct._id);
-      setIsDeleteDialogOpen(false);
-      setSelectedProduct(null);
-      router.refresh();
+      deleteProductMutation.mutate(selectedProduct._id);
     }
   };
 
@@ -250,8 +256,8 @@ const ProductsTable = () => {
             <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(false)} className="dark:text-zinc-300">
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={loading}>
-              {loading ? "Deleting..." : "Delete"}
+            <Button variant="destructive" onClick={handleDelete} disabled={deleteProductMutation.isPending}>
+              {deleteProductMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>

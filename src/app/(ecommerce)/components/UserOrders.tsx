@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
-import { useOrderStore } from "@/lib/stores/order.store";
+import { useUserOrdersQuery } from "@/hooks/queries/useOrdersQuery";
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import { Card, CardContent } from "@/components/ui/card";
 import { Chip } from "@/components/custom/Chip";
@@ -24,7 +24,7 @@ const getBadgeStyles = (status: string) => {
 };
 
 const UserOrders = () => {
-  const { userOrders, loading } = useOrderStore();
+  const { data: userOrders = [], isLoading: loading } = useUserOrdersQuery();
 
   return (
     <div className="font-inter">
@@ -39,7 +39,7 @@ const UserOrders = () => {
       ) : (
         <div className="divide-y divide-zinc-150 dark:divide-zinc-800">
           {userOrders && userOrders.length > 0 ? (
-            userOrders.map((order) => (
+            userOrders.map((order: any) => (
               <div key={order?._id} className="py-6 first:pt-0 space-y-4">
                 
                 {/* Header row */}
@@ -68,7 +68,7 @@ const UserOrders = () => {
 
                 {/* Products previews grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-zinc-100 dark:border-zinc-850">
-                  {order?.products.map((item) => (
+                  {order?.products.map((item: any) => (
                     <div
                       key={item?._id}
                       className="flex items-center gap-3"

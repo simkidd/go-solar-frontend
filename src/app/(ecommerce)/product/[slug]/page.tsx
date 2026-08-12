@@ -11,15 +11,11 @@ import {
   Truck,
   ShieldAlert,
   Cpu,
-  Download,
-  Sparkles,
-  BookOpen,
 } from "lucide-react";
 import ViewHistoryComp from "../../components/ViewHistory";
 import { getProducts, getPubilshedProducts } from "@/lib/api/products";
 import FaqNewsletterSection from "@/components/home/FaqNewsletterSection";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { PACKAGES_DATA } from "@/data/packages";
 
 interface IProduct {
@@ -109,57 +105,6 @@ const ProductPage = async ({ params }: IProduct) => {
     notFound();
   }
 
-  // System details mock values for clean specs layout in Mockup 2
-  const isPackage =
-    product?.category?.slug === "packages" ||
-    product?.name?.toLowerCase().includes("package");
-  const systemSpecs = isPackage
-    ? [
-        {
-          label: "Inverter Size",
-          value: product?.name?.includes("10Kva")
-            ? "10 kVA"
-            : product?.name?.includes("7.5Kva")
-              ? "7.5 kVA"
-              : "5.0 kVA",
-        },
-        {
-          label: "PV Panel Capacity",
-          value: product?.name?.includes("10Kva")
-            ? "12x 550W Panels"
-            : "8x 550W Panels",
-        },
-        {
-          label: "Lithium Battery Wall",
-          value: product?.name?.includes("10Kva") ? "15 kWh" : "10 kWh",
-        },
-        { label: "Estimated Installation Time", value: "3-5 Working Days" },
-      ]
-    : [
-        { label: "Hardware Model", value: product?.brand || "GoSolar Grade" },
-        {
-          label: "Component Type",
-          value: product?.category?.name || "Solar Component",
-        },
-        { label: "Certification", value: "Tier-1 Quality Standard" },
-        { label: "Manufacturer Warranty", value: "5 Years Replacement" },
-      ];
-
-  const loadCapabilities = isPackage
-    ? [
-        "1 Deep Freezer or Inverter Refrigerator",
-        "8-10 Smart Fans",
-        "10-15 LED Bulbs",
-        "3 LED Televisions",
-        "1 Inverter Air Conditioner (1.5 HP)",
-        "Charging Ports for Laptops & Mobile Stations",
-      ]
-    : [
-        "Specifically optimized for hybrid solar inverter connections",
-        "High efficiency conversion factor with zero leakage",
-        "Designed to survive high temperature thermal conditions",
-        "Built-in overcharge and system short-circuit circuit breakers",
-      ];
 
   return (
     <div className="w-full font-inter bg-white dark:bg-zinc-950">
@@ -219,78 +164,44 @@ const ProductPage = async ({ params }: IProduct) => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-6xl mx-auto">
             {/* Left side: Overview, Specs and Power capacity */}
             <div className="lg:col-span-8 space-y-8">
-              {/* Product description tab box */}
+              {/* Product Description */}
               <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs">
                 <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
-                  Package Overview
+                  Product Overview
                 </h3>
                 <ProductDesc product={product} />
               </div>
 
-              {/* System Details Spec Box */}
-              <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs space-y-4">
-                <h3 className="text-base font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[#08AA08]">
-                  System Details
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {systemSpecs.map((spec) => (
-                    <div
-                      key={spec.label}
-                      className="bg-zinc-50 dark:bg-zinc-900/40 p-4 rounded-xl border border-zinc-100 dark:border-zinc-850"
-                    >
-                      <span className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">
-                        {spec.label}
-                      </span>
-                      <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                        {spec.value}
-                      </span>
-                    </div>
-                  ))}
+              {/* Technical Datasheet Table — shown only when admin enables it */}
+              {product?.showDatasheet && product?.datasheet?.length > 0 && (
+                <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Cpu className="h-4 w-4 text-[#08AA08]" />
+                    <h3 className="text-base font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[#08AA08]">
+                      Technical Specifications
+                    </h3>
+                  </div>
+                  <div className="overflow-hidden rounded-xl border border-zinc-100 dark:border-zinc-800">
+                    <table className="w-full text-xs">
+                      <tbody>
+                        {product.datasheet.map((row, idx) => (
+                          <tr
+                            key={idx}
+                            className={idx % 2 === 0 ? "bg-zinc-50 dark:bg-zinc-900/40" : "bg-white dark:bg-zinc-900"}
+                          >
+                            <td className="py-3 px-4 font-semibold text-zinc-500 dark:text-zinc-400 w-2/5 border-r border-zinc-100 dark:border-zinc-800">
+                              {row.key}
+                            </td>
+                            <td className="py-3 px-4 font-semibold text-zinc-800 dark:text-zinc-200">
+                              {row.value}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-
-              {/* What It Powers / Capacity Showcase */}
-              <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs space-y-4">
-                <h3 className="text-base font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[#08AA08]">
-                  What It Powers (Usable Capacity Showcase)
-                </h3>
-                <p className="text-xs text-zinc-505 leading-relaxed">
-                  Estimated appliance loads that this configuration is designed
-                  to carry simultaneously:
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  {loadCapabilities.map((item, i) => (
-                    <div
-                      key={i}
-                      className="flex items-start gap-2.5 text-xs text-zinc-650 dark:text-zinc-350"
-                    >
-                      <Sparkles className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-                      <span className="font-semibold leading-relaxed">
-                        {item}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Datasheet download segment */}
-              <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="space-y-1 text-center sm:text-left">
-                  <h4 className="font-bold text-sm text-zinc-900 dark:text-white">
-                    Product Datasheet
-                  </h4>
-                  <p className="text-xs text-zinc-400">
-                    Download complete hardware technical data and layout
-                    instructions.
-                  </p>
-                </div>
-                <Button
-                  size="sm"
-                  className="bg-[#08AA08] hover:bg-[#079907] text-white rounded-xl gap-2 font-bold px-5 text-xs uppercase tracking-wider"
-                >
-                  <Download className="h-4 w-4" /> Download Datasheet
-                </Button>
-              </div>
+              )}
             </div>
 
             {/* Right side: Delivery & Warranty Details */}

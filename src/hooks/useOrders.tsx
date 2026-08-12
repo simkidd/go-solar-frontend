@@ -1,40 +1,20 @@
-import { Order } from "@/interfaces/order.interface";
-import { getOrders } from "@/lib/api/orders";
-import { useOrderStore } from "@/lib/stores/order.store";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
+"use client";
+import { useAllOrdersQuery, useUserOrdersQuery } from "./queries/useOrdersQuery";
 
 const useOrders = () => {
-  const { orders, setOrders } = useOrderStore();
-
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["allOrders"],
-    queryFn: async () => getOrders(),
-  });
-
-  const { memoizedOrders } = useMemo(() => {
-    if (!data || isLoading || isError) {
-      return { memoizedOrders: [] };
-    }
-
-    return {
-      memoizedOrders: (data as Order[]) || [],
-    };
-  }, [data, isLoading, isError]);
-
-  useEffect(() => {
-    if (memoizedOrders.length > 0) {
-      setOrders(memoizedOrders);
-    } else {
-      setOrders([]);
-    }
-  }, [memoizedOrders, setOrders]);
+  const allQuery = useAllOrdersQuery();
+  const userQuery = useUserOrdersQuery();
 
   return {
-    orders,
-    isLoading,
-    refetch,
-    isError,
+    orders: allQuery.data || [],
+    userOrders: userQuery.data || [],
+    isLoading: allQuery.isLoading || userQuery.isLoading,
+    isError: allQuery.isError || userQuery.isError,
+    error: allQuery.error || userQuery.error,
+    refetch: () => {
+      allQuery.refetch();
+      userQuery.refetch();
+    },
   };
 };
 

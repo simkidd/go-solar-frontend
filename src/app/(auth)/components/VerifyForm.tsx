@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useEffect, useMemo, useState } from "react";
 import { axiosInstance } from "@/lib/axios";
-import { useAuthStore } from "@/lib/stores/auth.store";
+import { useResendVerificationMutation } from "@/hooks/mutations/useAuthMutations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/custom/Spinner";
@@ -10,7 +10,7 @@ import { MailIcon, XCircleIcon } from "lucide-react";
 import Link from "next/link";
 
 const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
-  const { loading, resendVerification } = useAuthStore();
+  const resendMutation = useResendVerificationMutation();
   const [input, setInput] = useState({
     email: "",
   });
@@ -31,7 +31,7 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
       } catch (error) {
         const errorMsg = error as any;
         setError(true);
-        console.log(errorMsg?.response.data.message);
+        console.log(errorMsg?.response?.data?.message);
       } finally {
         setLoadingVerify(false);
       }
@@ -47,11 +47,11 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
     return validateEmail(input.email) ? false : true;
   }, [input.email]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    await resendVerification(input);
-    setInput({ email: "" });
+    resendMutation.mutate(input, {
+      onSuccess: () => setInput({ email: "" }),
+    });
   };
 
   if (loadingVerify) {
@@ -106,9 +106,9 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
                   <Button
                     type="submit"
                     className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11"
-                    disabled={!input.email || loading}
+                    disabled={!input.email || resendMutation.isPending}
                   >
-                    {loading ? "Sending..." : "Resend Link"}
+                    {resendMutation.isPending ? "Sending..." : "Resend Link"}
                   </Button>
                 </form>
               </div>

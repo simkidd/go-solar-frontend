@@ -24,5 +24,5 @@ export interface UpdatePostInput {
   content: string;
   tags: string[];
   author: string;
-  image: string | File;
+  image?: string | File;
 }
