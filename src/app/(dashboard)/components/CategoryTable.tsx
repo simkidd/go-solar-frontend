@@ -205,8 +205,7 @@ const CategoryTable = () => {
       </AppModal>
 
       {/* Action Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Categories</h2>
+      <div className="flex justify-end items-center">
         <Button
           variant="outline"
           size="sm"
@@ -346,7 +345,7 @@ const CategoryTable = () => {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-36">
-                                <DropdownMenuItem onClick={() => router.push(`/admin/categories/${cat?.slug}`)} className="cursor-pointer">
+                                <DropdownMenuItem onClick={() => router.push(`/dashboard/categories/${cat?.slug}`)} className="cursor-pointer">
                                   <Eye className="mr-2 h-4 w-4" />
                                   <span>Products</span>
                                 </DropdownMenuItem>

@@ -70,7 +70,7 @@ const BusinessNavbar = () => {
               <div className="flex items-center gap-4">
                 {(user?.isAdmin || user?.isSuperAdmin) && (
                   <Link
-                    href="/admin"
+                    href="/dashboard"
                     className="hover:text-primary transition-colors"
                   >
                     Dashboard

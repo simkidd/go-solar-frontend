@@ -200,8 +200,7 @@ const OrdersTable = () => {
   return (
     <div className="w-full space-y-4">
       {/* Top action block */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Orders</h2>
+      <div className="flex justify-end items-center">
         <Button
           variant="outline"
           size="sm"
@@ -366,7 +365,7 @@ const OrdersTable = () => {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-32">
-                                <DropdownMenuItem onClick={() => router.push(`/admin/orders/${order?._id}`)} className="cursor-pointer">
+                                <DropdownMenuItem onClick={() => router.push(`/dashboard/orders/${order?._id}`)} className="cursor-pointer">
                                   <Eye className="mr-2 h-4 w-4" />
                                   <span>Details</span>
                                 </DropdownMenuItem>

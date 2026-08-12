@@ -47,7 +47,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
   return (
     <>
       <div className="flex items-center justify-between mb-4">
-        <Link href="/admin/products" className="text-sm font-medium flex items-center gap-1.5 text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors">
+        <Link href="/dashboard/products" className="text-sm font-medium flex items-center gap-1.5 text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors">
           <ArrowLeft size={16} />
           Back to products
         </Link>

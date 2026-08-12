@@ -9,7 +9,7 @@ export const ScrollArea = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "relative overflow-y-auto pr-1.5 max-h-[220px] scrollbar-thin scrollbar-thumb-zinc-250 dark:scrollbar-thumb-zinc-800 scrollbar-track-transparent transition-all duration-200",
+        "relative overflow-y-auto pr-1.5 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent transition-all duration-200",
         className
       )}
       {...props}

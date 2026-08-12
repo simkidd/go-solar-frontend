@@ -87,8 +87,7 @@ const OffersComp = () => {
       </AppModal>
 
       {/* Action Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Offers</h2>
+      <div className="flex justify-end items-center">
         <Button
           variant="outline"
           size="sm"
@@ -159,7 +158,7 @@ const OffersComp = () => {
               </div>
             </CardContent>
             <CardFooter className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/10">
-              <Link href={`/admin/sales-offers/${offer?._id}`} className="w-full">
+              <Link href={`/dashboard/sales-offers/${offer?._id}`} className="w-full">
                 <Button className="w-full bg-primary hover:bg-primary/95 text-white gap-1.5">
                   <Eye className="h-4 w-4" />
                   See Details

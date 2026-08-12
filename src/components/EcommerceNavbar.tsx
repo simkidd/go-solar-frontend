@@ -170,8 +170,8 @@ const EcommerceNavbar = () => {
                 </div>
                 {(user?.isAdmin || user?.isSuperAdmin) && (
                   <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
-                      Admin Dashboard
+                    <Link href="/dashboard" className="cursor-pointer">
+                      Dashboard
                     </Link>
                   </DropdownMenuItem>
                 )}

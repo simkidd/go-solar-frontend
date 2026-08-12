@@ -1,5 +1,5 @@
 "use client";
-import { useAuthStore } from "@/lib/stores/auth.store";
+import { useSidebar, SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,39 +10,100 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bell, Menu, LogOut, Settings, User } from "lucide-react";
+import { Bell, LogOut, Settings, User } from "lucide-react";
 import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
 import { useSession } from "@/context/SessionContext";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import React from "react";
 
 const AdminHeader = () => {
   const { user, logout, loading } = useSession();
-  const { setShowSidebar } = useAuthStore();
+  const pathname = usePathname();
+
+  // Helper to format breadcrumb labels
+  const formatLabel = (path: string) => {
+    return path
+      .replace(/-/g, " ")
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  const paths = pathname.split("/").filter((path) => path !== "");
 
   return (
-    <div className="h-14 md:h-16 w-full flex bg-white dark:bg-[#222327] shadow-sm sticky top-0 right-0 left-0 z-40 border-b border-gray-100 dark:border-zinc-800">
-      <div className="w-full px-4 flex items-center justify-between">
-        <button 
-          className="md:hidden p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" 
-          onClick={() => setShowSidebar(true)}
-        >
-          <Menu className="h-5 w-5 dark:text-white" />
-        </button>
-        <div className="ms-auto flex items-center space-x-3">
-          <Button variant="ghost" size="icon" className="relative hover:bg-zinc-100 dark:hover:bg-zinc-800">
-            <Bell className="h-5 w-5 dark:text-white" />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500" />
+    <header className="h-16 w-full flex bg-white/90 dark:bg-[#1a1b1e]/90 backdrop-blur-md sticky top-0 z-20 border-b border-zinc-100 dark:border-zinc-800 transition-all">
+      <div className="w-full px-4 md:px-6 flex items-center justify-between gap-4">
+        
+        {/* Left Section: Sidebar Toggle & Breadcrumbs */}
+        <div className="flex items-center gap-3">
+          <SidebarTrigger className="h-9 w-9 text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/60 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none transition-colors" />
+          
+          <div className="hidden md:block">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link href="/dashboard">Dashboard</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                {paths.slice(1).map((path, index) => {
+                  const currentPath = `/${paths.slice(0, index + 2).join("/")}`;
+                  const isLast = index === paths.length - 2;
+                  
+                  return (
+                    <React.Fragment key={path}>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        {isLast ? (
+                          <BreadcrumbPage className="font-semibold text-zinc-800 dark:text-zinc-200">
+                            {formatLabel(path)}
+                          </BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink asChild>
+                            <Link href={currentPath}>{formatLabel(path)}</Link>
+                          </BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                    </React.Fragment>
+                  );
+                })}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </div>
+
+        {/* Right Section: Notifications, Theme, Profile */}
+        <div className="flex items-center space-x-3 ml-auto">
+          {/* Notifications */}
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 relative text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-[#1a1b1e]" />
           </Button>
+
+          {/* Theme switcher */}
           <ThemeSwitcher />
+
+          {/* User profile details */}
           <div className="flex items-center">
             {loading ? (
-              <Skeleton className="h-9 w-9 rounded-full" />
+              <Skeleton className="h-9 w-9 rounded-lg" />
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger className="focus:outline-none">
-                  <Avatar className="h-9 w-9 cursor-pointer hover:opacity-90 transition-opacity border border-zinc-200 dark:border-zinc-700">
+                  <Avatar className="h-9 w-9 cursor-pointer hover:opacity-90 transition-opacity border border-zinc-200 dark:border-zinc-700 rounded-lg">
                     <AvatarImage src="" />
-                    <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+                    <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm rounded-lg">
                       {user?.firstname?.[0] || <User className="h-4 w-4" />}
                     </AvatarFallback>
                   </Avatar>
@@ -51,7 +112,7 @@ const AdminHeader = () => {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-semibold leading-none">
-                        {user?.firstname + " " + user?.lastname}
+                        {user ? `${user.firstname} ${user.lastname}` : "Admin"}
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user?.email || "Administrator"}
@@ -59,12 +120,14 @@ const AdminHeader = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>My Settings</span>
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link href="/account/profile" className="flex items-center">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>My Settings</span>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={() => logout()}
                     className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50/50 dark:focus:bg-red-950/20"
                   >
@@ -77,7 +140,7 @@ const AdminHeader = () => {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { TOKEN_NAME, USER_DETAILS } from "./utils/constants";
 import { User } from "./interfaces/auth.interface";
-import jwt, { JwtPayload } from "jsonwebtoken";
 
 // Specify protected and public routes
-const adminRoutes = ["/admin"];
+const adminRoutes = ["/dashboard", "/admin"];
 const publicRoutes = ["/shop", "/product", "/blog", "/"];
 const privateRoutes = [
   "/account/profile",
@@ -38,7 +37,7 @@ export default async function proxy(req: NextRequest) {
   const isPrivateRoute = privateRoutes.some((route) => path.startsWith(route));
   const isAuthRoute = authRoutes.some((route) => path.startsWith(route));
   const ischeckoutRoute = checkoutRoutes.some((route) =>
-    path.startsWith(route)
+    path.startsWith(route),
   );
 
   const token = cookieStore.get(TOKEN_NAME)?.value;
@@ -65,7 +64,7 @@ export default async function proxy(req: NextRequest) {
       // User is not authenticated, redirect to login with redirectUrl
       const redirectUrl = encodeURIComponent(path);
       return NextResponse.redirect(
-        new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl)
+        new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl),
       );
     }
   }
@@ -74,14 +73,14 @@ export default async function proxy(req: NextRequest) {
   if (isPrivateRoute && !token) {
     const redirectUrl = encodeURIComponent(path);
     return NextResponse.redirect(
-      new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl)
+      new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl),
     );
   }
 
   if (ischeckoutRoute && !token) {
     const redirectUrl = encodeURIComponent(path);
     return NextResponse.redirect(
-      new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl)
+      new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl),
     );
   }
 

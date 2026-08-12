@@ -181,8 +181,7 @@ const UsersTable = () => {
   return (
     <div className="w-full space-y-4">
       {/* Top action block */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Customers</h2>
+      <div className="flex justify-end items-center">
         <Button
           variant="outline"
           size="sm"
@@ -322,7 +321,7 @@ const UsersTable = () => {
                       <TableCell key={columnKey} className="py-3 text-sm text-zinc-800 dark:text-zinc-200">
                         {columnKey === "name" && (
                           <span 
-                            onClick={() => router.push(`/admin/users/${userItem?._id}`)}
+                            onClick={() => router.push(`/dashboard/users/${userItem?._id}`)}
                             className="font-bold text-zinc-950 dark:text-white cursor-pointer hover:text-primary dark:hover:text-primary transition-colors"
                           >
                             {userItem?.firstname + " " + userItem?.lastname}
@@ -373,7 +372,7 @@ const UsersTable = () => {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-32">
-                                <DropdownMenuItem onClick={() => router.push(`/admin/users/${userItem?._id}`)} className="cursor-pointer">
+                                <DropdownMenuItem onClick={() => router.push(`/dashboard/users/${userItem?._id}`)} className="cursor-pointer">
                                   <Eye className="mr-2 h-4 w-4" />
                                   <span>Details</span>
                                 </DropdownMenuItem>

@@ -45,7 +45,7 @@ export const DeletePopup: React.FC<{
   const handleDelete = async () => {
     await deletePost(post?._id);
     onClose();
-    router.push("/admin/blogs");
+    router.push("/dashboard/blogs");
   };
 
   return (
