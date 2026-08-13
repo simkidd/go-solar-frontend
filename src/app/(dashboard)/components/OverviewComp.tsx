@@ -26,6 +26,10 @@ import {
   AlertTriangle,
   ArrowUpRight,
   ExternalLink,
+  Sun,
+  Zap,
+  CheckCircle2,
+  ListTodo,
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { Line } from "react-chartjs-2";
@@ -41,7 +45,6 @@ import {
 } from "chart.js";
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import Link from "next/link";
-import useOrders from "@/hooks/useOrders";
 
 Chart.register(
   CategoryScale,
@@ -62,6 +65,10 @@ interface DashboardStats {
   ordersPerMonth: {
     [key: string]: number;
   };
+  totalSolarLeads?: number;
+  pendingSolarLeads?: number;
+  totalRequestedKw?: number;
+  recentQuotes?: any[];
 }
 
 const getStatusBadgeClass = (status: string) => {
@@ -77,6 +84,21 @@ const getStatusBadgeClass = (status: string) => {
   }
 };
 
+const getQuoteStatusBadgeClass = (status: string) => {
+  switch (status) {
+    case "New Lead":
+      return "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-900/50";
+    case "Contacted":
+      return "bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-900/50";
+    case "Quote Sent":
+      return "bg-purple-100 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-900/50";
+    case "Won":
+      return "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/50";
+    default:
+      return "bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700";
+  }
+};
+
 const OverviewComp = () => {
   const { user } = useAuthStore();
   const { data: usersRes } = useAllUsersQuery({ limit: 1000 });
@@ -84,6 +106,7 @@ const OverviewComp = () => {
   const { data: ordersRes } = useAllOrdersQuery({ limit: 1000 });
   const users = usersRes?.users || [];
   const orders = ordersRes?.orders || [];
+  
   const [dashboardData, setDashboardData] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState("month");
@@ -128,20 +151,20 @@ const OverviewComp = () => {
         {
           label: "Revenue (₦)",
           data: revenueData,
-          backgroundColor: "rgba(8, 170, 8, 0.05)",
-          borderColor: "#08AA08",
+          backgroundColor: "rgba(16, 185, 129, 0.04)",
+          borderColor: "#10b981",
           borderWidth: 2,
-          tension: 0.3,
+          tension: 0.35,
           fill: true,
-          pointBackgroundColor: "#08AA08",
+          pointBackgroundColor: "#10b981",
         },
         {
           label: "Orders",
           data: ordersData,
-          backgroundColor: "rgba(249, 115, 22, 0.05)",
+          backgroundColor: "rgba(249, 115, 22, 0.04)",
           borderColor: "#f97316",
           borderWidth: 2,
-          tension: 0.3,
+          tension: 0.35,
           fill: true,
           pointBackgroundColor: "#f97316",
         },
@@ -234,13 +257,36 @@ const OverviewComp = () => {
       </div>
 
       {/* Stats Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Metric 1: Quotes Requested */}
         <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl group">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
-              Total Products
+              Quotes Requested
             </CardTitle>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-300">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform duration-300">
+              <Sun className="h-5 w-5" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
+              {isLoading ? <Skeleton className="h-9 w-16" /> : dashboardData?.totalSolarLeads ?? 0}
+            </div>
+            <div className="flex items-center gap-1.5 mt-2">
+              <Badge variant="secondary" className="bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-900/50 text-[10px] py-0.5 font-bold">
+                {dashboardData?.pendingSolarLeads ?? 0} New Requests
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Metric 2: Catalog Products */}
+        <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl group">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+              Catalog Products
+            </CardTitle>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-300">
               <Package className="h-5 w-5" />
             </div>
           </CardHeader>
@@ -249,19 +295,20 @@ const OverviewComp = () => {
               {products.length}
             </div>
             <div className="flex items-center gap-1.5 mt-2">
-              <Badge variant="secondary" className="bg-zinc-100 dark:bg-zinc-800 text-[10px] py-0.5">
-                {products.filter(p => p.isPublished).length} Published
+              <Badge variant="secondary" className="bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/50 text-[10px] py-0.5 font-bold">
+                {products.filter((p) => p.isPublished).length} Active Products
               </Badge>
             </div>
           </CardContent>
         </Card>
 
+        {/* Metric 3: Registered Customers */}
         <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl group">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
               Registered Customers
             </CardTitle>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-300">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
               <Users className="h-5 w-5" />
             </div>
           </CardHeader>
@@ -275,12 +322,13 @@ const OverviewComp = () => {
           </CardContent>
         </Card>
 
+        {/* Metric 4: Total Orders */}
         <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl group">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
               Total Orders
             </CardTitle>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-300">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-orange-500/10 text-orange-600 dark:text-orange-400 group-hover:scale-110 transition-transform duration-300">
               <ShoppingCart className="h-5 w-5" />
             </div>
           </CardHeader>
@@ -289,7 +337,7 @@ const OverviewComp = () => {
               {orders.length}
             </div>
             <div className="flex items-center gap-1.5 mt-2">
-              <Badge variant="secondary" className="bg-zinc-100 dark:bg-zinc-800 text-[10px] py-0.5">
+              <Badge variant="secondary" className="bg-orange-50 dark:bg-orange-950/20 text-orange-700 dark:text-orange-400 border-orange-100 dark:border-orange-900/50 text-[10px] py-0.5">
                 {orders.filter((o: any) => o.trackingStatus === "Processing").length} Processing
               </Badge>
             </div>
@@ -297,9 +345,9 @@ const OverviewComp = () => {
         </Card>
       </div>
 
-      {/* Main Grid: Left Side (Charts, Lists) & Right Side (Calendar, Alerts) */}
+      {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (Span 2) */}
+        {/* Left Columns (Span 2) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Revenue Chart */}
           <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl">
@@ -315,8 +363,8 @@ const OverviewComp = () => {
                     {isLoading ? (
                       <Skeleton className="h-6 w-24 mt-1" />
                     ) : (
-                      <p className="text-lg font-black text-primary mt-0.5 flex items-center">
-                        <DollarSign className="h-4.5 w-4.5 -ml-1 text-primary" />
+                      <p className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-0.5 flex items-center">
+                        <DollarSign className="h-4.5 w-4.5 -ml-1" />
                         {formatCurrency(dashboardData?.totalRevenue || 0, "NGN").replace("NGN", "")}
                       </p>
                     )}
@@ -342,10 +390,10 @@ const OverviewComp = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-32">
-                  <DropdownMenuItem onClick={() => setSelectedPeriod("month")}>
+                  <DropdownMenuItem onClick={() => setSelectedPeriod("month")} className="cursor-pointer">
                     This Month
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedPeriod("year")}>
+                  <DropdownMenuItem onClick={() => setSelectedPeriod("year")} className="cursor-pointer">
                     This Year
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -355,6 +403,71 @@ const OverviewComp = () => {
               <div className="w-full h-80">
                 <Line data={chartData} options={chartOptions} />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* New Solar Leads Tracker Card */}
+          <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl">
+            <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800/80">
+              <div>
+                <CardTitle className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                  <Sun className="h-5 w-5 text-amber-500" />
+                  Recent Quote Requests
+                </CardTitle>
+                <CardDescription className="text-xs text-zinc-500">
+                  Recent solar calculator estimation queries requested by users.
+                </CardDescription>
+              </div>
+              <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary/90 text-xs font-bold gap-1 rounded-lg">
+                <Link href="/dashboard/quotes">
+                  View All Requests
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+              {!dashboardData?.recentQuotes || dashboardData.recentQuotes.length === 0 ? (
+                <div className="py-12 text-center text-sm text-zinc-400">
+                  No quote requests submitted yet.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table className="w-full text-sm">
+                    <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/10">
+                      <TableRow className="border-b border-zinc-100 dark:border-zinc-800">
+                        <TableHead className="font-semibold text-zinc-500 h-10 px-4">Customer Name</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10">Calculated Load (kW)</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10">Recommended PV</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10 text-center">Status</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">Date</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {dashboardData.recentQuotes.map((quote) => (
+                        <TableRow key={quote._id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0">
+                          <TableCell className="font-bold text-zinc-900 dark:text-zinc-100 py-3.5 px-4">
+                            {quote.fullName}
+                          </TableCell>
+                          <TableCell className="font-semibold text-zinc-800 dark:text-zinc-300">
+                            {(quote.peakWatts / 1000).toFixed(2)} kW
+                          </TableCell>
+                          <TableCell className="text-zinc-500 text-xs font-semibold">
+                            {quote.recommendedPv}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="outline" className={`font-semibold text-[10px] px-2.5 py-0.5 rounded-full select-none ${getQuoteStatusBadgeClass(quote.status)}`}>
+                              {quote.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right text-zinc-500 text-xs px-4">
+                            {formatDate(quote.createdAt)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -477,7 +590,7 @@ const OverviewComp = () => {
                 </div>
               ) : (
                 <div className="flex gap-3 items-center p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 rounded-xl text-emerald-800 dark:text-emerald-300">
-                  <Package className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                   <p className="text-xs font-semibold">All products in healthy stock!</p>
                 </div>
               )}
@@ -485,30 +598,29 @@ const OverviewComp = () => {
               {/* Quick Summary Info */}
               <div className="space-y-2.5 pt-2">
                 <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
-                  <span className="text-zinc-500">Total Orders:</span>
-                  <span className="text-zinc-900 dark:text-white font-bold">{orders.length}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
-                  <span className="text-zinc-500">Solar Bundles:</span>
-                  <Link href="/dashboard/packages" className="text-primary hover:underline font-bold">
-                    6 Active Packages
-                  </Link>
-                </div>
-                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
-                  <span className="text-zinc-500">Sizing & Quote Leads:</span>
-                  <Link href="/dashboard/quotes" className="text-amber-600 hover:underline font-bold">
-                    4 Active Leads
-                  </Link>
-                </div>
-                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
-                  <span className="text-zinc-500">Total Users:</span>
-                  <span className="text-zinc-900 dark:text-white font-bold">{users.length}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
-                  <span className="text-zinc-500">Pending Orders:</span>
+                  <span className="text-zinc-500 flex items-center gap-1.5">
+                    <ListTodo className="h-3.5 w-3.5 text-zinc-400" />
+                    Pending Quote Review:
+                  </span>
                   <span className="text-amber-600 font-bold">
+                    {dashboardData?.pendingSolarLeads ?? 0}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
+                  <span className="text-zinc-500 flex items-center gap-1.5">
+                    <ShoppingCart className="h-3.5 w-3.5 text-zinc-400" />
+                    Pending Orders:
+                  </span>
+                  <span className="text-orange-500 font-bold">
                     {orders.filter((o: any) => o.trackingStatus === "Processing").length}
                   </span>
+                </div>
+                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
+                  <span className="text-zinc-500 flex items-center gap-1.5">
+                    <Package className="h-3.5 w-3.5 text-zinc-400" />
+                    Catalog Products:
+                  </span>
+                  <span className="text-zinc-900 dark:text-white font-bold">{products.length}</span>
                 </div>
               </div>
             </CardContent>
