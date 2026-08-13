@@ -26,7 +26,7 @@ const LoginPage = () => {
         <p className="text-xs text-center text-zinc-500">
           Forgot password?{" "}
           <Link
-            href="/account/forgot-password"
+            href="/auth/forgot-password"
             className="font-semibold text-primary hover:underline"
           >
             Reset password
@@ -36,7 +36,7 @@ const LoginPage = () => {
         <p className="text-xs text-center text-zinc-500">
           Don't have an account?{" "}
           <Link
-            href="/account/register"
+            href="/auth/register"
             className="font-semibold text-primary hover:underline"
           >
             Create an account

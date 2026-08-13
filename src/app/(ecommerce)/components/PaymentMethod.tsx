@@ -43,7 +43,7 @@ const PaymentMethod = () => {
   useEffect(() => {
     if (!user) {
       setCurrentStep(1);
-      router.push("/account/login");
+      router.push("/auth/login");
       return;
     } else if (!deliveryDetails.streetAddress) {
       setCurrentStep(1);

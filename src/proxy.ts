@@ -12,10 +12,10 @@ const privateRoutes = [
   "/orders/success",
 ];
 const authRoutes = [
-  "/account/login",
-  "/account/register",
-  "/account/reset-password",
-  "/account/forgot-password",
+  "/auth/login",
+  "/auth/register",
+  "/auth/reset-password",
+  "/auth/forgot-password",
 ];
 
 const checkoutRoutes = ["/checkout"];
@@ -64,7 +64,7 @@ export default async function proxy(req: NextRequest) {
       // User is not authenticated, redirect to login with redirectUrl
       const redirectUrl = encodeURIComponent(path);
       return NextResponse.redirect(
-        new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl),
+        new URL(`/auth/login?redirectUrl=${redirectUrl}`, req.nextUrl),
       );
     }
   }
@@ -73,14 +73,14 @@ export default async function proxy(req: NextRequest) {
   if (isPrivateRoute && !token) {
     const redirectUrl = encodeURIComponent(path);
     return NextResponse.redirect(
-      new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl),
+      new URL(`/auth/login?redirectUrl=${redirectUrl}`, req.nextUrl),
     );
   }
 
   if (ischeckoutRoute && !token) {
     const redirectUrl = encodeURIComponent(path);
     return NextResponse.redirect(
-      new URL(`/account/login?redirectUrl=${redirectUrl}`, req.nextUrl),
+      new URL(`/auth/login?redirectUrl=${redirectUrl}`, req.nextUrl),
     );
   }
 

@@ -31,7 +31,7 @@ const CheckoutPageContent = () => {
   useEffect(() => {
     if (!user) {
       toast.info("Please sign in to proceed with checkout.");
-      router.push("/account/login?redirect=/checkout");
+      router.push("/auth/login?redirect=/checkout");
     }
   }, [user, router]);
 

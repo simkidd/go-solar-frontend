@@ -164,7 +164,7 @@ const EcommerceNavbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link href="/account/login">
+              <Link href="/auth/login">
                 <Button className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 rounded-xl px-4 py-2 text-xs font-semibold">
                   Sign In
                 </Button>

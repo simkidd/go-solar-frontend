@@ -28,7 +28,7 @@ const ShippingDetailsForm = () => {
 
   useEffect(() => {
     if (!user) {
-      router.push("/account/login?redirectUrl=/checkout");
+      router.push("/auth/login?redirectUrl=/checkout");
     }
   }, [router, user]);
 

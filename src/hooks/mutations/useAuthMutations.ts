@@ -46,17 +46,14 @@ export const useLoginMutation = (redirectUrl?: string) => {
   });
 };
 
-export const useSignUpMutation = () => {
-  const router = useRouter();
-
+export const useSignUpMutation = (onSuccessCallback?: (email: string) => void) => {
   return useMutation({
     mutationFn: async (input: SignUpInput) => {
       const { data } = await axiosInstance.post("/auth/signup", input);
-      return data;
+      return { ...data, _inputEmail: input.email };
     },
     onSuccess: (data) => {
-      toast.success(data?.message || "Registration successful!");
-      router.push("/account/registration-success");
+      onSuccessCallback?.(data?._inputEmail || "");
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || "Registration failed";
@@ -91,7 +88,7 @@ export const useResetPasswordMutation = () => {
     },
     onSuccess: (data) => {
       toast.success(data?.message || "Password reset successfully!");
-      router.push("/account/login");
+      router.push("/auth/login");
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || "Password reset failed";
@@ -110,7 +107,7 @@ export const useVerifyAccountMutation = () => {
     },
     onSuccess: (data) => {
       toast.success(data?.message || "Account verified successfully!");
-      router.push("/account/login");
+      router.push("/auth/login");
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || "Verification failed";
@@ -122,7 +119,9 @@ export const useVerifyAccountMutation = () => {
 export const useResendVerificationMutation = () => {
   return useMutation({
     mutationFn: async (input: EmailInput) => {
-      const { data } = await axiosInstance.post("/auth/resend-verification", input);
+      const { data } = await axiosInstance.post(
+        `/auth/request-verification/${encodeURIComponent(input.email)}`
+      );
       return data;
     },
     onSuccess: (data) => {

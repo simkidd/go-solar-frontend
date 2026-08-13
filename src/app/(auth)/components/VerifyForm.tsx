@@ -124,7 +124,7 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
       <div className="text-center space-y-4 font-inter py-6">
         <h3 className="font-extrabold text-xl text-zinc-900 dark:text-white">You're all set!</h3>
         <p className="text-xs text-zinc-500 leading-relaxed">Thank you for verifying your email address. You can now login to your account.</p>
-        <Link href="/account/login" className="block pt-2">
+        <Link href="/auth/login" className="block pt-2">
           <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-8">
             Sign In
           </Button>

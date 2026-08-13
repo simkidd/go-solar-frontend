@@ -43,6 +43,7 @@ import {
   Briefcase,
   MessageSquare,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -103,6 +104,11 @@ const navigationItems = [
   {
     group: "Content & Proof",
     items: [
+      {
+        name: "Store Banners",
+        href: "/dashboard/banners",
+        icon: Sparkles,
+      },
       {
         name: "Installation Projects",
         href: "/dashboard/projects",

@@ -91,7 +91,7 @@ const BusinessNavbar = () => {
               </div>
             ) : (
               <Link
-                href="/account/login"
+                href="/auth/login"
                 className="hover:text-primary transition-colors"
               >
                 Login / Register

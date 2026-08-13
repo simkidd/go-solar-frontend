@@ -2,7 +2,7 @@
 import React from "react";
 import Cta from "@/app/(ecommerce)/components/shop/Cta";
 import { Category, Product } from "@/interfaces/product.interface";
-import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
+import { useActiveOffersQuery } from "@/hooks/queries/useOffersQuery";
 import CategoriesSectionGrid, { CategorySection } from "./shop/CategorySection";
 import SpecialOffers from "./shop/SpecialOffers";
 import ViewHistoryComp from "../components/ViewHistory";
@@ -87,7 +87,7 @@ const ShopFeaturesBar = () => (
 );
 
 const ShopPageComp = () => {
-  const { data: offers = [] } = useAllOffersQuery();
+  const { data: offers = [] } = useActiveOffersQuery();
 
   const {
     products: allProducts,

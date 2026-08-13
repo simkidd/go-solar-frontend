@@ -119,7 +119,7 @@ axiosInstance.interceptors.response.use(
         Cookies.remove(REFRESH_TOKEN_NAME);
         Cookies.remove(USER_DETAILS);
         if (typeof window !== "undefined") {
-          window.location.href = `/account/login?redirectUrl=${encodeURIComponent(
+          window.location.href = `/auth/login?redirectUrl=${encodeURIComponent(
             window.location.pathname,
           )}`;
         }
