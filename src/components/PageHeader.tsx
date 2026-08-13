@@ -18,6 +18,7 @@ interface PageHeaderProps {
   cta?: CtaButton[];
   className?: string;
   minHeight?: string;
+  align?: "center" | "left";
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -28,11 +29,15 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   cta,
   className,
   minHeight = "min-h-[480px] md:min-h-[540px]",
+  align = "center",
 }) => {
+  const isLeft = align === "left";
+
   return (
     <section
       className={cn(
-        "w-full relative bg-zinc-950 flex flex-col justify-center items-center text-center overflow-hidden font-inter",
+        "w-full relative bg-zinc-950 flex flex-col justify-center overflow-hidden font-inter",
+        isLeft ? "items-start text-left" : "items-center text-center",
         minHeight,
         className,
       )}
@@ -49,14 +54,19 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       <div className="absolute inset-0 z-10 bg-linear-to-b from-[#064e3b]/80 via-[#064e3b]/70 to-black/90" />
 
       {/* Content */}
-      <div className="relative z-20 max-w-3xl px-6 md:px-12 py-16 space-y-6 flex flex-col items-center">
+      <div
+        className={cn(
+          "relative z-20 max-w-3xl px-6 md:px-12 py-16 space-y-6 flex flex-col",
+          isLeft ? "items-start text-left" : "items-center text-center",
+        )}
+      >
         {badge && (
-          <span className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border bg-white/10 backdrop-blur-sm border-white/20 text-white/90 shadow-xs">
+          <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#08AA08] block">
             {badge}
           </span>
         )}
 
-        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-white tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-bold leading-tight text-white tracking-tight">
           {heading}
         </h1>
 
@@ -67,7 +77,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         )}
 
         {cta && cta.length > 0 && (
-          <div className="flex flex-wrap gap-3 pt-2 justify-center">
+          <div
+            className={cn(
+              "flex flex-wrap gap-3 pt-2",
+              isLeft ? "justify-start" : "justify-center",
+            )}
+          >
             {cta.map((btn) => (
               <Link key={btn.href} href={btn.href}>
                 {btn.variant === "outline" ? (
