@@ -25,9 +25,9 @@ const UpdatePostButton: React.FC<{ post: Post }> = ({ post }) => {
 
       <Button
         onClick={() => setIsOpen(true)}
-        className="gap-2 bg-primary hover:bg-primary/95 text-white"
+        className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
       >
-        <Edit size={16} />
+        <Edit className="h-4 w-4" />
         Update
       </Button>
     </div>
