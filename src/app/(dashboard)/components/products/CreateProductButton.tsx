@@ -24,9 +24,9 @@ const CreateProductButton = () => {
 
       <Button
         onClick={() => setIsOpen(true)}
-        className="gap-2 bg-primary hover:bg-primary/95 text-white"
+        className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
       >
-        <Plus size={16} />
+        <Plus className="h-4 w-4" />
         Add Product
       </Button>
     </div>
