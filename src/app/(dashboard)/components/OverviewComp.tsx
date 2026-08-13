@@ -79,9 +79,11 @@ const getStatusBadgeClass = (status: string) => {
 
 const OverviewComp = () => {
   const { user } = useAuthStore();
-  const { data: users = [] } = useAllUsersQuery();
+  const { data: usersRes } = useAllUsersQuery({ limit: 1000 });
   const { data: products = [] } = useAllProductsQuery();
-  const { data: orders = [] } = useAllOrdersQuery();
+  const { data: ordersRes } = useAllOrdersQuery({ limit: 1000 });
+  const users = usersRes?.users || [];
+  const orders = ordersRes?.orders || [];
   const [dashboardData, setDashboardData] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState("month");

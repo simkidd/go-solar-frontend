@@ -12,10 +12,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EllipsisVertical, PencilLine, RefreshCw, Trash2, Eye } from "lucide-react";
+import { EllipsisVertical, PencilLine, RefreshCw, Trash2, Eye, Tag } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import UpdateOfferForm from "./UpdateOfferForm";
+import CreateOfferButton from "./CreateOfferButton";
 
 export const getOfferBadgeStyles = (active: boolean) => {
   return active
@@ -91,22 +92,38 @@ const OffersComp = () => {
         )}
       </AppModal>
 
-      {/* Action Header */}
-      <div className="flex justify-end items-center">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-          className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </Button>
+      {/* Top Action Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <Tag className="h-5 w-5 text-primary" />
+            Promotional Campaigns & Offers
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            Configure discount campaigns, percentage slash rates, and promotional storefront tags.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 h-9 rounded-lg text-xs"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+
+          <CreateOfferButton />
+        </div>
       </div>
+
+      <div className="mt-6"></div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {offers.map((offer) => (
-          <Card key={offer?._id} className="bg-white dark:bg-[#222327] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden flex flex-col justify-between">
+          <Card key={offer?._id} className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden flex flex-col justify-between">
             <CardHeader className="pb-3 flex flex-row items-start justify-between border-b border-zinc-100 dark:border-zinc-800/80">
               <div>
                 <CardTitle className="text-base font-bold dark:text-white">{offer?.name}</CardTitle>

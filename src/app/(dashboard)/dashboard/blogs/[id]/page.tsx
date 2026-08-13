@@ -59,7 +59,7 @@ const SinglePostPage = async ({ params }: IPost) => {
           <UpdatePostButton post={post} />
         </div>
       </div>
-      <div className="w-full bg-white dark:bg-[#222327] py-16 px-6 shadow rounded">
+      <div className="w-full bg-white dark:bg-[#1a1b1e] py-16 px-6 shadow rounded">
         <div className="w-full max-w-[860px] mx-auto flex flex-col items-center mb-8">
           <div className="flex items-center space-x-2">
             <div className="flex items-center text-sm mb-4">

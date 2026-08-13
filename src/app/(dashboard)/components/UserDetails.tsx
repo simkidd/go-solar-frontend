@@ -25,7 +25,7 @@ const UserDetails: React.FC<{ id: string }> = ({ id }) => {
           <Skeleton className="h-8 w-24 rounded-lg" />
         </div>
 
-        <Card className="dark:bg-[#222327] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
+        <Card className="dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
           <CardContent className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[...Array(6)].map((_, index) => (
@@ -59,14 +59,8 @@ const UserDetails: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between mb-4">
-        <Link href="/dashboard/users" className="text-sm font-medium flex items-center gap-1.5 text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors">
-          <ArrowLeft size={16} />
-          Back to customers
-        </Link>
-      </div>
 
-      <Card className="dark:bg-[#222327] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
+      <Card className="dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
         <CardContent className="p-6 space-y-8">
           {/* Top Banner Info */}
           <div className="flex items-center gap-4 pb-6 border-b border-zinc-100 dark:border-zinc-800/80">

@@ -1,5 +1,5 @@
 "use client";
-import useOrders from "@/hooks/useOrders";
+import { useAllOrdersQuery } from "@/hooks/queries/useOrdersQuery";
 import { Order, TrackingStatus } from "@/interfaces/order.interface";
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
@@ -29,16 +29,17 @@ import {
   RefreshCw,
   Search,
   Settings2,
+  ShoppingBag,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
 
 const columns = [
   { name: "Order ID", uid: "orderId" },
-  { name: "Billing Name", uid: "billingName", sortable: true },
+  { name: "Billing Name", uid: "billingName" },
   { name: "Date", uid: "dateOrdered" },
   { name: "Total", uid: "total" },
-  { name: "Tracking Status", uid: "trackingStatus", sortable: true },
+  { name: "Tracking Status", uid: "trackingStatus" },
   { name: "Actions", uid: "actions" },
 ];
 
@@ -69,7 +70,6 @@ export const getChipColor = (status: TrackingStatus) => {
 };
 
 const OrdersTable = () => {
-  const { orders, isLoading, refetch } = useOrders();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -77,6 +77,14 @@ const OrdersTable = () => {
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const { data, isLoading, refetch } = useAllOrdersQuery({
+    page,
+    limit: rowsPerPage,
+  });
+  const orders = data?.orders || [];
+  const pagination = data?.pagination || { total: 0, pages: 1 };
+
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
     new Set(columns.map((col) => col.uid))
   );
@@ -113,13 +121,9 @@ const OrdersTable = () => {
     return filteredOrders;
   }, [orders, filterValue, statusFilter]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  const pages = pagination.pages;
 
-  const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
+  const items = filteredItems;
 
   const sortedItems = useMemo(() => {
     const sorted = [...items].sort((a, b) => {
@@ -198,14 +202,24 @@ const OrdersTable = () => {
   };
 
   return (
-    <div className="w-full space-y-4">
-      {/* Top action block */}
-      <div className="flex justify-end items-center">
+    <div className="space-y-6 font-inter">
+      {/* Top Action Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <ShoppingBag className="h-5 w-5 text-primary" />
+            Customer Order Management
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            Track customer system purchases, fulfillment status, and transaction histories.
+          </p>
+        </div>
+
         <Button
           variant="outline"
           size="sm"
           onClick={() => refetch()}
-          className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+          className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 h-9 rounded-lg text-xs"
         >
           <RefreshCw className="h-4 w-4" />
           Refresh
@@ -213,7 +227,7 @@ const OrdersTable = () => {
       </div>
 
       {/* Search & Filters */}
-      <div className="flex flex-col gap-4 bg-white dark:bg-[#222327] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+      <div className="flex flex-col gap-4 bg-white dark:bg-[#1a1b1e] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
         <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
@@ -247,29 +261,6 @@ const OrdersTable = () => {
                 <DropdownMenuItem onClick={() => onStatusFilterChange("Received")}>Received</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* Columns visibility toggle */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 border-zinc-200 dark:border-zinc-800">
-                  <Settings2 className="h-4 w-4 text-zinc-400" />
-                  Columns
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {columns.map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.uid}
-                    checked={visibleColumns.has(column.uid)}
-                    onCheckedChange={() => toggleColumnVisibility(column.uid)}
-                  >
-                    {column.name}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
 
@@ -283,34 +274,26 @@ const OrdersTable = () => {
               value={rowsPerPage}
               onChange={onRowsPerPageChange}
             >
-              <option value="5" className="dark:bg-[#222327]">5</option>
-              <option value="10" className="dark:bg-[#222327]">10</option>
-              <option value="15" className="dark:bg-[#222327]">15</option>
-              <option value="20" className="dark:bg-[#222327]">20</option>
+              <option value="5" className="dark:bg-[#1a1b1e]">5</option>
+              <option value="10" className="dark:bg-[#1a1b1e]">10</option>
+              <option value="15" className="dark:bg-[#1a1b1e]">15</option>
+              <option value="20" className="dark:bg-[#1a1b1e]">20</option>
             </select>
           </div>
         </div>
       </div>
 
       {/* Main Table */}
-      <div className="bg-white dark:bg-[#222327] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-[#1a1b1e] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-zinc-50/50 dark:bg-zinc-900/20 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-800">
               {headerColumns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  onClick={() => col.sortable && handleSort(col.uid)}
-                  className={`font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs select-none ${
-                    col.sortable ? "cursor-pointer hover:text-zinc-800 dark:hover:text-white" : ""
-                  } ${col.uid === "actions" ? "text-right" : ""}`}
+                  className={`font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs select-none ${col.uid === "actions" ? "text-right" : ""}`}
                 >
-                  <div className="flex items-center gap-1">
-                    {col.name}
-                    {col.sortable && sortColumn === col.uid && (
-                      <span className="text-[10px] text-zinc-400">{sortDirection === "asc" ? "▲" : "▼"}</span>
-                    )}
-                  </div>
+                  {col.name}
                 </TableHead>
               ))}
             </TableRow>

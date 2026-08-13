@@ -13,19 +13,22 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const useLoginMutation = (redirectUrl?: string) => {
+export const useLoginMutation = (
+  redirectUrl?: string,
+  onUnverified?: (email: string) => void
+) => {
   const router = useRouter();
 
   return useMutation({
     mutationFn: async (input: LoginInput) => {
       const { data } = await axiosInstance.post("/auth/login", input);
-      return data;
+      return { ...data, _inputEmail: input.email };
     },
     onSuccess: (data) => {
       toast.success(data?.message || "Login successful!");
       const token = data?.accessToken || data?.token;
       const refreshToken = data?.refreshToken;
-      const user = data?.user;
+      const user = data?.data?.user || data?.user;
 
       if (token) Cookies.set(TOKEN_NAME, token, { expires: 1 });
       if (refreshToken) Cookies.set(REFRESH_TOKEN_NAME, refreshToken, { expires: 30 });
@@ -33,18 +36,28 @@ export const useLoginMutation = (redirectUrl?: string) => {
 
       if (redirectUrl) {
         router.push(redirectUrl);
-      } else if (user?.role === "admin" || user?.role === "superAdmin") {
+      } else if (user?.isAdmin || user?.isSuperAdmin) {
         router.push("/dashboard");
       } else {
         router.push("/shop");
       }
     },
     onError: (error: any) => {
+      const errorName = error.response?.data?.name;
       const message = error.response?.data?.message || "Invalid credentials";
+      const email = error.config
+        ? JSON.parse(error.config.data || "{}").email
+        : "";
+
+      if (errorName === "UnverifiedAccount" && onUnverified) {
+        onUnverified(email);
+        return;
+      }
       toast.error(message);
     },
   });
 };
+
 
 export const useSignUpMutation = (onSuccessCallback?: (email: string) => void) => {
   return useMutation({

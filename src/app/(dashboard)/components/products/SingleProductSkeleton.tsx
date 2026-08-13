@@ -18,7 +18,7 @@ const SingleProductSkeleton = () => {
         </div>
       </div>
 
-      <Card className="dark:bg-[#222327] mb-8 shadow-sm border-zinc-100 dark:border-zinc-800 rounded-2xl overflow-hidden">
+      <Card className="dark:bg-[#1a1b1e] mb-8 shadow-sm border-zinc-100 dark:border-zinc-800 rounded-2xl overflow-hidden">
         <CardContent className="p-6">
           <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
             {/* Product Images */}

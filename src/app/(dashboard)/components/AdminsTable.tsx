@@ -21,6 +21,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -38,79 +45,33 @@ import {
   Calendar,
   Search,
   Trash2,
-  Lock,
-  User,
   KeyRound,
   CheckCircle2,
+  Plus,
+  RefreshCw,
+  Eye,
 } from "lucide-react";
-import useUsers from "@/hooks/useUsers";
 import { formatDate } from "@/utils/helpers";
 import { toast } from "sonner";
-import { axiosInstance } from "@/lib/axios";
-
-export interface AdminUserItem {
-  _id: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  phoneNumber: string;
-  isSuperAdmin: boolean;
-  isAdmin: boolean;
-  roleTitle?: string;
-  is_verified: boolean;
-  createdAt: string;
-}
-
-const INITIAL_ADMINS: AdminUserItem[] = [
-  {
-    _id: "adm-1",
-    firstname: "John",
-    lastname: "Mason",
-    email: "john.mason@gosolar.ng",
-    phoneNumber: "+234 803 111 2233",
-    isSuperAdmin: true,
-    isAdmin: true,
-    roleTitle: "Lead Systems Architect",
-    is_verified: true,
-    createdAt: new Date("2024-01-15").toISOString(),
-  },
-  {
-    _id: "adm-2",
-    firstname: "Chidinma",
-    lastname: "Eze",
-    email: "c.eze@gosolar.ng",
-    phoneNumber: "+234 802 444 5566",
-    isSuperAdmin: false,
-    isAdmin: true,
-    roleTitle: "Store & Inventory Manager",
-    is_verified: true,
-    createdAt: new Date("2024-06-20").toISOString(),
-  },
-  {
-    _id: "adm-3",
-    firstname: "Babajide",
-    lastname: "Fashola",
-    email: "b.fashola@gosolar.ng",
-    phoneNumber: "+234 812 777 8899",
-    isSuperAdmin: false,
-    isAdmin: true,
-    roleTitle: "Customer Quotes Lead",
-    is_verified: true,
-    createdAt: new Date("2025-02-10").toISOString(),
-  },
-];
+import {
+  useAdminUsersQuery,
+  useCreateAccountMutation,
+  useUpdateUserRoleMutation,
+} from "@/hooks/queries/useUsersQuery";
+import UserDetails from "./UserDetails";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const AdminsTable = () => {
-  const { users, isLoading, refetch } = useUsers();
-  const [localAdmins, setLocalAdmins] = useState<AdminUserItem[]>(INITIAL_ADMINS);
+  const { data: admins = [], isLoading, refetch } = useAdminUsersQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
 
-  // Dialog states
+  // Dialog & Sheet states
   const [isInviteOpen, setIsInviteOpen] = useState(false);
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [activeAdmin, setActiveAdmin] = useState<AdminUserItem | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isRevokeOpen, setIsRevokeOpen] = useState(false);
+  const [targetRevokeAdmin, setTargetRevokeAdmin] = useState<any | null>(null);
 
   // Invite Form state
   const [inviteForm, setInviteForm] = useState({
@@ -118,46 +79,50 @@ export const AdminsTable = () => {
     lastname: "",
     email: "",
     phoneNumber: "",
-    roleType: "Store Admin",
+    roleType: "admin", // admin or superAdmin
     roleTitle: "Solar Technical Specialist",
     password: "",
   });
 
-  // Combine database admin users with local admins
-  const allAdmins = useMemo(() => {
-    const apiAdmins = users
-      .filter((u) => u.isAdmin || u.isSuperAdmin)
-      .map((u) => ({
-        _id: u._id,
-        firstname: u.firstname,
-        lastname: u.lastname,
-        email: u.email,
-        phoneNumber: u.phoneNumber || "+234 800 000 0000",
-        isSuperAdmin: u.isSuperAdmin,
-        isAdmin: u.isAdmin,
-        roleTitle: u.isSuperAdmin ? "Super Admin" : "Store Administrator",
-        is_verified: u.is_verified,
-        createdAt: new Date(u.createdAt).toISOString(),
-      }));
+  const createAdminMutation = useCreateAccountMutation({
+    onSuccess: () => {
+      setIsInviteOpen(false);
+      setInviteForm({
+        firstname: "",
+        lastname: "",
+        email: "",
+        phoneNumber: "",
+        roleType: "admin",
+        roleTitle: "Solar Technical Specialist",
+        password: "",
+      });
+      toast.success("Administrator account created successfully!");
+    },
+  });
 
-    const combined = [...localAdmins];
-    apiAdmins.forEach((apiAdm) => {
-      if (!combined.some((a) => a.email.toLowerCase() === apiAdm.email.toLowerCase())) {
-        combined.push(apiAdm);
-      }
-    });
+  const updateRoleMutation = useUpdateUserRoleMutation({
+    onSuccess: () => {
+      toast.success("Administrator privilege updated!");
+    },
+  });
 
-    return combined;
-  }, [users, localAdmins]);
+  const revokeMutation = useUpdateUserRoleMutation({
+    onSuccess: () => {
+      setIsRevokeOpen(false);
+      setTargetRevokeAdmin(null);
+      toast.success("Access revoked. Account demoted to customer.");
+    },
+  });
 
+  // Filter loaded admins list
   const filteredAdmins = useMemo(() => {
-    return allAdmins.filter((adm) => {
-      const q = searchTerm.toLowerCase();
+    return admins.filter((adm) => {
+      const q = searchTerm.toLowerCase().trim();
       const matchesSearch =
         adm.firstname.toLowerCase().includes(q) ||
         adm.lastname.toLowerCase().includes(q) ||
         adm.email.toLowerCase().includes(q) ||
-        adm.phoneNumber.includes(q);
+        (adm.phoneNumber && adm.phoneNumber.toLowerCase().includes(q));
 
       const matchesRole =
         roleFilter === "All"
@@ -168,53 +133,52 @@ export const AdminsTable = () => {
 
       return matchesSearch && matchesRole;
     });
-  }, [allAdmins, searchTerm, roleFilter]);
+  }, [admins, searchTerm, roleFilter]);
 
   const handleSaveInvite = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteForm.email || !inviteForm.firstname) {
-      toast.error("Please fill in admin details");
+    if (!inviteForm.firstname || !inviteForm.lastname || !inviteForm.email || !inviteForm.phoneNumber || !inviteForm.password) {
+      toast.error("Please fill in all administrator details");
       return;
     }
 
-    const isSuper = inviteForm.roleType === "Super Admin";
-    const newAdmin: AdminUserItem = {
-      _id: `adm-${Date.now()}`,
+    createAdminMutation.mutate({
       firstname: inviteForm.firstname,
       lastname: inviteForm.lastname,
       email: inviteForm.email,
-      phoneNumber: inviteForm.phoneNumber || "+234 800 000 0000",
-      isSuperAdmin: isSuper,
-      isAdmin: true,
-      roleTitle: inviteForm.roleTitle || inviteForm.roleType,
-      is_verified: true,
-      createdAt: new Date().toISOString(),
-    };
-
-    setLocalAdmins((prev) => [newAdmin, ...prev]);
-    setIsInviteOpen(false);
-    toast.success(`Administrator ${inviteForm.firstname} ${inviteForm.lastname} added!`);
+      phoneNumber: inviteForm.phoneNumber,
+      password: inviteForm.password,
+      role: inviteForm.roleType,
+      roleTitle: inviteForm.roleTitle,
+    });
   };
 
-  const handleToggleSuperAdmin = (admin: AdminUserItem) => {
-    const updatedStatus = !admin.isSuperAdmin;
-    setLocalAdmins((prev) =>
-      prev.map((a) =>
-        a._id === admin._id ? { ...a, isSuperAdmin: updatedStatus } : a
-      )
-    );
-    toast.success(
-      updatedStatus
-        ? `${admin.firstname} elevated to Super Admin`
-        : `${admin.firstname} set to Store Admin`
-    );
+  const handleToggleSuperAdmin = (admin: any) => {
+    const nextSuper = !admin.isSuperAdmin;
+    updateRoleMutation.mutate({
+      userid: admin._id,
+      payload: {
+        isSuperAdmin: nextSuper,
+        // Make sure it remains admin
+        isAdmin: true,
+      },
+    });
   };
 
-  const handleDelete = () => {
-    if (!activeAdmin) return;
-    setLocalAdmins((prev) => prev.filter((a) => a._id !== activeAdmin._id));
-    setIsDeleteOpen(false);
-    toast.success(`Revoked administrative access for ${activeAdmin.firstname}`);
+  const handleConfirmRevoke = () => {
+    if (!targetRevokeAdmin) return;
+    revokeMutation.mutate({
+      userid: targetRevokeAdmin._id,
+      payload: {
+        isAdmin: false,
+        isSuperAdmin: false,
+      },
+    });
+  };
+
+  const handleOpenDetails = (id: string) => {
+    setSelectedUserId(id);
+    setIsDetailsOpen(true);
   };
 
   return (
@@ -224,28 +188,40 @@ export const AdminsTable = () => {
         <div>
           <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
-            Administrators & Staff Management
+            Administrator Directory
           </h2>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-            Manage store administrators, privilege levels, and system permissions.
+            Manage administrative staff, permissions, and security roles.
           </p>
         </div>
 
-        <Button
-          onClick={() => setIsInviteOpen(true)}
-          className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
-        >
-          <UserPlus className="h-4 w-4" />
-          Add Administrator
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 h-9 rounded-lg text-xs"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+
+          <Button
+            onClick={() => setIsInviteOpen(true)}
+            className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
+          >
+            <Plus className="h-4 w-4" />
+            Add Administrator
+          </Button>
+        </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white dark:bg-[#1a1b1e] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400" />
+      {/* Filters Bar */}
+      <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch bg-white dark:bg-[#1a1b1e] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
           <Input
-            placeholder="Search admins by name, email, phone..."
+            placeholder="Search administrators..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9 h-9 text-xs bg-zinc-50/50 dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 rounded-lg"
@@ -259,7 +235,7 @@ export const AdminsTable = () => {
             onChange={(e) => setRoleFilter(e.target.value)}
             className="h-9 px-2.5 bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold text-zinc-700 dark:text-zinc-300 outline-none"
           >
-            <option value="All">All Privileges ({allAdmins.length})</option>
+            <option value="All">All Privileges ({admins.length})</option>
             <option value="Super Admin">Super Admins</option>
             <option value="Store Admin">Store Admins</option>
           </select>
@@ -276,13 +252,23 @@ export const AdminsTable = () => {
               <TableHead className="font-semibold text-zinc-500 h-10">Assigned Privilege</TableHead>
               <TableHead className="font-semibold text-zinc-500 h-10">Status</TableHead>
               <TableHead className="font-semibold text-zinc-500 h-10">Date Appointed</TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10">Last Login</TableHead>
               <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAdmins.length === 0 ? (
+            {isLoading ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-12 text-sm text-zinc-400">
+                <TableCell colSpan={7} className="h-32">
+                  <div className="space-y-2 flex flex-col justify-center items-center py-8">
+                    <Skeleton className="h-5 w-4/5" />
+                    <Skeleton className="h-5 w-3/5" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : filteredAdmins.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-12 text-sm text-zinc-400">
                   No administrators found.
                 </TableCell>
               </TableRow>
@@ -302,9 +288,12 @@ export const AdminsTable = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-bold text-zinc-900 dark:text-white text-sm">
+                        <span 
+                          onClick={() => handleOpenDetails(adm._id)}
+                          className="font-bold text-zinc-900 dark:text-white text-sm cursor-pointer hover:text-primary transition-colors"
+                        >
                           {adm.firstname} {adm.lastname}
-                        </p>
+                        </span>
                         <p className="text-xs text-zinc-400">{adm.roleTitle || "Store Admin"}</p>
                       </div>
                     </div>
@@ -319,7 +308,7 @@ export const AdminsTable = () => {
                       </div>
                       <div className="flex items-center gap-1.5 text-zinc-400">
                         <Phone className="h-3 w-3 text-zinc-400" />
-                        <span>{adm.phoneNumber}</span>
+                        <span>{adm.phoneNumber || "-"}</span>
                       </div>
                     </div>
                   </TableCell>
@@ -352,6 +341,11 @@ export const AdminsTable = () => {
                     {formatDate(adm.createdAt)}
                   </TableCell>
 
+                  {/* Last Login */}
+                  <TableCell className="text-xs text-zinc-500 font-medium">
+                    {adm.lastLogin ? formatDate(adm.lastLogin) : "Never logged in"}
+                  </TableCell>
+
                   {/* Actions */}
                   <TableCell className="text-right px-4">
                     <DropdownMenu>
@@ -362,15 +356,19 @@ export const AdminsTable = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48 text-xs">
                         <DropdownMenuLabel>Permissions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => handleToggleSuperAdmin(adm)} className="cursor-pointer">
+                        <DropdownMenuItem onClick={() => handleOpenDetails(adm._id)} className="cursor-pointer">
+                          <Eye className="h-4 w-4 mr-2 text-zinc-500" />
+                          <span>View Details</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleToggleSuperAdmin(adm)} className="cursor-pointer" disabled={updateRoleMutation.isPending}>
                           <KeyRound className="h-4 w-4 mr-2 text-primary" />
                           <span>{adm.isSuperAdmin ? "Demote to Admin" : "Promote to Super Admin"}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => {
-                            setActiveAdmin(adm);
-                            setIsDeleteOpen(true);
+                            setTargetRevokeAdmin(adm);
+                            setIsRevokeOpen(true);
                           }}
                           className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20"
                         >
@@ -387,7 +385,27 @@ export const AdminsTable = () => {
         </Table>
       </div>
 
-      {/* INVITE / ADD ADMIN MODAL */}
+      {/* DETAILS SLIDING SIDE SHEET */}
+      <Sheet open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <SheetContent className="sm:max-w-md w-full overflow-y-auto border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#1a1b1e] p-6">
+          <SheetHeader className="border-b border-zinc-100 dark:border-zinc-800/80 pb-4 mb-4">
+            <SheetTitle className="text-lg font-extrabold text-zinc-950 dark:text-white">
+              Administrator Profile Details
+            </SheetTitle>
+            <SheetDescription className="text-xs text-zinc-500">
+              Assigned system role attributes, privileges, and verification audits.
+            </SheetDescription>
+          </SheetHeader>
+
+          {selectedUserId && (
+            <div className="py-2">
+              <UserDetails id={selectedUserId} />
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* CREATE ADMIN DIALOG */}
       <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
         <DialogContent className="max-w-md bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800">
           <DialogHeader>
@@ -415,7 +433,7 @@ export const AdminsTable = () => {
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Last Name</label>
                 <Input
-                  placeholder="e.g. Nwachukwu"
+                  placeholder="e.g. Okoye"
                   value={inviteForm.lastname}
                   onChange={(e) => setInviteForm({ ...inviteForm, lastname: e.target.value })}
                   required
@@ -425,7 +443,7 @@ export const AdminsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Official Email</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Email Address</label>
               <Input
                 type="email"
                 placeholder="staff@gosolar.ng"
@@ -436,35 +454,49 @@ export const AdminsTable = () => {
               />
             </div>
 
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Phone Number</label>
+              <Input
+                placeholder="e.g. +234 803 111 2222"
+                value={inviteForm.phoneNumber}
+                onChange={(e) => setInviteForm({ ...inviteForm, phoneNumber: e.target.value })}
+                required
+                className="h-9 text-xs"
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Phone</label>
-                <Input
-                  placeholder="+234 800 000 0000"
-                  value={inviteForm.phoneNumber}
-                  onChange={(e) => setInviteForm({ ...inviteForm, phoneNumber: e.target.value })}
-                  className="h-9 text-xs"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Privilege Tier</label>
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Privilege</label>
                 <select
                   value={inviteForm.roleType}
                   onChange={(e) => setInviteForm({ ...inviteForm, roleType: e.target.value })}
-                  className="w-full h-9 px-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900 text-xs font-semibold"
+                  className="w-full h-9 px-2 bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold outline-none"
                 >
-                  <option value="Store Admin">Store Administrator</option>
-                  <option value="Super Admin">Super Administrator</option>
+                  <option value="admin">Store Admin</option>
+                  <option value="superAdmin">Super Admin</option>
                 </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Role Title</label>
+                <Input
+                  placeholder="e.g. Inventory Lead"
+                  value={inviteForm.roleTitle}
+                  onChange={(e) => setInviteForm({ ...inviteForm, roleTitle: e.target.value })}
+                  required
+                  className="h-9 text-xs"
+                />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Job Title / Designation</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">System Password</label>
               <Input
-                placeholder="e.g. Solar Technical Engineer"
-                value={inviteForm.roleTitle}
-                onChange={(e) => setInviteForm({ ...inviteForm, roleTitle: e.target.value })}
+                type="password"
+                placeholder="Minimum 6 characters"
+                value={inviteForm.password}
+                onChange={(e) => setInviteForm({ ...inviteForm, password: e.target.value })}
+                required
                 className="h-9 text-xs"
               />
             </div>
@@ -473,31 +505,40 @@ export const AdminsTable = () => {
               <Button type="button" variant="ghost" size="sm" onClick={() => setIsInviteOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" size="sm" className="bg-primary hover:bg-primary/90 text-white font-bold">
-                Create Admin Account
+              <Button type="submit" size="sm" className="bg-primary hover:bg-primary/90 text-white font-bold" disabled={createAdminMutation.isPending}>
+                {createAdminMutation.isPending ? "Creating..." : "Save Administrator"}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* REVOKE ACCESS MODAL */}
-      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+      {/* CONFIRM ACCESS REVOCATION */}
+      <Dialog open={isRevokeOpen} onOpenChange={setIsRevokeOpen}>
         <DialogContent className="max-w-sm bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-zinc-900 dark:text-white">
-              Revoke Administrator Access
+              Confirm Revocation
             </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-500 mt-2">
-              Are you sure you want to revoke administrative permissions for <b>{activeAdmin?.firstname} {activeAdmin?.lastname}</b>?
+            <DialogDescription className="text-xs text-zinc-500">
+              Are you sure you want to revoke administrative access for{" "}
+              <strong className="text-zinc-800 dark:text-white">
+                {targetRevokeAdmin?.firstname} {targetRevokeAdmin?.lastname}
+              </strong>
+              ? They will be demoted to a regular customer profile.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="mt-4 flex gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setIsDeleteOpen(false)}>
+          <DialogFooter className="pt-2 gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setIsRevokeOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleDelete}>
-              Confirm Revocation
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleConfirmRevoke}
+              disabled={revokeMutation.isPending}
+            >
+              {revokeMutation.isPending ? "Revoking..." : "Revoke Access"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -505,5 +546,3 @@ export const AdminsTable = () => {
     </div>
   );
 };
-
-export default AdminsTable;

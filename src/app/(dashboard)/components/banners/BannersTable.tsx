@@ -106,13 +106,14 @@ const BannersTable = () => {
         </AppModal>
       )}
 
-      {/* Action Header */}
-      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white dark:bg-[#222327] p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-xs">
+      {/* Top Action Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-zinc-950 dark:text-white">
-            Storefront Banners ({banners.length})
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            Storefront Banners
           </h2>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             Manage the hero promotional carousel slides on the customer shop page.
           </p>
         </div>
@@ -122,7 +123,7 @@ const BannersTable = () => {
             variant="outline"
             size="sm"
             onClick={() => refetch()}
-            className="gap-2 border-zinc-200 dark:border-zinc-800 text-xs"
+            className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 h-9 rounded-lg text-xs"
           >
             <RefreshCw className="h-4 w-4" />
             Refresh
@@ -130,7 +131,7 @@ const BannersTable = () => {
 
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs gap-2 rounded-xl h-10 px-4 shadow-sm"
+            className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
           >
             <Plus className="h-4 w-4" />
             Add Banner
@@ -144,7 +145,7 @@ const BannersTable = () => {
           {[...Array(2)].map((_, i) => (
             <Card
               key={i}
-              className="overflow-hidden border-zinc-150 dark:border-zinc-800 dark:bg-[#222327]"
+              className="overflow-hidden border-zinc-150 dark:border-zinc-800 dark:bg-[#1a1b1e]"
             >
               <Skeleton className="w-full aspect-[21/9]" />
               <CardContent className="p-4 space-y-3">
@@ -155,7 +156,7 @@ const BannersTable = () => {
           ))}
         </div>
       ) : banners.length === 0 ? (
-        <Card className="border-dashed border-2 border-zinc-200 dark:border-zinc-800 dark:bg-[#222327]/40">
+        <Card className="border-dashed border-2 border-zinc-200 dark:border-zinc-800 dark:bg-[#1a1b1e]/40">
           <CardContent className="p-12 text-center space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-[#08AA08]/10 text-[#08AA08] flex items-center justify-center mx-auto">
               <Sparkles className="h-6 w-6" />
@@ -183,7 +184,7 @@ const BannersTable = () => {
           {banners.map((banner) => (
             <Card
               key={banner._id}
-              className="overflow-hidden border border-zinc-150 dark:border-zinc-800 bg-white dark:bg-[#222327] shadow-xs group"
+              className="overflow-hidden border border-zinc-150 dark:border-zinc-800 bg-white dark:bg-[#1a1b1e] shadow-xs group"
             >
               {/* Visual Banner Preview */}
               <div className="relative w-full aspect-[21/9] bg-zinc-950 overflow-hidden">

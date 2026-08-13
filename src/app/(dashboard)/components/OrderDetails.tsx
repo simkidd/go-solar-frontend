@@ -39,7 +39,7 @@ const OrderDetails: React.FC<{
   return (
     <div className="space-y-6">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white dark:bg-[#222327] p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white dark:bg-[#1a1b1e] p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
         <div>
           <h3 className="text-xl font-bold text-zinc-950 dark:text-white flex items-center gap-2">
             Order ID: <span className="font-mono text-lg text-primary">#{order?.trackingId?.tracking_id}</span>
@@ -56,7 +56,7 @@ const OrderDetails: React.FC<{
       </div>
 
       {/* Ordered Items Layout */}
-      <Card className="bg-white dark:bg-[#222327] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
+      <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
         <CardHeader className="pb-4 border-b border-zinc-100 dark:border-zinc-800/80">
           <CardTitle className="text-base font-bold dark:text-white">
             Ordered Items ({order?.products.length})
@@ -105,7 +105,7 @@ const OrderDetails: React.FC<{
       {/* Details Cards Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Customer Address Card */}
-        <Card className="bg-white dark:bg-[#222327] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
+        <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
           <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/80">
             <CardTitle className="text-sm font-bold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
               <MapPin className="h-4 w-4 text-primary" />
@@ -146,7 +146,7 @@ const OrderDetails: React.FC<{
         </Card>
 
         {/* Payment Summary Card */}
-        <Card className="bg-white dark:bg-[#222327] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
+        <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
           <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/80">
             <CardTitle className="text-sm font-bold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
               <CreditCard className="h-4 w-4 text-primary" />
@@ -177,7 +177,7 @@ const OrderDetails: React.FC<{
         </Card>
 
         {/* Tracking Status Form Card */}
-        <Card className="bg-white dark:bg-[#222327] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
+        <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
           <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/80">
             <CardTitle className="text-sm font-bold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
               <PackageCheck className="h-4 w-4 text-primary" />

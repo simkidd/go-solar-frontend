@@ -8,13 +8,31 @@ export const ORDER_KEYS = {
   detail: (id: string) => [...ORDER_KEYS.all, "detail", id] as const,
 };
 
-// Fetch all orders (admin)
-export const useAllOrdersQuery = () => {
-  return useQuery({
-    queryKey: ORDER_KEYS.lists(),
+export interface PaginatedOrdersResponse {
+  orders: any[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+  };
+}
+
+// Fetch all orders (admin) with pagination
+export const useAllOrdersQuery = (params?: { page?: number; limit?: number }) => {
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 10;
+
+  return useQuery<PaginatedOrdersResponse>({
+    queryKey: [...ORDER_KEYS.lists(), page, limit],
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/admin/all-orders");
-      return data?.orders || [];
+      const { data } = await axiosInstance.get("/admin/all-orders", {
+        params: { page, limit },
+      });
+      return {
+        orders: data?.orders || [],
+        pagination: data?.pagination || { total: 0, page, limit, pages: 1 },
+      };
     },
   });
 };

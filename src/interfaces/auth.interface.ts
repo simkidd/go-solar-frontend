@@ -21,6 +21,8 @@ export interface User {
   isSuperAdmin: boolean;
   isAdmin: boolean;
   is_verified: boolean;
+  roleTitle?: string;
+  lastLogin?: string | Date;
   createdAt: Date;
   updatedAt: Date;
   token?: string;

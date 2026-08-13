@@ -65,7 +65,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
         </div>
       </div>
 
-      <Card className="dark:bg-[#222327] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
+      <Card className="dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
         <CardContent className="p-6">
           <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
             {/* Product Images */}

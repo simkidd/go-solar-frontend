@@ -26,7 +26,7 @@ const OfferProducts: React.FC<{
   return (
     <div className="w-full space-y-6">
       {/* Header Info */}
-      <div className="bg-white dark:bg-[#222327] p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="bg-white dark:bg-[#1a1b1e] p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-xl font-bold text-zinc-950 dark:text-white">{offer?.name}</h1>
           <p className="text-sm text-zinc-500 mt-1">{offer?.description}</p>
@@ -51,7 +51,7 @@ const OfferProducts: React.FC<{
           <Skeleton className="h-20 w-full rounded-lg" />
         </div>
       ) : filteredProducts && filteredProducts.length > 0 ? (
-        <div className="bg-white dark:bg-[#222327] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-[#1a1b1e] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="bg-zinc-50/50 dark:bg-zinc-900/20 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-800">
@@ -98,7 +98,7 @@ const OfferProducts: React.FC<{
           </Table>
         </div>
       ) : (
-        <div className="bg-white dark:bg-[#222327] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm p-12 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="bg-white dark:bg-[#1a1b1e] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm p-12 text-center text-sm text-zinc-500 dark:text-zinc-400">
           No products found for this offer.
         </div>
       )}

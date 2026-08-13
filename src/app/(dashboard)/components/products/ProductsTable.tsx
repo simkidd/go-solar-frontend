@@ -43,21 +43,23 @@ import {
   Search,
   Trash,
   Settings2,
+  Package,
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import CreateProductButton from "./CreateProductButton";
 
 const columns = [
-  { name: "Product", uid: "name", sortable: true },
-  { name: "Price", uid: "price", sortable: true },
-  { name: "Discount", uid: "discount", sortable: true },
+  { name: "Product", uid: "name" },
+  { name: "Price", uid: "price" },
+  { name: "Discount", uid: "discount" },
   { name: "Quantity", uid: "quantity" },
   { name: "Offer", uid: "offer" },
   { name: "Category", uid: "category" },
   { name: "Brand", uid: "brand" },
-  { name: "Status", uid: "status", sortable: true },
-  { name: "Date added", uid: "dateAdded", sortable: true },
+  { name: "Status", uid: "status" },
+  { name: "Date added", uid: "dateAdded" },
   { name: "Actions", uid: "actions" },
 ];
 
@@ -245,7 +247,7 @@ const ProductsTable = () => {
     <div className="w-full space-y-4">
       {/* Delete confirmation dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[425px] dark:bg-[#222327] dark:border-zinc-800">
+        <DialogContent className="sm:max-w-[425px] dark:bg-[#1a1b1e] dark:border-zinc-800">
           <DialogHeader>
             <DialogTitle className="dark:text-white">Delete Product</DialogTitle>
             <DialogDescription className="text-zinc-500 dark:text-zinc-400 mt-2">
@@ -263,21 +265,35 @@ const ProductsTable = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Top action block */}
-      <div className="flex justify-end items-center">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-          className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </Button>
+      {/* Top Action Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <Package className="h-5 w-5 text-primary" />
+            Product Inventory
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            Manage storefront products, brand listings, pricing levels, and quantity stock levels.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 h-9 rounded-lg text-xs"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+
+          <CreateProductButton />
+        </div>
       </div>
 
       {/* Search & Filters */}
-      <div className="flex flex-col gap-4 bg-white dark:bg-[#222327] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+      <div className="flex flex-col gap-4 bg-white dark:bg-[#1a1b1e] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
         <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
@@ -328,29 +344,6 @@ const ProductsTable = () => {
                 <DropdownMenuItem onClick={() => onPublishFilterChange("draft")}>Draft</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* Columns visibility toggle */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 border-zinc-200 dark:border-zinc-800">
-                  <Settings2 className="h-4 w-4 text-zinc-400" />
-                  Columns
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {columns.map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.uid}
-                    checked={visibleColumns.has(column.uid)}
-                    onCheckedChange={() => toggleColumnVisibility(column.uid)}
-                  >
-                    {column.name}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
 
@@ -364,34 +357,26 @@ const ProductsTable = () => {
               value={rowsPerPage}
               onChange={onRowsPerPageChange}
             >
-              <option value="5" className="dark:bg-[#222327]">5</option>
-              <option value="10" className="dark:bg-[#222327]">10</option>
-              <option value="15" className="dark:bg-[#222327]">15</option>
-              <option value="20" className="dark:bg-[#222327]">20</option>
+              <option value="5" className="dark:bg-[#1a1b1e]">5</option>
+              <option value="10" className="dark:bg-[#1a1b1e]">10</option>
+              <option value="15" className="dark:bg-[#1a1b1e]">15</option>
+              <option value="20" className="dark:bg-[#1a1b1e]">20</option>
             </select>
           </div>
         </div>
       </div>
 
       {/* Main Table */}
-      <div className="bg-white dark:bg-[#222327] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-[#1a1b1e] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-zinc-50/50 dark:bg-zinc-900/20 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-800">
               {headerColumns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  onClick={() => col.sortable && handleSort(col.uid)}
-                  className={`font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs select-none ${
-                    col.sortable ? "cursor-pointer hover:text-zinc-800 dark:hover:text-white" : ""
-                  } ${col.uid === "actions" ? "text-right" : ""}`}
+                  className={`font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs select-none ${col.uid === "actions" ? "text-right" : ""}`}
                 >
-                  <div className="flex items-center gap-1">
-                    {col.name}
-                    {col.sortable && sortColumn === col.uid && (
-                      <span className="text-[10px] text-zinc-400">{sortDirection === "asc" ? "▲" : "▼"}</span>
-                    )}
-                  </div>
+                  {col.name}
                 </TableHead>
               ))}
             </TableRow>

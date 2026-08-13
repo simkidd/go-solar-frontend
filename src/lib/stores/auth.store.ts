@@ -2,6 +2,7 @@ import { User } from "@/interfaces/auth.interface";
 import { create } from "zustand";
 import Cookies from "js-cookie";
 import { REFRESH_TOKEN_NAME, TOKEN_NAME, USER_DETAILS } from "@/utils/constants";
+import { axiosInstance } from "@/lib/axios";
 
 interface IAuthStore {
   user: User | undefined;
@@ -25,6 +26,14 @@ export const useAuthStore = create<IAuthStore>((set) => ({
   setShowSidebar: (showSidebar: boolean) => set({ showSidebar }),
   setCollapsed: (collapsed: boolean) => set({ collapsed }),
   logout: () => {
+    const refreshToken = Cookies.get(REFRESH_TOKEN_NAME);
+    if (refreshToken) {
+      axiosInstance
+        .post("/auth/logout", { refreshToken })
+        .catch(() => {
+          // Fail silently; client is logged out locally regardless
+        });
+    }
     Cookies.remove(TOKEN_NAME);
     Cookies.remove(REFRESH_TOKEN_NAME);
     Cookies.remove(USER_DETAILS);

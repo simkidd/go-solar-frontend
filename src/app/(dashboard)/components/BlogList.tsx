@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Search } from "lucide-react";
+import { RefreshCw, Search, FileText } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import CreatePostButton from "./CreatePostButton";
 
 const BlogList = () => {
   const { data: posts = [], isLoading: loading, refetch } = useBlogPostsQuery();
@@ -58,7 +59,34 @@ const BlogList = () => {
   };
 
   return (
-    <div className="w-full space-y-4">
+    <div className="space-y-6 font-inter">
+      {/* Top Action Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" />
+            Blog Editorial Manager
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            Create, moderate, and publish verified client educational articles and announcements.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 h-9 rounded-lg text-xs"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+
+          <CreatePostButton />
+        </div>
+      </div>
+
       {/* Search Header */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
         <div className="relative flex-1 max-w-md">
@@ -67,25 +95,15 @@ const BlogList = () => {
             placeholder="Search posts..."
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
-            className="pl-9 bg-white dark:bg-[#222327]/40 border-zinc-200 dark:border-zinc-800"
+            className="pl-9 bg-white dark:bg-[#1a1b1e]/40 border-zinc-200 dark:border-zinc-800 h-9 text-xs rounded-lg"
           />
         </div>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-          className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </Button>
       </div>
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <Card key={i} className="dark:bg-[#222327] border-zinc-100 dark:border-zinc-800">
+            <Card key={i} className="dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800">
               <CardContent className="p-4 space-y-3">
                 <Skeleton className="h-48 w-full rounded-xl" />
                 <Skeleton className="h-5 w-3/4 rounded" />
@@ -95,7 +113,7 @@ const BlogList = () => {
           ))}
         </div>
       ) : paginatedPosts?.length === 0 ? (
-        <Card className="dark:bg-[#222327] border-zinc-100 dark:border-zinc-800">
+        <Card className="dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800">
           <CardContent className="p-12 text-center text-sm text-zinc-500 dark:text-zinc-400">
             No posts found
           </CardContent>

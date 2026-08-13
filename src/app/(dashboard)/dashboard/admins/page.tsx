@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AdminsTable from "../../components/AdminsTable";
+import { AdminsTable } from "../../components/AdminsTable";
 
 export const metadata: Metadata = {
   title: "Administrators & Staff | GoSolar Admin",
