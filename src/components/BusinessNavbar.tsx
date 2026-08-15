@@ -9,13 +9,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const BusinessNavbar = () => {
   const { isAuthenticated, user, logout } = useSession();
   const pathname = usePathname();
   const [showMenu, setShowMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [showUserDropdown, setShowUserDropdown] = useState(false);
 
   const toggleShowMenu = () => {
     setShowMenu(!showMenu);
@@ -97,11 +103,11 @@ const BusinessNavbar = () => {
             : "py-4 bg-background"
         }`}
       >
-        <div className="container mx-auto px-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 flex items-center justify-between relative">
           {/* Animated Hamburger Toggle Button (Mobile) */}
           <button
             onClick={toggleShowMenu}
-            className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors text-foreground flex items-center justify-center h-10 w-10 z-50 cursor-pointer"
+            className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors text-foreground flex items-center justify-center h-10 w-10 z-50 cursor-pointer absolute left-4 top-1/2 -translate-y-1/2"
             aria-label="Toggle Menu"
           >
             <div className="w-5 h-4 flex flex-col justify-between items-center relative">
@@ -128,7 +134,7 @@ const BusinessNavbar = () => {
           </button>
 
           {/* Logo brand */}
-          <Link href="/" className="flex items-center gap-2 select-none group">
+          <Link href="/" className="flex items-center gap-2 select-none group mx-auto lg:mx-0 z-10">
             <Image
               src={LogoIcon}
               alt="logo"
@@ -169,7 +175,7 @@ const BusinessNavbar = () => {
           </nav>
 
           {/* Action CTAs & Auth Dropdown */}
-          <div className="flex items-center gap-3 relative">
+          <div className="flex items-center gap-3 absolute right-4 top-1/2 -translate-y-1/2 lg:static lg:translate-y-0">
             <Link href="/shop" className="hidden sm:inline-block">
               <Button
                 variant="outline"
@@ -191,65 +197,50 @@ const BusinessNavbar = () => {
 
             <div className="hidden lg:block">
               {isAuthenticated ? (
-                <div className="relative">
-                  <button
-                    onClick={() => setShowUserDropdown(!showUserDropdown)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted text-foreground transition-colors cursor-pointer select-none"
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted text-foreground transition-colors cursor-pointer select-none focus:outline-none">
+                      <div className="h-7 w-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-extrabold text-xs">
+                        {user?.firstname
+                          ? user.firstname[0].toUpperCase()
+                          : "U"}
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-wider hidden xl:inline">
+                        {user?.firstname}
+                      </span>
+                      <ChevronDown className="h-3 w-3 text-muted-foreground transition-transform duration-200" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-44 p-2 rounded-2xl bg-card border border-border shadow-xl font-inter tracking-wider font-semibold text-muted-foreground select-none"
                   >
-                    <div className="h-7 w-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-extrabold text-xs">
-                      {user?.firstname ? user.firstname[0].toUpperCase() : "U"}
-                    </div>
-                    <span className="text-[10px] font-black uppercase tracking-wider hidden xl:inline">
-                      {user?.firstname}
-                    </span>
-                    <ChevronDown
-                      className={`h-3 w-3 text-muted-foreground transition-transform duration-200 ${showUserDropdown ? "rotate-180" : ""}`}
-                    />
-                  </button>
-
-                  <AnimatePresence>
-                    {showUserDropdown && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40"
-                          onClick={() => setShowUserDropdown(false)}
-                        />
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          className="absolute right-0 mt-2 w-44 bg-card border border-border rounded-2xl shadow-xl z-50 p-2 font-inter text-[10px] uppercase tracking-wider font-extrabold text-muted-foreground select-none"
+                    {(user?.isAdmin || user?.isSuperAdmin) && (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/dashboard"
+                          className="w-full block px-4 py-2.5 hover:bg-muted hover:text-foreground rounded-xl transition-colors cursor-pointer text-xs"
                         >
-                          {(user?.isAdmin || user?.isSuperAdmin) && (
-                            <Link
-                              href="/dashboard"
-                              onClick={() => setShowUserDropdown(false)}
-                              className="block px-4 py-2.5 hover:bg-muted hover:text-foreground rounded-xl transition-colors"
-                            >
-                              Dashboard
-                            </Link>
-                          )}
-                          <Link
-                            href="/account/profile"
-                            onClick={() => setShowUserDropdown(false)}
-                            className="block px-4 py-2.5 hover:bg-muted hover:text-foreground rounded-xl transition-colors"
-                          >
-                            My Profile
-                          </Link>
-                          <button
-                            onClick={() => {
-                              setShowUserDropdown(false);
-                              logout();
-                            }}
-                            className="w-full text-left px-4 py-2.5 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-500 rounded-xl transition-colors cursor-pointer"
-                          >
-                            Logout
-                          </button>
-                        </motion.div>
-                      </>
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
                     )}
-                  </AnimatePresence>
-                </div>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/account/profile"
+                        className="w-full block px-4 py-2.5 hover:bg-muted hover:text-foreground rounded-xl transition-colors cursor-pointer text-xs"
+                      >
+                        My Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => logout()}
+                      className="w-full text-left px-4 py-2.5 text-rose-500 focus:text-rose-650 dark:focus:text-rose-400 focus:bg-rose-50 dark:focus:bg-rose-950/20 rounded-xl transition-colors cursor-pointer text-xs"
+                    >
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
                 <Link
                   href="/auth/login"
@@ -282,32 +273,27 @@ const BusinessNavbar = () => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 220 }}
-              className="relative w-4/5 max-w-sm bg-card text-card-foreground border-r border-border h-full p-6 flex flex-col justify-between shadow-2xl"
+              className="relative w-4/5 max-w-sm bg-card text-card-foreground border-r border-border h-full py-6 flex flex-col justify-between shadow-2xl overflow-hidden"
             >
-              <div>
-                {/* Drawer Header */}
-                <div className="flex items-center justify-between mb-8 select-none">
-                  <Link
-                    href="/"
-                    className="flex items-center gap-2"
-                    onClick={toggleShowMenu}
-                  >
-                    <Image src={LogoIcon} alt="logo" width={32} height={32} />
-                    <span className="font-extrabold text-lg text-foreground">
-                      Go<span className="text-primary">Solar</span>
-                    </span>
-                  </Link>
-                  <button
-                    onClick={toggleShowMenu}
-                    className="p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
+              {/* Drawer Header (Fixed) */}
+              <div className="flex items-center mb-6 select-none pl-16 pr-6">
+                <Link
+                  href="/"
+                  className="flex items-center gap-2"
+                  onClick={toggleShowMenu}
+                >
+                  <Image src={LogoIcon} alt="logo" width={32} height={32} />
+                  <span className="font-extrabold text-lg tracking-tight text-foreground">
+                    Go<span className="text-primary">Solar</span>
+                  </span>
+                </Link>
+              </div>
 
+              {/* Scrollable links list */}
+              <ScrollArea className="flex-1 my-4">
                 {/* User Profile Info on Mobile */}
                 {isAuthenticated && (
-                  <div className="p-4 bg-muted border border-border rounded-2xl mb-6 flex items-center gap-3">
+                  <div className="p-4 bg-muted border border-border rounded-2xl mb-6 flex items-center gap-3 mx-6">
                     <div className="h-9 w-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm">
                       {user?.firstname ? user.firstname[0].toUpperCase() : "U"}
                     </div>
@@ -323,7 +309,7 @@ const BusinessNavbar = () => {
                 )}
 
                 {/* Navigation Links */}
-                <div className="space-y-1">
+                <div className="space-y-1 px-6">
                   {navLinks.map((link, idx) => {
                     const active = isActive(link.href);
                     return (
@@ -411,10 +397,10 @@ const BusinessNavbar = () => {
                     </motion.div>
                   )}
                 </div>
-              </div>
+              </ScrollArea>
 
               {/* Drawer Bottom CTAs */}
-              <div className="space-y-3 pt-6 border-t border-border">
+              <div className="space-y-3 pt-4 border-t border-border px-6">
                 <Link
                   href="/shop"
                   onClick={toggleShowMenu}
