@@ -146,3 +146,37 @@ export const useResendVerificationMutation = () => {
     },
   });
 };
+
+export const useUpdateProfileMutation = (options?: { onSuccess?: (data: any) => void }) => {
+  return useMutation({
+    mutationFn: async (payload: { firstname: string; lastname: string; phoneNumber?: string }) => {
+      const { data } = await axiosInstance.put("/auth/update-profile", payload);
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message || "Profile details updated successfully!");
+      options?.onSuccess?.(data);
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || "Failed to update profile";
+      toast.error(message);
+    },
+  });
+};
+
+export const useChangePasswordMutation = (options?: { onSuccess?: () => void }) => {
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const { data } = await axiosInstance.put("/auth/change-password", payload);
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message || "Password changed successfully!");
+      options?.onSuccess?.();
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || "Failed to change password";
+      toast.error(message);
+    },
+  });
+};

@@ -23,7 +23,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import CartSheet from "@/app/(ecommerce)/components/shop/CartSheet";
-import { ThemeSwitcher } from "./ThemeSwitcher";
 import SearchModal from "./SearchModal";
 
 const EcommerceNavbar = () => {
@@ -101,9 +100,6 @@ const EcommerceNavbar = () => {
             >
               <Search className="h-4 w-4 text-zinc-600 dark:text-zinc-300" />
             </Button>
-
-            {/* Theme Toggle */}
-            <ThemeSwitcher />
 
             {/* Wishlist */}
             <Button
