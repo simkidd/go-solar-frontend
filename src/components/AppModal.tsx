@@ -6,14 +6,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface MProps {
   children: React.ReactNode;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full" | string;
-  scrollBehavior?: "normal" | "inside" | string;
+  size?:
+    | "xs"
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | "4xl"
+    | "5xl"
+    | "full";
+  scrollBehavior?: "normal" | "inside";
   isDismissable?: boolean;
   hideCloseButton?: boolean;
 }
@@ -45,32 +56,27 @@ const AppModal: React.FC<MProps> = ({
   const maxWidthClass = sizeClasses[size] || "max-w-md";
 
   return (
-    <Dialog 
-      open={isOpen} 
-      onOpenChange={onOpenChange}
-    >
-      <DialogContent 
-        className={`${maxWidthClass} w-full dark:bg-[#222327] dark:border-zinc-800 p-6 flex flex-col`}
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent
+        className={`${maxWidthClass} w-full dark:bg-[#222327] dark:border-zinc-800 flex p-0 flex-col`}
         onPointerDownOutside={(e) => {
           if (!isDismissable) {
             e.preventDefault();
           }
         }}
       >
-        <DialogHeader className="pb-2">
+        <DialogHeader className=" p-6 pb-2">
           <DialogTitle className="text-xl font-bold dark:text-white leading-none">
             {title}
           </DialogTitle>
         </DialogHeader>
-        <div 
-          className={`flex-1 pr-1 ${
-            scrollBehavior === "inside" 
-              ? "overflow-y-auto max-h-[70vh] scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800" 
-              : ""
-          }`}
-        >
-          {children}
-        </div>
+        {scrollBehavior === "inside" ? (
+          <ScrollArea className="flex-1 max-h-[80vh] px-6 pb-4">
+            {children}
+          </ScrollArea>
+        ) : (
+          <div className="flex-1">{children}</div>
+        )}
       </DialogContent>
     </Dialog>
   );

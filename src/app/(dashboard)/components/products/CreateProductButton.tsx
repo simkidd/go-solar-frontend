@@ -16,7 +16,7 @@ const CreateProductButton = () => {
         title="New Product"
         isDismissable={false}
         hideCloseButton
-        size="4xl"
+        size="5xl"
         scrollBehavior="inside"
       >
         <CreateProductForm onClose={() => setIsOpen(false)} />

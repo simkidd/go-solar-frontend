@@ -1,21 +1,17 @@
 "use client";
+
 import useCategories from "@/hooks/useCategories";
 import useProducts from "@/hooks/useProducts";
-import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
+import { Product } from "@/interfaces/product.interface";
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import { useDeleteProductMutation } from "@/hooks/mutations/useProductMutations";
-import { useAddProductsToOfferMutation } from "@/hooks/mutations/useOfferMutations";
 import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -37,29 +33,33 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ChevronDown,
+  ChevronUp,
   MoreVertical,
   Eye,
+  EyeOff,
   RefreshCw,
   Search,
   Trash,
-  Settings2,
   Package,
+  AlertTriangle,
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CreateProductButton from "./CreateProductButton";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateProduct } from "@/lib/api/products";
+import { toast } from "sonner";
+import { PRODUCT_KEYS } from "@/hooks/queries/useProductsQuery";
 
 const columns = [
-  { name: "Product", uid: "name" },
-  { name: "Price", uid: "price" },
-  { name: "Discount", uid: "discount" },
+  { name: "Product Info", uid: "name" },
+  { name: "Unit Price", uid: "price" },
   { name: "Quantity", uid: "quantity" },
-  { name: "Offer", uid: "offer" },
+  { name: "Campaign Discount", uid: "discount" },
   { name: "Category", uid: "category" },
-  { name: "Brand", uid: "brand" },
-  { name: "Status", uid: "status" },
-  { name: "Date added", uid: "dateAdded" },
+  { name: "Publishing Status", uid: "status" },
+  { name: "Date Added", uid: "dateAdded" },
   { name: "Actions", uid: "actions" },
 ];
 
@@ -72,43 +72,55 @@ const ProductsTable = () => {
     },
   });
 
+  const queryClient = useQueryClient();
+  const togglePublishMutation = useMutation({
+    mutationFn: updateProduct,
+    onSuccess: (data) => {
+      toast.success(
+        data?.product?.isPublished
+          ? "Product published successfully"
+          : "Product set to draft successfully",
+      );
+      queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
+      setIsPublishDialogOpen(false);
+      setSelectedProduct(null);
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    },
+  });
+
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
-  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
-    new Set(columns.map((col) => col.uid))
-  );
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortColumn, setSortColumn] = useState<string>("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(1);
-  
+
   const [publishFilter, setPublishFilter] = useState(
-    searchParams.get("published") || "All"
+    searchParams.get("published") || "All",
   );
   const [categoryFilter, setCategoryFilter] = useState(
-    searchParams.get("category") || "All"
+    searchParams.get("category") || "All",
   );
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const hasSearchFilter = Boolean(filterValue);
   const { products, isError, isLoading, refetch } = useProducts();
   const { categories } = useCategories();
 
-  const headerColumns = useMemo(() => {
-    return columns.filter((column) => visibleColumns.has(column.uid));
-  }, [visibleColumns]);
-
   const filteredItems = useMemo(() => {
     let filteredProducts = [...products];
 
     if (hasSearchFilter) {
       filteredProducts = filteredProducts.filter((product) =>
-        product?.name.toLowerCase().includes(filterValue.toLowerCase())
+        product?.name.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
@@ -116,7 +128,7 @@ const ProductsTable = () => {
       filteredProducts = filteredProducts.filter((product) =>
         publishFilter === "published"
           ? product.isPublished
-          : !product.isPublished
+          : !product.isPublished,
       );
     }
 
@@ -124,7 +136,7 @@ const ProductsTable = () => {
       filteredProducts = filteredProducts.filter((product) =>
         product?.category?.name
           .toLowerCase()
-          .includes(categoryFilter.toLowerCase())
+          .includes(categoryFilter.toLowerCase()),
       );
     }
 
@@ -150,7 +162,12 @@ const ProductsTable = () => {
         second = b.category?.name || "";
       }
 
-      const cmp = (first ?? "") < (second ?? "") ? -1 : (first ?? "") > (second ?? "") ? 1 : 0;
+      const cmp =
+        (first ?? "") < (second ?? "")
+          ? -1
+          : (first ?? "") > (second ?? "")
+            ? 1
+            : 0;
       return sortDirection === "desc" ? -cmp : cmp;
     });
     return sorted;
@@ -189,14 +206,6 @@ const ProductsTable = () => {
     router.replace(`${pathname}?${params.toString()}`);
   };
 
-  const onClear = () => {
-    setFilterValue("");
-    const params = new URLSearchParams(searchParams);
-    params.delete("q");
-    router.replace(`${pathname}?${params.toString()}`);
-    setPage(1);
-  };
-
   const onPublishFilterChange = (status: string) => {
     const params = new URLSearchParams(searchParams);
     if (status && status !== "All") {
@@ -231,49 +240,97 @@ const ProductsTable = () => {
     router.replace(pathname);
   };
 
-  const toggleColumnVisibility = (columnUid: string) => {
-    const newVisible = new Set(visibleColumns);
-    if (newVisible.has(columnUid)) {
-      if (newVisible.size > 1) { // keep at least one column
-        newVisible.delete(columnUid);
-      }
-    } else {
-      newVisible.add(columnUid);
-    }
-    setVisibleColumns(newVisible);
-  };
-
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-5 font-inter">
       {/* Delete confirmation dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[425px] dark:bg-[#1a1b1e] dark:border-zinc-800">
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
           <DialogHeader>
-            <DialogTitle className="dark:text-white">Delete Product</DialogTitle>
-            <DialogDescription className="text-zinc-500 dark:text-zinc-400 mt-2">
-              Are you sure you want to delete <b>{selectedProduct?.name}</b>? This action cannot be undone.
+            <DialogTitle className="text-foreground font-extrabold text-base">
+              Delete Product
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed font-semibold">
+              Are you sure you want to delete <b>{selectedProduct?.name}</b>?
+              This action cannot be undone and will remove it from the online
+              store.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4 flex gap-2">
-            <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(false)} className="dark:text-zinc-300">
+            <Button
+              variant="ghost"
+              onClick={() => setIsDeleteDialogOpen(false)}
+              className="text-xs font-semibold rounded-xl cursor-pointer text-muted-foreground hover:text-foreground"
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={deleteProductMutation.isPending}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteProductMutation.isPending}
+              className="text-xs font-semibold rounded-xl cursor-pointer"
+            >
               {deleteProductMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
+      {/* Publish confirmation dialog */}
+      <Dialog open={isPublishDialogOpen} onOpenChange={setIsPublishDialogOpen}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle className="text-foreground font-extrabold text-base">
+              {selectedProduct?.isPublished
+                ? "Draft Product"
+                : "Publish Product"}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed font-semibold">
+              Are you sure you want to change the status of{" "}
+              <b>{selectedProduct?.name}</b> to{" "}
+              <b>{selectedProduct?.isPublished ? "Draft" : "Published"}</b>?
+              This will affect its visibility on the public storefront.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4 flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setIsPublishDialogOpen(false)}
+              className="text-xs font-semibold rounded-xl cursor-pointer text-muted-foreground hover:text-foreground"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedProduct) {
+                  togglePublishMutation.mutate({
+                    productId: selectedProduct._id,
+                    isPublished: !selectedProduct.isPublished,
+                  });
+                }
+              }}
+              disabled={togglePublishMutation.isPending}
+              className="text-xs font-semibold rounded-xl cursor-pointer bg-primary hover:bg-primary/90 text-white"
+            >
+              {togglePublishMutation.isPending
+                ? "Processing..."
+                : selectedProduct?.isPublished
+                  ? "Set as Draft"
+                  : "Publish"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <Package className="h-5 w-5 text-primary" />
             Product Inventory
           </h2>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-            Manage storefront products, brand listings, pricing levels, and quantity stock levels.
+          <p className="text-xs text-muted-foreground font-semibold mt-0.5">
+            Manage storefront products, brand listings, pricing levels, and
+            quantity stock levels.
           </p>
         </div>
 
@@ -282,9 +339,9 @@ const ProductsTable = () => {
             variant="outline"
             size="sm"
             onClick={() => refetch()}
-            className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 h-9 rounded-lg text-xs"
+            className="gap-2 border-border text-muted-foreground hover:text-foreground h-9 rounded-xl text-xs font-semibold cursor-pointer hover:bg-muted/30"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-3.5 w-3.5" />
             Refresh
           </Button>
 
@@ -293,21 +350,27 @@ const ProductsTable = () => {
       </div>
 
       {/* Search & Filters */}
-      <div className="flex flex-col gap-4 bg-white dark:bg-[#1a1b1e] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+      <div className="flex flex-col gap-4 bg-card text-card-foreground p-5 rounded-2xl border border-border/80 shadow-xs">
         <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
             <Input
               placeholder="Search products..."
               value={filterValue}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-9 bg-zinc-50/50 dark:bg-zinc-900/20 border-zinc-200 dark:border-zinc-800"
+              className="pl-10 bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
             />
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {(hasSearchFilter || publishFilter !== "All" || categoryFilter !== "All") && (
-              <Button variant="ghost" onClick={onResetFilters} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20">
+            {(hasSearchFilter ||
+              publishFilter !== "All" ||
+              categoryFilter !== "All") && (
+              <Button
+                variant="ghost"
+                onClick={onResetFilters}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50/50 dark:hover:bg-red-950/10 text-xs font-semibold rounded-xl cursor-pointer"
+              >
                 Reset
               </Button>
             )}
@@ -315,15 +378,27 @@ const ProductsTable = () => {
             {/* Categories filter */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="border-zinc-200 dark:border-zinc-800">
+                <Button
+                  variant="outline"
+                  className="border-border text-xs font-semibold rounded-xl h-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                >
                   {categoryFilter === "All" ? "All Categories" : categoryFilter}
-                  <ChevronDown className="ml-2 h-4 w-4 text-zinc-400" />
+                  <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="max-h-60 overflow-y-auto w-48">
-                <DropdownMenuItem onClick={() => onCatFilterChange("All")}>All Categories</DropdownMenuItem>
+              <DropdownMenuContent className="max-h-60 overflow-y-auto w-48 rounded-xl bg-card border border-border/80">
+                <DropdownMenuItem
+                  onClick={() => onCatFilterChange("All")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  All Categories
+                </DropdownMenuItem>
                 {categories.map((category) => (
-                  <DropdownMenuItem key={category?._id} onClick={() => onCatFilterChange(category?.name)}>
+                  <DropdownMenuItem
+                    key={category?._id}
+                    onClick={() => onCatFilterChange(category?.name)}
+                    className="cursor-pointer text-xs font-bold"
+                  >
                     {category?.name}
                   </DropdownMenuItem>
                 ))}
@@ -333,48 +408,59 @@ const ProductsTable = () => {
             {/* Status filter */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="border-zinc-200 dark:border-zinc-800">
-                  {publishFilter === "All" ? "All Status" : publishFilter === "published" ? "Published" : "Draft"}
-                  <ChevronDown className="ml-2 h-4 w-4 text-zinc-400" />
+                <Button
+                  variant="outline"
+                  className="border-border text-xs font-semibold rounded-xl h-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                >
+                  {publishFilter === "All"
+                    ? "All Status"
+                    : publishFilter === "published"
+                      ? "Published"
+                      : "Draft"}
+                  <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-36">
-                <DropdownMenuItem onClick={() => onPublishFilterChange("All")}>All Status</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onPublishFilterChange("published")}>Published</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onPublishFilterChange("draft")}>Draft</DropdownMenuItem>
+              <DropdownMenuContent className="w-36 rounded-xl bg-card border border-border/80">
+                <DropdownMenuItem
+                  onClick={() => onPublishFilterChange("All")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  All Status
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onPublishFilterChange("published")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Published
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onPublishFilterChange("draft")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Draft
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
 
         {/* Counter and row switcher */}
-        <div className="flex justify-between items-center text-xs text-zinc-400 dark:text-zinc-500 border-t border-zinc-100 dark:border-zinc-800/80 pt-3">
-          <span>Total {products.length} products</span>
-          <div className="flex items-center gap-1">
-            <span>Rows per page:</span>
-            <select
-              className="bg-transparent text-zinc-500 dark:text-zinc-400 outline-none cursor-pointer font-medium"
-              value={rowsPerPage}
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5" className="dark:bg-[#1a1b1e]">5</option>
-              <option value="10" className="dark:bg-[#1a1b1e]">10</option>
-              <option value="15" className="dark:bg-[#1a1b1e]">15</option>
-              <option value="20" className="dark:bg-[#1a1b1e]">20</option>
-            </select>
-          </div>
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+          <span>Total {products.length} products listed</span>
         </div>
       </div>
 
       {/* Main Table */}
-      <div className="bg-white dark:bg-[#1a1b1e] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+      <div className="bg-card text-card-foreground rounded-2xl border border-border/80 shadow-xs overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="bg-zinc-50/50 dark:bg-zinc-900/20 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-800">
-              {headerColumns.map((col) => (
+            <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
+              {columns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  className={`font-semibold text-zinc-500 dark:text-zinc-400 h-11 text-xs select-none ${col.uid === "actions" ? "text-right" : ""}`}
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none ${
+                    col.uid === "actions" ? "text-right" : ""
+                  }`}
                 >
                   {col.name}
                 </TableHead>
@@ -384,111 +470,192 @@ const ProductsTable = () => {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={headerColumns.length} className="h-32 text-center">
-                  <div className="space-y-2 flex flex-col justify-center items-center py-8">
-                    <Skeleton className="h-5 w-4/5" />
-                    <Skeleton className="h-5 w-3/5" />
-                    <Skeleton className="h-5 w-4/5" />
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-32 text-center"
+                >
+                  <div className="space-y-3 flex flex-col justify-center items-center py-8">
+                    <Skeleton className="h-5 w-4/5 rounded-md" />
+                    <Skeleton className="h-5 w-3/5 rounded-md" />
+                    <Skeleton className="h-5 w-4/5 rounded-md" />
                   </div>
                 </TableCell>
               </TableRow>
             ) : sortedItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={headerColumns.length} className="h-24 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                  No products found
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-xs text-muted-foreground font-semibold"
+                >
+                  No products found in system inventory.
                 </TableCell>
               </TableRow>
             ) : (
-              sortedItems.map((product) => (
-                <TableRow key={product?._id} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/30 dark:hover:bg-zinc-800/10">
-                  {headerColumns.map((col) => {
-                    const columnKey = col.uid;
-                    return (
-                      <TableCell key={columnKey} className="py-3 text-sm text-zinc-800 dark:text-zinc-200">
-                        {columnKey === "name" && (
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 min-w-10 rounded-lg overflow-hidden border border-zinc-100 dark:border-zinc-800 relative bg-zinc-50 dark:bg-zinc-900">
-                              <Image
-                                src={product?.images?.[0]?.url || "/placeholder-product.jpg"}
-                                alt={product?.name}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                            <span className="font-medium text-zinc-900 dark:text-white line-clamp-2">{product?.name}</span>
-                          </div>
-                        )}
-                        {columnKey === "price" && (
-                          <span>{formatCurrency(product?.price, "NGN")}</span>
-                        )}
-                        {columnKey === "discount" && (
-                          <div>
-                            {product?.currentOffer?.isActive && product?.currentOffer?.percentageOff ? (
-                              <span className="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50 rounded-full px-2 py-0.5 text-xs font-medium">
-                                {product.currentOffer.percentageOff}% Off
-                              </span>
-                            ) : (
-                              <span className="text-zinc-400">-</span>
+              sortedItems.map((product) => {
+                const qty = product?.quantityInStock;
+                const isOutOfStock = qty <= 0;
+                const isLowStock = qty > 0 && qty <= 10;
+
+                return (
+                  <TableRow
+                    key={product?._id}
+                    className="border-b border-border/60 hover:bg-muted/15 transition-colors"
+                  >
+                    {/* 1. Name & Image Details Info */}
+                    <TableCell className="py-3.5 text-xs text-foreground max-w-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 min-w-[40px] rounded-xl overflow-hidden border border-border/80 relative bg-muted select-none">
+                          <Image
+                            src={
+                              product?.images?.[0]?.url ||
+                              "/placeholder-product.jpg"
+                            }
+                            alt={product?.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="font-extrabold text-foreground line-clamp-1 select-all">
+                            {product?.name}
+                          </span>
+                          <div className="flex items-center gap-2 text-[9px] uppercase tracking-wider font-extrabold text-muted-foreground select-none">
+                            <span>{product?.brand || "GoSolar"}</span>
+                            {product?.category?.name && (
+                              <>
+                                <span className="text-border/80">•</span>
+                                <span className="text-primary">
+                                  {product.category.name}
+                                </span>
+                              </>
                             )}
                           </div>
-                        )}
-                        {columnKey === "quantity" && (
-                          <span>{product?.quantityInStock}</span>
-                        )}
-                        {columnKey === "offer" && (
-                          <span className="text-xs text-zinc-500 dark:text-zinc-400">{product?.currentOffer?.name || "-"}</span>
-                        )}
-                        {columnKey === "category" && (
-                          <span>{product?.category?.name || "-"}</span>
-                        )}
-                        {columnKey === "brand" && (
-                          <span>{product?.brand || "-"}</span>
-                        )}
-                        {columnKey === "status" && (
-                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                            product.isPublished 
-                              ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50"
-                              : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700"
-                          }`}>
-                            {product.isPublished ? "Published" : "Draft"}
-                          </span>
-                        )}
-                        {columnKey === "dateAdded" && (
-                          <span>{formatDate(product?.createdAt)}</span>
-                        )}
-                        {columnKey === "actions" && (
-                          <div className="flex justify-end">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
-                                  <MoreVertical className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-36">
-                                <DropdownMenuItem onClick={() => router.push(`/dashboard/products/${product?._id}`)} className="cursor-pointer">
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  <span>Details</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem 
-                                  onClick={() => {
-                                    setSelectedProduct(product);
-                                    setIsDeleteDialogOpen(true);
-                                  }}
-                                  className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20"
-                                >
-                                  <Trash className="mr-2 h-4 w-4" />
-                                  <span>Delete</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    {/* 2. Unit Price */}
+                    <TableCell className="py-3.5 text-xs font-bold text-foreground monospace select-all">
+                      {formatCurrency(product?.price, "NGN")}
+                    </TableCell>
+
+                    {/* 3. Quantity Stock Alerts */}
+                    <TableCell className="py-3.5 text-xs select-none">
+                      {isOutOfStock ? (
+                        <span className="text-rose-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-1">
+                          <AlertTriangle className="h-3.5 w-3.5 fill-rose-500/10" />
+                          Out of Stock
+                        </span>
+                      ) : isLowStock ? (
+                        <span className="text-amber-500 font-extrabold uppercase text-[10px] tracking-wider flex items-center gap-1">
+                          {qty} Left (Low)
+                        </span>
+                      ) : (
+                        <span className="font-semibold text-foreground">
+                          {qty}
+                        </span>
+                      )}
+                    </TableCell>
+
+                    {/* 4. Discount */}
+                    <TableCell className="py-3.5 text-xs select-none">
+                      {product?.currentOffer?.isActive &&
+                      product?.currentOffer?.percentageOff ? (
+                        <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">
+                          {product.currentOffer.percentageOff}% Off
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground/40">-</span>
+                      )}
+                    </TableCell>
+
+                    {/* 5. Category */}
+                    <TableCell className="py-3.5 text-xs text-muted-foreground font-semibold select-none">
+                      {product?.category?.name || "-"}
+                    </TableCell>
+
+                    {/* 6. Publishing Status */}
+                    <TableCell className="py-3.5 text-xs select-none">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest border ${
+                          product.isPublished
+                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                            : "bg-muted text-muted-foreground border-border/80"
+                        }`}
+                      >
+                        {product.isPublished ? "Published" : "Draft"}
+                      </span>
+                    </TableCell>
+
+                    {/* 7. Date Added */}
+                    <TableCell className="py-3.5 text-xs text-muted-foreground font-semibold select-none">
+                      {formatDate(product?.createdAt)}
+                    </TableCell>
+
+                    {/* 8. Actions Dropdown */}
+                    <TableCell className="py-3.5 text-xs select-none">
+                      <div className="flex justify-end">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="end"
+                            className="w-36 rounded-xl bg-card border border-border/80"
+                          >
+                            <DropdownMenuItem
+                              onClick={() =>
+                                router.push(
+                                  `/dashboard/products/${product?._id}`,
+                                )
+                              }
+                              className="cursor-pointer text-xs font-bold"
+                            >
+                              <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
+                              <span>Details</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedProduct(product);
+                                setIsPublishDialogOpen(true);
+                              }}
+                              className="cursor-pointer text-xs font-bold"
+                            >
+                              {product.isPublished ? (
+                                <>
+                                  <EyeOff className="mr-2 h-4 w-4 text-muted-foreground" />
+                                  <span>Set as Draft</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
+                                  <span>Publish</span>
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedProduct(product);
+                                setIsDeleteDialogOpen(true);
+                              }}
+                              className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50/50 dark:focus:bg-red-950/10 text-xs font-bold"
+                            >
+                              <Trash className="mr-2 h-4 w-4" />
+                              <span>Delete</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -496,8 +663,8 @@ const ProductsTable = () => {
 
       {/* Pagination Controls */}
       {pages > 1 && (
-        <div className="flex items-center justify-between py-2 border-t border-zinc-100 dark:border-zinc-800">
-          <div className="text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="flex items-center justify-between py-2 border-t border-border/80 select-none">
+          <div className="text-xs text-muted-foreground font-semibold">
             Page {page} of {pages}
           </div>
           <div className="flex items-center gap-2">
@@ -506,7 +673,7 @@ const ProductsTable = () => {
               size="sm"
               disabled={page === 1}
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              className="border-zinc-200 dark:border-zinc-800"
+              className="border-border text-xs font-black uppercase tracking-wider rounded-xl cursor-pointer"
             >
               Previous
             </Button>
@@ -515,7 +682,7 @@ const ProductsTable = () => {
               size="sm"
               disabled={page === pages}
               onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
-              className="border-zinc-200 dark:border-zinc-800"
+              className="border-border text-xs font-black uppercase tracking-wider rounded-xl cursor-pointer"
             >
               Next
             </Button>

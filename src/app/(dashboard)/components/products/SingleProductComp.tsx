@@ -1,4 +1,5 @@
 "use client";
+
 import ProductDesc from "@/app/(ecommerce)/components/shop/ProductDesc";
 import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
 import { getProductById } from "@/lib/api/products";
@@ -46,16 +47,16 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-4">
-        <Link href="/dashboard/products" className="text-sm font-medium flex items-center gap-1.5 text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors">
-          <ArrowLeft size={16} />
+      <div className="flex items-center justify-between mb-4 select-none">
+        <Link href="/dashboard/products" className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+          <ArrowLeft size={14} />
           Back to products
         </Link>
       </div>
 
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-        <h4 className="font-bold text-2xl text-zinc-900 dark:text-white">
-          Product Detail
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-4 select-none">
+        <h4 className="font-extrabold text-2xl text-foreground tracking-tight">
+          Product Details
         </h4>
 
         <div className="flex items-center gap-2 flex-wrap">
@@ -65,7 +66,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
         </div>
       </div>
 
-      <Card className="dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl overflow-hidden">
+      <Card className="bg-card text-card-foreground border-border/80 shadow-xs rounded-3xl overflow-hidden">
         <CardContent className="p-6">
           <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
             {/* Product Images */}
@@ -79,18 +80,18 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
             {/* Product Details */}
             <div className="w-full flex flex-col space-y-6">
-              <h2 className="font-extrabold text-3xl text-zinc-900 dark:text-white">
+              <h2 className="font-extrabold text-2xl text-foreground tracking-tight">
                 {product?.name}
               </h2>
 
               {/* Price Section */}
-              <div className="flex items-center space-x-4">
-                <span className="font-black text-3xl text-primary">
+              <div className="flex items-baseline space-x-3 select-none">
+                <span className="font-black text-2xl text-primary">
                   {formatCurrency(newPrice, "NGN")}
                 </span>
                 {product?.currentOffer?.isActive &&
                   product?.currentOffer?.percentageOff && (
-                    <span className="line-through text-zinc-400 text-xl font-medium">
+                    <span className="line-through text-muted-foreground/60 text-base font-semibold">
                       {formatCurrency(product?.price, "NGN")}
                     </span>
                   )}
@@ -98,57 +99,57 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
               {/* Offer Banner */}
               {product?.currentOffer?.isActive && (
-                <div className="bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 p-4 rounded-xl border border-amber-200 dark:border-amber-900/50">
-                  <p className="capitalize text-lg font-bold">
+                <div className="bg-amber-500/10 text-amber-500 p-4 rounded-2xl border border-amber-500/20 select-none">
+                  <p className="capitalize text-sm font-black uppercase tracking-wider">
                     {product?.currentOffer?.name}
                   </p>
-                  <p className="text-sm mt-0.5">Limited Time Offer!</p>
+                  <p className="text-xs font-semibold text-amber-600 mt-0.5">Limited Time Offer!</p>
                 </div>
               )}
 
               {/* Product Metadata */}
-              <div className="space-y-4 border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
+              <div className="space-y-4 border-t border-border/60 pt-4">
                 <div className="flex items-center justify-between sm:justify-start sm:gap-12">
-                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground min-w-36">
                     Quantity in stock:
                   </p>
-                  <span className="font-bold text-zinc-900 dark:text-white">
+                  <span className="text-sm font-extrabold text-foreground select-all">
                     {product?.quantityInStock}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-start sm:gap-12">
-                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground min-w-36">
                     Category:
                   </p>
-                  <span className="font-bold text-zinc-900 dark:text-white">
+                  <span className="text-sm font-extrabold text-foreground select-all">
                     {product?.category?.name}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-start sm:gap-12">
-                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
-                    Brand:
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground min-w-36">
+                    Brand Name:
                   </p>
-                  <span className="font-bold text-zinc-900 dark:text-white">
+                  <span className="text-sm font-extrabold text-foreground select-all">
                     {product?.brand}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-start sm:gap-12">
-                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
-                    Delivery within Location:
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground min-w-36">
+                    Local Delivery Fee:
                   </p>
-                  <span className="font-bold text-zinc-900 dark:text-white">
+                  <span className="text-sm font-extrabold text-foreground select-all">
                     {formatCurrency(product?.withinLocationDeliveryFee, "NGN")}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-start sm:gap-12">
-                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 min-w-36">
-                    Delivery outside Location:
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground min-w-36">
+                    Out of Town Delivery Fee:
                   </p>
-                  <span className="font-bold text-zinc-900 dark:text-white">
+                  <span className="text-sm font-extrabold text-foreground select-all">
                     {formatCurrency(product?.outsideLocationDeliveryFee, "NGN")}
                   </span>
                 </div>
@@ -157,7 +158,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
           </div>
 
           {/* Product Description */}
-          <div className="mt-8 border-t border-zinc-100 dark:border-zinc-800/80 pt-6">
+          <div className="mt-8 border-t border-border/60 pt-6">
             <ProductDesc product={product} />
           </div>
         </CardContent>
