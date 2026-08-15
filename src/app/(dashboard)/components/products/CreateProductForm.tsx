@@ -45,7 +45,9 @@ interface FormValues {
 const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { data: categories = [] } = useCategoriesQuery();
   const { data: offers = [] } = useAllOffersQuery();
-  const createProductMutation = useCreateProductMutation({ onSuccess: onClose });
+  const createProductMutation = useCreateProductMutation({
+    onSuccess: onClose,
+  });
 
   const [files, setFiles] = useState<FileWithPreview[]>([]);
 
@@ -92,12 +94,12 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
-        })
+        }),
       );
 
       setFiles((prev) => [...prev, ...newFiles]);
     },
-    [files.length]
+    [files.length],
   );
 
   const thumbs = files.map((file) => (
@@ -142,10 +144,10 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       toast.error("Please select a category");
       return;
     }
-    if (files.length === 0) {
-      toast.error("Please upload at least one image");
-      return;
-    }
+    // if (files.length === 0) {
+    //   toast.error("Please upload at least one image");
+    //   return;
+    // }
 
     const formData = new FormData();
     formData.append("name", values.name);
@@ -159,11 +161,11 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     formData.append("additionalInfo", values.additionalInfo || "");
     formData.append(
       "withinLocationDeliveryFee",
-      String(values.withinLocationDeliveryFee || 0)
+      String(values.withinLocationDeliveryFee || 0),
     );
     formData.append(
       "outsideLocationDeliveryFee",
-      String(values.outsideLocationDeliveryFee || 0)
+      String(values.outsideLocationDeliveryFee || 0),
     );
     formData.append("showDatasheet", String(values.showDatasheet));
     formData.append("datasheet", JSON.stringify(values.datasheet || []));
@@ -182,10 +184,12 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const activeOffers = offers.filter((offer) => offer?.isActive);
 
   return (
-    <form className="w-full font-inter flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="w-full font-inter flex flex-col gap-4"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <ScrollArea className="flex-1 max-h-[70vh]">
         <div className="space-y-6 pr-4 pt-2">
-
           {/* ── Main 2-Column Grid ── */}
           <div className="w-full grid lg:grid-cols-2 grid-cols-1 gap-6">
             {/* Left Column */}
@@ -196,10 +200,14 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </label>
                 <Input
                   placeholder="Enter product name"
-                  {...register("name", { required: "Product title is required" })}
+                  {...register("name", {
+                    required: "Product title is required",
+                  })}
                   className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
                 />
-                {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+                {errors.name && (
+                  <p className="text-xs text-red-500">{errors.name.message}</p>
+                )}
               </div>
 
               <div className="space-y-1.5">
@@ -209,11 +217,15 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <Textarea
                   placeholder="Enter product description"
                   rows={4}
-                  {...register("description", { required: "Product description is required" })}
+                  {...register("description", {
+                    required: "Product description is required",
+                  })}
                   className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
                 />
                 {errors.description && (
-                  <p className="text-xs text-red-500">{errors.description.message}</p>
+                  <p className="text-xs text-red-500">
+                    {errors.description.message}
+                  </p>
                 )}
               </div>
 
@@ -227,7 +239,10 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     name="category"
                     rules={{ required: "Category is required" }}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800">
                           <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
@@ -242,12 +257,16 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     )}
                   />
                   {errors.category && (
-                    <p className="text-xs text-red-500">{errors.category.message}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.category.message}
+                    </p>
                   )}
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Brand</label>
+                  <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                    Brand
+                  </label>
                   <Input
                     placeholder="Brand name"
                     {...register("brand")}
@@ -270,12 +289,19 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     })}
                     className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
                   />
-                  {errors.price && <p className="text-xs text-red-500">{errors.price.message}</p>}
+                  {errors.price && (
+                    <p className="text-xs text-red-500">
+                      {errors.price.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    Discount Price (₦) <span className="text-xs text-zinc-400 font-normal">(Optional)</span>
+                    Discount Price (₦){" "}
+                    <span className="text-xs text-zinc-400 font-normal">
+                      (Optional)
+                    </span>
                   </label>
                   <Input
                     type="number"
@@ -301,7 +327,9 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
                   />
                   {errors.quantityInStock && (
-                    <p className="text-xs text-red-500">{errors.quantityInStock.message}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.quantityInStock.message}
+                    </p>
                   )}
                 </div>
 
@@ -313,14 +341,23 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     control={control}
                     name="shippingClass"
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800">
                           <SelectValue placeholder="Select Shipping Class" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="standard">Standard Equipment (0–5kg)</SelectItem>
-                          <SelectItem value="medium">Medium Cargo (5–20kg)</SelectItem>
-                          <SelectItem value="heavy_freight">Heavy Freight (Batteries / Panels 20kg+)</SelectItem>
+                          <SelectItem value="standard">
+                            Standard Equipment (0–5kg)
+                          </SelectItem>
+                          <SelectItem value="medium">
+                            Medium Cargo (5–20kg)
+                          </SelectItem>
+                          <SelectItem value="heavy_freight">
+                            Heavy Freight (Batteries / Panels 20kg+)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -331,24 +368,34 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    Custom Delivery In-City (₦) <span className="text-xs text-zinc-400 font-normal">(Optional)</span>
+                    Custom Delivery In-City (₦){" "}
+                    <span className="text-xs text-zinc-400 font-normal">
+                      (Optional)
+                    </span>
                   </label>
                   <Input
                     type="number"
                     placeholder="0"
-                    {...register("withinLocationDeliveryFee", { valueAsNumber: true })}
+                    {...register("withinLocationDeliveryFee", {
+                      valueAsNumber: true,
+                    })}
                     className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
                   />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    Custom Delivery Interstate (₦) <span className="text-xs text-zinc-400 font-normal">(Optional)</span>
+                    Custom Delivery Interstate (₦){" "}
+                    <span className="text-xs text-zinc-400 font-normal">
+                      (Optional)
+                    </span>
                   </label>
                   <Input
                     type="number"
                     placeholder="0"
-                    {...register("outsideLocationDeliveryFee", { valueAsNumber: true })}
+                    {...register("outsideLocationDeliveryFee", {
+                      valueAsNumber: true,
+                    })}
                     className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
                   />
                 </div>
@@ -356,13 +403,21 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                  Campaign Offer <span className="text-xs text-zinc-400 font-normal">(Optional sitewide promo)</span>
+                  Campaign Offer{" "}
+                  <span className="text-xs text-zinc-400 font-normal">
+                    (Optional sitewide promo)
+                  </span>
                 </label>
                 <Controller
                   control={control}
                   name="currentOffer"
                   render={({ field }) => (
-                    <Select value={field.value || "none"} onValueChange={(val) => field.onChange(val === "none" ? "" : val)}>
+                    <Select
+                      value={field.value || "none"}
+                      onValueChange={(val) =>
+                        field.onChange(val === "none" ? "" : val)
+                      }
+                    >
                       <SelectTrigger className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800">
                         <SelectValue placeholder="Select an offer campaign (optional)" />
                       </SelectTrigger>
@@ -383,23 +438,32 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             {/* Right Column */}
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Images</label>
+                <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                  Images
+                </label>
                 <div
                   {...getRootProps()}
                   className={`border-2 border-dashed rounded-xl py-10 px-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-zinc-50/50 dark:bg-zinc-900/10 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/10 ${
-                    isDragActive ? "border-primary bg-primary/5" : "border-zinc-200 dark:border-zinc-800"
+                    isDragActive
+                      ? "border-primary bg-primary/5"
+                      : "border-zinc-200 dark:border-zinc-800"
                   }`}
                 >
                   <input {...getInputProps()} />
                   {isDragActive ? (
-                    <p className="text-primary text-sm font-medium">Drop the files here...</p>
+                    <p className="text-primary text-sm font-medium">
+                      Drop the files here...
+                    </p>
                   ) : (
                     <div className="flex flex-col items-center justify-center text-center space-y-2">
                       <Upload className="h-5 w-5 text-zinc-400" />
                       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                        Drag &amp; drop files here, or <span className="text-primary font-medium">browse</span>
+                        Drag &amp; drop files here, or{" "}
+                        <span className="text-primary font-medium">browse</span>
                       </p>
-                      <p className="text-xs text-zinc-400">(Maximum of 3 files allowed)</p>
+                      <p className="text-xs text-zinc-400">
+                        (Maximum of 3 files allowed)
+                      </p>
                     </div>
                   )}
                 </div>
@@ -407,7 +471,9 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Additional Information</label>
+                <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                  Additional Information
+                </label>
                 <Textarea
                   placeholder="Enter additional details"
                   rows={4}
@@ -422,11 +488,17 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <div className="border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Technical Datasheet</p>
-                <p className="text-xs text-zinc-400 mt-0.5">Spec rows shown on the product detail page</p>
+                <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                  Technical Datasheet
+                </p>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  Spec rows shown on the product detail page
+                </p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-zinc-500">{showDatasheet ? "Visible" : "Hidden"}</span>
+                <span className="text-xs text-zinc-500">
+                  {showDatasheet ? "Visible" : "Hidden"}
+                </span>
                 <Controller
                   control={control}
                   name="showDatasheet"
@@ -445,12 +517,16 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <div key={field.id} className="flex items-center gap-2">
                 <Input
                   placeholder="Spec name (e.g. Capacity)"
-                  {...register(`datasheet.${idx}.key` as const, { required: true })}
+                  {...register(`datasheet.${idx}.key` as const, {
+                    required: true,
+                  })}
                   className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
                 />
                 <Input
                   placeholder="Value (e.g. 200Ah)"
-                  {...register(`datasheet.${idx}.value` as const, { required: true })}
+                  {...register(`datasheet.${idx}.value` as const, {
+                    required: true,
+                  })}
                   className="bg-zinc-50/50 dark:bg-zinc-900/10 border-zinc-200 dark:border-zinc-800"
                 />
                 <button
@@ -473,12 +549,16 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <Plus size={14} /> Add Row
             </Button>
           </div>
-
         </div>
       </ScrollArea>
 
       <div className="flex items-center gap-2 pt-4 mt-2 border-t border-zinc-100 dark:border-zinc-800 justify-end">
-        <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onClose}
+          className="dark:text-zinc-300"
+        >
           Close
         </Button>
         <Button

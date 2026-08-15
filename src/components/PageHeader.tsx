@@ -45,7 +45,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       {/* Background Image */}
       {image && (
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-35"
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-35 select-none pointer-events-none"
           style={{ backgroundImage: `url(${image})` }}
         />
       )}
@@ -61,17 +61,17 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         )}
       >
         {badge && (
-          <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#08AA08] block">
+          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block select-none">
             {badge}
           </span>
         )}
 
-        <h1 className="text-4xl sm:text-5xl font-bold leading-tight text-white tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-white tracking-tight select-none">
           {heading}
         </h1>
 
         {subtitle && (
-          <p className="text-zinc-300 text-sm sm:text-base max-w-xl leading-relaxed">
+          <p className="text-zinc-300 text-sm sm:text-base max-w-xl leading-relaxed font-semibold">
             {subtitle}
           </p>
         )}
@@ -86,12 +86,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             {cta.map((btn) => (
               <Link key={btn.href} href={btn.href}>
                 {btn.variant === "outline" ? (
-                  <button className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest border border-white/40 text-white hover:bg-white/10 transition-all">
+                  <button className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest border border-white/40 text-white hover:bg-white/10 transition-all cursor-pointer">
                     {btn.label}
                     <ArrowUpRight className="h-4 w-4" />
                   </button>
                 ) : (
-                  <button className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest bg-[#08AA08] hover:bg-[#079907] text-white shadow-md hover:scale-105 transition-all">
+                  <button className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest bg-primary hover:bg-primary/90 text-white shadow-md hover:scale-105 transition-all cursor-pointer">
                     {btn.label}
                     <ArrowUpRight className="h-4 w-4" />
                   </button>

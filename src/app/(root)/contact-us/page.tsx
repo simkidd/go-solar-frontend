@@ -178,7 +178,7 @@ const ContactUsPage = () => {
                 allowFullScreen={false}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                className="absolute inset-0 w-full h-full grayscale dark:invert"
+                className="absolute inset-0 w-full h-full"
               />
             </div>
           </div>

@@ -21,15 +21,16 @@ const PackagesSection = () => {
     <section className="w-full py-24 bg-white dark:bg-zinc-950 font-inter">
       <div className="container mx-auto px-4 space-y-16">
         {/* Header Title */}
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-[#08AA08]">
+        <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3 select-none">
+          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
             Pre-Configured Setups
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight leading-tight">
             Explore Our Solar Packages
           </h2>
-          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-            Standard pre-designed configurations sized to support common residential and commercial loads with long-term hardware durability.
+          <p className="text-sm text-muted-foreground leading-relaxed font-semibold">
+            Standard pre-designed configurations sized to support common
+            residential and commercial loads with long-term hardware durability.
           </p>
         </div>
 
@@ -104,7 +105,7 @@ const PackagesSection = () => {
 
         <div className="flex justify-center pt-4">
           <Link href="/packages">
-            <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider h-11 px-8 rounded-full">
+            <Button className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-11 px-8 rounded-full">
               View All Packages
             </Button>
           </Link>

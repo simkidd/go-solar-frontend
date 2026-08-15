@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Dialog,
@@ -7,7 +8,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Search,
@@ -24,6 +24,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePublishedProductsQuery } from "@/hooks/queries/useProductsQuery";
+import { useCategoryTreeQuery } from "@/hooks/queries/useCategoriesQuery";
 import { formatCurrency } from "@/utils/helpers";
 
 const POPULAR_SEARCHES = [
@@ -34,14 +35,6 @@ const POPULAR_SEARCHES = [
   "Hybrid Inverter",
   "Solar Flood Lights",
   "Tubular Battery",
-];
-
-const POPULAR_CATEGORIES = [
-  { name: "Inverters", slug: "inverters" },
-  { name: "Batteries", slug: "batteries" },
-  { name: "Solar Panels", slug: "solar-panels" },
-  { name: "Solar Generators", slug: "solar-generators" },
-  { name: "Solar Lights", slug: "solar-lights" },
 ];
 
 const RECENT_SEARCHES_KEY = "_goSolar_recent_searches";
@@ -60,6 +53,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const [query, setQuery] = useState("");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const { data: products = [] } = usePublishedProductsQuery();
+  const { data: categoryTree = [] } = useCategoryTreeQuery();
 
   // Load recent searches from localStorage
   useEffect(() => {
@@ -145,7 +139,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-2xl p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850 rounded-2xl shadow-2xl fixed left-1/2 -translate-x-1/2 top-[5%] sm:top-[8%] translate-y-0 data-[state=closed]:slide-out-to-top-[0%] data-[state=open]:slide-in-from-top-[0%] data-[state=closed]:slide-out-to-left-1/2 data-[state=open]:slide-in-from-left-1/2"
+        className="sm:max-w-2xl p-0 gap-0 overflow-hidden bg-card text-card-foreground border border-border/80 rounded-2xl shadow-2xl fixed left-1/2 -translate-x-1/2 top-[5%] sm:top-[8%] translate-y-0"
         hideCloseButton
       >
         <DialogHeader className="sr-only">
@@ -153,8 +147,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         </DialogHeader>
 
         {/* Search Input Bar */}
-        <div className="flex items-center px-4 py-3.5 border-b border-zinc-150 dark:border-zinc-850 gap-3">
-          <Search className="h-5 w-5 text-zinc-400 shrink-0" />
+        <div className="flex items-center px-4 py-3.5 border-b border-border/60 gap-3">
+          <Search className="h-5 w-5 text-muted-foreground shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -162,39 +156,33 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent border-0 text-sm sm:text-base font-medium placeholder:text-zinc-400 focus:outline-none text-zinc-900 dark:text-white"
+            className="flex-1 bg-transparent border-0 text-sm font-medium placeholder:text-muted-foreground focus:outline-none text-foreground"
             autoFocus
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
-              className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              className="text-muted-foreground hover:text-foreground p-1 rounded-full hover:bg-muted transition-colors cursor-pointer"
             >
               <X className="h-4 w-4" />
             </button>
           )}
-          <Badge
-            variant="outline"
-            className="hidden sm:inline-flex text-[10px] uppercase font-mono px-1.5 py-0.5 border-zinc-200 dark:border-zinc-800 text-zinc-400"
-          >
-            ESC
-          </Badge>
         </div>
 
         {/* Body content */}
-        <div className="max-h-[70vh] overflow-y-auto p-4 sm:p-5 space-y-6">
+        <div className="max-h-[60vh] overflow-y-auto p-5 space-y-6 scrollbar-thin">
           {/* If there is a search query and results */}
           {query.trim() && matchingProducts.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
                   Products ({matchingProducts.length})
                 </span>
                 <button
                   type="button"
                   onClick={() => handleSearch(query)}
-                  className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+                  className="text-xs font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   View all results <ArrowRight className="h-3 w-3" />
                 </button>
@@ -215,18 +203,18 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                         saveRecentSearch(product.name);
                         onOpenChange(false);
                       }}
-                      className="flex items-center gap-3.5 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60 border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 transition-all group"
+                      className="flex items-center gap-3.5 p-2.5 rounded-xl hover:bg-muted/40 border border-transparent hover:border-border/60 transition-all group"
                     >
-                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-850 shrink-0 relative border border-zinc-200 dark:border-zinc-800">
+                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-muted shrink-0 relative border border-border/80">
                         {product.images?.[0]?.url ? (
                           <Image
                             src={product.images[0].url}
                             alt={product.name}
                             fill
-                            className="object-cover group-hover:scale-105 transition-transform"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-zinc-400">
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <Zap className="h-5 w-5" />
                           </div>
                         )}
@@ -235,27 +223,27 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           {product.category?.name && (
-                            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md">
+                            <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
                               {product.category.name}
                             </span>
                           )}
                           {product.brand && (
-                            <span className="text-[10px] font-medium text-zinc-500">
+                            <span className="text-[10px] font-bold text-muted-foreground">
                               {product.brand}
                             </span>
                           )}
                         </div>
-                        <p className="text-sm font-bold text-zinc-900 dark:text-white truncate group-hover:text-primary transition-colors">
+                        <p className="text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors">
                           {product.name}
                         </p>
                       </div>
 
                       <div className="text-right shrink-0">
-                        <p className="text-sm font-extrabold text-[#08AA08]">
+                        <p className="text-xs font-black text-primary">
                           {formatCurrency(effectivePrice, "NGN")}
                         </p>
                         {product.discountPrice && product.discountPrice > 0 && (
-                          <p className="text-xs text-zinc-400 line-through">
+                          <p className="text-[10px] text-muted-foreground line-through">
                             {formatCurrency(product.price, "NGN")}
                           </p>
                         )}
@@ -270,13 +258,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           {/* If there is a search query but NO results */}
           {query.trim() && matchingProducts.length === 0 && (
             <div className="py-12 text-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center mx-auto text-zinc-400">
-                <Search className="h-6 w-6" />
+              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground select-none">
+                <Search className="h-5 w-5" />
               </div>
-              <p className="text-sm font-bold text-zinc-900 dark:text-white">
+              <p className="text-xs font-black uppercase tracking-wider text-foreground">
                 No products found for &ldquo;{query}&rdquo;
               </p>
-              <p className="text-xs text-zinc-400 max-w-sm mx-auto">
+              <p className="text-[10px] text-muted-foreground max-w-xs mx-auto">
                 Try checking for typos or searching for general terms like
                 &ldquo;inverter&rdquo;, &ldquo;battery&rdquo;, or
                 &ldquo;panel&rdquo;.
@@ -285,9 +273,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => handleSearch(query)}
-                className="mt-2 text-xs font-semibold"
+                className="mt-2 text-[10px] font-bold uppercase tracking-wider h-8 rounded-lg cursor-pointer border-primary text-primary hover:bg-primary/5"
               >
-                Search all catalog for &ldquo;{query}&rdquo;
+                Search full catalog
               </Button>
             </div>
           )}
@@ -298,14 +286,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               {/* Recent Searches */}
               {recentSearches.length > 0 && (
                 <div className="space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                  <div className="flex items-center justify-between select-none">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5" /> Recent Searches
                     </span>
                     <button
                       type="button"
                       onClick={clearAllRecent}
-                      className="text-[11px] text-zinc-400 hover:text-red-500 transition-colors"
+                      className="text-[10px] font-black uppercase tracking-wider text-muted-foreground hover:text-rose-500 transition-colors cursor-pointer"
                     >
                       Clear all
                     </button>
@@ -315,14 +303,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                       <span
                         key={term}
                         onClick={() => handleSearch(term)}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 text-xs font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer transition-colors group"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted hover:bg-muted/80 text-xs font-semibold text-foreground cursor-pointer transition-colors group"
                       >
-                        <History className="h-3 w-3 text-zinc-400" />
+                        <History className="h-3.5 w-3.5 text-muted-foreground" />
                         {term}
                         <button
                           type="button"
                           onClick={(e) => removeRecentSearch(e, term)}
-                          className="text-zinc-400 hover:text-red-500 ml-0.5"
+                          className="text-muted-foreground hover:text-rose-500 ml-0.5 cursor-pointer"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -334,7 +322,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
               {/* Popular Searches */}
               <div className="space-y-2.5">
-                <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 select-none">
                   <TrendingUp className="h-3.5 w-3.5 text-primary" /> Popular
                   Searches
                 </span>
@@ -344,30 +332,30 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                       key={term}
                       type="button"
                       onClick={() => handleSearch(term)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-50 hover:bg-emerald-50 dark:bg-zinc-900/60 dark:hover:bg-emerald-950/30 border border-zinc-200 dark:border-zinc-800 hover:border-emerald-300 dark:hover:border-emerald-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-emerald-700 dark:hover:text-emerald-400 transition-all"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-50 hover:bg-emerald-50 dark:bg-zinc-900/60 dark:hover:bg-emerald-950/30 border border-border/80 hover:border-emerald-300 dark:hover:border-emerald-800 text-xs font-semibold text-foreground hover:text-emerald-700 dark:hover:text-emerald-400 transition-all cursor-pointer"
                     >
-                      <Sparkles className="h-3 w-3 text-primary" />
+                      <Sparkles className="h-3.5 w-3.5 text-primary animate-none" />
                       {term}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Popular Categories */}
+              {/* Explore Categories */}
               <div className="space-y-2.5">
-                <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 select-none">
                   <ShoppingBag className="h-3.5 w-3.5" /> Explore Categories
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {POPULAR_CATEGORIES.map((cat) => (
+                  {categoryTree.slice(0, 6).map((cat) => (
                     <Link
-                      key={cat.slug}
+                      key={cat._id}
                       href={`/${cat.slug}/products`}
                       onClick={() => onOpenChange(false)}
-                      className="p-3 rounded-xl bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900/40 dark:hover:bg-zinc-850 border border-zinc-150 dark:border-zinc-850 flex items-center justify-between text-xs font-semibold text-zinc-800 dark:text-zinc-200 transition-all group"
+                      className="p-3 rounded-xl bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900/40 dark:hover:bg-zinc-850 border border-border/60 flex items-center justify-between text-xs font-bold text-foreground transition-all group"
                     >
                       <span>{cat.name}</span>
-                      <ArrowRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                     </Link>
                   ))}
                 </div>
@@ -377,24 +365,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-150 dark:border-zinc-850 flex items-center justify-between text-xs text-zinc-400">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[10px] font-mono">
-                ↵
-              </kbd>{" "}
-              to search
-            </span>
-            <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[10px] font-mono">
-                ESC
-              </kbd>{" "}
-              to exit
-            </span>
-          </div>
-          <span className="text-[11px] text-zinc-400">
-            GoSolar Clean Energy
-          </span>
+        <div className="px-5 py-3.5 bg-muted/40 border-t border-border/85 flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-muted-foreground select-none">
+          <span>Quick Shop Search</span>
+          <span>GoSolar Clean Energy</span>
         </div>
       </DialogContent>
     </Dialog>

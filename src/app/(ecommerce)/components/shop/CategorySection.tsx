@@ -5,6 +5,7 @@ import React from "react";
 import CategoryCard from "./CategoryCard";
 import ProductCard from "./ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowRight } from "lucide-react";
 
 interface CategorySectionProps {
   title: string;
@@ -26,11 +27,16 @@ const CategoriesSectionGrid: React.FC<{
   loading?: boolean;
 }> = ({ categories, loading }) => {
   return (
-    <section className="w-full py-8 font-inter relative px-10">
-      <div className="flex items-center justify-between mb-6 -mx-10">
-        <h2 className="text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
-          Categories
-        </h2>
+    <section className="w-full py-6 font-inter relative px-10">
+      <div className="flex items-center justify-between mb-6 -mx-10 select-none">
+        <div className="space-y-0.5 pl-10">
+          <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+            Explore Categories
+          </span>
+          <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
+            Browse Departments
+          </h2>
+        </div>
       </div>
 
       {/* Categories Cards Carousel */}
@@ -44,14 +50,20 @@ const CategoriesSectionGrid: React.FC<{
         <CarouselContent className="-ml-6">
           {loading
             ? Array.from({ length: 5 }).map((_, index) => (
-                <CarouselItem key={index} className="pl-6 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
+                <CarouselItem
+                  key={index}
+                  className="pl-6 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+                >
                   <div className="w-full">
-                    <Skeleton className="h-32 rounded-2xl" />
+                    <Skeleton className="h-28 rounded-2xl" />
                   </div>
                 </CarouselItem>
               ))
             : categories.map((category) => (
-                <CarouselItem key={category._id} className="pl-6 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
+                <CarouselItem
+                  key={category._id}
+                  className="pl-6 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+                >
                   <div className="w-full">
                     <CategoryCard
                       name={category?.name}
@@ -63,40 +75,47 @@ const CategoriesSectionGrid: React.FC<{
               ))}
         </CarouselContent>
         {/* Navigation Arrows on Left and Right borders */}
-        <CarouselPrevious className="-left-10 hover:scale-115 transition-transform" />
-        <CarouselNext className="-right-10 hover:scale-115 transition-transform" />
+        <CarouselPrevious className="-left-10 hover:scale-105 transition-transform" />
+        <CarouselNext className="-right-10 hover:scale-105 transition-transform" />
       </Carousel>
     </section>
   );
 };
 
+export { CategoriesSectionGrid };
 export default CategoriesSectionGrid;
 
 export const CategorySection: React.FC<CategorySectionProps> = ({
   link,
   products,
   title,
-  loading,
 }) => {
-  // If not loading and no products, don't render the section
+  // If no products, don't render the section
   if (!products || products.length === 0) {
     return null;
   }
 
   // Render the actual section with products
   return (
-    <div className="mb-16 font-inter">
-      <div className="flex items-center justify-between bg-primary text-white px-6 py-3 rounded-2xl shadow-sm">
-        <h3 className="text-xl font-bold tracking-tight">{title}</h3>
+    <div className="mb-16 font-inter space-y-8">
+      <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
+        <div className="space-y-0.5">
+          <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+            Department
+          </span>
+          <h3 className="text-xl font-extrabold text-foreground tracking-tight">
+            {title}
+          </h3>
+        </div>
         <Link
           href={link}
-          className="text-xs font-bold text-white hover:underline transition-colors uppercase tracking-wider"
+          className="text-xs font-black uppercase tracking-wider text-primary hover:underline transition-colors flex items-center gap-1 cursor-pointer"
         >
-          View all
+          View All {title} <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
-      <div className="grid lg:grid-cols-5 md:grid-cols-4 grid-cols-2 gap-6 my-8">
-        {products.slice(0, 6).map((item) => (
+      <div className="grid lg:grid-cols-4 md:grid-cols-4 grid-cols-2 gap-6 my-8">
+        {products.slice(0, 5).map((item) => (
           <ProductCard key={item?._id} item={item} />
         ))}
       </div>

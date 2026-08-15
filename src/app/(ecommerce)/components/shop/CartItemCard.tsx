@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import useCartStore, { CartItem } from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
@@ -11,11 +12,11 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
   const { increaseQuantity, decreaseQuantity, removeItem } = useCartStore();
 
   return (
-    <div className="w-full py-6 border-b border-zinc-100 dark:border-zinc-800/80 first:pt-0">
-      <div className="flex gap-4 sm:gap-6">
+    <div className="w-full py-5 border-b border-border/60 first:pt-0">
+      <div className="flex gap-4">
         
         {/* Item Image */}
-        <div className="h-20 w-20 min-w-20 rounded-xl overflow-hidden border border-zinc-100 dark:border-zinc-800 relative bg-zinc-50 dark:bg-zinc-900">
+        <div className="h-16 w-16 min-w-[64px] rounded-xl overflow-hidden border border-border/80 relative bg-muted shrink-0 select-none">
           <Image
             src={cartItem?.product?.images?.[0]?.url || "/placeholder-product.jpg"}
             alt={cartItem?.product?.name}
@@ -25,60 +26,68 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
         </div>
 
         {/* Item Details */}
-        <div className="flex-1 flex flex-col sm:flex-row justify-between gap-4">
-          <div className="space-y-1">
+        <div className="flex-1 flex flex-col justify-between min-w-0">
+          
+          <div className="space-y-0.5">
             <Link href={`/products/${cartItem?.product?.slug}`} className="group">
-              <h3 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-white group-hover:text-primary transition-colors">
+              <h3 className="text-xs font-extrabold text-foreground group-hover:text-primary transition-colors line-clamp-1">
                 {cartItem.product.name}
               </h3>
             </Link>
-            <p className="text-xs text-zinc-400 dark:text-zinc-500 line-clamp-2 max-w-md">
+            <p className="text-[10px] text-muted-foreground line-clamp-1">
               {cartItem.product.description}
             </p>
           </div>
 
-          <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2 shrink-0">
+          <div className="flex items-center justify-between gap-2 mt-2">
+            
             {/* Price */}
-            <p className="font-extrabold text-sm sm:text-base text-zinc-900 dark:text-white">
+            <p className="font-black text-xs text-primary">
               {formatCurrency(cartItem?.product?.price, "NGN")}
             </p>
 
-            {/* Quantity actions */}
-            <div className="flex items-center gap-2 border border-zinc-200 dark:border-zinc-800 p-0.5 rounded-lg">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => cartItem.qty > 1 && decreaseQuantity(cartItem?.product?._id)}
-                disabled={cartItem?.qty <= 1}
-                className="h-7 w-7 rounded-md"
+            <div className="flex items-center gap-2">
+              
+              {/* Quantity actions */}
+              <div className="flex items-center gap-1.5 border border-border/80 p-0.5 rounded-lg bg-card select-none">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => cartItem.qty > 1 && decreaseQuantity(cartItem?.product?._id)}
+                  disabled={cartItem?.qty <= 1}
+                  className="h-6 w-6 rounded-md hover:bg-muted"
+                >
+                  <Minus className="h-2.5 w-2.5" />
+                </Button>
+                <span className="text-[11px] font-black text-foreground px-1">{cartItem?.qty}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    if (cartItem.qty < cartItem.product.quantityInStock) {
+                      increaseQuantity(cartItem?.product?._id);
+                    }
+                  }}
+                  disabled={cartItem.qty >= cartItem.product.quantityInStock}
+                  className="h-6 w-6 rounded-md hover:bg-muted"
+                >
+                  <Plus className="h-2.5 w-2.5" />
+                </Button>
+              </div>
+
+              {/* Remove Action */}
+              <button
+                onClick={() => removeItem(cartItem?.product?._id)}
+                className="text-[9px] font-black uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors flex items-center gap-1 cursor-pointer h-7 px-2 rounded-lg hover:bg-rose-500/5"
               >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 px-1">{cartItem?.qty}</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  if (cartItem.qty < cartItem.product.quantityInStock) {
-                    increaseQuantity(cartItem?.product?._id);
-                  }
-                }}
-                disabled={cartItem.qty >= cartItem.product.quantityInStock}
-                className="h-7 w-7 rounded-md"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
+                <Trash2 className="h-3 w-3" />
+                Remove
+              </button>
+
             </div>
 
-            {/* Remove Action */}
-            <button
-              onClick={() => removeItem(cartItem?.product?._id)}
-              className="text-xs font-semibold text-rose-500 hover:text-rose-700 transition flex items-center gap-1 mt-1"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-              Remove
-            </button>
           </div>
+
         </div>
 
       </div>

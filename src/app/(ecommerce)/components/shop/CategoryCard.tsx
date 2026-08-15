@@ -14,12 +14,14 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   link,
 }) => {
   return (
-    <Link href={link} className="group font-inter block">
-      <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800/80 shadow-xs hover:border-[#08AA08] hover:shadow-md transition-all duration-300">
-        <div className="text-2xl mb-4 flex items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-850 group-hover:bg-[#08AA08]/10 group-hover:text-[#08AA08] w-12 h-12 transition-all duration-300">
-          <Icon className="group-hover:scale-110 transition-transform duration-300" />
+    <Link href={link} className="group font-inter block select-none">
+      <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-card border border-border/80 hover:border-primary/20 hover:shadow-md hover:shadow-primary/[0.01] transition-all duration-300">
+        <div className="text-xl mb-3 flex items-center justify-center rounded-xl bg-muted group-hover:bg-primary/10 group-hover:text-primary w-11 h-11 transition-all duration-300 text-muted-foreground">
+          <Icon className="group-hover:scale-105 transition-transform duration-300" />
         </div>
-        <p className="font-bold text-xs text-zinc-800 dark:text-zinc-200 text-center tracking-wide line-clamp-1">{name}</p>
+        <p className="font-black text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors text-center line-clamp-1">
+          {name}
+        </p>
       </div>
     </Link>
   );

@@ -31,11 +31,11 @@ const VisionSection = () => {
     <section className="w-full py-24 bg-zinc-50 dark:bg-zinc-900/10 font-inter">
       <div className="container mx-auto px-4 space-y-16">
         {/* Centered Heading */}
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-[#08AA08]">
+        <div className="text-center max-w-2xl mx-auto space-y-3 select-none">
+          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
             Energy Independence
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight leading-tight">
             Why Choose Us for Your Energy Transformation Journey?
           </h2>
         </div>
@@ -87,7 +87,7 @@ const VisionSection = () => {
                   viewport={{ once: true }}
                   className="flex gap-4 p-5 bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-2xl shadow-xs"
                 >
-                  <div className="h-10 w-10 rounded-xl bg-[#08AA08]/10 text-[#08AA08] flex items-center justify-center shrink-0 border border-[#08AA08]/20">
+                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="space-y-1 text-left">

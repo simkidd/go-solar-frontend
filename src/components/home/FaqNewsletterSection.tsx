@@ -37,20 +37,20 @@ const FaqNewsletterSection = () => {
         {/* FAQ Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* FAQ Left Block */}
-          <div className="lg:col-span-5 space-y-6">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-[#08AA08]">
+          <div className="lg:col-span-5 space-y-6 select-none">
+            <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               FAQ Support
             </span>
-            <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white leading-tight tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white leading-tight tracking-tight">
               Frequently Asked Questions
             </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed font-semibold">
               Find answers to design questions, sizing configurations, safety
               changeovers, and warranties.
             </p>
             <div className="pt-2">
               <Link href="/contact-us">
-                <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl px-6 h-10">
+                <Button className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl px-6 h-10 cursor-pointer">
                   Ask Anything
                 </Button>
               </Link>
@@ -122,10 +122,10 @@ const FaqNewsletterSection = () => {
                 <input
                   type="email"
                   placeholder="Enter email address"
-                  className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl py-2.5 pl-10 pr-4 text-xs text-white placeholder-zinc-500 focus:outline-hidden focus:border-[#08AA08] transition-colors"
+                  className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl py-2.5 pl-10 pr-4 text-xs text-white placeholder-zinc-500 focus:outline-hidden focus:border-primary transition-colors"
                 />
               </div>
-              <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-5 shrink-0">
+              <Button className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-5 shrink-0 cursor-pointer">
                 Subscribe
               </Button>
             </div>

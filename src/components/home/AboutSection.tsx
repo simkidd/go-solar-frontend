@@ -51,13 +51,13 @@ const AboutSection = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <span className="text-xs font-extrabold uppercase tracking-widest text-[#08AA08]">
+            <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block select-none">
               About GoSolar
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-900 dark:text-white leading-tight tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white leading-tight tracking-tight select-none">
               We Are Specialists in Sustainable Energy Sizing
             </h2>
-            <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xl">
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xl font-semibold">
               GoSolar specializes in designing premium, customized solar energy
               systems for residential homes, corporate workspaces, and
               industrial settings. By combining clean tier-1 hardware components
@@ -67,14 +67,14 @@ const AboutSection = () => {
 
             <div className="flex gap-6 items-center pt-4">
               <div className="text-center">
-                <p className="text-3xl font-extrabold text-[#08AA08]">99.8%</p>
+                <p className="text-3xl font-extrabold text-primary">99.8%</p>
                 <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider mt-1">
                   Uptime Sized
                 </p>
               </div>
               <div className="h-10 w-px bg-zinc-200 dark:bg-zinc-800" />
               <div className="text-center">
-                <p className="text-3xl font-extrabold text-[#08AA08]">500+</p>
+                <p className="text-3xl font-extrabold text-primary">500+</p>
                 <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider mt-1">
                   Properties Sized
                 </p>
@@ -95,7 +95,7 @@ const AboutSection = () => {
               return (
                 <div
                   key={feat.title}
-                  className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800/80 p-6 rounded-2xl space-y-4 hover:shadow-sm hover:border-[#08AA08]/30 transition-all duration-300"
+                  className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800/80 p-6 rounded-2xl space-y-4 hover:shadow-sm hover:border-primary/30 transition-all duration-300"
                 >
                   <div
                     className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${feat.color}`}

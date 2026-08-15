@@ -15,9 +15,13 @@ export const useCreateProductMutation = (options?: MutationOptions) => {
 
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      const { data } = await axiosInstance.post("/products", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const { data } = await axiosInstance.post(
+        "/admin/add-product",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
       return data;
     },
     onSuccess: (data) => {
@@ -26,7 +30,8 @@ export const useCreateProductMutation = (options?: MutationOptions) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to create product";
+      const message =
+        error.response?.data?.message || "Failed to create product";
       toast.error(message);
       options?.onError?.(error);
     },
@@ -39,9 +44,9 @@ export const useUpdateProductMutation = (options?: MutationOptions) => {
 
   return useMutation({
     mutationFn: async (input: UpdateProductInput) => {
-      const { data } = await axiosInstance.put(
-        `/products/${input.productId}`,
-        input
+      const { data } = await axiosInstance.patch(
+        `/admin/update-product-details`,
+        input,
       );
       return data;
     },
@@ -51,7 +56,8 @@ export const useUpdateProductMutation = (options?: MutationOptions) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to update product";
+      const message =
+        error.response?.data?.message || "Failed to update product";
       toast.error(message);
       options?.onError?.(error);
     },
@@ -73,7 +79,8 @@ export const useDeleteProductMutation = (options?: MutationOptions) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to delete product";
+      const message =
+        error.response?.data?.message || "Failed to delete product";
       toast.error(message);
       options?.onError?.(error);
     },
@@ -86,9 +93,13 @@ export const useUpdateProductImageMutation = (options?: MutationOptions) => {
 
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      const { data } = await axiosInstance.put("/products/update-image", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const { data } = await axiosInstance.put(
+        "/products/update-image",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
       return data;
     },
     onSuccess: (data) => {

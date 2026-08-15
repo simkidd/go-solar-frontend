@@ -14,16 +14,15 @@ const TestimonialSection = () => {
     >
       <div className="container mx-auto px-4 space-y-16">
         {/* Header Title */}
-        <div className="text-center max-w-xl mx-auto space-y-3">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-[#08AA08]">
+        <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3 select-none">
+          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
             Customer Feedback
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
             What Our Customers Say
           </h2>
-          <p className="text-xs text-zinc-500 leading-relaxed max-w-sm mx-auto">
-            Real feedback from homeowners and enterprise clients relying on our
-            power systems.
+          <p className="text-sm text-muted-foreground leading-relaxed font-semibold max-w-sm">
+            Real feedback from homeowners and enterprise clients relying on our power systems.
           </p>
         </div>
 

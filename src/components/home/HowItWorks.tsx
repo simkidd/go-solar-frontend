@@ -33,12 +33,12 @@ const HowItWorks = () => {
     <section className="py-20 lg:py-28 bg-background font-inter">
       <div className="container mx-auto px-4">
         {/* Header Block */}
-        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-14">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-14 select-none">
           <div className="space-y-3">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               The Process
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
               How GoSolar Works
             </h2>
           </div>
