@@ -101,7 +101,6 @@ const SolarCalculatorPage = () => {
           i.name === preset.name ? { ...i, qty: i.qty + 1 } : i,
         ),
       );
-      toast.info(`Increased quantity for ${preset.name}`);
       return;
     }
 
@@ -115,7 +114,6 @@ const SolarCalculatorPage = () => {
         hours: 4, // Default run hours
       },
     ]);
-    toast.success(`Added ${preset.name}`);
   };
 
   const handleAddCustomItem = (e: React.FormEvent) => {
@@ -910,7 +908,7 @@ const SolarCalculatorPage = () => {
                     </div>
                     <div className="flex gap-3 pt-2">
                       <Link
-                        href={`/package/${matchedPackage.slug}`}
+                        href={`/packages/${matchedPackage.slug}`}
                         className="flex-1"
                       >
                         <Button className="w-full h-10 text-xs font-bold bg-[#08AA08] hover:bg-[#079907] text-white rounded-xl shadow-xs">

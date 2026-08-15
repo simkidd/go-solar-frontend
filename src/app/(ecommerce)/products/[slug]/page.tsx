@@ -45,7 +45,7 @@ export const generateMetadata = async ({
     title: `${product?.name || "Product"} | GoSolar`,
     description: product?.description,
     alternates: {
-      canonical: `/product/${product?.slug}`,
+      canonical: `/products/${product?.slug}`,
     },
     openGraph: {
       title: product?.name,

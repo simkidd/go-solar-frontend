@@ -20,12 +20,8 @@ export const getCategories = async () => {
 };
 
 export const getPubilshedProducts = async () => {
-  const { data } = await axiosInstance.get("/products");
-
-  const publishedProducts = data.products.filter(
-    (product: Product) => product.isPublished
-  );
-  return publishedProducts;
+  const { data } = await axiosInstance.get("/products/published");
+  return data.products;
 };
 
 export const deleteProduct = async (id: string) => {

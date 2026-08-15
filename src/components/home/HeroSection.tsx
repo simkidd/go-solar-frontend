@@ -1,156 +1,121 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
+
+import React from "react";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
-
-const SLIDES = [
-  {
-    tag: "Solar Financing",
-    title: "Go Solar Now,\nPay Later",
-    desc: "Enjoy clean, reliable energy without breaking the bank. Our flexible financing options let you install your system today and pay over time.",
-    actionText: "Apply for Financing",
-    actionLink: "/contact-us?subject=Financing",
-    tagClass:
-      "bg-sky-100 dark:bg-sky-950/45 text-sky-600 dark:text-sky-400 border-sky-200 dark:border-sky-850",
-    image: "/images/bg/hero-bg.jpg",
-  },
-  {
-    tag: "Certified Installations",
-    title: "Powering Nigeria\nWith Reliable Solar",
-    desc: "Experience zero blackouts and complete energy independence. We design and install high-efficiency solar setups for homes and enterprises.",
-    actionText: "Request Free Quote",
-    actionLink: "/contact-us?subject=Quote",
-    tagClass:
-      "bg-emerald-100 dark:bg-emerald-950/45 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-850",
-    image: "/images/bg/contact-bg.jpg",
-  },
-  {
-    tag: "Smart Power Audit",
-    title: "Save Up To 75%\nOn Monthly Bills",
-    desc: "Stop wasting money on grid tariffs and diesel generators. Run our calculator tool to find the exact setup your home or workspace needs.",
-    actionText: "Start Energy Calculator",
-    actionLink: "/energy-calculator",
-    tagClass:
-      "bg-amber-100 dark:bg-amber-950/45 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-850",
-    image: "/images/bg/about-us.jpg",
-  },
-];
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const HeroSection = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const MotionImage = motion.create(Image);
-
   return (
-    <section className="w-full relative bg-zinc-950 font-inter min-h-[560px] md:min-h-[640px] flex flex-col justify-center items-center text-center overflow-hidden">
-      {/* Background image fade transitions */}
-      <div className="absolute inset-0 z-0 select-none pointer-events-none">
-        <AnimatePresence mode="wait">
-          <MotionImage
-            key={currentSlide}
-            src={SLIDES[currentSlide].image}
-            alt=""
-            fill
-            priority={currentSlide === 0}
-            sizes="100vw"
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 0.5, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="object-cover object-center"
-          />
-        </AnimatePresence>
+    <section className="relative w-full min-h-[90vh] bg-zinc-950 text-white font-inter flex flex-col justify-center items-center overflow-hidden border-b border-zinc-900 select-none">
+      
+      {/* ── Looping Background Video & Fallback Poster ── */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        poster="/images/beautiful-alternative-energy-plant-with-solar-panels.jpg"
+        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none select-none opacity-45"
+      >
+        <source
+          src="https://assets.mixkit.co/videos/preview/mixkit-solar-panels-on-a-roof-40348-large.mp4"
+          type="video/mp4"
+        />
+      </video>
 
-        {/* Dark gradient overlay */}
-        <div className="absolute inset-0 z-10 bg-linear-to-b from-black/55 via-black/50 to-black/65" />
-      </div>
+      {/* Dark Overlay mask for maximum typography readability */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] z-10 pointer-events-none" />
 
-      {/* Centered Content Block */}
-      <div className="relative z-20 max-w-3xl px-6 md:px-12 py-20 space-y-6 flex flex-col items-center">
-        {/* Slide Tag Badge */}
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={currentSlide + "-tag"}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border shadow-xs transition-colors duration-300 ${SLIDES[currentSlide].tagClass}`}
-          >
-            {SLIDES[currentSlide].tag}
-          </motion.span>
-        </AnimatePresence>
+      {/* ── Centered Hero Content ── */}
+      <div className="relative z-20 max-w-4xl mx-auto px-6 py-20 text-center flex flex-col items-center space-y-8">
+        
+        {/* Blinking Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md"
+        >
+          <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+          <span className="font-mono text-[10px] font-extrabold uppercase tracking-widest text-zinc-300">
+            Nigeria's Solar Energy Specialists
+          </span>
+        </motion.div>
 
-        {/* Slogan Title */}
-        <AnimatePresence mode="wait">
-          <motion.h1
-            key={currentSlide + "-title"}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight text-white tracking-tight whitespace-pre-line"
-          >
-            {SLIDES[currentSlide].title}
-          </motion.h1>
-        </AnimatePresence>
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-black tracking-tight leading-tight"
+        >
+          Power Your{" "}
+          <span className="bg-gradient-to-r from-emerald-400 to-primary bg-clip-text text-transparent drop-shadow-sm">
+            Future
+          </span>
+          <br />
+          with Solar Energy
+        </motion.h1>
 
-        {/* Slogan Description */}
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={currentSlide + "-desc"}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-zinc-300 text-sm sm:text-base md:text-lg max-w-xl leading-relaxed"
-          >
-            {SLIDES[currentSlide].desc}
-          </motion.p>
-        </AnimatePresence>
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-sm sm:text-base md:text-lg text-zinc-300 leading-relaxed max-w-2xl font-medium"
+        >
+          Professional solar design, supply, and installation for homes and businesses across Nigeria. Cut your monthly energy bills by up to 90% using clean power.
+        </motion.p>
 
-        {/* CTA Button */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${currentSlide}-cta`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="pt-2"
-          >
-            <Link href={SLIDES[currentSlide].actionLink}>
-              <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-widest px-8 py-3 rounded-full flex items-center gap-2 shadow-md hover:scale-105 transition-all duration-300">
-                {SLIDES[currentSlide].actionText}
-                <ArrowUpRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex flex-col sm:flex-row gap-4 items-center justify-center pt-4 w-full sm:w-auto"
+        >
+          <Link href="/energy-calculator" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest h-12 px-8 rounded-full flex items-center justify-center gap-2 shadow-md hover:scale-105 transition-all duration-300">
+              Calculate Your System
+              <ArrowUpRight className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Link href="/solutions" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto border border-white/20 bg-white/5 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-widest h-12 px-8 rounded-full transition-all">
+              View Solutions
+            </Button>
+          </Link>
+        </motion.div>
 
-      {/* Dots Indicator */}
-      <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2.5 z-20">
-        {SLIDES.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              currentSlide === index
-                ? "w-6 bg-[#08AA08]"
-                : "w-2 bg-white/40 hover:bg-white/60"
-            }`}
-          />
-        ))}
+        {/* Stats inline row */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="pt-10 border-t border-white/10 grid grid-cols-3 gap-8 sm:gap-16 max-w-lg w-full"
+        >
+          {[
+            { value: "500+", label: "Installations", tooltip: "Active residential & enterprise sites across Nigeria." },
+            { value: "5 MW", label: "Capacity", tooltip: "Total clean solar generation capacity deployed." },
+            { value: "15 Yrs", label: "Experience", tooltip: "Pioneering engineering experience in sustainable power." },
+          ].map((stat, idx) => (
+            <div key={idx} className="group relative cursor-default">
+              <div className="font-heading font-extrabold text-2xl sm:text-3xl text-white group-hover:text-emerald-400 transition-colors">
+                {stat.value}
+              </div>
+              <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
+                {stat.label}
+              </div>
+              {/* Floating Tooltip */}
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-44 scale-0 group-hover:scale-100 transition-all origin-bottom duration-200 bg-zinc-900 border border-zinc-800 rounded-lg p-2 shadow-xl text-[9px] text-zinc-400 z-50 pointer-events-none">
+                {stat.tooltip}
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
       </div>
     </section>
   );

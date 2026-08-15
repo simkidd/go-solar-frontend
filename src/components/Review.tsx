@@ -1,43 +1,54 @@
 "use client";
+
 import React from "react";
 import { ReviewData } from "@/data/reviews";
 import { Star, User } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Review = () => {
+  // Use 4 reviews for a clean 4-column layout matching reference structure
+  const featuredReviews = ReviewData.slice(0, 4);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-inter">
-      {ReviewData.map((rev, index) => (
-        <div
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-3xl overflow-hidden border border-border shadow-xs font-inter">
+      {featuredReviews.map((rev, index) => (
+        <motion.div
           key={index}
-          className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-xs hover:shadow-md hover:border-[#08AA08]/20 transition-all duration-300"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: index * 0.1 }}
+          viewport={{ once: true }}
+          className="bg-card text-card-foreground p-8 flex flex-col justify-between h-[340px] hover:bg-secondary/40 transition-all duration-300 group cursor-default"
         >
-          {/* Rating */}
-          <div className="flex gap-1 text-amber-500">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className="h-4 w-4 fill-current shrink-0" />
-            ))}
+          {/* Star Rating */}
+          <div className="space-y-4">
+            <div className="flex gap-1.5 text-amber-400">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} className="h-4.5 w-4.5 fill-current shrink-0" />
+              ))}
+            </div>
+
+            {/* Feedback Content */}
+            <blockquote className="text-xs sm:text-sm text-muted-foreground group-hover:text-foreground leading-relaxed font-semibold italic">
+              "{rev.content}"
+            </blockquote>
           </div>
 
-          {/* Feedback Content */}
-          <p className="text-xs sm:text-sm text-zinc-550 dark:text-zinc-400 leading-relaxed font-semibold italic flex-1">
-            "{rev.content}"
-          </p>
-
           {/* Reviewer Meta info */}
-          <div className="flex items-center gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-850">
-            <div className="h-9 w-9 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-450 shrink-0">
-              <User className="h-4 w-4" />
+          <div className="flex items-center gap-3 pt-6 border-t border-border transition-colors">
+            <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground shrink-0 border border-border">
+              <User className="h-4.5 w-4.5 text-muted-foreground group-hover:text-primary" />
             </div>
             <div className="space-y-0.5">
-              <h5 className="font-extrabold text-xs text-zinc-900 dark:text-white leading-snug">
+              <h5 className="font-extrabold text-xs text-foreground group-hover:text-primary transition-colors leading-snug">
                 {rev.name}
               </h5>
-              <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider">
+              <p className="text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
                 {rev.role}
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   );

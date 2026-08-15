@@ -49,7 +49,7 @@ const ProductCard: React.FC<{
       
       {/* Image container */}
       <div className="relative aspect-square overflow-hidden bg-zinc-50 dark:bg-zinc-950 shrink-0">
-        <Link href={`/product/${item?.slug}`} onClick={handleCardClick} className="w-full h-full block">
+        <Link href={`/products/${item?.slug}`} onClick={handleCardClick} className="w-full h-full block">
           <Image
             src={item?.images[0]?.url || "https://fakeimg.pl/300x300?text=No+Image"}
             alt={item?.name}
@@ -113,7 +113,7 @@ const ProductCard: React.FC<{
             )}
           </div>
           <Link
-            href={`/product/${item?.slug}`}
+            href={`/products/${item?.slug}`}
             className="text-sm font-bold text-zinc-800 dark:text-zinc-200 line-clamp-2 hover:text-[#08AA08] transition-colors leading-snug block"
             title={item?.name}
             onClick={handleCardClick}
@@ -138,9 +138,8 @@ const ProductCard: React.FC<{
             )}
           </div>
 
-          {/* Grid buttons matching Mockup 3 */}
           <div className="grid grid-cols-2 gap-2 pt-1">
-            <Link href={`/product/${item?.slug}`} onClick={handleCardClick}>
+            <Link href={`/products/${item?.slug}`} onClick={handleCardClick}>
               <Button
                 variant="outline"
                 className="w-full text-xs font-bold rounded-xl h-9 border-zinc-200 text-zinc-700 dark:border-zinc-800 dark:text-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 transition-colors"

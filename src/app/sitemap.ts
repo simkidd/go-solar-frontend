@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const productUrls: MetadataRoute.Sitemap = products.map((product) => ({
-    url: `${base_url}/product/${product?.slug}`,
+    url: `${base_url}/products/${product?.slug}`,
     lastModified: new Date(product?.updatedAt),
   }));
 

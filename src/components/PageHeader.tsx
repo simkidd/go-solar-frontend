@@ -56,7 +56,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       {/* Content */}
       <div
         className={cn(
-          "relative z-20 max-w-3xl px-6 md:px-12 py-16 space-y-6 flex flex-col",
+          "relative z-20 container mx-auto px-6 md:px-12 py-16 space-y-6 flex flex-col",
           isLeft ? "items-start text-left" : "items-center text-center",
         )}
       >

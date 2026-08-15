@@ -27,7 +27,7 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
         {/* Item Details */}
         <div className="flex-1 flex flex-col sm:flex-row justify-between gap-4">
           <div className="space-y-1">
-            <Link href={`/product/${cartItem?.product?.slug}`} className="group">
+            <Link href={`/products/${cartItem?.product?.slug}`} className="group">
               <h3 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-white group-hover:text-primary transition-colors">
                 {cartItem.product.name}
               </h3>

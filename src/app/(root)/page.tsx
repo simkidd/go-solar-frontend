@@ -1,50 +1,54 @@
 /* eslint-disable react/no-unescaped-entities */
-import AboutSection from "@/components/home/AboutSection";
-import BlogSection from "@/components/home/BlogSection";
-import StatsSection from "@/components/home/StatsSection";
 import HeroSection from "@/components/home/HeroSection";
-import HomeContactCta from "@/components/home/HomeContactCta";
+import SolutionsSection from "@/components/home/SolutionsSection";
+import AboutSection from "@/components/home/AboutSection";
 import PackagesSection from "@/components/home/PackagesSection";
-import HowItWorks from "@/components/home/HowItWorks";
-import TestimonialSection from "@/components/home/TestimonialSection";
+import SimulatorSection from "@/components/home/SimulatorSection";
 import VisionSection from "@/components/home/VisionSection";
-import CounterSection from "@/components/home/CounterSection";
+import HowItWorks from "@/components/home/HowItWorks";
+import ShopSection from "@/components/home/ShopSection";
+import TestimonialSection from "@/components/home/TestimonialSection";
+import BlogSection from "@/components/home/BlogSection";
 import FaqNewsletterSection from "@/components/home/FaqNewsletterSection";
+import HomeContactCta from "@/components/home/HomeContactCta";
 
 const page = async () => {
   return (
     <div className="w-full font-inter overflow-hidden bg-white dark:bg-zinc-950">
-      {/* Hero Sliders Banner */}
+      {/* 1. Hero Section (Cinematic Video/Image Background) */}
       <HeroSection />
 
-      {/* Stats Counter metrics */}
-      <StatsSection />
+      {/* 2. Complete Solar Solutions Grid */}
+      <SolutionsSection />
 
-      {/* About Section */}
+      {/* 3. About Section */}
       <AboutSection />
 
-      {/* Packages Grid layout */}
+      {/* 4. Pre-Configured Solar Packages */}
       <PackagesSection />
 
-      {/* Vision & Brand Message */}
+      {/* 5. Standalone Sizing Day/Night Simulator */}
+      <SimulatorSection />
+
+      {/* 6. Vision / Energy Independence */}
       <VisionSection />
 
-      {/* How it works steps layout */}
+      {/* 7. Step-By-Step Process */}
       <HowItWorks />
 
-      {/* Partner Logos cluster */}
-      <CounterSection />
+      {/* 8. Shop Products Showcase */}
+      <ShopSection />
 
-      {/* Testimonials Review Slider */}
+      {/* 9. Testimonials Section */}
       <TestimonialSection />
 
-      {/* Blog list updates */}
+      {/* 10. Blog Insights */}
       <BlogSection />
 
-      {/* FAQ & Newsletter segment */}
+      {/* 11. FAQ & Newsletter segment */}
       <FaqNewsletterSection />
 
-      {/* Footer Contact CTA banner */}
+      {/* 12. Footer Contact CTA banner */}
       <HomeContactCta />
     </div>
   );

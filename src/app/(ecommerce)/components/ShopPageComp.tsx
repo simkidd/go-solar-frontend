@@ -3,6 +3,7 @@ import React from "react";
 import Cta from "@/app/(ecommerce)/components/shop/Cta";
 import { Category, Product } from "@/interfaces/product.interface";
 import { useActiveOffersQuery } from "@/hooks/queries/useOffersQuery";
+import { useActiveBannersQuery } from "@/hooks/queries/useBannersQuery";
 import CategoriesSectionGrid, { CategorySection } from "./shop/CategorySection";
 import SpecialOffers from "./shop/SpecialOffers";
 import ViewHistoryComp from "../components/ViewHistory";
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import ProductCard from "./shop/ProductCard";
+import { Button } from "@/components/ui/button";
 
 
 
@@ -88,6 +90,7 @@ const ShopFeaturesBar = () => (
 
 const ShopPageComp = () => {
   const { data: offers = [] } = useActiveOffersQuery();
+  const { data: serverBanners = [] } = useActiveBannersQuery();
 
   const {
     products: allProducts,
@@ -158,7 +161,37 @@ const ShopPageComp = () => {
 
         {/* Promo banner placeholder */}
         <div className="mb-6">
-          <Cta />
+          {serverBanners && serverBanners.length > 1 ? (
+            <div className="w-full relative rounded-3xl overflow-hidden shadow-xs border border-zinc-150 dark:border-zinc-800 bg-zinc-950 min-h-[160px] flex items-center font-inter p-8 md:p-12">
+              <div
+                className="absolute inset-0 z-0 bg-cover bg-center opacity-30 hover:scale-102 transition-transform duration-[10s]"
+                style={{ backgroundImage: `url('${serverBanners[1].image}')` }}
+              />
+              <div className="absolute inset-0 z-10 bg-linear-to-r from-black via-black/80 to-transparent" />
+              <div className="relative z-20 max-w-xl space-y-2 text-white">
+                {serverBanners[1].badge && (
+                  <span className="inline-block text-[9px] font-extrabold bg-[#08AA08] text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
+                    {serverBanners[1].badge}
+                  </span>
+                )}
+                <h3 className="text-lg md:text-xl font-black tracking-tight leading-tight">{serverBanners[1].title}</h3>
+                {serverBanners[1].subtitle && (
+                  <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-semibold">{serverBanners[1].subtitle}</p>
+                )}
+                {serverBanners[1].ctaLink && (
+                  <div className="pt-2">
+                    <Link href={serverBanners[1].ctaLink}>
+                      <Button className="bg-[#08AA08] hover:bg-[#079907] text-white text-[10px] font-extrabold uppercase tracking-widest h-8 px-4 rounded-xl shadow-xs transition-all hover:scale-102">
+                        {serverBanners[1].ctaText || "Explore"}
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <Cta />
+          )}
         </div>
 
         {/* Pre-configured Complete Packages segment */}

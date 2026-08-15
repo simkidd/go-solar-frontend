@@ -1,12 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MoonStar, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -21,35 +14,76 @@ export function ThemeSwitcher() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <Skeleton className="w-8 h-8 rounded-full" />;
+  if (!mounted) {
+    return <Skeleton className="w-[84px] h-[28px] rounded-full" />;
+  }
+
+  // Fallback to "system" if theme is not set
+  const currentTheme = theme || "system";
+
+  // Translate slider position based on active theme
+  const getTranslateClass = () => {
+    switch (currentTheme) {
+      case "light":
+        return "translate-x-0";
+      case "dark":
+        return "translate-x-[24px]";
+      case "system":
+      default:
+        return "translate-x-[48px]";
+    }
+  };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="w-9 h-9 rounded-full">
-          {theme === "light" && (
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          )}
-          {theme === "dark" && (
-            <MoonStar className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:text-white" />
-          )}
-          {theme === "system" && (
-            <BiDesktop className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:text-white" />
-          )}
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div
+      className="flex items-center bg-zinc-150 dark:bg-zinc-800 p-0.5 rounded-full relative w-[76px] h-[28px] select-none shadow-inner transition-colors duration-300"
+      role="radiogroup"
+      aria-label="Theme Selection"
+    >
+      {/* Sliding indicator element */}
+      <div
+        className={`absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white dark:bg-zinc-950 shadow-xs border border-zinc-200/50 dark:border-zinc-850/50 transition-transform duration-300 ease-out z-0 ${getTranslateClass()}`}
+      />
+
+      {/* Light Theme Button */}
+      <button
+        onClick={() => setTheme("light")}
+        className={`w-6 h-6 rounded-full flex items-center justify-center relative z-10 transition-colors duration-300 cursor-pointer ${
+          currentTheme === "light"
+            ? "text-[#08AA08] dark:text-[#08AA08]"
+            : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-650 dark:hover:text-zinc-350"
+        }`}
+        aria-label="Light Theme"
+      >
+        <Sun className="h-3.5 w-3.5" />
+      </button>
+
+      {/* Dark Theme Button */}
+      <button
+        onClick={() => setTheme("dark")}
+        className={`w-6 h-6 rounded-full flex items-center justify-center relative z-10 transition-colors duration-300 cursor-pointer ${
+          currentTheme === "dark"
+            ? "text-[#08AA08] dark:text-[#08AA08]"
+            : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-650 dark:hover:text-zinc-350"
+        }`}
+        aria-label="Dark Theme"
+      >
+        <MoonStar className="h-3.5 w-3.5" />
+      </button>
+
+      {/* System Theme Button */}
+      <button
+        onClick={() => setTheme("system")}
+        className={`w-6 h-6 rounded-full flex items-center justify-center relative z-10 transition-colors duration-300 cursor-pointer ${
+          currentTheme === "system"
+            ? "text-[#08AA08] dark:text-[#08AA08]"
+            : "text-zinc-400 dark:text-zinc-500 hover:text-[#08AA08]/50 dark:hover:text-zinc-350"
+        }`}
+        aria-label="System Theme"
+      >
+        <BiDesktop className="h-3.5 w-3.5" />
+      </button>
+    </div>
   );
 }
+export default ThemeSwitcher;

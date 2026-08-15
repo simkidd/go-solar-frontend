@@ -390,7 +390,7 @@ export const PackagesTable = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-44">
                         <DropdownMenuItem asChild className="cursor-pointer">
-                          <Link href={`/package/${pkg.slug}`} target="_blank" className="flex items-center gap-2">
+                          <Link href={`/packages/${pkg.slug}`} target="_blank" className="flex items-center gap-2">
                             <ExternalLink className="h-4 w-4" />
                             <span>Preview Store</span>
                           </Link>

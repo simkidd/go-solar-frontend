@@ -9,6 +9,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import FilterComp from "./FilterComp";
 import ProductCard from "./ProductCard";
 import FaqNewsletterSection from "@/components/home/FaqNewsletterSection";
+import { useActiveBannersQuery } from "@/hooks/queries/useBannersQuery";
+import Link from "next/link";
 
 const ProductsList = ({
   categorySlug,
@@ -31,6 +33,8 @@ const ProductsList = ({
     isLoading: categoriesLoading,
     isError: categoriesError,
   } = useCategories();
+
+  const { data: serverBanners = [] } = useActiveBannersQuery();
 
   // Memoize publishedProducts
   const publishedProducts = useMemo(
@@ -157,6 +161,10 @@ const ProductsList = ({
     const endIndex = startIndex + itemPerPage;
     return finalFilteredProducts.slice(startIndex, endIndex);
   }, [page, finalFilteredProducts]);
+
+  const firstRow = useMemo(() => paginatedProducts.slice(0, 8), [paginatedProducts]);
+  const secondRow = useMemo(() => paginatedProducts.slice(8), [paginatedProducts]);
+  const promoBanner = serverBanners[0];
 
   const handleResetFilters = () => {
     setTempPriceRange([50000, 5000000]);
@@ -286,10 +294,51 @@ const ProductsList = ({
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {paginatedProducts?.map((product) => (
+                {firstRow.map((product) => (
                   <ProductCard key={product?._id} item={product} />
                 ))}
               </div>
+
+              {secondRow.length > 0 && promoBanner && (
+                <div className="w-full relative rounded-3xl overflow-hidden shadow-xs border border-zinc-150 dark:border-zinc-800 bg-zinc-950 p-6 md:p-8 min-h-[140px] flex items-center">
+                  <div
+                    className="absolute inset-0 z-0 bg-cover bg-center opacity-30 hover:scale-102 transition-transform duration-[10s]"
+                    style={{ backgroundImage: `url('${promoBanner.image}')` }}
+                  />
+                  <div className="absolute inset-0 z-10 bg-linear-to-r from-black via-black/80 to-transparent" />
+                  <div className="relative z-20 space-y-2 text-white max-w-xl">
+                    {promoBanner.badge && (
+                      <span className="inline-block text-[8px] font-bold text-[#08AA08] bg-[#08AA08]/10 px-2 py-0.5 rounded-md uppercase tracking-widest">
+                        {promoBanner.badge}
+                      </span>
+                    )}
+                    <h4 className="text-sm md:text-base font-extrabold tracking-tight leading-snug">
+                      {promoBanner.title}
+                    </h4>
+                    {promoBanner.subtitle && (
+                      <p className="text-[11px] text-zinc-350 leading-relaxed line-clamp-1 font-semibold">
+                        {promoBanner.subtitle}
+                      </p>
+                    )}
+                    {promoBanner.ctaLink && (
+                      <Link
+                        href={promoBanner.ctaLink}
+                        className="inline-block text-[10px] font-bold text-[#08AA08] hover:underline"
+                      >
+                        {promoBanner.ctaText || "Configure Setup"} →
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {secondRow.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {secondRow.map((product) => (
+                    <ProductCard key={product?._id} item={product} />
+                  ))}
+                </div>
+              )}
               
               {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-2 pt-6 border-t border-zinc-100 dark:border-zinc-850">

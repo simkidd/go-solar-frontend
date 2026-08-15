@@ -1,62 +1,42 @@
 "use client";
+
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const HomeContactCta = () => {
   return (
-    <section className="w-full py-24 bg-white dark:bg-zinc-950 font-inter">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Card 1: Green Solid Banner */}
-          <div className="relative rounded-[24px] bg-linear-to-br from-[#08AA08] to-[#069906] p-8 flex flex-col justify-between text-white shadow-md min-h-[220px]">
-            <div className="space-y-3">
-              <h3 className="text-xl sm:text-2xl font-extrabold leading-tight tracking-tight">
-                Ready to power your home or business with solar?
-              </h3>
-              <p className="text-xs text-white/80 max-w-sm leading-relaxed">
-                Connect for a detailed sizing consultation and secure 24/7 power
-                systems today.
-              </p>
-            </div>
-            <div className="pt-6">
-              <Link href="/energy-calculator">
-                <Button className="bg-white hover:bg-zinc-100 text-[#08AA08] font-bold text-xs uppercase tracking-wider rounded-xl px-6 h-10 flex items-center gap-1.5 shadow-sm">
-                  Let's Get Sized
-                  <ArrowUpRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
+    <section className="bg-zinc-900 dark:bg-zinc-950/60 py-20 lg:py-28 relative overflow-hidden font-inter border-t border-border">
+      {/* Decorative Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[300px] rounded-full bg-primary/10 blur-[120px] pointer-events-none z-0" />
 
-          {/* Card 2: Dark Installer Network Banner */}
-          <div className="relative rounded-[24px] bg-zinc-900 p-8 flex flex-col justify-between text-white shadow-md min-h-[220px] overflow-hidden border dark:border-zinc-800">
-            {/* Soft glowing mesh background */}
-            <div
-              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-25"
-              style={{ backgroundImage: `url('/images/bg/contact-bg.jpg')` }}
-            />
-            <div className="absolute inset-0 z-0 bg-linear-to-r from-zinc-950 via-zinc-950/70 to-transparent" />
+      <div className="container mx-auto px-6 relative z-10 text-center max-w-3xl space-y-6">
+        <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
+          Get Started Today
+        </span>
+        
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
+          Ready to Go Solar?
+        </h2>
+        
+        <p className="text-sm sm:text-base text-zinc-400 max-w-xl mx-auto leading-relaxed font-semibold">
+          Join over 500 homes and businesses that trust GoSolar for professional, reliable solar energy solutions.
+        </p>
 
-            <div className="space-y-3 relative z-10">
-              <h3 className="text-xl sm:text-2xl font-extrabold leading-tight tracking-tight">
-                Join Our Installer Network
-              </h3>
-              <p className="text-xs text-zinc-400 max-w-sm leading-relaxed">
-                Partner with GoSolar to scale local installations and deliver
-                structural solar projects.
-              </p>
-            </div>
-            <div className="pt-6 relative z-10">
-              <Link href="/contact-us?subject=Installer">
-                <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl px-6 h-10 flex items-center gap-1.5">
-                  Apply Now
-                  <ArrowUpRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+          <Link href="/energy-calculator">
+            <Button className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest h-12 px-8 rounded-full flex items-center justify-center gap-2 shadow-md hover:scale-105 transition-all duration-300">
+              Calculate Your System
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Link href="/contact-us">
+            <Button className="w-full sm:w-auto border border-zinc-700 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-200 hover:text-white font-bold text-xs uppercase tracking-widest h-12 px-8 rounded-full transition-all">
+              Contact Our Team
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

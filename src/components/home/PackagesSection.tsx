@@ -90,7 +90,7 @@ const PackagesSection = () => {
                       {formatCurrency(pkg.price, "NGN")}
                     </p>
                   </div>
-                  <Link href={`/package/${pkg.slug}`}>
+                  <Link href={`/packages/${pkg.slug}`}>
                     <Button className="bg-zinc-950 text-white hover:bg-zinc-900 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 rounded-xl px-5 gap-1.5 h-10 text-xs font-bold uppercase tracking-wider">
                       Configure Setup
                       <ArrowRight className="h-3.5 w-3.5" />

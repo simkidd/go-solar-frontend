@@ -1,11 +1,28 @@
 import { axiosInstance } from "../axios";
+import { FALLBACK_POSTS } from "../data";
 
 export const getPosts = async () => {
-  const { data } = await axiosInstance.get("/blogs");
-  return data?.blogs;
+  try {
+    const { data } = await axiosInstance.get("/blogs");
+    if (data?.blogs && data.blogs.length > 0) {
+      return data.blogs;
+    }
+    return FALLBACK_POSTS;
+  } catch (error) {
+    console.log(error);
+    return FALLBACK_POSTS;
+  }
 };
 
 export const getPostById = async (id: string) => {
-  const { data } = await axiosInstance.get(`/blogs/${id}`);
-  return data.blog;
+  try {
+    const { data } = await axiosInstance.get(`/blogs/${id}`);
+    if (data?.blog) {
+      return data.blog;
+    }
+    return FALLBACK_POSTS.find((p) => p._id === id || p.slug === id);
+  } catch (error) {
+    console.log(error);
+    return FALLBACK_POSTS.find((p) => p._id === id || p.slug === id);
+  }
 };
