@@ -2,17 +2,15 @@
 import { IImage } from "@/interfaces/product.interface";
 import React, { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, FullscreenIcon, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Expand, X, ImageOff } from "lucide-react";
 
 const ProductImages: React.FC<{
   images: IImage[];
 }> = ({ images }) => {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
-  const handleThumbnailClick = (index: number) => {
-    setSelectedImage(index);
-  };
+  const hasImages = images && images.length > 0;
 
   const handleNext = () => {
     setSelectedImage((prev) => (prev + 1) % images.length);
@@ -22,92 +20,146 @@ const ProductImages: React.FC<{
     setSelectedImage((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  // ── No Images Placeholder ──
+  if (!hasImages) {
+    return (
+      <div className="w-full aspect-square rounded-2xl bg-muted/40 border border-dashed border-border flex flex-col items-center justify-center gap-3 select-none">
+        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+          <ImageOff className="w-5 h-5 text-muted-foreground/50" />
+        </div>
+        <div className="text-center space-y-0.5">
+          <p className="text-xs font-bold text-muted-foreground">No images uploaded</p>
+          <p className="text-[10px] text-muted-foreground/60 font-semibold">Use "Update Images" to add product photos</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row gap-4 w-full">
-      {/* Thumbnails */}
-      {images && images.length > 0 && (
-        <div className="flex lg:flex-col gap-2.5 overflow-x-auto lg:overflow-y-auto scrollbar-hide shrink-0 lg:w-20">
+    <div className="w-full space-y-3">
+      {/* ── Main Featured Image ── */}
+      <div
+        className="relative w-full aspect-square rounded-2xl overflow-hidden border border-border/60 bg-muted/20 cursor-zoom-in group"
+        onClick={() => setIsLightboxOpen(true)}
+      >
+        <Image
+          src={images[selectedImage]?.url}
+          alt={`Product Image ${selectedImage + 1}`}
+          fill
+          className="object-contain p-4 transition-transform duration-300 group-hover:scale-[1.02]"
+          priority
+        />
+
+        {/* Expand hint overlay */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-200" />
+        <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <Expand className="w-3.5 h-3.5" />
+        </div>
+
+        {/* Image counter badge */}
+        {images.length > 1 && (
+          <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full select-none">
+            {selectedImage + 1} / {images.length}
+          </div>
+        )}
+
+        {/* Arrow nav on hover */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/65 backdrop-blur-sm text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleNext(); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/65 backdrop-blur-sm text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* ── Thumbnail Strip ── */}
+      {images.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
           {images.map((img, index) => (
-            <div
+            <button
               key={index}
-              className={`relative w-16 h-16 lg:w-20 lg:h-20 shrink-0 rounded-xl overflow-hidden cursor-pointer border-2 transition-all duration-200 ${
+              onClick={() => setSelectedImage(index)}
+              className={`relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-150 cursor-pointer ${
                 selectedImage === index
-                  ? "border-[#08AA08] dark:border-white shadow-xs"
-                  : "border-zinc-100 dark:border-zinc-800 hover:border-zinc-300"
+                  ? "border-primary ring-2 ring-primary/20"
+                  : "border-border/60 hover:border-border"
               }`}
-              onClick={() => handleThumbnailClick(index)}
             >
               <Image
-                src={img?.url || "/placeholder-image.jpg"}
+                src={img?.url}
                 alt={`Thumbnail ${index + 1}`}
                 fill
                 className="object-cover"
               />
-            </div>
+            </button>
           ))}
         </div>
       )}
 
-      {/* Main Image */}
-      <div className="relative flex-1 aspect-[4/5] sm:aspect-square rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/30 cursor-pointer">
-        <Image
-          src={images[selectedImage]?.url || "/placeholder-image.jpg"}
-          alt={`Product Image ${selectedImage + 1}`}
-          fill
-          className="object-contain p-6"
-          onClick={openModal}
-          priority
-        />
-
-        <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-xs text-white p-2.5 rounded-full hover:bg-black/85 transition-colors">
-          <FullscreenIcon className="w-4 h-4" />
-        </div>
-      </div>
-
-      {/* Full-Screen Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+      {/* ── Lightbox ── */}
+      {isLightboxOpen && (
+        <div
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          {/* Close */}
           <button
-            onClick={closeModal}
-            className="absolute top-4 right-4 text-white hover:text-gray-300"
+            onClick={() => setIsLightboxOpen(false)}
+            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors cursor-pointer z-10"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
 
-          <div className="relative w-full max-w-4xl h-full max-h-[90vh]">
+          {/* Image */}
+          <div
+            className="relative w-full max-w-3xl max-h-[85vh] aspect-square"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Image
-              src={images[selectedImage]?.url || "/placeholder-image.jpg"}
+              src={images[selectedImage]?.url}
               alt={`Product Image ${selectedImage + 1}`}
               fill
               className="object-contain"
             />
           </div>
 
-          {/* Navigation Buttons */}
-          <button
-            onClick={handlePrev}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70"
-          >
-            <ChevronLeft size={32} />
-          </button>
-          <button
-            onClick={handleNext}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70"
-          >
-            <ChevronRight size={32} />
-          </button>
+          {/* Nav */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors cursor-pointer"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors cursor-pointer"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </>
+          )}
+
+          {/* Counter */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/10 text-white text-xs font-semibold px-3 py-1 rounded-full">
+            {selectedImage + 1} / {images.length}
+          </div>
         </div>
       )}
     </div>
   );
 };
+
 
 export default ProductImages;

@@ -42,6 +42,7 @@ import {
   Trash,
   Package,
   AlertTriangle,
+  ImageOff,
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -505,15 +506,18 @@ const ProductsTable = () => {
                     <TableCell className="py-3.5 text-xs text-foreground max-w-sm">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 min-w-[40px] rounded-xl overflow-hidden border border-border/80 relative bg-muted select-none">
-                          <Image
-                            src={
-                              product?.images?.[0]?.url ||
-                              "/placeholder-product.jpg"
-                            }
-                            alt={product?.name}
-                            fill
-                            className="object-cover"
-                          />
+                          {product?.images?.[0]?.url ? (
+                            <Image
+                              src={product.images[0].url}
+                              alt={product?.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <ImageOff className="w-4 h-4 text-muted-foreground/30" />
+                            </div>
+                          )}
                         </div>
                         <div className="space-y-1">
                           <span className="font-extrabold text-foreground line-clamp-1 select-all">

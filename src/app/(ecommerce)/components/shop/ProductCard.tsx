@@ -7,7 +7,7 @@ import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Zap } from "lucide-react";
+import { Heart, Zap, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const ProductCard: React.FC<{
@@ -57,23 +57,32 @@ const ProductCard: React.FC<{
           onClick={handleCardClick}
           className="w-full h-full block"
         >
-          <Image
-            src={item?.images[0]?.url || "/placeholder-product.jpg"}
-            alt={item?.name}
-            fill
-            sizes="(max-w-[768px]) 50vw, (max-w-[1200px]) 25vw, 20vw"
-            loading="lazy"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          {item?.images?.length > 1 && (
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          {item?.images?.length > 0 ? (
+            <>
               <Image
-                src={item?.images[1]?.url}
+                src={item.images[0].url}
                 alt={item?.name}
                 fill
                 sizes="(max-w-[768px]) 50vw, (max-w-[1200px]) 25vw, 20vw"
-                className="object-cover"
+                loading="lazy"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
+              {item.images.length > 1 && (
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <Image
+                    src={item.images[1].url}
+                    alt={item?.name}
+                    fill
+                    sizes="(max-w-[768px]) 50vw, (max-w-[1200px]) 25vw, 20vw"
+                    className="object-cover"
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-muted/40 select-none">
+              <ImageOff className="w-8 h-8 text-muted-foreground/30" />
+              <p className="text-[9px] text-muted-foreground/50 font-bold uppercase tracking-wider">No image</p>
             </div>
           )}
         </Link>

@@ -85,20 +85,20 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      if (files.length + acceptedFiles.length > 3) {
-        toast.info("You can only upload up to 3 images");
+      if (files.length + acceptedFiles.length > 5) {
+        toast.info("You can only upload up to 5 images");
         return;
       }
 
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
-        })
+        }),
       );
 
       setFiles((prev) => [...prev, ...newFiles]);
     },
-    [files.length]
+    [files.length],
   );
 
   const thumbs = files.map((file) => (
@@ -156,11 +156,11 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     formData.append("additionalInfo", values.additionalInfo || "");
     formData.append(
       "withinLocationDeliveryFee",
-      String(values.withinLocationDeliveryFee || 0)
+      String(values.withinLocationDeliveryFee || 0),
     );
     formData.append(
       "outsideLocationDeliveryFee",
-      String(values.outsideLocationDeliveryFee || 0)
+      String(values.outsideLocationDeliveryFee || 0),
     );
     formData.append("showDatasheet", String(values.showDatasheet));
     formData.append("datasheet", JSON.stringify(values.datasheet || []));
@@ -185,15 +185,17 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     >
       {/* 2:1 Shopify-style Editor Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-4">
-        
         {/* ── Wider Main Column (2/3) ── */}
         <div className="lg:col-span-2 space-y-6">
-          
           {/* Card 1: Core Details */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 select-none">
-              <h3 className="text-sm font-extrabold text-foreground tracking-tight">General Details</h3>
-              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Core title and description of the product</p>
+              <h3 className="text-sm font-extrabold text-foreground tracking-tight">
+                General Details
+              </h3>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                Core title and description of the product
+              </p>
             </div>
 
             <div className="space-y-1.5">
@@ -206,7 +208,9 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
               />
               {errors.name && (
-                <p className="text-xs text-red-500 font-semibold">{errors.name.message}</p>
+                <p className="text-xs text-red-500 font-semibold">
+                  {errors.name.message}
+                </p>
               )}
             </div>
 
@@ -217,11 +221,15 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <Textarea
                 placeholder="Describe product characteristics, benefits, specifications, and layout detail..."
                 rows={5}
-                {...register("description", { required: "Product description is required" })}
+                {...register("description", {
+                  required: "Product description is required",
+                })}
                 className="bg-muted/30 border-border rounded-xl text-xs focus-visible:ring-primary min-h-[120px]"
               />
               {errors.description && (
-                <p className="text-xs text-red-500 font-semibold">{errors.description.message}</p>
+                <p className="text-xs text-red-500 font-semibold">
+                  {errors.description.message}
+                </p>
               )}
             </div>
           </div>
@@ -229,8 +237,12 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           {/* Card 2: Storefront Media */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 select-none">
-              <h3 className="text-sm font-extrabold text-foreground tracking-tight">Product Media</h3>
-              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Upload images for the storefront catalog listing</p>
+              <h3 className="text-sm font-extrabold text-foreground tracking-tight">
+                Product Media
+              </h3>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                Upload images for the storefront catalog listing
+              </p>
             </div>
 
             <div
@@ -248,10 +260,11 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <div className="flex flex-col items-center justify-center text-center space-y-1.5 select-none">
                   <Upload className="h-5 w-5 text-muted-foreground/60" />
                   <p className="text-xs text-muted-foreground font-semibold">
-                    Drag &amp; drop files here, or <span className="text-primary font-bold">browse</span>
+                    Drag &amp; drop files here, or{" "}
+                    <span className="text-primary font-bold">browse</span>
                   </p>
                   <p className="text-[9px] text-muted-foreground/50 uppercase font-bold">
-                    Maximum of 3 image files allowed
+                    Maximum of 5 image files allowed
                   </p>
                 </div>
               )}
@@ -262,8 +275,12 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           {/* Card 3: Pricing & Stock */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 select-none">
-              <h3 className="text-sm font-extrabold text-foreground tracking-tight">Pricing &amp; Inventory</h3>
-              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Configure storefront prices and stock levels</p>
+              <h3 className="text-sm font-extrabold text-foreground tracking-tight">
+                Pricing &amp; Inventory
+              </h3>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                Configure storefront prices and stock levels
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -281,7 +298,9 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
                 {errors.price && (
-                  <p className="text-xs text-red-500 font-semibold">{errors.price.message}</p>
+                  <p className="text-xs text-red-500 font-semibold">
+                    {errors.price.message}
+                  </p>
                 )}
               </div>
 
@@ -311,7 +330,9 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
                 {errors.quantityInStock && (
-                  <p className="text-xs text-red-500 font-semibold">{errors.quantityInStock.message}</p>
+                  <p className="text-xs text-red-500 font-semibold">
+                    {errors.quantityInStock.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -321,8 +342,12 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-extrabold text-foreground tracking-tight select-none">Technical Specifications</h3>
-                <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Parameters shown on the product detail page</p>
+                <h3 className="text-sm font-extrabold text-foreground tracking-tight select-none">
+                  Technical Specifications
+                </h3>
+                <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                  Parameters shown on the product detail page
+                </p>
               </div>
               <div className="flex items-center gap-2 select-none">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
@@ -346,12 +371,16 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <div key={field.id} className="flex items-center gap-2">
                 <Input
                   placeholder="Spec name (e.g. Capacity)"
-                  {...register(`datasheet.${idx}.key` as const, { required: true })}
+                  {...register(`datasheet.${idx}.key` as const, {
+                    required: true,
+                  })}
                   className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
                 <Input
                   placeholder="Value (e.g. 200Ah)"
-                  {...register(`datasheet.${idx}.value` as const, { required: true })}
+                  {...register(`datasheet.${idx}.value` as const, {
+                    required: true,
+                  })}
                   className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
                 <button
@@ -374,17 +403,19 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <Plus size={13} /> Add Row
             </Button>
           </div>
-
         </div>
 
         {/* ── Narrower Sidebar Column (1/3) ── */}
         <div className="space-y-6">
-          
           {/* Card 5: Product Organization */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 select-none">
-              <h3 className="text-sm font-extrabold text-foreground tracking-tight">Organization</h3>
-              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Assign category shelves and brand names</p>
+              <h3 className="text-sm font-extrabold text-foreground tracking-tight">
+                Organization
+              </h3>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                Assign category shelves and brand names
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -403,7 +434,11 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       </SelectTrigger>
                       <SelectContent className="rounded-xl bg-card border border-border/80">
                         {categories.map((cat) => (
-                          <SelectItem key={cat?._id} value={cat?._id} className="cursor-pointer font-semibold text-xs">
+                          <SelectItem
+                            key={cat?._id}
+                            value={cat?._id}
+                            className="cursor-pointer font-semibold text-xs"
+                          >
                             {cat?.name}
                           </SelectItem>
                         ))}
@@ -412,7 +447,9 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   )}
                 />
                 {errors.category && (
-                  <p className="text-xs text-red-500 font-semibold">{errors.category.message}</p>
+                  <p className="text-xs text-red-500 font-semibold">
+                    {errors.category.message}
+                  </p>
                 )}
               </div>
 
@@ -432,8 +469,12 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           {/* Card 6: Promo & Marketing campaigns */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 select-none">
-              <h3 className="text-sm font-extrabold text-foreground tracking-tight">Marketing Offers</h3>
-              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Link active discount campaigns</p>
+              <h3 className="text-sm font-extrabold text-foreground tracking-tight">
+                Marketing Offers
+              </h3>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                Link active discount campaigns
+              </p>
             </div>
 
             <div className="space-y-1.5">
@@ -446,15 +487,26 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 render={({ field }) => (
                   <Select
                     value={field.value || "none"}
-                    onValueChange={(val) => field.onChange(val === "none" ? "" : val)}
+                    onValueChange={(val) =>
+                      field.onChange(val === "none" ? "" : val)
+                    }
                   >
                     <SelectTrigger className="bg-muted/30 border-border rounded-xl text-xs h-10 focus:ring-primary">
                       <SelectValue placeholder="Select offer campaign" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl bg-card border border-border/80">
-                      <SelectItem value="none" className="cursor-pointer font-semibold text-xs">No Active Campaign</SelectItem>
+                      <SelectItem
+                        value="none"
+                        className="cursor-pointer font-semibold text-xs"
+                      >
+                        No Active Campaign
+                      </SelectItem>
                       {activeOffers.map((offer) => (
-                        <SelectItem key={offer?._id} value={offer?._id} className="cursor-pointer font-semibold text-xs">
+                        <SelectItem
+                          key={offer?._id}
+                          value={offer?._id}
+                          className="cursor-pointer font-semibold text-xs"
+                        >
                           {offer?.name}
                         </SelectItem>
                       ))}
@@ -468,8 +520,12 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           {/* Card 7: Logistics & Shipping details */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 select-none">
-              <h3 className="text-sm font-extrabold text-foreground tracking-tight">Logistics &amp; Delivery</h3>
-              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Configure delivery fees and shipping tiers</p>
+              <h3 className="text-sm font-extrabold text-foreground tracking-tight">
+                Logistics &amp; Delivery
+              </h3>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                Configure delivery fees and shipping tiers
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -486,9 +542,24 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         <SelectValue placeholder="Select Shipping Class" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl bg-card border border-border/80">
-                        <SelectItem value="standard" className="cursor-pointer font-semibold text-xs">Standard Equipment (0–5kg)</SelectItem>
-                        <SelectItem value="medium" className="cursor-pointer font-semibold text-xs">Medium Cargo (5–20kg)</SelectItem>
-                        <SelectItem value="heavy_freight" className="cursor-pointer font-semibold text-xs">Heavy Freight (20kg+)</SelectItem>
+                        <SelectItem
+                          value="standard"
+                          className="cursor-pointer font-semibold text-xs"
+                        >
+                          Standard Equipment (0–5kg)
+                        </SelectItem>
+                        <SelectItem
+                          value="medium"
+                          className="cursor-pointer font-semibold text-xs"
+                        >
+                          Medium Cargo (5–20kg)
+                        </SelectItem>
+                        <SelectItem
+                          value="heavy_freight"
+                          className="cursor-pointer font-semibold text-xs"
+                        >
+                          Heavy Freight (20kg+)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -502,7 +573,9 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <Input
                   type="number"
                   placeholder="0"
-                  {...register("withinLocationDeliveryFee", { valueAsNumber: true })}
+                  {...register("withinLocationDeliveryFee", {
+                    valueAsNumber: true,
+                  })}
                   className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
               </div>
@@ -514,7 +587,9 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <Input
                   type="number"
                   placeholder="0"
-                  {...register("outsideLocationDeliveryFee", { valueAsNumber: true })}
+                  {...register("outsideLocationDeliveryFee", {
+                    valueAsNumber: true,
+                  })}
                   className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
               </div>
@@ -531,7 +606,6 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
             </div>
           </div>
-
         </div>
       </div>
 

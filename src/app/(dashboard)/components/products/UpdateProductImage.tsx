@@ -1,13 +1,18 @@
 "use client";
 import React, { useCallback, useState } from "react";
-import AppModal from "@/components/AppModal";
 import { Product } from "@/interfaces/product.interface";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Upload } from "lucide-react";
+import { Edit2, Trash2, Upload, ImageOff } from "lucide-react";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { useUpdateProductImageMutation } from "@/hooks/mutations/useProductMutations";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const UpdateProductImage: React.FC<{
   product: Product;
@@ -15,29 +20,34 @@ const UpdateProductImage: React.FC<{
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div>
+    <>
       <Button
         variant="outline"
         size="sm"
         onClick={() => setIsOpen(true)}
-        className="gap-2 border-zinc-200 dark:border-zinc-800 dark:text-zinc-300"
+        className="text-xs font-semibold gap-1.5 border-border hover:bg-muted/30 rounded-xl h-8 px-3 cursor-pointer"
       >
-        <Edit className="h-4 w-4" />
-        Update Images
+        <Edit2 className="h-3.5 w-3.5" />
+        Manage Images
       </Button>
 
-      <AppModal
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        title="Update Product Images"
-        isDismissable={false}
-        hideCloseButton
-        size="md"
-        scrollBehavior="inside"
-      >
-        <ProductImagesForm onClose={() => setIsOpen(false)} product={product} />
-      </AppModal>
-    </div>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[520px] bg-card border border-border/80 rounded-2xl p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/60">
+            <DialogTitle className="text-sm font-extrabold text-foreground tracking-tight">
+              Manage Product Images
+            </DialogTitle>
+            <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+              Select an existing image slot to replace it with a new upload. Up to 5 images supported.
+            </p>
+          </DialogHeader>
+
+          <div className="px-6 py-5">
+            <ProductImagesForm onClose={() => setIsOpen(false)} product={product} />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
@@ -48,63 +58,32 @@ export const ProductImagesForm: React.FC<{
   onClose: () => void;
 }> = ({ onClose, product }) => {
   const updateImagesMutation = useUpdateProductImageMutation({ onSuccess: onClose });
-  const [images, setImages] = useState<string[]>(
-    product.images.map((img) => img.url)
-  );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedImgId, setSelectedImgId] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const MAX_IMAGES = 5;
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      if (images.length + acceptedFiles.length > 3) {
-        toast.info("You can only upload up to 3 images");
+      if (product.images.length >= MAX_IMAGES) {
+        toast.info(`You can only have up to ${MAX_IMAGES} images`);
         return;
       }
-
-      const newFiles = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      );
-
-      const newImageUrls = acceptedFiles.map((file) =>
-        URL.createObjectURL(file)
-      );
-
-      setImages((prevFiles) => [...prevFiles, ...newImageUrls]);
-      setSelectedImage(newFiles[0]);
+      const file = acceptedFiles[0];
+      if (!file) return;
+      setSelectedImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
     },
-    [images.length]
+    [product.images.length]
   );
-
-  const thumbs = images.map((image, i) => (
-    <div key={i} className="relative w-20 h-20 group rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800">
-      <Image
-        src={image}
-        alt={`Product Image ${i + 1}`}
-        className="w-full h-full object-cover"
-        width={80}
-        height={80}
-      />
-      <button
-        type="button"
-        className="absolute top-1 right-1 bg-white/90 text-red-600 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={() => {
-          setImages(images.filter((f) => f !== image));
-          setSelectedImage(null);
-          setSelectedImgId(null);
-        }}
-      >
-        <Trash2 size={14} />
-      </button>
-    </div>
-  ));
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       "image/jpeg": [],
       "image/png": [],
+      "image/webp": [],
     },
     multiple: false,
   });
@@ -113,7 +92,7 @@ export const ProductImagesForm: React.FC<{
     e.preventDefault();
 
     if (!selectedImage || !selectedImgId) {
-      toast.warning("Please select an image to update");
+      toast.warning("Please select an image slot to replace, then upload a new image.");
       return;
     }
 
@@ -126,87 +105,124 @@ export const ProductImagesForm: React.FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full font-inter space-y-6 pt-2">
-      <div className="w-full space-y-4">
-        {product.images && product.images.length > 0 && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-              Select an image to replace:
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {product.images.map((img) => (
-                <div
-                  key={img.public_id}
-                  onClick={() => setSelectedImgId(img.public_id)}
-                  className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${
-                    selectedImgId === img.public_id
-                      ? "border-primary ring-2 ring-primary/20"
-                      : "border-zinc-200 dark:border-zinc-800"
-                  }`}
-                >
-                  <Image
-                    src={img.url}
-                    alt="product image"
-                    className="w-full h-full object-cover"
-                    width={80}
-                    height={80}
-                  />
-                </div>
-              ))}
-            </div>
+    <form onSubmit={handleSubmit} className="w-full font-inter space-y-5">
+
+      {/* Step 1: Choose slot to replace */}
+      <div className="space-y-2">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none">
+          Step 1 — Select image to replace
+        </p>
+
+        {product.images && product.images.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {product.images.map((img) => (
+              <button
+                key={img.public_id}
+                type="button"
+                onClick={() => setSelectedImgId(img.public_id)}
+                className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${
+                  selectedImgId === img.public_id
+                    ? "border-primary ring-2 ring-primary/20"
+                    : "border-border/60 hover:border-border"
+                }`}
+              >
+                <Image
+                  src={img.url}
+                  alt="product image"
+                  fill
+                  className="object-cover"
+                />
+                {selectedImgId === img.public_id && (
+                  <div className="absolute inset-0 bg-primary/15 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-primary border-2 border-white" />
+                  </div>
+                )}
+              </button>
+            ))}
           </div>
-        )}
-
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-            Upload Replacement Image
-          </label>
-          <div
-            {...getRootProps()}
-            className={`border-2 border-dashed rounded-xl py-8 px-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-zinc-50/50 dark:bg-zinc-900/10 hover:bg-zinc-100/50 ${
-              isDragActive ? "border-primary bg-primary/5" : "border-zinc-200 dark:border-zinc-800"
-            }`}
-          >
-            <input {...getInputProps()} />
-            <div className="flex flex-col items-center justify-center text-center space-y-1">
-              <Upload className="h-5 w-5 text-zinc-400" />
-              <p className="text-xs text-zinc-500">Drag & drop or click to select new image</p>
-            </div>
-          </div>
-
-          {thumbs.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-2">
-              {thumbs}
-            </div>
-          )}
-        </div>
-
-        {selectedImage && (
-          <div className="space-y-2">
-            <h4 className="text-xs font-semibold text-zinc-500">Selected File Preview:</h4>
-            <div className="w-24 h-24 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-              <Image
-                src={URL.createObjectURL(selectedImage)}
-                alt="Selected Image"
-                className="w-full h-full object-cover"
-                width={96}
-                height={96}
-              />
-            </div>
+        ) : (
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/60">
+            <ImageOff className="h-5 w-5 text-muted-foreground/50 shrink-0" />
+            <p className="text-xs text-muted-foreground font-semibold">
+              No images yet. Upload your first image below.
+            </p>
           </div>
         )}
       </div>
 
-      <div className="flex items-center gap-2 mt-8 justify-end">
-        <Button type="button" variant="ghost" onClick={onClose} className="dark:text-zinc-300">
-          Close
+      {/* Step 2: Upload replacement */}
+      <div className="space-y-2">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none">
+          Step 2 — Upload new image
+        </p>
+        <div
+          {...getRootProps()}
+          className={`border-2 border-dashed rounded-xl py-6 px-4 flex flex-col items-center justify-center cursor-pointer transition-all ${
+            isDragActive
+              ? "border-primary bg-primary/5"
+              : "border-border/60 hover:border-border bg-muted/10 hover:bg-muted/20"
+          }`}
+        >
+          <input {...getInputProps()} />
+          <div className="flex flex-col items-center justify-center text-center space-y-2">
+            <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
+              <Upload className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">
+                {isDragActive ? "Drop image here" : "Drag & drop or click to browse"}
+              </p>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                JPG, PNG, WEBP supported
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Preview */}
+        {previewUrl && selectedImage && (
+          <div className="flex items-center gap-3 mt-2 p-3 rounded-xl bg-muted/20 border border-border/60">
+            <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-border/60 shrink-0">
+              <Image
+                src={previewUrl}
+                alt="Selected preview"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-foreground truncate">{selectedImage.name}</p>
+              <p className="text-[10px] text-muted-foreground font-semibold">
+                {(selectedImage.size / 1024).toFixed(0)} KB
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setSelectedImage(null); setPreviewUrl(null); }}
+              className="text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center justify-end gap-2 pt-4 border-t border-border/60">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onClose}
+          className="text-xs font-semibold rounded-xl h-9 px-5 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
+        >
+          Cancel
         </Button>
         <Button
           type="submit"
           disabled={updateImagesMutation.isPending || !selectedImgId || !selectedImage}
-          className="bg-primary hover:bg-primary/95 text-white"
+          className="bg-primary hover:bg-primary/90 text-white text-xs font-semibold h-9 px-5 rounded-xl cursor-pointer"
         >
-          {updateImagesMutation.isPending ? "Updating..." : "Update Image"}
+          {updateImagesMutation.isPending ? "Uploading..." : "Replace Image"}
         </Button>
       </div>
     </form>
