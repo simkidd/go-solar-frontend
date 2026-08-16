@@ -1,11 +1,11 @@
 "use client";
 
 import useCategories from "@/hooks/useCategories";
-import useProducts from "@/hooks/useProducts";
 import { Product } from "@/interfaces/product.interface";
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import { useDeleteProductMutation } from "@/hooks/mutations/useProductMutations";
 import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
+import { useAllProductsQuery } from "@/hooks/queries/useProductsQuery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -96,9 +96,6 @@ const ProductsTable = () => {
   const router = useRouter();
 
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortColumn, setSortColumn] = useState<string>("name");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(1);
 
   const [publishFilter, setPublishFilter] = useState(
@@ -113,85 +110,31 @@ const ProductsTable = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const hasSearchFilter = Boolean(filterValue);
-  const { products, isError, isLoading, refetch } = useProducts();
+
   const { categories } = useCategories();
+  const selectedCategoryObj = categories.find((c) => c.name === categoryFilter);
 
-  const filteredItems = useMemo(() => {
-    let filteredProducts = [...products];
+  const {
+    data: productsRes,
+    isLoading,
+    refetch,
+  } = useAllProductsQuery({
+    page,
+    limit: 10,
+    q: filterValue,
+    status: publishFilter,
+    category: selectedCategoryObj ? selectedCategoryObj._id : "All",
+  });
 
-    if (hasSearchFilter) {
-      filteredProducts = filteredProducts.filter((product) =>
-        product?.name.toLowerCase().includes(filterValue.toLowerCase()),
-      );
-    }
+  const products = productsRes?.products || [];
+  const pagination = productsRes?.pagination || { total: 0, pages: 1 };
 
-    if (publishFilter !== "All") {
-      filteredProducts = filteredProducts.filter((product) =>
-        publishFilter === "published"
-          ? product.isPublished
-          : !product.isPublished,
-      );
-    }
-
-    if (categoryFilter !== "All") {
-      filteredProducts = filteredProducts.filter((product) =>
-        product?.category?.name
-          .toLowerCase()
-          .includes(categoryFilter.toLowerCase()),
-      );
-    }
-
-    return filteredProducts;
-  }, [products, filterValue, publishFilter, categoryFilter]);
-
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
-
-  const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
-
-  const sortedItems = useMemo(() => {
-    const sorted = [...items].sort((a, b) => {
-      let first = a[sortColumn as keyof typeof a];
-      let second = b[sortColumn as keyof typeof b];
-
-      // Handle nested values
-      if (sortColumn === "category") {
-        first = a.category?.name || "";
-        second = b.category?.name || "";
-      }
-
-      const cmp =
-        (first ?? "") < (second ?? "")
-          ? -1
-          : (first ?? "") > (second ?? "")
-            ? 1
-            : 0;
-      return sortDirection === "desc" ? -cmp : cmp;
-    });
-    return sorted;
-  }, [sortColumn, sortDirection, items]);
-
-  const handleSort = (columnKey: string) => {
-    if (sortColumn === columnKey) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(columnKey);
-      setSortDirection("asc");
-    }
-  };
+  const pages = pagination.pages;
 
   const handleDelete = () => {
     if (selectedProduct) {
       deleteProductMutation.mutate(selectedProduct._id);
     }
-  };
-
-  const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
   };
 
   const onSearchChange = (value: string) => {
@@ -482,7 +425,7 @@ const ProductsTable = () => {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : sortedItems.length === 0 ? (
+            ) : products.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
@@ -492,7 +435,7 @@ const ProductsTable = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              sortedItems.map((product) => {
+              products.map((product) => {
                 const qty = product?.quantityInStock;
                 const isOutOfStock = qty <= 0;
                 const isLowStock = qty > 0 && qty <= 10;

@@ -75,7 +75,7 @@ const AppModal: React.FC<MProps> = ({
             {children}
           </ScrollArea>
         ) : (
-          <div className="flex-1">{children}</div>
+          <div className="flex-1 px-6 pb-4">{children}</div>
         )}
       </DialogContent>
     </Dialog>

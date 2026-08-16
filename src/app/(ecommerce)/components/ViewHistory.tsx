@@ -9,7 +9,7 @@ const ViewHistoryComp = () => {
   const { viewHistory } = useViewHistoryStore();
 
   const publishedViewedProduct = viewHistory.filter(
-    (product) => product?.isPublished
+    (product) => product?.isPublished,
   );
 
   return (
@@ -25,14 +25,14 @@ const ViewHistoryComp = () => {
           <div className="my-6">
             <Swiper
               slidesPerView={2}
-              spaceBetween={16}
+              spaceBetween={24}
               slidesPerGroup={1}
               breakpoints={{
                 768: {
                   slidesPerView: 3,
                 },
                 1024: {
-                  slidesPerView: 6,
+                  slidesPerView: 4,
                 },
               }}
             >

@@ -1,8 +1,7 @@
 "use client";
-
-import React from "react";
+import React, { useMemo } from "react";
 import Cta from "@/app/(ecommerce)/components/shop/Cta";
-import { Category } from "@/interfaces/product.interface";
+import { Category, Product } from "@/interfaces/product.interface";
 import { useActiveOffersQuery } from "@/hooks/queries/useOffersQuery";
 import { useActiveBannersQuery } from "@/hooks/queries/useBannersQuery";
 import CategoriesSectionGrid, { CategorySection } from "./shop/CategorySection";
@@ -99,19 +98,29 @@ const ShopPageComp = () => {
     isError: categoriesError,
   } = useCategories();
 
-  const publishedProducts = allProducts.filter(
-    (product) => product.isPublished,
+  const publishedProducts = useMemo(
+    () => allProducts.filter((product: Product) => product.isPublished),
+    [allProducts]
   );
 
+  const topLevelCategories = useMemo(() => {
+    return allCategories.filter((cat: Category) => !cat.parent);
+  }, [allCategories]);
+
   const productsInCategory = (category: Category) => {
-    return publishedProducts.filter(
-      (product) => product?.category?._id === category?._id,
-    );
+    return publishedProducts.filter((product: Product) => {
+      if (!product.category) return false;
+      if (product.category._id === category._id) return true;
+      const parentId = typeof product.category.parent === "object"
+        ? product.category.parent?._id
+        : product.category.parent;
+      return parentId === category._id;
+    });
   };
 
   const featuredPackages = publishedProducts
     .filter(
-      (product) =>
+      (product: Product) =>
         product.category?.slug === "packages" ||
         product.category?.name?.toLowerCase() === "packages",
     )
@@ -119,15 +128,15 @@ const ShopPageComp = () => {
 
   const bestSellers = publishedProducts
     .filter(
-      (product) =>
+      (product: Product) =>
         product.category?.slug !== "packages" &&
         product.category?.name?.toLowerCase() !== "packages",
     )
     .slice(0, 5);
 
   const topOffers = offers
-    .filter((offer) => offer.isActive)
-    .sort((a, b) => b.percentageOff - a.percentageOff)
+    .filter((offer: any) => offer.isActive)
+    .sort((a: any, b: any) => b.percentageOff - a.percentageOff)
     .slice(0, 3);
 
   if (productsError || categoriesError) {
@@ -151,7 +160,7 @@ const ShopPageComp = () => {
       <div className="container mx-auto px-4 py-12 space-y-16">
         {/* Categories Section */}
         <CategoriesSectionGrid
-          categories={allCategories}
+          categories={topLevelCategories}
           loading={categoriesLoading}
         />
 
@@ -218,7 +227,7 @@ const ShopPageComp = () => {
               ? Array.from({ length: 3 }).map((_, idx) => (
                   <Skeleton key={idx} className="h-72 rounded-2xl" />
                 ))
-              : featuredPackages.map((pkg) => (
+              : featuredPackages.map((pkg: Product) => (
                   <ProductCard key={pkg._id} item={pkg} />
                 ))}
           </div>
@@ -248,7 +257,7 @@ const ShopPageComp = () => {
               ? Array.from({ length: 5 }).map((_, idx) => (
                   <Skeleton key={idx} className="h-60 rounded-2xl" />
                 ))
-              : bestSellers.map((prod) => (
+              : bestSellers.map((prod: Product) => (
                   <ProductCard key={prod._id} item={prod} />
                 ))}
           </div>
@@ -276,7 +285,7 @@ const ShopPageComp = () => {
                   </div>
                 </div>
               ))
-            : allCategories.map((category) => (
+            : topLevelCategories.map((category: Category) => (
                 <CategorySection
                   key={category?._id}
                   title={category?.name}

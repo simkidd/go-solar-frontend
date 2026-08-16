@@ -1,10 +1,15 @@
 "use client";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useCategories from "@/hooks/useCategories";
-import useProducts from "@/hooks/useProducts";
+import { usePublishedProductsQuery } from "@/hooks/queries/useProductsQuery";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftCircleIcon, FilterIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ArrowLeftCircleIcon,
+  FilterIcon,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import FilterComp from "./FilterComp";
 import ProductCard from "./ProductCard";
@@ -24,11 +29,6 @@ const ProductsList = ({
   const searchParams = useSearchParams();
 
   const {
-    products: allProducts,
-    isError: productsError,
-    isLoading: productsLoading,
-  } = useProducts();
-  const {
     categories: allCategories,
     isLoading: categoriesLoading,
     isError: categoriesError,
@@ -36,148 +36,133 @@ const ProductsList = ({
 
   const { data: serverBanners = [] } = useActiveBannersQuery();
 
-  // Memoize publishedProducts
-  const publishedProducts = useMemo(
-    () => allProducts.filter((product) => product.isPublished),
-    [allProducts]
-  );
-
   // Find the category based on the categorySlug
   const category = useMemo(
     () => allCategories.find((cat) => cat.slug === categorySlug),
-    [allCategories, categorySlug]
+    [allCategories, categorySlug],
   );
 
-  // Filter products by category and search query
-  const filteredProducts = useMemo(() => {
-    let filtered = [...publishedProducts];
+  const searchQuery = useMemo(() => {
+    return query || searchParams.get("q") || "";
+  }, [query, searchParams]);
 
-    if (categorySlug) {
-      filtered = filtered.filter(
-        (product) => product.category?.slug === categorySlug
-      );
-    }
-
-    if (query) {
-      const lowerCaseQuery = query.toLowerCase();
-      filtered = filtered.filter(
-        (product) =>
-          product.name.toLowerCase().includes(lowerCaseQuery) ||
-          product.description.toLowerCase().includes(lowerCaseQuery) ||
-          product.brand.toLowerCase().includes(lowerCaseQuery)
-      );
-    }
-
-    return filtered;
-  }, [publishedProducts, categorySlug, query]);
-
-  const [priceRange, setPriceRange] = useState<number[]>([50000, 5000000]);
-  const [tempPriceRange, setTempPriceRange] = useState<number[]>([
-    50000, 5000000,
-  ]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [tempSelectedBrands, setTempSelectedBrands] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState("newest");
-  const initialPage = parseInt(searchParams.get("page") || "1", 10);
-  const [page, setPage] = useState<number>(initialPage);
-  const [openFilter, setOpenFilter] = useState(false);
   const itemPerPage = 20;
-  const totalPages = Math.ceil(filteredProducts.length / itemPerPage);
 
-  const brands = useMemo(
-    () => Array.from(new Set(filteredProducts.map((product) => product.brand))),
-    [filteredProducts]
+  // Parse filters directly from URL searchParams
+  const activeSort = searchParams.get("sort") || "newest";
+  const activeMinPrice = parseInt(searchParams.get("minPrice") || "50000", 10);
+  const activeMaxPrice = parseInt(
+    searchParams.get("maxPrice") || "10000000",
+    10,
   );
+  const activeBrands = useMemo(() => {
+    const brandsParam = searchParams.get("brands");
+    return brandsParam ? brandsParam.split(",") : [];
+  }, [searchParams]);
+  const page = parseInt(searchParams.get("page") || "1", 10);
 
-  // Apply filters and sorting
-  const finalFilteredProducts = useMemo(() => {
-    let filtered = [...filteredProducts];
-  
-    filtered = filtered.filter(
-      (product) =>
-        product.price >= priceRange[0] && product.price <= priceRange[1]
-    );
-  
-    if (selectedBrands.length > 0) {
-      filtered = filtered.filter((product) =>
-        selectedBrands.includes(product.brand)
-      );
-    }
-  
-    switch (sortBy) {
-      case "name-asc":
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "name-desc":
-        filtered.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "price-asc":
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      case "newest":
-        filtered.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        break;
-      default:
-        break;
-    }
-  
-    return filtered;
-  }, [filteredProducts, priceRange, selectedBrands, sortBy]);
+  // Local state for sidebar (before applying)
+  const [tempPriceRange, setTempPriceRange] = useState<number[]>([
+    activeMinPrice,
+    activeMaxPrice,
+  ]);
+  const [tempSelectedBrands, setTempSelectedBrands] =
+    useState<string[]>(activeBrands);
+  const [openFilter, setOpenFilter] = useState(false);
+
+  // Keep sidebar in sync with URL changes (e.g. resets, browser navigation)
+  useEffect(() => {
+    setTempPriceRange([activeMinPrice, activeMaxPrice]);
+    setTempSelectedBrands(activeBrands);
+  }, [activeMinPrice, activeMaxPrice, activeBrands]);
+
+  const activeBrandsString = searchParams.get("brands") || "";
+
+  // Fetch published products filtered, sorted, and paginated from the backend
+  const {
+    data: productsRes,
+    isLoading: productsLoading,
+    isError: productsError,
+  } = usePublishedProductsQuery({
+    page,
+    limit: itemPerPage,
+    q: searchQuery,
+    category: category?._id || "All",
+    sort: activeSort,
+    minPrice: activeMinPrice,
+    maxPrice: activeMaxPrice,
+    brands: activeBrandsString,
+  });
+
+  const publishedProducts = productsRes?.products || [];
+  const totalProductsCount = productsRes?.pagination?.total || 0;
+  const totalPages = productsRes?.pagination?.pages || 1;
+
+  const brands = productsRes?.brands || [];
 
   const handleBrandChange = (brand: string) => {
     setTempSelectedBrands((prev) =>
-      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
+      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand],
     );
   };
 
   const handleApplyFilters = () => {
-    setPriceRange(tempPriceRange);
-    setSelectedBrands(tempSelectedBrands);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("minPrice", String(tempPriceRange[0]));
+    params.set("maxPrice", String(tempPriceRange[1]));
+    if (tempSelectedBrands.length > 0) {
+      params.set("brands", tempSelectedBrands.join(","));
+    } else {
+      params.delete("brands");
+    }
+    params.set("page", "1"); // Reset to page 1 when filters are applied
+
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
     setOpenFilter(false);
   };
 
   const handlePageChange = useCallback(
     (newPage: number) => {
-      setPage(newPage);
-      const query = new URLSearchParams(searchParams.toString());
-      query.set("page", String(newPage));
-      const url = `${pathname}?${query.toString()}`;
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(newPage));
+      const url = `${pathname}?${params.toString()}`;
       router.push(url, { scroll: false });
       if (typeof window !== "undefined") {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     },
-    [pathname, router, searchParams]
+    [pathname, router, searchParams],
   );
 
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (page - 1) * itemPerPage;
-    const endIndex = startIndex + itemPerPage;
-    return finalFilteredProducts.slice(startIndex, endIndex);
-  }, [page, finalFilteredProducts]);
+  const paginatedProducts = publishedProducts;
 
-  const firstRow = useMemo(() => paginatedProducts.slice(0, 8), [paginatedProducts]);
-  const secondRow = useMemo(() => paginatedProducts.slice(8), [paginatedProducts]);
+  const firstRow = useMemo(
+    () => paginatedProducts.slice(0, 8),
+    [paginatedProducts],
+  );
+  const secondRow = useMemo(
+    () => paginatedProducts.slice(8),
+    [paginatedProducts],
+  );
   const promoBanner = serverBanners[0];
 
   const handleResetFilters = () => {
-    setTempPriceRange([50000, 5000000]);
-    setPriceRange([50000, 5000000]);
-    setSelectedBrands([]);
-    setTempSelectedBrands([]);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("minPrice");
+    params.delete("maxPrice");
+    params.delete("brands");
+    params.delete("sort");
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
     setOpenFilter(false);
-    setPage(1);
   };
 
   const renderSkeletons = (count: number) => {
     return Array.from({ length: count }).map((_, index) => (
-      <div key={index} className="space-y-3 p-4 border rounded-2xl bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800">
+      <div
+        key={index}
+        className="space-y-3 p-4 border rounded-2xl bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800"
+      >
         <Skeleton className="h-40 w-full rounded-xl" />
         <Skeleton className="h-4 w-3/4 rounded-md" />
         <Skeleton className="h-4 w-1/2 rounded-md" />
@@ -206,7 +191,11 @@ const ProductsList = ({
   }
 
   if (productsError || categoriesError) {
-    return <div className="text-center font-bold text-rose-500 py-12 font-inter">Error loading products. Please try again later.</div>;
+    return (
+      <div className="text-center font-bold text-rose-500 py-12 font-inter">
+        Error loading products. Please try again later.
+      </div>
+    );
   }
 
   return (
@@ -215,7 +204,7 @@ const ProductsList = ({
         <div className="col-span-2 hidden lg:block">
           <FilterComp
             categories={allCategories}
-            priceRange={priceRange}
+            priceRange={[activeMinPrice, activeMaxPrice]}
             tempPriceRange={tempPriceRange}
             setTempPriceRange={setTempPriceRange}
             selectedBrands={tempSelectedBrands}
@@ -233,21 +222,38 @@ const ProductsList = ({
                 {query
                   ? `Search Results for "${query}"`
                   : category
-                  ? category.name
-                  : "Shop Online"}
+                    ? category.name
+                    : "Shop Online"}
               </p>
               <div className="flex items-center gap-2">
                 <span className="hidden md:block text-zinc-400">Sort By:</span>
                 <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  value={activeSort}
+                  onChange={(e) => {
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set("sort", e.target.value);
+                    params.set("page", "1"); // Reset page on sort change
+                    router.push(`${pathname}?${params.toString()}`, {
+                      scroll: false,
+                    });
+                  }}
                   className="border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 focus:outline-none bg-transparent cursor-pointer font-bold"
                 >
-                  <option value="name-asc" className="dark:bg-zinc-900">A-Z</option>
-                  <option value="name-desc" className="dark:bg-zinc-900">Z-A</option>
-                  <option value="newest" className="dark:bg-zinc-900">Newest</option>
-                  <option value="price-asc" className="dark:bg-zinc-900">Price: Low to High</option>
-                  <option value="price-desc" className="dark:bg-zinc-900">Price: High to Low</option>
+                  <option value="name-asc" className="dark:bg-zinc-900">
+                    A-Z
+                  </option>
+                  <option value="name-desc" className="dark:bg-zinc-900">
+                    Z-A
+                  </option>
+                  <option value="newest" className="dark:bg-zinc-900">
+                    Newest
+                  </option>
+                  <option value="price-asc" className="dark:bg-zinc-900">
+                    Price: Low to High
+                  </option>
+                  <option value="price-desc" className="dark:bg-zinc-900">
+                    Price: High to Low
+                  </option>
                 </select>
               </div>
             </div>
@@ -255,13 +261,10 @@ const ProductsList = ({
               <p>
                 Showing{" "}
                 <span className="text-primary font-bold">
-                  {Math.min(
-                    (page - 1) * itemPerPage + 1,
-                    filteredProducts.length
-                  )}{" "}
-                  - {Math.min(page * itemPerPage, filteredProducts.length)}
+                  {totalProductsCount > 0 ? (page - 1) * itemPerPage + 1 : 0} -{" "}
+                  {Math.min(page * itemPerPage, totalProductsCount)}
                 </span>{" "}
-                of {filteredProducts.length} products
+                of {totalProductsCount} products
               </p>
 
               <Button
@@ -274,7 +277,7 @@ const ProductsList = ({
             </div>
           </div>
 
-          {finalFilteredProducts.length < 1 ? (
+          {totalProductsCount < 1 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center space-y-4 bg-white dark:bg-zinc-900 border rounded-3xl border-zinc-150 dark:border-zinc-800 p-8 shadow-xs">
               <h3 className="text-lg font-extrabold text-zinc-900 dark:text-white">
                 No Products Found
@@ -339,7 +342,7 @@ const ProductsList = ({
                   ))}
                 </div>
               )}
-              
+
               {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-2 pt-6 border-t border-zinc-100 dark:border-zinc-850">
                   <Button
@@ -377,14 +380,16 @@ const ProductsList = ({
             onClick={() => setOpenFilter(false)}
           />
         )}
-        
+
         <div
           className={`lg:hidden fixed top-0 left-0 h-full w-full max-w-[280px] bg-white dark:bg-zinc-950 shadow-xl z-50 transition-transform duration-300 ease-in-out overflow-y-auto scrollbar-hide border-r dark:border-zinc-900 ${
             openFilter ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           <div className="pt-4 px-4 flex justify-between items-center">
-            <span className="text-xs font-extrabold uppercase text-zinc-400">Filters</span>
+            <span className="text-xs font-extrabold uppercase text-zinc-400">
+              Filters
+            </span>
             <button
               className="flex items-center text-xs font-bold text-primary gap-1"
               onClick={() => setOpenFilter(false)}
@@ -396,10 +401,10 @@ const ProductsList = ({
           <div className="w-full p-4">
             <FilterComp
               categories={allCategories}
-              priceRange={priceRange}
+              priceRange={[activeMinPrice, activeMaxPrice]}
               tempPriceRange={tempPriceRange}
               setTempPriceRange={setTempPriceRange}
-              selectedBrands={selectedBrands}
+              selectedBrands={tempSelectedBrands}
               handleBrandChange={handleBrandChange}
               brands={brands}
               handleApplyFilters={handleApplyFilters}

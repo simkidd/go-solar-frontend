@@ -33,24 +33,10 @@ const Search = ({ placeholder, categories }: SearchProps) => {
       }
 
       let searchRoute: string;
-      if (pathname === "/shop") {
-        searchRoute = "/products/search";
-      } else if (pathname === "/blog") {
+      if (pathname.startsWith("/blog")) {
         searchRoute = "/blog/search";
-      } else if (pathname.includes("search")) {
-        // If already on a search page, use the current pathname
-        searchRoute = pathname;
-      } else if (pathname.match(/\/products\/[^\/]+/)) {
-        // If on a '/products/[slug]' route, go to '/products/search'
-        searchRoute = "/products/search";
-      } else if (
-        pathname.includes("products") &&
-        !pathname.includes("search")
-      ) {
-        // If on a '/[slug]/products' route, append '/search'
-        searchRoute = "/products/search";
       } else {
-        searchRoute = `${pathname}/search`;
+        searchRoute = "/products/search";
       }
 
       router.push(`${searchRoute}?${params.toString()}`);

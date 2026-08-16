@@ -19,15 +19,19 @@ export interface PaginatedOrdersResponse {
 }
 
 // Fetch all orders (admin) with pagination
-export const useAllOrdersQuery = (params?: { page?: number; limit?: number }) => {
-  const page = params?.page ?? 1;
-  const limit = params?.limit ?? 10;
+export const useAllOrdersQuery = (params?: {
+  page?: number;
+  limit?: number;
+  q?: string;
+  status?: string;
+}) => {
+  const { page = 1, limit = 10, q = "", status = "All" } = params || {};
 
   return useQuery<PaginatedOrdersResponse>({
-    queryKey: [...ORDER_KEYS.lists(), page, limit],
+    queryKey: [...ORDER_KEYS.lists(), page, limit, q, status],
     queryFn: async () => {
       const { data } = await axiosInstance.get("/admin/all-orders", {
-        params: { page, limit },
+        params: { page, limit, q, status },
       });
       return {
         orders: data?.orders || [],

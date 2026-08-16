@@ -7,7 +7,8 @@ import { usePublishedProductsQuery } from "@/hooks/queries/useProductsQuery";
 import "swiper/css";
 
 const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
-  const { data: publishedProducts = [] } = usePublishedProductsQuery();
+  const { data: productsRes } = usePublishedProductsQuery({ page: 1, limit: 1000 });
+  const publishedProducts = productsRes?.products || [];
 
   const relatedProducts = publishedProducts
     .filter(

@@ -77,6 +77,7 @@ export interface Category {
   name: string;
   slug: string;
   description: string;
+  parent?: { _id: string; name: string; slug: string } | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -145,4 +146,26 @@ export interface UpdateOfferInput extends CreateOfferInput {
 export interface AddOfferProductDTO {
   products: string[];
   offer: string;
+}
+
+export interface IPagination {
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
+export interface PaginatedProductsResponse {
+  success: boolean;
+  message: string;
+  products: Product[];
+  pagination: IPagination;
+  brands?: string[];
+}
+
+export interface PaginatedCategoriesResponse {
+  success: boolean;
+  message: string;
+  categories: Category[];
+  pagination: IPagination;
 }

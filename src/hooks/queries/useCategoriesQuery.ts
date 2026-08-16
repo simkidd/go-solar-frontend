@@ -1,4 +1,4 @@
-import { Category } from "@/interfaces/product.interface";
+import { Category, PaginatedCategoriesResponse } from "@/interfaces/product.interface";
 import { axiosInstance } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
@@ -15,12 +15,21 @@ export const CATEGORY_KEYS = {
 };
 
 // Fetch flat categories list
-export const useCategoriesQuery = () => {
-  return useQuery<Category[]>({
-    queryKey: CATEGORY_KEYS.lists(),
+export const useCategoriesQuery = (params?: {
+  page?: number;
+  limit?: number;
+  q?: string;
+  parent?: string | null;
+}) => {
+  const { page = 1, limit = 10, q = "", parent } = params || {};
+  const parentParam = parent === null ? "null" : parent;
+  return useQuery<PaginatedCategoriesResponse>({
+    queryKey: [...CATEGORY_KEYS.lists(), page, limit, q, parentParam],
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/categories");
-      return data?.categories || [];
+      const { data } = await axiosInstance.get("/categories", {
+        params: { page, limit, q, parent: parentParam },
+      });
+      return data;
     },
   });
 };

@@ -52,12 +52,13 @@ const SingleOrderPage = async ({ params }: IOrder) => {
 
   return (
     <div className="w-full max-w-[1000px] mx-auto py-4 font-inter">
-      <div className="flex items-center justify-between mb-4">
-        <Link href="/admin/orders">
-          <button className="px-4 py-2 text-sm flex items-center">
-            <ArrowLeft className="mr-2" size={16} />
-            Go back
-          </button>
+      <div className="flex items-center justify-between mb-4 select-none">
+        <Link 
+          href="/dashboard/orders"
+          className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+        >
+          <ArrowLeft size={14} />
+          Back to orders
         </Link>
       </div>
       <div className="w-full">

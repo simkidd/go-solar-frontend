@@ -52,7 +52,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const { data: products = [] } = usePublishedProductsQuery();
+  const { data: productsRes } = usePublishedProductsQuery({ page: 1, limit: 1000 });
+  const products = productsRes?.products || [];
   const { data: categoryTree = [] } = useCategoryTreeQuery();
 
   // Load recent searches from localStorage
@@ -120,13 +121,19 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       .slice(0, 6);
   }, [products, query]);
 
+  const handleNavigate = (href: string) => {
+    onOpenChange(false);
+    setTimeout(() => {
+      router.push(href);
+    }, 80);
+  };
+
   // Handle Search Submission
   const handleSearch = (searchTerm: string) => {
     if (!searchTerm.trim()) return;
     saveRecentSearch(searchTerm);
-    onOpenChange(false);
     setQuery("");
-    router.push(`/shop?q=${encodeURIComponent(searchTerm.trim())}`);
+    handleNavigate(`/products/search?q=${encodeURIComponent(searchTerm.trim())}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -199,9 +206,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                     <Link
                       key={product._id}
                       href={`/shop/${product.slug || product._id}`}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         saveRecentSearch(product.name);
-                        onOpenChange(false);
+                        handleNavigate(`/shop/${product.slug || product._id}`);
                       }}
                       className="flex items-center gap-3.5 p-2.5 rounded-xl hover:bg-muted/40 border border-transparent hover:border-border/60 transition-all group"
                     >
@@ -351,7 +359,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                     <Link
                       key={cat._id}
                       href={`/${cat.slug}/products`}
-                      onClick={() => onOpenChange(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleNavigate(`/${cat.slug}/products`);
+                      }}
                       className="p-3 rounded-xl bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900/40 dark:hover:bg-zinc-850 border border-border/60 flex items-center justify-between text-xs font-bold text-foreground transition-all group"
                     >
                       <span>{cat.name}</span>

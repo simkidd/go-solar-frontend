@@ -140,9 +140,8 @@ const ProductCard: React.FC<{
           >
             {item?.name}
           </Link>
-          <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">
-            {item?.description ||
-              "High efficiency monocrystalline hardware component built to deliver reliable power."}
+          <p className="text-[10px] text-muted-foreground line-clamp-1 leading-relaxed">
+            {item?.description || ""}
           </p>
         </div>
 

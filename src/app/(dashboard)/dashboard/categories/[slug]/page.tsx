@@ -1,6 +1,8 @@
 import SingleCategoryProducts from "@/app/(dashboard)/components/products/SingleCategoryProducts";
 import { Category } from "@/interfaces/product.interface";
 import { getCategories } from "@/lib/data";
+
+export const dynamic = "force-dynamic";
 import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -40,14 +42,14 @@ const SingleCatgory = async ({ params }: IProp) => {
   const category = categories?.find((cat) => cat?.slug === categorySlug);
 
   return (
-    <div className="w-full font-inter">
-      <div className="flex items-center justify-between mb-4">
+    <div className="w-full font-inter space-y-4">
+      <div className="flex items-center justify-between select-none">
         <Link 
-          href="/admin/categories"
-          className="text-sm font-medium flex items-center gap-1.5 text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors"
+          href="/dashboard/categories"
+          className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
-          <ArrowLeft size={16} />
-          Categories
+          <ArrowLeft size={14} />
+          Back to categories
         </Link>
       </div>
 

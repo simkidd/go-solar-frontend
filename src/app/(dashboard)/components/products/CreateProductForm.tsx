@@ -43,7 +43,8 @@ interface FormValues {
 }
 
 const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { data: categories = [] } = useCategoriesQuery();
+  const { data: catRes } = useCategoriesQuery({ page: 1, limit: 1000 });
+  const categories = catRes?.categories || [];
   const { data: offers = [] } = useAllOffersQuery();
   const createProductMutation = useCreateProductMutation({
     onSuccess: onClose,
@@ -56,6 +57,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     control,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
@@ -74,6 +76,14 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       showDatasheet: false,
       datasheet: [],
     },
+  });
+
+  const [selectedParentId, setSelectedParentId] = useState<string>("");
+
+  const parentCategories = categories.filter((c: any) => !c.parent);
+  const subcategories = categories.filter((c: any) => {
+    const parentVal = typeof c.parent === "object" ? c.parent?._id : c.parent;
+    return parentVal === selectedParentId;
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -424,37 +434,67 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
-                  Category <span className="text-red-500">*</span>
+                  Parent Category <span className="text-red-500">*</span>
                 </label>
-                <Controller
-                  control={control}
-                  name="category"
-                  rules={{ required: "Category is required" }}
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="bg-muted/30 border-border rounded-xl text-xs h-10 focus:ring-primary">
-                        <SelectValue placeholder="Select Category" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl bg-card border border-border/80">
-                        {categories.map((cat) => (
-                          <SelectItem
-                            key={cat?._id}
-                            value={cat?._id}
-                            className="cursor-pointer font-semibold text-xs"
-                          >
-                            {cat?.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.category && (
-                  <p className="text-xs text-red-500 font-semibold">
-                    {errors.category.message}
-                  </p>
-                )}
+                <Select
+                  value={selectedParentId}
+                  onValueChange={(val) => {
+                    setSelectedParentId(val);
+                    setValue("category", val); // Fallback to parent category
+                  }}
+                >
+                  <SelectTrigger className="bg-muted/30 border-border rounded-xl text-xs h-10 focus:ring-primary">
+                    <SelectValue placeholder="Select Parent Category" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl bg-card border border-border/80">
+                    {parentCategories.map((cat) => (
+                      <SelectItem
+                        key={cat?._id}
+                        value={cat?._id}
+                        className="cursor-pointer font-semibold text-xs"
+                      >
+                        {cat?.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+              {selectedParentId && subcategories.length > 0 && (
+                <div className="space-y-1.5 animate-fadeIn">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                    Subcategory <span className="text-red-500">*</span>
+                  </label>
+                  <Controller
+                    control={control}
+                    name="category"
+                    rules={{ required: "Subcategory is required" }}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className="bg-muted/30 border-border rounded-xl text-xs h-10 focus:ring-primary">
+                          <SelectValue placeholder="Select Subcategory" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl bg-card border border-border/80">
+                          {subcategories.map((cat) => (
+                            <SelectItem
+                              key={cat?._id}
+                              value={cat?._id}
+                              className="cursor-pointer font-semibold text-xs"
+                            >
+                              {cat?.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.category && (
+                    <p className="text-xs text-red-500 font-semibold">
+                      {errors.category.message}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">

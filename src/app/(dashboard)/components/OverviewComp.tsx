@@ -102,8 +102,9 @@ const getQuoteStatusBadgeClass = (status: string) => {
 const OverviewComp = () => {
   const { user } = useAuthStore();
   const { data: usersRes } = useAllUsersQuery({ limit: 1000 });
-  const { data: products = [] } = useAllProductsQuery();
+  const { data: productsRes } = useAllProductsQuery({ page: 1, limit: 1000 });
   const { data: ordersRes } = useAllOrdersQuery({ limit: 1000 });
+  const products = productsRes?.products || [];
   const users = usersRes?.users || [];
   const orders = ordersRes?.orders || [];
   

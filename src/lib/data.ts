@@ -240,7 +240,9 @@ export const getProduct = async (id: string) => {
 
 export const getCategories = async () => {
   try {
-    const { data } = await axiosInstance.get("/categories");
+    const { data } = await axiosInstance.get("/categories", {
+      params: { page: 1, limit: 1000 }
+    });
 
     return data?.categories;
   } catch (error) {

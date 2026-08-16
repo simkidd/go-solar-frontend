@@ -25,10 +25,16 @@ const UpdateCategoryForm: React.FC<{
   category: Category & { parent?: any };
   onClose: () => void;
 }> = ({ category, onClose }) => {
-  const { data: categories = [] } = useCategoriesQuery();
-  const updateCategoryMutation = useUpdateCategoryMutation({ onSuccess: onClose });
+  const { data: catRes } = useCategoriesQuery({ page: 1, limit: 1000 });
+  const categories = catRes?.categories || [];
+  const updateCategoryMutation = useUpdateCategoryMutation({
+    onSuccess: onClose,
+  });
 
-  const parentId = typeof category?.parent === "object" ? category?.parent?._id : category?.parent;
+  const parentId =
+    typeof category?.parent === "object"
+      ? category?.parent?._id
+      : category?.parent;
 
   const {
     register,
@@ -53,46 +59,69 @@ const UpdateCategoryForm: React.FC<{
   };
 
   const parentOptions = categories.filter(
-    (c: any) => !c.parent && c._id !== category._id
+    (c: any) => !c.parent && c._id !== category._id,
   );
 
   return (
-    <form className="w-full font-inter flex flex-col gap-4 pt-2" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="w-full font-inter flex flex-col gap-6 pt-2"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       {/* Details Section */}
-      <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/20 p-4 space-y-4">
-        <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-          Category Details
-        </p>
-
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-            Name <span className="text-red-500">*</span>
-          </label>
-          <Input
-            placeholder="e.g. Solar Panels"
-            {...register("name", { required: "Category name is required" })}
-            className="h-9 text-sm bg-white dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 rounded-lg focus-visible:ring-primary/30"
-          />
-          {errors.name && <p className="text-xs text-red-500 mt-0.5">{errors.name.message}</p>}
+      <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
+        <div className="border-b border-border/60 pb-3 select-none">
+          <h3 className="text-sm font-extrabold text-foreground tracking-tight">
+            Category Details
+          </h3>
+          <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+            Configure core catalog taxonomy name, description, and hierarchy
+          </p>
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+            Category Name <span className="text-red-500">*</span>
+          </label>
+          <Input
+            placeholder="e.g., Solar Panels"
+            {...register("name", { required: "Category name is required" })}
+            className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+          />
+          {errors.name && (
+            <p className="text-xs text-red-500 font-semibold mt-0.5">
+              {errors.name.message}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
             Parent Category{" "}
-            <span className="text-[10px] font-normal text-zinc-400">(Leave empty for top-level)</span>
+            <span className="text-[10px] font-normal text-muted-foreground/60">
+              (Leave empty for top-level)
+            </span>
           </label>
           <Controller
             control={control}
             name="parent"
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="h-9 text-sm bg-white dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 rounded-lg focus-visible:ring-primary/30">
+                <SelectTrigger className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary">
                   <SelectValue placeholder="Select Parent Category (Optional)" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None (Top-Level Category)</SelectItem>
+                <SelectContent className="rounded-xl bg-card border border-border/80">
+                  <SelectItem
+                    value="none"
+                    className="text-xs cursor-pointer font-bold"
+                  >
+                    None (Top-Level Category)
+                  </SelectItem>
                   {parentOptions.map((cat) => (
-                    <SelectItem key={cat?._id} value={cat?._id}>
+                    <SelectItem
+                      key={cat?._id}
+                      value={cat?._id}
+                      className="text-xs cursor-pointer font-bold"
+                    >
                       {cat?.name}
                     </SelectItem>
                   ))}
@@ -103,29 +132,35 @@ const UpdateCategoryForm: React.FC<{
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
             Description{" "}
-            <span className="text-[10px] font-normal text-zinc-400">(Optional)</span>
+            <span className="text-[10px] font-normal text-muted-foreground/60">
+              (Optional)
+            </span>
           </label>
           <Textarea
-            placeholder="Brief description of this category"
-            rows={3}
+            placeholder="Brief description of this category..."
+            rows={4}
             {...register("description")}
-            className="text-sm bg-white dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 rounded-lg focus-visible:ring-primary/30 resize-none"
+            className="bg-muted/30 border-border rounded-xl text-xs focus-visible:ring-primary min-h-[100px] resize-none"
           />
         </div>
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-end gap-2 pt-1">
-        <Button type="button" variant="ghost" size="sm" onClick={onClose} className="h-9 text-xs dark:text-zinc-300">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/60 select-none">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onClose}
+          className="text-muted-foreground hover:text-foreground text-xs font-bold h-10 px-4 rounded-xl cursor-pointer"
+        >
           Cancel
         </Button>
         <Button
           type="submit"
-          size="sm"
           disabled={updateCategoryMutation.isPending}
-          className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
+          className="bg-primary text-primary-foreground text-xs font-bold h-10 px-6 rounded-xl cursor-pointer shadow-xs hover:bg-primary/95 transition-all text-white"
         >
           {updateCategoryMutation.isPending ? "Saving..." : "Save Changes"}
         </Button>

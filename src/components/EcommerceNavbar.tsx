@@ -203,7 +203,7 @@ const EcommerceNavbar = () => {
         <div className="w-full bg-zinc-50/50 dark:bg-zinc-900/10 border-t border-border/60 py-2">
           <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
             {/* Dynamic Categories Link Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
+            <div className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth mr-6">
               <Link
                 href="/shop"
                 className={`text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors px-3 py-1.5 rounded-full ${

@@ -17,7 +17,8 @@ import Image from "next/image";
 const OfferProducts: React.FC<{
   offer: Offer;
 }> = ({ offer }) => {
-  const { data: products = [], isLoading: loading } = useAllProductsQuery();
+  const { data, isLoading: loading } = useAllProductsQuery({ page: 1, limit: 1000 });
+  const products = data?.products || [];
 
   const filteredProducts = products.filter(
     (product) => product?.currentOffer?._id === offer._id
