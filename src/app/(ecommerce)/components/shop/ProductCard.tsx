@@ -7,7 +7,7 @@ import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Zap, ImageOff } from "lucide-react";
+import { Heart, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const ProductCard: React.FC<{
@@ -63,17 +63,26 @@ const ProductCard: React.FC<{
                 src={item.images[0].url}
                 alt={item?.name}
                 fill
-                sizes="(max-w-[768px]) 50vw, (max-w-[1200px]) 25vw, 20vw"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
                 loading="lazy"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className={`object-cover group-hover:scale-105 transition-transform duration-500 ${!inStock ? "grayscale brightness-75" : ""}`}
               />
-              {item.images.length > 1 && (
+              {/* Out of Stock overlay */}
+              {!inStock && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                    Out of Stock
+                  </span>
+                </div>
+              )}
+              {/* Hover swap to second image */}
+              {inStock && item.images.length > 1 && (
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   <Image
                     src={item.images[1].url}
                     alt={item?.name}
                     fill
-                    sizes="(max-w-[768px]) 50vw, (max-w-[1200px]) 25vw, 20vw"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
                     className="object-cover"
                   />
                 </div>
@@ -82,36 +91,29 @@ const ProductCard: React.FC<{
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-muted/40 select-none">
               <ImageOff className="w-8 h-8 text-muted-foreground/30" />
-              <p className="text-[9px] text-muted-foreground/50 font-bold uppercase tracking-wider">No image</p>
+              <p className="text-[9px] text-muted-foreground/50 font-bold uppercase tracking-wider">
+                No image
+              </p>
             </div>
           )}
         </Link>
 
-        {/* Floating Stock & Discount Badges */}
-        <div className="absolute top-3 left-3 z-[2] flex flex-col gap-1.5 select-none">
-          {inStock ? (
-            <span className="text-[9px] font-black uppercase px-2.5 py-1 rounded-full bg-emerald-500 text-white shadow-xs tracking-wider w-fit">
-              In Stock
-            </span>
-          ) : (
-            <span className="text-[9px] font-black uppercase px-2.5 py-1 rounded-full bg-rose-500 text-white shadow-xs tracking-wider  w-fit">
-              Out of Stock
-            </span>
-          )}
-          {discountPercentage > 0 && (
-            <span className="text-[9px] font-black uppercase px-2.5 py-1 rounded-full bg-amber-500 text-white shadow-xs tracking-wider w-fit">
+        {/* Discount Badge — only when on sale */}
+        {discountPercentage > 0 && (
+          <div className="absolute top-3 left-3 z-[2] select-none">
+            <span className="text-[9px] font-black uppercase px-2.5 py-1 rounded-full bg-amber-500 text-white shadow-xs tracking-wider">
               {discountPercentage}% Off
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Wishlist Heart Icon */}
+        {/* Wishlist Heart */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             setLiked(!liked);
           }}
-          className="absolute top-3 right-3 h-8 w-8 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-xs flex items-center justify-center text-muted-foreground hover:text-rose-500 border border-border/40 shadow-xs transition-colors z-[2] cursor-pointer"
+          className="absolute top-3 right-3 h-8 w-8 rounded-full bg-background/80 backdrop-blur-xs flex items-center justify-center text-muted-foreground hover:text-rose-500 border border-border/40 shadow-xs transition-colors z-[2] cursor-pointer"
         >
           <Heart
             className={`h-4 w-4 ${liked ? "fill-rose-500 text-rose-500" : ""}`}
@@ -157,7 +159,7 @@ const ProductCard: React.FC<{
             )}
           </div>
 
-          {/* Single Action Cart Button */}
+          {/* Cart Button */}
           <Button
             onClick={(e) => {
               e.stopPropagation();

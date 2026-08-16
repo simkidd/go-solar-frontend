@@ -53,6 +53,7 @@ export const useUpdateProductMutation = (options?: MutationOptions) => {
     onSuccess: (data) => {
       toast.success(data?.message || "Product updated successfully");
       queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
+
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
@@ -93,8 +94,8 @@ export const useUpdateProductImageMutation = (options?: MutationOptions) => {
 
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      const { data } = await axiosInstance.put(
-        "/products/update-image",
+      const { data } = await axiosInstance.patch(
+        "/admin/update-product-image",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

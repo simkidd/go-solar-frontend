@@ -2,7 +2,7 @@
 import React, { useCallback, useState } from "react";
 import { Product } from "@/interfaces/product.interface";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2, Upload, ImageOff } from "lucide-react";
+import { Edit2, Trash2, Upload, ImageOff, Plus } from "lucide-react";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
@@ -38,7 +38,7 @@ const UpdateProductImage: React.FC<{
               Manage Product Images
             </DialogTitle>
             <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
-              Select an existing image slot to replace it with a new upload. Up to 5 images supported.
+              Select an image slot to replace it, or select "Add New" to upload another image (up to 5 total).
             </p>
           </DialogHeader>
 
@@ -59,14 +59,16 @@ export const ProductImagesForm: React.FC<{
 }> = ({ onClose, product }) => {
   const updateImagesMutation = useUpdateProductImageMutation({ onSuccess: onClose });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [selectedImgId, setSelectedImgId] = useState<string | null>(null);
+  const [selectedImgId, setSelectedImgId] = useState<string | null>(
+    product.images && product.images.length > 0 ? null : "new"
+  );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const MAX_IMAGES = 5;
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      if (product.images.length >= MAX_IMAGES) {
+      if (selectedImgId === "new" && product.images.length >= MAX_IMAGES) {
         toast.info(`You can only have up to ${MAX_IMAGES} images`);
         return;
       }
@@ -75,7 +77,7 @@ export const ProductImagesForm: React.FC<{
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
     },
-    [product.images.length]
+    [product.images.length, selectedImgId]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -92,13 +94,13 @@ export const ProductImagesForm: React.FC<{
     e.preventDefault();
 
     if (!selectedImage || !selectedImgId) {
-      toast.warning("Please select an image slot to replace, then upload a new image.");
+      toast.warning("Please select a slot (replace or add new) and upload an image.");
       return;
     }
 
     const formData = new FormData();
     formData.append("productId", product?._id);
-    formData.append("imgId", selectedImgId);
+    formData.append("imgId", selectedImgId === "new" ? "" : selectedImgId);
     formData.append("updateImg", selectedImage);
 
     updateImagesMutation.mutate(formData);
@@ -107,15 +109,16 @@ export const ProductImagesForm: React.FC<{
   return (
     <form onSubmit={handleSubmit} className="w-full font-inter space-y-5">
 
-      {/* Step 1: Choose slot to replace */}
+      {/* Step 1: Choose slot to replace or Add New */}
       <div className="space-y-2">
         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none">
-          Step 1 — Select image to replace
+          Step 1 — Select slot (replace existing or add new)
         </p>
 
-        {product.images && product.images.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {product.images.map((img) => (
+        <div className="flex flex-wrap gap-2">
+          {/* Existing images */}
+          {product.images &&
+            product.images.map((img) => (
               <button
                 key={img.public_id}
                 type="button"
@@ -139,21 +142,29 @@ export const ProductImagesForm: React.FC<{
                 )}
               </button>
             ))}
-          </div>
-        ) : (
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/60">
-            <ImageOff className="h-5 w-5 text-muted-foreground/50 shrink-0" />
-            <p className="text-xs text-muted-foreground font-semibold">
-              No images yet. Upload your first image below.
-            </p>
-          </div>
-        )}
+
+          {/* Add new button slot if under cap */}
+          {product.images.length < MAX_IMAGES && (
+            <button
+              type="button"
+              onClick={() => setSelectedImgId("new")}
+              className={`relative w-20 h-20 rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all ${
+                selectedImgId === "new"
+                  ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                  : "border-border/60 hover:border-border bg-muted/10 hover:bg-muted/20"
+              }`}
+            >
+              <Plus className="w-5 h-5 text-muted-foreground" />
+              <span className="text-[9px] font-bold text-muted-foreground mt-1">Add New</span>
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Step 2: Upload replacement */}
+      {/* Step 2: Upload replacement/new image */}
       <div className="space-y-2">
         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none">
-          Step 2 — Upload new image
+          Step 2 — Upload image file
         </p>
         <div
           {...getRootProps()}
@@ -222,7 +233,11 @@ export const ProductImagesForm: React.FC<{
           disabled={updateImagesMutation.isPending || !selectedImgId || !selectedImage}
           className="bg-primary hover:bg-primary/90 text-white text-xs font-semibold h-9 px-5 rounded-xl cursor-pointer"
         >
-          {updateImagesMutation.isPending ? "Uploading..." : "Replace Image"}
+          {updateImagesMutation.isPending
+            ? "Uploading..."
+            : selectedImgId === "new"
+            ? "Add Image"
+            : "Replace Image"}
         </Button>
       </div>
     </form>

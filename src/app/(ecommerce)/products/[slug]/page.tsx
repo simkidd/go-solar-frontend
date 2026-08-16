@@ -9,14 +9,16 @@ import ProductDetail from "../../components/shop/ProductDetail";
 import {
   RefreshCcw,
   Truck,
-  ShieldAlert,
   Cpu,
+  ChevronRight,
+  ShieldCheck,
 } from "lucide-react";
 import ViewHistoryComp from "../../components/ViewHistory";
 import { getProducts, getPubilshedProducts } from "@/lib/api/products";
 import FaqNewsletterSection from "@/components/home/FaqNewsletterSection";
 import Link from "next/link";
 import { PACKAGES_DATA } from "@/data/packages";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface IProduct {
   params: Promise<{ slug: string }>;
@@ -105,179 +107,215 @@ const ProductPage = async ({ params }: IProduct) => {
     notFound();
   }
 
-
   return (
-    <div className="w-full font-inter bg-white dark:bg-zinc-950">
-      {/* Breadcrumbs Navigation */}
-      <div className="w-full bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-zinc-150 dark:border-zinc-850 py-3.5">
-        <div className="container mx-auto px-4">
-          <nav className="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500">
+    <div className="w-full font-inter bg-background text-foreground min-h-screen">
+      {/* ── Breadcrumb ── */}
+      <div className="w-full border-b border-border bg-muted/20 py-3">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <nav className="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground">
             <Link
               href="/shop"
-              className="hover:text-zinc-950 dark:hover:text-white transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               Store
             </Link>
             {product?.category && (
               <>
-                <span className="text-zinc-300 dark:text-zinc-700 select-none">
-                  /
-                </span>
+                <ChevronRight className="w-3 h-3 text-muted-foreground/30" />
                 <Link
                   href={`/${product.category.slug}/products`}
-                  className="hover:text-zinc-950 dark:hover:text-white transition-colors"
+                  className="hover:text-foreground transition-colors"
                 >
                   {product.category.name}
                 </Link>
               </>
             )}
-            <span className="text-zinc-300 dark:text-zinc-700 select-none">
-              /
-            </span>
-            <span className="text-zinc-900 dark:text-white font-bold select-none truncate max-w-[280px]">
+            <ChevronRight className="w-3 h-3 text-muted-foreground/30" />
+            <span className="text-foreground font-bold truncate max-w-[260px] select-none">
               {product.name}
             </span>
           </nav>
         </div>
       </div>
 
-      {/* Main product showcase */}
-      <section className="w-full py-12 bg-white dark:bg-zinc-950">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-6xl mx-auto">
-            {/* Left Column: Image gallery */}
-            <div className="lg:col-span-7 w-full">
+      {/* ── Main Hero Section ── */}
+      <section className="w-full py-10 lg:py-14">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-10 gap-10 lg:gap-14 items-start">
+            {/* Left: Gallery */}
+            <div className="lg:col-span-5 w-full">
               <ProductImages images={product?.images} />
             </div>
 
-            {/* Right Column: Specs and pricing detail */}
-            <div className="lg:col-span-5 w-full bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs">
+            {/* Right: Details */}
+            <div className="lg:col-span-5 w-full">
               <ProductDetail product={product} productCode={productCode} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Detailed specifications & Capacity info matching Mockup 2 */}
-      <section className="w-full py-16 bg-zinc-50 dark:bg-zinc-900/10 border-t border-b border-zinc-150 dark:border-zinc-900">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-6xl mx-auto">
-            {/* Left side: Overview, Specs and Power capacity */}
-            <div className="lg:col-span-8 space-y-8">
-              {/* Product Description */}
-              <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs">
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
-                  Product Overview
-                </h3>
-                <ProductDesc product={product} />
-              </div>
+      {/* ── Tabbed Info Section ── */}
+      <section className="w-full border-t border-border bg-background py-10 lg:py-14 select-none">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent h-auto p-0 space-x-8 mb-4 select-none">
+              <TabsTrigger
+                value="overview"
+                className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger
+                value="specs"
+                className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
+              >
+                Specifications
+              </TabsTrigger>
+              <TabsTrigger
+                value="delivery"
+                className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
+              >
+                Delivery & Warranty
+              </TabsTrigger>
+            </TabsList>
 
-              {/* Technical Datasheet Table — shown only when admin enables it */}
-              {product?.showDatasheet && product?.datasheet?.length > 0 && (
-                <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Cpu className="h-4 w-4 text-[#08AA08]" />
-                    <h3 className="text-base font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[#08AA08]">
-                      Technical Specifications
-                    </h3>
-                  </div>
-                  <div className="overflow-hidden rounded-xl border border-zinc-100 dark:border-zinc-800">
-                    <table className="w-full text-xs">
-                      <tbody>
-                        {product.datasheet.map((row, idx) => (
-                          <tr
-                            key={idx}
-                            className={idx % 2 === 0 ? "bg-zinc-50 dark:bg-zinc-900/40" : "bg-white dark:bg-zinc-900"}
-                          >
-                            <td className="py-3 px-4 font-semibold text-zinc-500 dark:text-zinc-400 w-2/5 border-r border-zinc-100 dark:border-zinc-800">
-                              {row.key}
-                            </td>
-                            <td className="py-3 px-4 font-semibold text-zinc-800 dark:text-zinc-200">
-                              {row.value}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+            {/* Panel 1: Overview */}
+            <TabsContent
+              value="overview"
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left select-text space-y-4 pt-4"
+            >
+              <h3 className="text-base font-extrabold text-foreground select-none">
+                Product Overview
+              </h3>
+              <ProductDesc product={product} />
+            </TabsContent>
+
+            {/* Panel 2: Specs */}
+            <TabsContent
+              value="specs"
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left select-text space-y-4"
+            >
+              {product?.showDatasheet && product?.datasheet?.length > 0 ? (
+                <div className="overflow-hidden rounded-2xl border border-border/60 bg-muted/20">
+                  <table className="w-full text-xs">
+                    <tbody>
+                      {product.datasheet.map((row, idx) => (
+                        <tr
+                          key={idx}
+                          className={idx % 2 === 0 ? "bg-muted/10" : "bg-card"}
+                        >
+                          <td className="py-3.5 px-5 font-semibold text-muted-foreground w-2/5 border-r border-border/60 select-none">
+                            {row.key}
+                          </td>
+                          <td className="py-3.5 px-5 font-semibold text-foreground">
+                            {row.value}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
+              ) : (
+                <p className="text-xs text-muted-foreground font-semibold italic select-none">
+                  No technical specifications sheet available for this product.
+                </p>
               )}
-            </div>
+            </TabsContent>
 
-            {/* Right side: Delivery & Warranty Details */}
-            <div className="lg:col-span-4 space-y-6">
-              <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs space-y-6">
-                <div>
-                  <h3 className="text-base font-bold text-zinc-900 dark:text-white pb-3 border-b dark:border-zinc-800">
-                    Delivery &amp; Warranty
-                  </h3>
-                </div>
+            {/* Panel 3: Delivery & Warranty */}
+            <TabsContent
+              value="delivery"
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start select-text">
+                {/* Details */}
+                <div className="md:col-span-8 space-y-6">
+                  <div className="space-y-6">
+                    <div className="flex gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <Truck className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
+                          Express Logistics Delivery
+                        </h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
+                          1–5 working days delivery in Lagos, Port Harcourt, and
+                          Uyo Experience Centers. Same-day logistics coverage
+                          available for orders processed before 11AM.
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="space-y-5">
-                  <div className="flex gap-3">
-                    <Truck className="h-6 w-6 text-primary shrink-0" />
-                    <div className="space-y-1">
-                      <h4 className="font-semibold text-xs text-zinc-800 dark:text-zinc-200">
-                        Express Delivery
-                      </h4>
-                      <p className="text-[11px] text-zinc-550 leading-relaxed">
-                        Delivered within 1-5 working days in Lagos, Port
-                        Harcourt, and Uyo Experience Centre ranges. Same-day
-                        delivery available for orders before 11AM.
-                      </p>
+                    <div className="flex gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <RefreshCcw className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
+                          7-Day Returns coverage
+                        </h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
+                          Unused hardware components in original packaging are
+                          accepted for refund or replacement claims within 7
+                          days. Remote engineering support available for returns
+                          verification.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <ShieldCheck className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
+                          Manufacturer Warranty
+                        </h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
+                          All systems and monocrystalline solar components
+                          include official manufacturer warranty coverage.
+                          Support engineers assist with registration.
+                        </p>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="flex gap-3">
-                    <RefreshCcw className="h-6 w-6 text-primary shrink-0" />
-                    <div className="space-y-1">
-                      <h4 className="font-semibold text-xs text-zinc-800 dark:text-zinc-200">
-                        Return Policy
-                      </h4>
-                      <p className="text-[11px] text-zinc-550 leading-relaxed">
-                        Guaranteed 7-day return coverage for unused hardware
-                        components in original packaging. Remote technical
-                        support for claims.
-                      </p>
-                    </div>
-                  </div>
                 </div>
 
-                {/* Green warning/advice banner box */}
-                <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/50 p-4 rounded-2xl text-emerald-800 dark:text-emerald-400 text-xs space-y-1 leading-relaxed">
-                  <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[10px] text-emerald-700 dark:text-emerald-300">
-                    <ShieldAlert className="h-4 w-4" /> Ready to Switch?
+                {/* Switch Expert Advisor Callout */}
+                <div className="md:col-span-4 bg-emerald-55 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 p-6 rounded-3xl space-y-3.5 text-emerald-800 dark:text-emerald-300">
+                  <div className="flex items-center gap-1.5 font-black uppercase tracking-wider text-[11px] text-emerald-700 dark:text-emerald-400 select-none">
+                    <ShieldCheck className="h-4 w-4" /> Ready to Switch?
                   </div>
-                  <p>
-                    Consult with our engineers to verify that this setup carries
-                    your load parameters safely before checkout.
+                  <p className="text-xs leading-relaxed font-medium">
+                    Consult our design engineers to verify this product carries
+                    your household or commercial load safely before checkout.
                   </p>
                   <Link
                     href="/contact-us"
-                    className="inline-block font-bold underline mt-1.5 hover:text-emerald-600"
+                    className="inline-block text-xs font-bold underline hover:text-emerald-600 dark:hover:text-emerald-250 mt-1"
                   >
                     Talk to an Expert →
                   </Link>
                 </div>
               </div>
-            </div>
-          </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </section>
 
-      {/* Other Related Products list section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          <RelatedProducts product={product} />
-        </div>
+      {/* ── Related Products ── */}
+      <section className="container mx-auto px-4 py-14 max-w-7xl">
+        <RelatedProducts product={product} />
       </section>
 
-      {/* User History track */}
-      <section className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* ── View History ── */}
+      <section className="container mx-auto px-4 pb-10 max-w-7xl">
         <ViewHistoryComp />
       </section>
 
-      {/* FAQs and newsletter footer section */}
+      {/* ── FAQs & Newsletter ── */}
       <FaqNewsletterSection />
     </div>
   );

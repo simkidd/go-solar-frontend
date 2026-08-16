@@ -291,6 +291,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <Input
                   type="number"
                   placeholder="0"
+                  min={0}
                   {...register("price", {
                     required: "Price is required",
                     valueAsNumber: true,
@@ -310,6 +311,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </label>
                 <Input
                   type="number"
+                  min={0}
                   placeholder="Promo price"
                   {...register("discountPrice", { valueAsNumber: true })}
                   className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
@@ -322,6 +324,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </label>
                 <Input
                   type="number"
+                  min={0}
                   placeholder="0"
                   {...register("quantityInStock", {
                     required: "Stock quantity is required",
@@ -573,6 +576,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <Input
                   type="number"
                   placeholder="0"
+                  min={0}
                   {...register("withinLocationDeliveryFee", {
                     valueAsNumber: true,
                   })}
@@ -587,6 +591,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <Input
                   type="number"
                   placeholder="0"
+                  min={0}
                   {...register("outsideLocationDeliveryFee", {
                     valueAsNumber: true,
                   })}

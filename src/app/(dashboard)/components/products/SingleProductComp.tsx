@@ -17,9 +17,9 @@ import {
   Trash2,
   Edit2,
   Plus,
+  ImageOff,
 } from "lucide-react";
-
-import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
+import Image from "next/image";
 import { Product } from "@/interfaces/product.interface";
 import {
   getProductById,
@@ -429,7 +429,29 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
             </div>
 
             <div className="w-full pt-2">
-              <ProductImages images={product?.images} />
+              {product?.images && product.images.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {product.images.map((img) => (
+                    <div
+                      key={img.public_id}
+                      className="relative aspect-square rounded-xl overflow-hidden border border-border/60 bg-muted/20"
+                    >
+                      <Image
+                        src={img.url}
+                        alt="Product thumbnail"
+                        fill
+                        sizes="(max-w-768px) 50vw, 20vw"
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="w-full py-8 rounded-xl bg-muted/10 border border-dashed border-border flex flex-col items-center justify-center gap-2 select-none">
+                  <ImageOff className="w-6 h-6 text-muted-foreground/45" />
+                  <p className="text-xs font-semibold text-muted-foreground">No images uploaded</p>
+                </div>
+              )}
             </div>
           </div>
 
