@@ -21,13 +21,7 @@ const Review = () => {
           className="bg-card text-card-foreground p-8 flex flex-col justify-between h-[340px] hover:bg-secondary/40 transition-all duration-300 group cursor-default"
         >
           {/* Star Rating */}
-          <div className="space-y-4">
-            <div className="flex gap-1.5 text-amber-400">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="h-4.5 w-4.5 fill-current shrink-0" />
-              ))}
-            </div>
-
+          <div className="">
             {/* Feedback Content */}
             <blockquote className="text-xs sm:text-sm text-muted-foreground group-hover:text-foreground leading-relaxed font-semibold italic">
               "{rev.content}"

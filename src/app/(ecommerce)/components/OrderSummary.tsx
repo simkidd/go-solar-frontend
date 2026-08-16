@@ -35,7 +35,12 @@ const OrderSummary = () => {
 
   const calculateTotals = (cartItems: CartItem[]) => {
     const subtotal = cartItems.reduce(
-      (acc, cartItem) => acc + cartItem.product.price * cartItem.qty,
+      (acc, cartItem) => {
+        const activePrice = cartItem.product.discountPrice && cartItem.product.discountPrice > 0
+          ? cartItem.product.discountPrice
+          : cartItem.product.price;
+        return acc + activePrice * cartItem.qty;
+      },
       0
     );
     const deliveryFee = cartItems.reduce(
@@ -69,7 +74,9 @@ const OrderSummary = () => {
                 <span className="mb-2">{cartItem?.product?.name}</span>
                 <span className="font-medium">
                   {formatCurrency(
-                    cartItem?.product?.price * cartItem.qty,
+                    (cartItem?.product?.discountPrice && cartItem?.product?.discountPrice > 0
+                      ? cartItem.product.discountPrice
+                      : cartItem?.product?.price) * cartItem.qty,
                     "NGN"
                   )}
                 </span>
@@ -114,7 +121,7 @@ const OrderSummary = () => {
           </div>
           <div className="flex justify-between font-bold text-lg border-t pt-2">
             <span>Total:</span>
-            <span>{formatCurrency(totalPricePaid, "NGN")}</span>
+            <span>{formatCurrency(totalPricePaid || (subtotal + deliveryFee), "NGN")}</span>
           </div>
         </div>
       </div>

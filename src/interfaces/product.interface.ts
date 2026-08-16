@@ -32,6 +32,7 @@ export interface Product {
   currentOffer?: Offer;
   datasheet: DatasheetRow[];
   showDatasheet: boolean;
+  productCode?: string;
 }
 
 export interface CreateProductInput {

@@ -45,7 +45,6 @@ export interface ReviewItem {
   name: string;
   role: string;
   content: string;
-  rating: number;
   isPublished: boolean;
   createdAt: string;
 }
@@ -55,9 +54,10 @@ const INITIAL_REVIEWS: ReviewItem[] = ReviewData.slice(0, 6).map((r, i) => ({
   name: r.name,
   role: r.role,
   content: r.content,
-  rating: 5,
   isPublished: i < 4, // first 4 published, rest pending
-  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * (i + 1) * 3).toISOString(),
+  createdAt: new Date(
+    Date.now() - 1000 * 60 * 60 * 24 * (i + 1) * 3,
+  ).toISOString(),
 }));
 
 export const ReviewsTable = () => {
@@ -75,7 +75,6 @@ export const ReviewsTable = () => {
     name: "",
     role: "Residential Customer",
     content: "",
-    rating: 5,
     isPublished: true,
   });
 
@@ -90,8 +89,8 @@ export const ReviewsTable = () => {
         statusFilter === "All"
           ? true
           : statusFilter === "Published"
-          ? r.isPublished
-          : !r.isPublished;
+            ? r.isPublished
+            : !r.isPublished;
 
       return matchesSearch && matchesStatus;
     });
@@ -106,7 +105,7 @@ export const ReviewsTable = () => {
           return { ...r, isPublished: next };
         }
         return r;
-      })
+      }),
     );
   };
 
@@ -122,7 +121,6 @@ export const ReviewsTable = () => {
       name: formData.name,
       role: formData.role,
       content: formData.content,
-      rating: formData.rating,
       isPublished: formData.isPublished,
       createdAt: new Date().toISOString(),
     };
@@ -182,8 +180,12 @@ export const ReviewsTable = () => {
             className="h-9 px-2.5 bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold text-zinc-700 dark:text-zinc-300 outline-none"
           >
             <option value="All">All Reviews ({reviews.length})</option>
-            <option value="Published">Published ({reviews.filter((r) => r.isPublished).length})</option>
-            <option value="Pending">Pending ({reviews.filter((r) => !r.isPublished).length})</option>
+            <option value="Published">
+              Published ({reviews.filter((r) => r.isPublished).length})
+            </option>
+            <option value="Pending">
+              Pending ({reviews.filter((r) => !r.isPublished).length})
+            </option>
           </select>
         </div>
       </div>
@@ -193,17 +195,27 @@ export const ReviewsTable = () => {
         <Table>
           <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/20">
             <TableRow className="border-b border-zinc-100 dark:border-zinc-800">
-              <TableHead className="font-semibold text-zinc-500 h-10 px-4">Customer</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">Rating</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">Review Testimonial</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10 text-center">Status</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">Actions</TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10 px-4">
+                Customer
+              </TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10">
+                Review Testimonial
+              </TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10 text-center">
+                Status
+              </TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredReviews.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-12 text-sm text-zinc-400">
+                <TableCell
+                  colSpan={5}
+                  className="text-center py-12 text-sm text-zinc-400"
+                >
                   No reviews matched your filters.
                 </TableCell>
               </TableRow>
@@ -220,15 +232,6 @@ export const ReviewsTable = () => {
                         {rev.name}
                       </p>
                       <p className="text-xs text-zinc-400 mt-0.5">{rev.role}</p>
-                    </div>
-                  </TableCell>
-
-                  {/* Rating Stars */}
-                  <TableCell>
-                    <div className="flex items-center gap-0.5 text-amber-400">
-                      {[...Array(rev.rating)].map((_, i) => (
-                        <Star key={i} className="h-3.5 w-3.5 fill-amber-400" />
-                      ))}
                     </div>
                   </TableCell>
 
@@ -298,58 +301,64 @@ export const ReviewsTable = () => {
 
           <form onSubmit={handleSaveCreate} className="space-y-3 py-2">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Customer Name</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Customer Name
+              </label>
               <Input
                 placeholder="e.g. Mrs. Blessing Alabi"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 required
                 className="h-9 text-xs"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Client Role</label>
-                <Input
-                  placeholder="e.g. Homeowner in Port Harcourt"
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="h-9 text-xs"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Star Rating</label>
-                <select
-                  value={formData.rating}
-                  onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
-                  className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900 text-xs"
-                >
-                  <option value="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
-                  <option value="4">⭐⭐⭐⭐ (4 Stars)</option>
-                  <option value="3">⭐⭐⭐ (3 Stars)</option>
-                </select>
-              </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Client Role
+              </label>
+              <Input
+                placeholder="e.g. Homeowner in Port Harcourt"
+                value={formData.role}
+                onChange={(e) =>
+                  setFormData({ ...formData, role: e.target.value })
+                }
+                className="h-9 text-xs"
+              />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Testimonial Review</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Testimonial Review
+              </label>
               <textarea
                 rows={3}
                 placeholder="Customer's review on installation quality, solar system performance, and utility savings."
                 value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, content: e.target.value })
+                }
                 required
                 className="w-full p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900 text-xs outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
 
             <DialogFooter className="pt-2 gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setIsCreateOpen(false)}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsCreateOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit" size="sm" className="bg-primary hover:bg-primary/90 text-white font-bold">
+              <Button
+                type="submit"
+                size="sm"
+                className="bg-primary hover:bg-primary/90 text-white font-bold"
+              >
                 Save Review
               </Button>
             </DialogFooter>
@@ -365,11 +374,16 @@ export const ReviewsTable = () => {
               Delete Review
             </DialogTitle>
             <DialogDescription className="text-xs text-zinc-500 mt-2">
-              Are you sure you want to remove the review from <b>{activeReview?.name}</b>?
+              Are you sure you want to remove the review from{" "}
+              <b>{activeReview?.name}</b>?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4 flex gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setIsDeleteOpen(false)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsDeleteOpen(false)}
+            >
               Cancel
             </Button>
             <Button variant="destructive" size="sm" onClick={handleDelete}>

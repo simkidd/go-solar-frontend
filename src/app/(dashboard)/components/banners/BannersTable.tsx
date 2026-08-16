@@ -1,9 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Banner } from "@/interfaces/banner.interface";
-import {
-  useAllBannersAdminQuery,
-} from "@/hooks/queries/useBannersQuery";
+import { useAllBannersAdminQuery } from "@/hooks/queries/useBannersQuery";
 import {
   useDeleteBannerMutation,
   useToggleBannerStatusMutation,
@@ -28,11 +26,7 @@ import CreateBannerForm from "./CreateBannerForm";
 import UpdateBannerForm from "./UpdateBannerForm";
 
 const BannersTable = () => {
-  const {
-    data: banners = [],
-    isLoading,
-    refetch,
-  } = useAllBannersAdminQuery();
+  const { data: banners = [], isLoading, refetch } = useAllBannersAdminQuery();
 
   const deleteBannerMutation = useDeleteBannerMutation();
   const toggleStatusMutation = useToggleBannerStatusMutation();
@@ -56,6 +50,7 @@ const BannersTable = () => {
         isOpen={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         title="Create Storefront Banner"
+        size="3xl"
       >
         <CreateBannerForm onClose={() => setIsCreateOpen(false)} />
       </AppModal>
@@ -82,8 +77,8 @@ const BannersTable = () => {
           <div className="space-y-4 pt-2">
             <p className="text-sm text-zinc-600 dark:text-zinc-300">
               Are you sure you want to delete banner &ldquo;
-              <b>{deletingBanner.title}</b>&rdquo;? This will immediately remove it
-              from the storefront carousel.
+              <b>{deletingBanner.title}</b>&rdquo;? This will immediately remove
+              it from the storefront carousel.
             </p>
             <div className="flex items-center justify-end gap-2 pt-4">
               <Button
@@ -99,7 +94,9 @@ const BannersTable = () => {
                 onClick={handleDelete}
                 className="text-xs"
               >
-                {deleteBannerMutation.isPending ? "Deleting..." : "Delete Banner"}
+                {deleteBannerMutation.isPending
+                  ? "Deleting..."
+                  : "Delete Banner"}
               </Button>
             </div>
           </div>
@@ -114,7 +111,8 @@ const BannersTable = () => {
             Storefront Banners
           </h2>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-            Manage the hero promotional carousel slides on the customer shop page.
+            Manage the hero promotional carousel slides on the customer shop
+            page.
           </p>
         </div>
 
@@ -166,8 +164,9 @@ const BannersTable = () => {
                 No custom banners created yet
               </h3>
               <p className="text-xs text-zinc-400 max-w-sm mx-auto mt-1">
-                The storefront is currently showing standard fallback solar slides. Add
-                your first custom banner to showcase seasonal sales, packages, or tools!
+                The storefront is currently showing standard fallback solar
+                slides. Add your first custom banner to showcase seasonal sales,
+                packages, or tools!
               </p>
             </div>
             <Button

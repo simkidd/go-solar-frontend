@@ -189,9 +189,11 @@ const OrdersTable = () => {
                     key={s}
                     variant={isSelected ? "default" : "outline"}
                     onClick={() =>
-                      onStatusFilterChange(s === "All" ? "All" : s.toLowerCase())
+                      onStatusFilterChange(
+                        s === "All" ? "All" : s.toLowerCase(),
+                      )
                     }
-                    className={`h-10 text-xs font-semibold rounded-xl uppercase tracking-wider transition-all cursor-pointer ${
+                    className={`h-10 text-xs font-semibold rounded-xl tracking-wider transition-all cursor-pointer ${
                       isSelected
                         ? "bg-primary text-primary-foreground shadow-xs"
                         : "border-border text-muted-foreground hover:text-foreground hover:bg-muted/30"

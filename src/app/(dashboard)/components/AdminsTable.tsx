@@ -128,8 +128,8 @@ export const AdminsTable = () => {
         roleFilter === "All"
           ? true
           : roleFilter === "Super Admin"
-          ? adm.isSuperAdmin
-          : !adm.isSuperAdmin;
+            ? adm.isSuperAdmin
+            : !adm.isSuperAdmin;
 
       return matchesSearch && matchesRole;
     });
@@ -137,7 +137,13 @@ export const AdminsTable = () => {
 
   const handleSaveInvite = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteForm.firstname || !inviteForm.lastname || !inviteForm.email || !inviteForm.phoneNumber || !inviteForm.password) {
+    if (
+      !inviteForm.firstname ||
+      !inviteForm.lastname ||
+      !inviteForm.email ||
+      !inviteForm.phoneNumber ||
+      !inviteForm.password
+    ) {
       toast.error("Please fill in all administrator details");
       return;
     }
@@ -211,7 +217,7 @@ export const AdminsTable = () => {
             className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
           >
             <Plus className="h-4 w-4" />
-            Add Administrator
+            Add Admin
           </Button>
         </div>
       </div>
@@ -247,13 +253,27 @@ export const AdminsTable = () => {
         <Table>
           <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/20">
             <TableRow className="border-b border-zinc-100 dark:border-zinc-800">
-              <TableHead className="font-semibold text-zinc-500 h-10 px-4">Administrator</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">Contact</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">Assigned Privilege</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">Status</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">Date Appointed</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">Last Login</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">Actions</TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10 px-4">
+                Administrator
+              </TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10">
+                Contact
+              </TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10">
+                Assigned Privilege
+              </TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10">
+                Status
+              </TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10">
+                Date Appointed
+              </TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10">
+                Last Login
+              </TableHead>
+              <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -268,7 +288,10 @@ export const AdminsTable = () => {
               </TableRow>
             ) : filteredAdmins.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-12 text-sm text-zinc-400">
+                <TableCell
+                  colSpan={7}
+                  className="text-center py-12 text-sm text-zinc-400"
+                >
                   No administrators found.
                 </TableCell>
               </TableRow>
@@ -288,13 +311,15 @@ export const AdminsTable = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <span 
+                        <span
                           onClick={() => handleOpenDetails(adm._id)}
                           className="font-bold text-zinc-900 dark:text-white text-sm cursor-pointer hover:text-primary transition-colors"
                         >
                           {adm.firstname} {adm.lastname}
                         </span>
-                        <p className="text-xs text-zinc-400">{adm.roleTitle || "Store Admin"}</p>
+                        <p className="text-xs text-zinc-400">
+                          {adm.roleTitle || "Store Admin"}
+                        </p>
                       </div>
                     </div>
                   </TableCell>
@@ -321,7 +346,10 @@ export const AdminsTable = () => {
                         Super Admin
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 font-bold px-2.5 py-0.5 text-[10px] gap-1">
+                      <Badge
+                        variant="outline"
+                        className="bg-primary/10 text-primary border-primary/20 font-bold px-2.5 py-0.5 text-[10px] gap-1"
+                      >
                         <ShieldAlert className="h-3 w-3 text-primary" />
                         Store Admin
                       </Badge>
@@ -343,26 +371,43 @@ export const AdminsTable = () => {
 
                   {/* Last Login */}
                   <TableCell className="text-xs text-zinc-500 font-medium">
-                    {adm.lastLogin ? formatDate(adm.lastLogin) : "Never logged in"}
+                    {adm.lastLogin
+                      ? formatDate(adm.lastLogin)
+                      : "Never logged in"}
                   </TableCell>
 
                   {/* Actions */}
                   <TableCell className="text-right px-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 rounded-lg">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-zinc-400 rounded-lg"
+                        >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48 text-xs">
                         <DropdownMenuLabel>Permissions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => handleOpenDetails(adm._id)} className="cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => handleOpenDetails(adm._id)}
+                          className="cursor-pointer"
+                        >
                           <Eye className="h-4 w-4 mr-2 text-zinc-500" />
                           <span>View Details</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleToggleSuperAdmin(adm)} className="cursor-pointer" disabled={updateRoleMutation.isPending}>
+                        <DropdownMenuItem
+                          onClick={() => handleToggleSuperAdmin(adm)}
+                          className="cursor-pointer"
+                          disabled={updateRoleMutation.isPending}
+                        >
                           <KeyRound className="h-4 w-4 mr-2 text-primary" />
-                          <span>{adm.isSuperAdmin ? "Demote to Admin" : "Promote to Super Admin"}</span>
+                          <span>
+                            {adm.isSuperAdmin
+                              ? "Demote to Admin"
+                              : "Promote to Super Admin"}
+                          </span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
@@ -393,7 +438,8 @@ export const AdminsTable = () => {
               Administrator Profile Details
             </SheetTitle>
             <SheetDescription className="text-xs text-zinc-500">
-              Assigned system role attributes, privileges, and verification audits.
+              Assigned system role attributes, privileges, and verification
+              audits.
             </SheetDescription>
           </SheetHeader>
 
@@ -414,28 +460,37 @@ export const AdminsTable = () => {
               Add Administrator
             </DialogTitle>
             <DialogDescription className="text-xs text-zinc-500">
-              Grant staff or partners administrative access to the GoSolar dashboard.
+              Grant staff or partners administrative access to the GoSolar
+              dashboard.
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSaveInvite} className="space-y-3 py-2">
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">First Name</label>
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  First Name
+                </label>
                 <Input
                   placeholder="e.g. David"
                   value={inviteForm.firstname}
-                  onChange={(e) => setInviteForm({ ...inviteForm, firstname: e.target.value })}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, firstname: e.target.value })
+                  }
                   required
                   className="h-9 text-xs"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Last Name</label>
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  Last Name
+                </label>
                 <Input
                   placeholder="e.g. Okoye"
                   value={inviteForm.lastname}
-                  onChange={(e) => setInviteForm({ ...inviteForm, lastname: e.target.value })}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, lastname: e.target.value })
+                  }
                   required
                   className="h-9 text-xs"
                 />
@@ -443,23 +498,31 @@ export const AdminsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Email Address</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Email Address
+              </label>
               <Input
                 type="email"
                 placeholder="staff@gosolar.ng"
                 value={inviteForm.email}
-                onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
+                onChange={(e) =>
+                  setInviteForm({ ...inviteForm, email: e.target.value })
+                }
                 required
                 className="h-9 text-xs"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Phone Number</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Phone Number
+              </label>
               <Input
                 placeholder="e.g. +234 803 111 2222"
                 value={inviteForm.phoneNumber}
-                onChange={(e) => setInviteForm({ ...inviteForm, phoneNumber: e.target.value })}
+                onChange={(e) =>
+                  setInviteForm({ ...inviteForm, phoneNumber: e.target.value })
+                }
                 required
                 className="h-9 text-xs"
               />
@@ -467,10 +530,14 @@ export const AdminsTable = () => {
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Privilege</label>
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  Privilege
+                </label>
                 <select
                   value={inviteForm.roleType}
-                  onChange={(e) => setInviteForm({ ...inviteForm, roleType: e.target.value })}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, roleType: e.target.value })
+                  }
                   className="w-full h-9 px-2 bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold outline-none"
                 >
                   <option value="admin">Store Admin</option>
@@ -478,11 +545,15 @@ export const AdminsTable = () => {
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Role Title</label>
+                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  Role Title
+                </label>
                 <Input
                   placeholder="e.g. Inventory Lead"
                   value={inviteForm.roleTitle}
-                  onChange={(e) => setInviteForm({ ...inviteForm, roleTitle: e.target.value })}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, roleTitle: e.target.value })
+                  }
                   required
                   className="h-9 text-xs"
                 />
@@ -490,23 +561,37 @@ export const AdminsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">System Password</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                System Password
+              </label>
               <Input
                 type="password"
                 placeholder="Minimum 6 characters"
                 value={inviteForm.password}
-                onChange={(e) => setInviteForm({ ...inviteForm, password: e.target.value })}
+                onChange={(e) =>
+                  setInviteForm({ ...inviteForm, password: e.target.value })
+                }
                 required
                 className="h-9 text-xs"
               />
             </div>
 
             <DialogFooter className="pt-2 gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setIsInviteOpen(false)}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsInviteOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit" size="sm" className="bg-primary hover:bg-primary/90 text-white font-bold" disabled={createAdminMutation.isPending}>
-                {createAdminMutation.isPending ? "Creating..." : "Save Administrator"}
+              <Button
+                type="submit"
+                size="sm"
+                className="bg-primary hover:bg-primary/90 text-white font-bold"
+                disabled={createAdminMutation.isPending}
+              >
+                {createAdminMutation.isPending ? "Creating..." : "Create Admin"}
               </Button>
             </DialogFooter>
           </form>
@@ -529,7 +614,11 @@ export const AdminsTable = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="pt-2 gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setIsRevokeOpen(false)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsRevokeOpen(false)}
+            >
               Cancel
             </Button>
             <Button

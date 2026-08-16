@@ -558,14 +558,16 @@ const UpdateProductForm: React.FC<{
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                   Local City Delivery (₦)
                 </label>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  min={0}
-                  {...register("withinLocationDeliveryFee", {
-                    valueAsNumber: true,
-                  })}
-                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                <Controller
+                  control={control}
+                  name="withinLocationDeliveryFee"
+                  render={({ field }) => (
+                    <PriceInput
+                      value={field.value || ""}
+                      onChange={(val) => field.onChange(val === "" ? 0 : val)}
+                      placeholder="0"
+                    />
+                  )}
                 />
               </div>
 
@@ -573,14 +575,16 @@ const UpdateProductForm: React.FC<{
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                   Interstate Delivery (₦)
                 </label>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  min={0}
-                  {...register("outsideLocationDeliveryFee", {
-                    valueAsNumber: true,
-                  })}
-                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                <Controller
+                  control={control}
+                  name="outsideLocationDeliveryFee"
+                  render={({ field }) => (
+                    <PriceInput
+                      value={field.value || ""}
+                      onChange={(val) => field.onChange(val === "" ? 0 : val)}
+                      placeholder="0"
+                    />
+                  )}
                 />
               </div>
 

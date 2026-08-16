@@ -41,9 +41,13 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
 
           <div className="flex items-center justify-between gap-2 mt-2">
             
-            {/* Price */}
             <p className="font-black text-xs text-primary">
-              {formatCurrency(cartItem?.product?.price, "NGN")}
+              {formatCurrency(
+                cartItem?.product?.discountPrice && cartItem?.product?.discountPrice > 0
+                  ? cartItem.product.discountPrice
+                  : cartItem?.product?.price,
+                "NGN"
+              )}
             </p>
 
             <div className="flex items-center gap-2">

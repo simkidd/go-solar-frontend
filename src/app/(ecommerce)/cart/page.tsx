@@ -22,19 +22,23 @@ const CartPage = () => {
 
   const calculateTotals = (items: CartItem[]) => {
     const subtotal = items.reduce(
-      (acc, item) => acc + item.product.price * item.qty,
+      (acc, item) => {
+        const activePrice = item.product.discountPrice && item.product.discountPrice > 0
+          ? item.product.discountPrice
+          : item.product.price;
+        return acc + activePrice * item.qty;
+      },
       0,
     );
     const deliveryFee = items.reduce(
       (acc, item) => acc + item.deliveryFee * item.qty,
       0,
     );
-    const tax = Math.round(subtotal * 0.05); // 5% VAT
-    const total = subtotal + deliveryFee + tax;
-    return { total, subtotal, deliveryFee, tax };
+    const total = subtotal + deliveryFee;
+    return { total, subtotal, deliveryFee };
   };
 
-  const { total, subtotal, deliveryFee, tax } = calculateTotals(cartItems);
+  const { total, subtotal, deliveryFee } = calculateTotals(cartItems);
 
   const handleCheckout = () => {
     setTotalPricePaid(total);
@@ -160,7 +164,9 @@ const CartPage = () => {
                         <div className="flex items-center gap-4 shrink-0">
                           <p className="font-extrabold text-sm sm:text-base text-zinc-900 dark:text-white">
                             {formatCurrency(
-                              cartItem.product.price * cartItem.qty,
+                              (cartItem.product.discountPrice && cartItem.product.discountPrice > 0
+                                ? cartItem.product.discountPrice
+                                : cartItem.product.price) * cartItem.qty,
                               "NGN",
                             )}
                           </p>
@@ -211,12 +217,7 @@ const CartPage = () => {
                         </span>
                       </div>
 
-                      <div className="flex justify-between items-center">
-                        <span>Tax</span>
-                        <span className="text-zinc-900 dark:text-white font-extrabold text-sm">
-                          {formatCurrency(tax, "NGN")}
-                        </span>
-                      </div>
+
 
                       <div className="flex justify-between items-center pt-4 border-t dark:border-zinc-800 text-sm font-extrabold text-zinc-900 dark:text-white">
                         <span>Total</span>

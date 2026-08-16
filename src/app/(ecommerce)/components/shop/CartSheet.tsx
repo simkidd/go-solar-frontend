@@ -85,7 +85,12 @@ export const CartSheet = () => {
                 <span className="font-extrabold text-foreground">
                   {formatCurrency(
                     cartItems.reduce(
-                      (acc, item) => acc + item.product.price * item.qty,
+                      (acc, item) => {
+                        const activePrice = item.product.discountPrice && item.product.discountPrice > 0
+                          ? item.product.discountPrice
+                          : item.product.price;
+                        return acc + activePrice * item.qty;
+                      },
                       0,
                     ),
                     "NGN",

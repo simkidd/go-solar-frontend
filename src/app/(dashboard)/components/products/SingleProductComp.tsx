@@ -351,9 +351,9 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
             )}
           </div>
           <p className="text-xs text-muted-foreground font-semibold">
-            Product ID:{" "}
-            <span className="font-mono text-[10px] select-all bg-muted/65 px-1 py-0.5 rounded text-foreground">
-              {product?._id}
+            Product Code:{" "}
+            <span className="font-mono text-[10px] select-all bg-muted/65 px-1.5 py-0.5 rounded text-foreground uppercase">
+              {product?.productCode || `GSL-${product?._id.slice(-6).toUpperCase()}`}
             </span>
           </p>
         </div>

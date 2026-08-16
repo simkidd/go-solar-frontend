@@ -91,9 +91,9 @@ const navigationItems = [
         icon: Package,
       },
       {
-        name: "Quote Leads",
+        name: "Enquiries",
         href: "/dashboard/quotes",
-        icon: Calculator,
+        icon: MessageSquare,
       },
       {
         name: "Sales Offers",
@@ -111,7 +111,7 @@ const navigationItems = [
         icon: Sparkles,
       },
       {
-        name: "Installation Projects",
+        name: "Projects",
         href: "/dashboard/projects",
         icon: Briefcase,
       },
@@ -121,7 +121,7 @@ const navigationItems = [
         icon: MessageSquare,
       },
       {
-        name: "Blog Posts",
+        name: "Blog",
         href: "/dashboard/blogs",
         icon: Newspaper,
       },
@@ -158,7 +158,7 @@ const SidebarInnerContent = ({
     href === pathname || href === pathname.replace(/\/$/, "");
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#1a1b1e] select-none">
+    <div className="flex flex-col h-full bg-white dark:bg-[#1a1b1e] select-none font-inter">
       {/* Brand Header */}
       <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 shrink-0">
         <Link
@@ -185,7 +185,7 @@ const SidebarInnerContent = ({
       {/* Main Navigation Links with ScrollArea */}
       <ScrollArea className="flex-1 px-3 py-4">
         <TooltipProvider delayDuration={0}>
-          <div className="space-y-5">
+          <div className="space-y-3">
             {navigationItems.map((group) => (
               <div key={group.group} className="space-y-1">
                 {!isCollapsed && (
@@ -202,14 +202,14 @@ const SidebarInnerContent = ({
                       <Link
                         href={item.href}
                         onClick={onItemClick}
-                        className={`flex items-center h-10 px-3 rounded-lg text-sm font-medium transition-all duration-150 ${
+                        className={`flex items-center h-9 px-3 rounded-lg text-xs font-medium transition-all duration-150 ${
                           active
-                            ? "bg-primary/10 text-primary font-semibold border-l-3 border-primary rounded-l-none"
+                            ? "bg-primary/10 text-primary font-semibold border-l-2 border-primary rounded-l-none"
                             : "text-zinc-600 dark:text-zinc-300 hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
                         } ${isCollapsed ? "justify-center px-0" : ""}`}
                       >
                         <Icon
-                          className={`h-[18px] w-[18px] shrink-0 ${
+                          className={`h-4 w-4 shrink-0 ${
                             active
                               ? "text-primary"
                               : "text-zinc-500 dark:text-zinc-400"
