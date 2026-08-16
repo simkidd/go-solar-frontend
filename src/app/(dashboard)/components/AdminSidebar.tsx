@@ -49,6 +49,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const navigationItems = [
   {
@@ -163,19 +164,19 @@ const SidebarInnerContent = ({
         <Link
           href="/"
           onClick={onItemClick}
-          className="flex items-center gap-2.5 overflow-hidden"
+          className="flex items-center gap-2 overflow-hidden"
         >
           <Image
             src={LogoIcon}
             alt="GoSolar Logo"
             width={34}
             height={34}
-            className="w-8 h-8 shrink-0"
+            className="w-10 h-8 shrink-0"
             priority
           />
           {!isCollapsed && (
-            <span className="font-bold text-lg font-dmsans tracking-tight text-zinc-900 dark:text-white truncate">
-              GoSolar
+            <span className="font-extrabold text-xl tracking-tight text-foreground">
+              Go<span className="text-primary">Solar</span>
             </span>
           )}
         </Link>
@@ -209,7 +210,9 @@ const SidebarInnerContent = ({
                       >
                         <Icon
                           className={`h-[18px] w-[18px] shrink-0 ${
-                            active ? "text-primary" : "text-zinc-500 dark:text-zinc-400"
+                            active
+                              ? "text-primary"
+                              : "text-zinc-500 dark:text-zinc-400"
                           }`}
                         />
                         {!isCollapsed && (
@@ -243,9 +246,17 @@ const SidebarInnerContent = ({
 
       {/* Footer Profile Dropdown */}
       <div className="p-2 border-t border-zinc-100 dark:border-zinc-800 shrink-0">
+        {!isCollapsed && (
+          <div className="flex items-center w-full p-2 justify-between mb-2">
+            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Theme
+            </span>
+            <ThemeSwitcher />
+          </div>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/40 text-left outline-none transition-colors">
+            <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/40 text-left outline-none transition-colors cursor-pointer">
               <Avatar className="h-9 w-9 shrink-0 border border-zinc-200 dark:border-zinc-700">
                 <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
                   {user?.firstname?.[0] || <User className="h-4 w-4" />}
@@ -261,14 +272,18 @@ const SidebarInnerContent = ({
                   </p>
                 </div>
               )}
-              {!isCollapsed && <ChevronUp className="h-4 w-4 text-zinc-400 shrink-0 ml-auto" />}
+              {!isCollapsed && (
+                <ChevronUp className="h-4 w-4 text-zinc-400 shrink-0 ml-auto" />
+              )}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 mb-2">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-semibold truncate">
-                  {user ? `${user.firstname} ${user.lastname}` : "Administrator"}
+                  {user
+                    ? `${user.firstname} ${user.lastname}`
+                    : "Administrator"}
                 </p>
                 <p className="text-xs text-zinc-500 truncate">{user?.email}</p>
               </div>

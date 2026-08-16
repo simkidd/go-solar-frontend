@@ -7,10 +7,8 @@ export const useCreatePackageMutation = (options?: { onSuccess?: () => void }) =
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (formData: FormData) => {
-      const { data } = await axiosInstance.post("/packages", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    mutationFn: async (input: any) => {
+      const { data } = await axiosInstance.post("/packages", input);
       return data;
     },
     onSuccess: (data) => {

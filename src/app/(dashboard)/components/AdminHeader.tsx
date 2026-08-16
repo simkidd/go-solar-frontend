@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bell, LogOut, Settings, User } from "lucide-react";
-import { ThemeSwitcher } from "../../../components/ThemeSwitcher";
 import { useSession } from "@/context/SessionContext";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -44,11 +43,10 @@ const AdminHeader = () => {
   return (
     <header className="h-16 w-full flex bg-white/90 dark:bg-[#1a1b1e]/90 backdrop-blur-md sticky top-0 z-20 border-b border-zinc-100 dark:border-zinc-800 transition-all">
       <div className="w-full px-4 md:px-6 flex items-center justify-between gap-4">
-        
         {/* Left Section: Sidebar Toggle & Breadcrumbs */}
         <div className="flex items-center gap-3">
           <SidebarTrigger className="h-9 w-9 text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/60 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none transition-colors" />
-          
+
           <div className="hidden md:block">
             <Breadcrumb>
               <BreadcrumbList>
@@ -60,7 +58,7 @@ const AdminHeader = () => {
                 {paths.slice(1).map((path, index) => {
                   const currentPath = `/${paths.slice(0, index + 2).join("/")}`;
                   const isLast = index === paths.length - 2;
-                  
+
                   return (
                     <React.Fragment key={path}>
                       <BreadcrumbSeparator />
@@ -86,13 +84,14 @@ const AdminHeader = () => {
         {/* Right Section: Notifications, Theme, Profile */}
         <div className="flex items-center space-x-3 ml-auto">
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 relative text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 relative text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+          >
             <Bell className="h-5 w-5" />
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-[#1a1b1e]" />
           </Button>
-
-          {/* Theme switcher */}
-          <ThemeSwitcher />
 
           {/* User profile details */}
           <div className="flex items-center">

@@ -6,60 +6,29 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { PackageComponent } from "@/data/packages";
 
-interface PkgDetails {
-  id: string;
-  name: string;
-  price: number;
-  slug: string;
-  desc: string;
-  spec: string;
-  inverterRange: string;
-  constituents: PackageComponent[];
-}
-
-const AddToCartBtn = ({ pkg }: { pkg: PkgDetails }) => {
+const AddToCartBtn = ({ pkg }: { pkg: any }) => {
   const { addItem, cartItems } = useCartStore();
   const router = useRouter();
 
   const handleAddToCart = () => {
     let addedCount = 0;
-    pkg.constituents.forEach((item) => {
+    if (!pkg.constituents || pkg.constituents.length === 0) {
+      toast.error("This package has no constituent products to add.");
+      return;
+    }
+
+    pkg.constituents.forEach((item: any) => {
+      const prod = item.product;
+      if (!prod) return;
+
       // Check if this sub-product is already in the cart
-      const exists = cartItems.some((cartItem) => cartItem.product._id === item.id);
+      const exists = cartItems.some((cartItem) => cartItem.product._id === prod._id);
       if (!exists) {
         addItem({
-          product: {
-            _id: item.id,
-            name: item.name,
-            slug: item.slug,
-            price: item.price,
-            description: `Part of the ${pkg.name}`,
-            images: [],
-            brand: "GoSolar",
-            category: {
-              _id: `cat-${item.categorySlug}`,
-              name: item.categoryName,
-              slug: item.categorySlug,
-              description: `System category for ${item.categoryName}`,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            },
-            additionalInfo: "Included inside packages installation configuration.",
-            quantityInStock: 10,
-            withinLocationDeliveryFee: 15000,
-            outsideLocationDeliveryFee: 35000,
-            isPublished: true,
-            isDeleted: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            currentOffer: null as any,
-            datasheet: [],
-            showDatasheet: false,
-          },
-          qty: item.qty,
-          deliveryFee: 15000,
+          product: prod, // Fully populated Product object from DB!
+          qty: item.qty || 1,
+          deliveryFee: prod.withinLocationDeliveryFee || 15000,
         });
         addedCount++;
       }
@@ -73,40 +42,21 @@ const AddToCartBtn = ({ pkg }: { pkg: PkgDetails }) => {
   };
 
   const handleOrderSetup = () => {
-    pkg.constituents.forEach((item) => {
-      const exists = cartItems.some((cartItem) => cartItem.product._id === item.id);
+    if (!pkg.constituents || pkg.constituents.length === 0) {
+      toast.error("This package has no constituent products.");
+      return;
+    }
+
+    pkg.constituents.forEach((item: any) => {
+      const prod = item.product;
+      if (!prod) return;
+
+      const exists = cartItems.some((cartItem) => cartItem.product._id === prod._id);
       if (!exists) {
         addItem({
-          product: {
-            _id: item.id,
-            name: item.name,
-            slug: item.slug,
-            price: item.price,
-            description: `Part of the ${pkg.name}`,
-            images: [],
-            brand: "GoSolar",
-            category: {
-              _id: `cat-${item.categorySlug}`,
-              name: item.categoryName,
-              slug: item.categorySlug,
-              description: `System category for ${item.categoryName}`,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            },
-            additionalInfo: "Included inside packages installation configuration.",
-            quantityInStock: 10,
-            withinLocationDeliveryFee: 15000,
-            outsideLocationDeliveryFee: 35000,
-            isPublished: true,
-            isDeleted: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            currentOffer: null as any,
-            datasheet: [],
-            showDatasheet: false,
-          },
-          qty: item.qty,
-          deliveryFee: 15000,
+          product: prod,
+          qty: item.qty || 1,
+          deliveryFee: prod.withinLocationDeliveryFee || 15000,
         });
       }
     });
@@ -123,7 +73,7 @@ const AddToCartBtn = ({ pkg }: { pkg: PkgDetails }) => {
         Add Package Components to Cart
       </Button>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 font-bold text-xs">
         <Button
           onClick={handleOrderSetup}
           variant="outline"

@@ -1,17 +1,36 @@
+"use client";
+
 import Cta from "@/app/(ecommerce)/components/shop/Cta";
-import { Metadata } from "next";
-import { PACKAGES_DATA } from "@/data/packages";
 import { formatCurrency } from "@/utils/helpers";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-export const metadata: Metadata = {
-  title: "Complete Solar Packages | GoSolar",
-  description:
-    "Explore pre-sized complete hybrid solar package installations for homes and offices by GoSolar.",
-};
+import { usePackagesQuery } from "@/hooks/queries/usePackagesQuery";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PackagesPage = () => {
+  const { data: packages = [], isLoading, error } = usePackagesQuery();
+
+  const getBadgeColor = (kva: number) => {
+    if (kva <= 2) {
+      return "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/20 dark:text-indigo-400 dark:border-indigo-900/50";
+    }
+    if (kva <= 3.5) {
+      return "bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/20 dark:text-teal-400 dark:border-teal-900/50";
+    }
+    if (kva <= 5) {
+      return "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/50";
+    }
+    return "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900/50";
+  };
+
+  if (error) {
+    return (
+      <div className="w-full text-center py-24 font-bold text-red-500 font-inter">
+        Failed to load solar packages. Please try again later.
+      </div>
+    );
+  }
+
   return (
     <div className="w-full font-inter bg-white dark:bg-zinc-950 min-h-screen">
       <section className="w-full">
@@ -27,79 +46,77 @@ const PackagesPage = () => {
             <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
               Pre-Configured Solar Packages
             </h2>
-            <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">
+            <p className="text-zinc-505 dark:text-zinc-400 text-sm leading-relaxed font-semibold">
               Explore our range of professional hybrid solar packages tailored
               for houses, apartments, and commercial facilities.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mt-10 pb-16">
-            {PACKAGES_DATA.map((pkg) => (
-              <div
-                key={pkg.id}
-                className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-xs hover:shadow-md hover:border-[#08AA08]/40 transition-all duration-300"
-              >
-                <div className="space-y-4">
-                  <div className="relative aspect-video rounded-2xl overflow-hidden bg-zinc-50 dark:bg-zinc-800 border dark:border-zinc-850 flex flex-col items-center justify-center text-zinc-400">
-                    <div className="absolute inset-0 bg-linear-to-br from-[#064e3b] to-emerald-700 opacity-5" />
-                    <svg
-                      className="w-12 h-12 text-[#08AA08]"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                      />
-                    </svg>
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mt-2">
-                      GoSolar Setup
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${pkg.badgeColor}`}
-                    >
-                      {pkg.inverterRange} Range
-                    </span>
-                    <h3 className="text-lg font-extrabold text-zinc-900 dark:text-white leading-tight">
-                      {pkg.name}
-                    </h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed min-h-[36px]">
-                      {pkg.desc}
-                    </p>
-                    <div className="bg-zinc-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-zinc-100 dark:border-zinc-800 space-y-1">
-                      <span className="text-[9px] uppercase font-bold text-zinc-400 dark:text-zinc-500">
-                        Configuration
+            {isLoading ? (
+              Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="p-6 border rounded-3xl space-y-4">
+                  <Skeleton className="h-40 w-full rounded-2xl" />
+                  <Skeleton className="h-6 w-1/2 rounded-md" />
+                  <Skeleton className="h-4 w-3/4 rounded-md" />
+                  <Skeleton className="h-10 w-full rounded-xl" />
+                </div>
+              ))
+            ) : packages.length === 0 ? (
+              <div className="col-span-full text-center py-12 text-zinc-550 font-semibold">
+                No solar packages available at this time.
+              </div>
+            ) : (
+              packages.map((pkg: any) => {
+                const badgeColor = getBadgeColor(pkg.capacityKva);
+                return (
+                  <div
+                    key={pkg._id}
+                    className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-xs hover:shadow-md hover:border-[#08AA08]/40 transition-all duration-300 font-semibold"
+                  >
+                    <div className="space-y-2">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${badgeColor}`}
+                      >
+                        {pkg.capacityKva} kVA Range
                       </span>
-                      <p className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 leading-normal">
-                        {pkg.spec}
+                      <h3 className="text-lg font-extrabold text-zinc-900 dark:text-white leading-tight">
+                        {pkg.name}
+                      </h3>
+                      <p className="text-xs text-zinc-550 dark:text-zinc-400 leading-relaxed min-h-[36px]">
+                        {pkg.description}
                       </p>
+                      {pkg.tagline && (
+                        <div className="bg-zinc-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-zinc-150 dark:border-zinc-800 space-y-1">
+                          <span className="text-[9px] uppercase font-bold text-zinc-400 dark:text-zinc-500">
+                            Configuration
+                          </span>
+                          <p className="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 leading-normal">
+                            {pkg.tagline}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                      <div>
+                        <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">
+                          Starting Price
+                        </span>
+                        <p className="text-xl font-extrabold text-[#08AA08]">
+                          {formatCurrency(pkg.price, "NGN")}
+                        </p>
+                      </div>
+                      <Link href={`/packages/${pkg.slug}`}>
+                        <Button className="bg-[#08AA08] hover:bg-[#079907] text-white text-xs font-bold rounded-xl px-5 py-2">
+                          Configure →
+                        </Button>
+                      </Link>
                     </div>
                   </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">
-                      Starting Price
-                    </span>
-                    <p className="text-xl font-extrabold text-[#08AA08]">
-                      {formatCurrency(pkg.price, "NGN")}
-                    </p>
-                  </div>
-                  <Link href={`/packages/${pkg.slug}`}>
-                    <Button className="bg-[#08AA08] hover:bg-[#079907] text-white text-xs font-bold rounded-xl px-5 py-2">
-                      Configure →
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ))}
+                );
+              })
+            )}
           </div>
         </div>
       </section>

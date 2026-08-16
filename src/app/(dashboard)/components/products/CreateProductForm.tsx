@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, Trash2, Upload } from "lucide-react";
+import PriceInput from "@/components/ui/price-input";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
@@ -298,15 +299,18 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                   Regular Price (₦) <span className="text-red-500">*</span>
                 </label>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  min={0}
-                  {...register("price", {
-                    required: "Price is required",
-                    valueAsNumber: true,
-                  })}
-                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                <Controller
+                  control={control}
+                  name="price"
+                  rules={{ required: "Price is required", validate: (v) => v > 0 || "Price must be greater than 0" }}
+                  render={({ field }) => (
+                    <PriceInput
+                      value={field.value || ""}
+                      onChange={(val) => field.onChange(val === "" ? 0 : val)}
+                      placeholder="e.g. 450,000"
+                      className="text-primary font-bold"
+                    />
+                  )}
                 />
                 {errors.price && (
                   <p className="text-xs text-red-500 font-semibold">
@@ -319,12 +323,16 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                   Discount Price (₦)
                 </label>
-                <Input
-                  type="number"
-                  min={0}
-                  placeholder="Promo price"
-                  {...register("discountPrice", { valueAsNumber: true })}
-                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                <Controller
+                  control={control}
+                  name="discountPrice"
+                  render={({ field }) => (
+                    <PriceInput
+                      value={field.value || ""}
+                      onChange={(val) => field.onChange(val === "" ? 0 : val)}
+                      placeholder="Promo price"
+                    />
+                  )}
                 />
               </div>
 
@@ -613,14 +621,16 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                   Local City Delivery (₦)
                 </label>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  min={0}
-                  {...register("withinLocationDeliveryFee", {
-                    valueAsNumber: true,
-                  })}
-                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                <Controller
+                  control={control}
+                  name="withinLocationDeliveryFee"
+                  render={({ field }) => (
+                    <PriceInput
+                      value={field.value || ""}
+                      onChange={(val) => field.onChange(val === "" ? 0 : val)}
+                      placeholder="0"
+                    />
+                  )}
                 />
               </div>
 
@@ -628,14 +638,16 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                   Interstate Delivery (₦)
                 </label>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  min={0}
-                  {...register("outsideLocationDeliveryFee", {
-                    valueAsNumber: true,
-                  })}
-                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                <Controller
+                  control={control}
+                  name="outsideLocationDeliveryFee"
+                  render={({ field }) => (
+                    <PriceInput
+                      value={field.value || ""}
+                      onChange={(val) => field.onChange(val === "" ? 0 : val)}
+                      placeholder="0"
+                    />
+                  )}
                 />
               </div>
 

@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
+import PriceInput from "@/components/ui/price-input";
 import { toast } from "sonner";
 import { useCategoriesQuery } from "@/hooks/queries/useCategoriesQuery";
 import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
@@ -203,15 +204,18 @@ const UpdateProductForm: React.FC<{
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                   Regular Price (₦) <span className="text-red-500">*</span>
                 </label>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  min={0}
-                  {...register("price", {
-                    required: "Price is required",
-                    valueAsNumber: true,
-                  })}
-                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                <Controller
+                  control={control}
+                  name="price"
+                  rules={{ required: "Price is required", validate: (v) => v > 0 || "Price must be greater than 0" }}
+                  render={({ field }) => (
+                    <PriceInput
+                      value={field.value || ""}
+                      onChange={(val) => field.onChange(val === "" ? 0 : val)}
+                      placeholder="e.g. 450,000"
+                      className="text-primary font-bold"
+                    />
+                  )}
                 />
                 {errors.price && (
                   <p className="text-xs text-red-500 font-semibold">
@@ -224,12 +228,16 @@ const UpdateProductForm: React.FC<{
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                   Discount Price (₦)
                 </label>
-                <Input
-                  type="number"
-                  min={0}
-                  placeholder="Promo price"
-                  {...register("discountPrice", { valueAsNumber: true })}
-                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                <Controller
+                  control={control}
+                  name="discountPrice"
+                  render={({ field }) => (
+                    <PriceInput
+                      value={field.value || ""}
+                      onChange={(val) => field.onChange(val === "" ? 0 : val)}
+                      placeholder="Promo price"
+                    />
+                  )}
                 />
               </div>
 
