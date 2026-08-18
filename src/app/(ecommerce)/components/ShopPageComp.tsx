@@ -10,7 +10,7 @@ import ViewHistoryComp from "../components/ViewHistory";
 import useProducts from "@/hooks/useProducts";
 import useCategories from "@/hooks/useCategories";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Zap, ShieldCheck, Truck, Headphones, ArrowRight } from "lucide-react";
+import { Zap, ShieldCheck, Truck, Headphones, ArrowRight, CreditCard, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import ProductCard from "./shop/ProductCard";
 import { Button } from "@/components/ui/button";
@@ -18,55 +18,55 @@ import { Button } from "@/components/ui/button";
 const ShopFeaturesBar = () => (
   <section className="w-full py-8 bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-border/80 select-none">
     <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-        {/* Fast Shipping Card */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        {/* Secure Payments Card */}
         <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <CreditCard className="h-5 w-5" />
+          </div>
+          <div>
+            <h4 className="font-extrabold text-[10px] text-foreground uppercase tracking-widest mb-0.5">
+              Secure Payments
+            </h4>
+            <p className="text-[10px] text-muted-foreground font-semibold leading-tight">
+              Safe and verified transactions
+            </p>
+          </div>
+        </div>
+
+        {/* Free Shipping Card */}
+        <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
+          <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <Truck className="h-5 w-5" />
           </div>
           <div>
             <h4 className="font-extrabold text-[10px] text-foreground uppercase tracking-widest mb-0.5">
-              Fast Shipping
+              Free Shipping
             </h4>
             <p className="text-[10px] text-muted-foreground font-semibold leading-tight">
-              Delivered within 3-5 working days
+              On orders over ₦2,500,000
             </p>
           </div>
         </div>
 
-        {/* 5-Year Warranty Card */}
+        {/* Money-Back Guarantee Card */}
         <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <ShieldCheck className="h-5 w-5" />
+          <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <RotateCcw className="h-5 w-5" />
           </div>
           <div>
             <h4 className="font-extrabold text-[10px] text-foreground uppercase tracking-widest mb-0.5">
-              5-Year Warranty
+              Money-Back Guarantee
             </h4>
             <p className="text-[10px] text-muted-foreground font-semibold leading-tight">
-              Full hardware replacement protection
-            </p>
-          </div>
-        </div>
-
-        {/* Expert Mounting Card */}
-        <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <Zap className="h-5 w-5" />
-          </div>
-          <div>
-            <h4 className="font-extrabold text-[10px] text-foreground uppercase tracking-widest mb-0.5">
-              Expert Mounting
-            </h4>
-            <p className="text-[10px] text-muted-foreground font-semibold leading-tight">
-              Installed by licensed solar technicians
+              30 days hassle-free return policy
             </p>
           </div>
         </div>
 
         {/* 24/7 Support Card */}
         <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <Headphones className="h-5 w-5" />
           </div>
           <div>
@@ -74,7 +74,7 @@ const ShopFeaturesBar = () => (
               24/7 Support
             </h4>
             <p className="text-[10px] text-muted-foreground font-semibold leading-tight">
-              Post-install remote telemetry monitoring
+              Expert customer assistance
             </p>
           </div>
         </div>
@@ -86,6 +86,12 @@ const ShopFeaturesBar = () => (
 const ShopPageComp = () => {
   const { data: offers = [] } = useActiveOffersQuery();
   const { data: serverBanners = [] } = useActiveBannersQuery();
+
+  const promoCardBanner = useMemo(() => {
+    return serverBanners.find(
+      (b: any) => b.placement === "storefront_promo_card"
+    );
+  }, [serverBanners]);
 
   const {
     products: allProducts,
@@ -166,32 +172,32 @@ const ShopPageComp = () => {
 
         {/* Promo banner placeholder */}
         <div className="mb-6">
-          {serverBanners && serverBanners.length > 1 ? (
+          {promoCardBanner ? (
             <div className="w-full relative rounded-3xl overflow-hidden shadow-xs border border-border/80 bg-zinc-950 min-h-[160px] flex items-center font-inter p-8 md:p-12">
               <div
                 className="absolute inset-0 z-0 bg-cover bg-center opacity-30 hover:scale-102 transition-transform duration-[10s]"
-                style={{ backgroundImage: `url('${serverBanners[1].image}')` }}
+                style={{ backgroundImage: `url('${promoCardBanner.image}')` }}
               />
               <div className="absolute inset-0 z-10 bg-gradient-to-r from-black via-black/80 to-transparent" />
               <div className="relative z-20 max-w-xl space-y-2 text-white">
-                {serverBanners[1].badge && (
+                {promoCardBanner.badge && (
                   <span className="inline-block text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
-                    {serverBanners[1].badge}
+                    {promoCardBanner.badge}
                   </span>
                 )}
                 <h3 className="text-lg md:text-xl font-black tracking-tight leading-tight">
-                  {serverBanners[1].title}
+                  {promoCardBanner.title}
                 </h3>
-                {serverBanners[1].subtitle && (
+                {promoCardBanner.subtitle && (
                   <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-semibold">
-                    {serverBanners[1].subtitle}
+                    {promoCardBanner.subtitle}
                   </p>
                 )}
-                {serverBanners[1].ctaLink && (
+                {promoCardBanner.ctaLink && (
                   <div className="pt-2">
-                    <Link href={serverBanners[1].ctaLink}>
+                    <Link href={promoCardBanner.ctaLink}>
                       <Button className="bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest h-8 px-4 rounded-xl shadow-xs transition-all hover:scale-[1.02] cursor-pointer">
-                        {serverBanners[1].ctaText || "Explore"}
+                        {promoCardBanner.ctaText || "Explore"}
                       </Button>
                     </Link>
                   </div>

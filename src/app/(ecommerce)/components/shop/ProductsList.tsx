@@ -144,7 +144,11 @@ const ProductsList = ({
     () => paginatedProducts.slice(8),
     [paginatedProducts],
   );
-  const promoBanner = serverBanners[0];
+  const promoBanner = useMemo(() => {
+    return serverBanners.find(
+      (b: any) => b.placement === "storefront_promo_strip"
+    );
+  }, [serverBanners]);
 
   const handleResetFilters = () => {
     const params = new URLSearchParams(searchParams.toString());

@@ -10,6 +10,7 @@ export interface Banner {
   isActive?: boolean;
   startDate?: string;
   endDate?: string;
+  placement?: "storefront_hero" | "storefront_promo_strip" | "storefront_promo_card";
   createdAt: string;
   updatedAt: string;
 }
@@ -23,6 +24,7 @@ export interface CreateBannerInput {
   ctaLink?: string;
   order?: number;
   isActive?: boolean;
+  placement?: "storefront_hero" | "storefront_promo_strip" | "storefront_promo_card";
 }
 
 export interface UpdateBannerInput {
@@ -35,4 +37,5 @@ export interface UpdateBannerInput {
   ctaLink?: string;
   order?: number;
   isActive?: boolean;
+  placement?: "storefront_hero" | "storefront_promo_strip" | "storefront_promo_card";
 }

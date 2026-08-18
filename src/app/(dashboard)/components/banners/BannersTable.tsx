@@ -25,6 +25,19 @@ import AppModal from "@/components/AppModal";
 import CreateBannerForm from "./CreateBannerForm";
 import UpdateBannerForm from "./UpdateBannerForm";
 
+const getPlacementLabel = (placement?: string) => {
+  switch (placement) {
+    case "storefront_hero":
+      return "Hero Slider";
+    case "storefront_promo_strip":
+      return "Grid Strip";
+    case "storefront_promo_card":
+      return "Featured Card";
+    default:
+      return "Hero Slider";
+  }
+};
+
 const BannersTable = () => {
   const { data: banners = [], isLoading, refetch } = useAllBannersAdminQuery();
 
@@ -51,6 +64,9 @@ const BannersTable = () => {
         onOpenChange={setIsCreateOpen}
         title="Create Storefront Banner"
         size="3xl"
+        scrollBehavior="inside"
+        isDismissable={false}
+        hideCloseButton
       >
         <CreateBannerForm onClose={() => setIsCreateOpen(false)} />
       </AppModal>
@@ -60,6 +76,10 @@ const BannersTable = () => {
           isOpen={Boolean(editingBanner)}
           onOpenChange={(open) => !open && setEditingBanner(null)}
           title="Edit Storefront Banner"
+          size="3xl"
+          scrollBehavior="inside"
+          isDismissable={false}
+          hideCloseButton
         >
           <UpdateBannerForm
             banner={editingBanner}
@@ -197,10 +217,15 @@ const BannersTable = () => {
 
                 {/* Top badges & status */}
                 <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-[#08AA08] text-white shadow-xs">
-                    <Sparkles className="h-2.5 w-2.5" />
-                    {banner.badge || "Highlight"}
-                  </span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-[#08AA08] text-white shadow-xs">
+                      <Sparkles className="h-2.5 w-2.5" />
+                      {banner.badge || "Highlight"}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-white/20 text-white backdrop-blur-md border border-white/10 select-none">
+                      {getPlacementLabel(banner.placement)}
+                    </span>
+                  </div>
 
                   <Badge
                     variant={banner.isActive ? "default" : "secondary"}

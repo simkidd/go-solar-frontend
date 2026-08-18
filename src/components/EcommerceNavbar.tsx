@@ -61,8 +61,25 @@ const EcommerceNavbar = () => {
       <SearchModal isOpen={isSearchOpen} onOpenChange={setIsSearchOpen} />
 
       <header className="w-full bg-white dark:bg-zinc-950 border-b border-border/80 sticky top-0 z-50 font-inter">
+        {/* ── Top Announcement & Utility Bar ── */}
+        <div className="w-full bg-primary/10 dark:bg-primary/20 border-b border-primary/10 py-2 text-[10px] font-bold text-primary select-none hidden md:block">
+          <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="bg-primary text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-wider">PROMO</span>
+              <span>⚡ Free Shipping on Orders Over ₦2,500,000!</span>
+            </div>
+            <div className="flex items-center gap-4 text-[9px] uppercase tracking-wider">
+              <span className="cursor-pointer hover:text-primary transition-colors">English</span>
+              <span className="cursor-pointer hover:text-primary transition-colors">NGN (₦)</span>
+              <span className="opacity-30">|</span>
+              <span className="cursor-pointer hover:text-primary transition-colors">Help Center</span>
+              <span className="cursor-pointer hover:text-primary transition-colors">Support: +234-800-GOSOLAR</span>
+            </div>
+          </div>
+        </div>
+
         {/* ── Top Utility Header Bar ── */}
-        <div className="container mx-auto px-4 lg:px-6 py-3.5 grid grid-cols-3 items-center lg:flex lg:justify-between lg:gap-8">
+        <div className="container mx-auto px-4 lg:px-6 py-4 grid grid-cols-3 items-center lg:flex lg:justify-between lg:gap-8">
           {/* Col 1 (Mobile Left): Animated Hamburger Toggle Button */}
           <div className="flex items-center justify-start lg:hidden">
             <button
@@ -118,14 +135,23 @@ const EcommerceNavbar = () => {
             <CartSheet />
           </div>
 
-          {/* Desktop Center: Search Bar Mock Input */}
-          <div className="hidden lg:flex items-center justify-center flex-1 max-w-md mx-auto">
+          {/* Desktop Center: Redesigned SolarWest-Style Search Bar */}
+          <div className="hidden lg:flex items-center justify-center flex-1 max-w-xl mx-auto">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-3 px-4 py-1.5 bg-muted/40 border border-border/60 hover:border-border hover:bg-muted/80 rounded-full text-xs text-muted-foreground w-full cursor-pointer transition-all duration-200 select-none outline-none h-9"
+              className="flex items-center bg-zinc-50 dark:bg-zinc-900/40 border border-border/80 hover:border-primary/30 rounded-full text-xs text-muted-foreground w-full cursor-pointer transition-all duration-200 select-none outline-none h-10 p-0 overflow-hidden shadow-xs"
             >
-              <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-              <span className="text-left flex-1">Search store...</span>
+              <div className="px-4 py-2 border-r border-border/60 font-bold text-foreground/80 flex items-center gap-1 hover:text-primary transition-colors shrink-0 text-[10px] uppercase tracking-wider">
+                <span>All Categories</span>
+                <ChevronDown className="h-3 w-3 opacity-60" />
+              </div>
+              <div className="flex items-center gap-2 px-4 flex-1 text-left">
+                <Search className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
+                <span className="text-muted-foreground/50 flex-1 truncate font-medium">Search solar panels, inverters, batteries...</span>
+              </div>
+              <div className="bg-primary text-white hover:bg-primary/90 h-full px-5 flex items-center justify-center font-black uppercase tracking-widest text-[9px] transition-colors shrink-0">
+                Search
+              </div>
             </button>
           </div>
 

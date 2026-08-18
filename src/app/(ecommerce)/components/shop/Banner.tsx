@@ -47,6 +47,24 @@ const DEFAULT_FALLBACK_SLIDES = [
   },
 ];
 
+const highlightKeywords = (title: string) => {
+  const keywords = ["Solar Uptime", "Solar Panels", "Solar Energy", "Clean Energy"];
+  let rendered = title;
+  for (const kw of keywords) {
+    if (rendered.includes(kw)) {
+      const parts = rendered.split(kw);
+      return (
+        <>
+          {parts[0]}
+          <span className="text-primary">{kw}</span>
+          {parts[1]}
+        </>
+      );
+    }
+  }
+  return title;
+};
+
 const Banner = () => {
   const plugin = React.useRef(
     Autoplay({ delay: 6000, stopOnInteraction: false })
@@ -55,14 +73,17 @@ const Banner = () => {
   const { data: serverBanners = [], isLoading } = useActiveBannersQuery();
 
   const slides = useMemo(() => {
-    if (serverBanners && serverBanners.length > 0) {
-      return serverBanners;
+    const heroBanners = serverBanners.filter(
+      (b: any) => b.placement === "storefront_hero"
+    );
+    if (heroBanners.length > 0) {
+      return heroBanners;
     }
     return DEFAULT_FALLBACK_SLIDES;
   }, [serverBanners]);
 
   return (
-    <div className="w-full relative rounded-3xl overflow-hidden shadow-md border border-zinc-150 dark:border-zinc-800 bg-zinc-950 font-inter">
+    <div className="w-full relative rounded-[32px] overflow-hidden shadow-lg border border-zinc-150 dark:border-zinc-800/80 bg-zinc-950 font-inter">
       <Carousel
         plugins={[plugin.current]}
         opts={{
@@ -74,37 +95,48 @@ const Banner = () => {
           {slides.map((slide) => (
             <CarouselItem
               key={slide._id}
-              className="relative w-full aspect-[21/9] min-h-[300px] sm:min-h-[360px] md:min-h-[400px]"
+              className="relative w-full min-h-[380px] sm:min-h-[420px] md:min-h-[480px] flex items-center"
             >
-              {/* Background slide image */}
+              {/* Background slide image (positioned on right on large screens) */}
               <div
-                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-60 transition-transform duration-10000 hover:scale-105"
+                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-60 md:opacity-85 transition-transform duration-[10s] hover:scale-105"
                 style={{ backgroundImage: `url('${slide.image}')` }}
               />
-              {/* Dark gradient overlay */}
-              <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/85 via-black/50 to-transparent" />
+              
+              {/* Split layout gradient overlay */}
+              <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/95 via-black/85 md:from-black/95 md:via-black/75 md:to-transparent" />
 
-              {/* Text content block */}
-              <div className="absolute inset-0 z-20 flex flex-col justify-center items-start px-8 sm:px-16 md:px-20 max-w-xl space-y-4">
+              {/* Text Container: Align left in split layout */}
+              <div className="relative z-20 w-[95%] sm:w-4/5 md:w-[65%] ml-6 sm:ml-12 md:ml-16 py-10 flex flex-col justify-center items-start space-y-4 text-white select-none">
                 {slide.badge && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-[#08AA08]/90 text-white shadow-sm">
-                    <Sparkles className="h-3 w-3" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-widest bg-primary text-white shadow-md">
+                    <Sparkles className="h-3 w-3 animate-pulse text-amber-300" />
                     {slide.badge}
                   </span>
                 )}
-                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight">
-                  {slide.title}
+                
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight Outfit">
+                  {highlightKeywords(slide.title)}
                 </h2>
+                
                 {slide.subtitle && (
-                  <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-medium line-clamp-2 sm:line-clamp-none">
+                  <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-medium max-w-lg line-clamp-3">
                     {slide.subtitle}
                   </p>
                 )}
-                <div className="pt-2">
-                  <Link href={slide.ctaLink || "/shop"} className="inline-block">
-                    <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-widest rounded-full px-6 h-10 gap-1.5 hover:scale-105 transition-all shadow-md">
-                      {slide.ctaText || "Explore Now"}
+                
+                {/* Actions row: side by side buttons */}
+                <div className="pt-2 flex flex-wrap gap-3">
+                  <Link href={slide.ctaLink || "/shop"}>
+                    <Button className="bg-primary hover:bg-primary/90 text-white font-extrabold text-[10px] uppercase tracking-widest rounded-xl px-6 h-11 gap-2 transition-all hover:scale-[1.02] cursor-pointer">
+                      {slide.ctaText || "Shop Now"}
                       <ArrowRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </Link>
+                  
+                  <Link href="/energy-calculator">
+                    <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:text-white font-extrabold text-[10px] uppercase tracking-widest rounded-xl px-6 h-11 transition-all hover:scale-[1.02] cursor-pointer">
+                      Explore Solutions
                     </Button>
                   </Link>
                 </div>
@@ -113,8 +145,8 @@ const Banner = () => {
           ))}
         </CarouselContent>
         {/* Carousel arrows */}
-        <CarouselPrevious className="hidden sm:flex hover:scale-110 transition-transform left-4" />
-        <CarouselNext className="hidden sm:flex hover:scale-110 transition-transform right-4" />
+        <CarouselPrevious className="hidden sm:flex hover:scale-110 transition-transform left-4 bg-white/10 backdrop-blur-md border-white/10 hover:bg-white/20 text-white" />
+        <CarouselNext className="hidden sm:flex hover:scale-110 transition-transform right-4 bg-white/10 backdrop-blur-md border-white/10 hover:bg-white/20 text-white" />
       </Carousel>
     </div>
   );
