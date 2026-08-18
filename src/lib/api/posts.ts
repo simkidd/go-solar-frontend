@@ -16,9 +16,11 @@ export const getPosts = async () => {
 
 export const getPostById = async (id: string) => {
   try {
-    const { data } = await axiosInstance.get(`/blogs/${id}`);
-    if (data?.blog) {
-      return data.blog;
+    if (id && /^[0-9a-fA-F]{24}$/.test(id)) {
+      const { data } = await axiosInstance.get(`/blogs/${id}`);
+      if (data?.blog) {
+        return data.blog;
+      }
     }
     return FALLBACK_POSTS.find((p) => p._id === id || p.slug === id);
   } catch (error) {
