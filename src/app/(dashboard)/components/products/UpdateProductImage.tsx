@@ -1,48 +1,53 @@
 "use client";
-import AppModal from "@/components/AppModal";
-import { IImage, Product } from "@/interfaces/product.interface";
-import { axiosInstance } from "@/lib/axios";
-import { useProductStore } from "@/lib/stores/product.store";
-import { Button, useDisclosure } from "@heroui/react";
-import { Edit, Trash2 } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React, { useCallback, useState } from "react";
+import { Product } from "@/interfaces/product.interface";
+import { Button } from "@/components/ui/button";
+import { Edit2, Trash2, Upload, ImageOff, Plus } from "lucide-react";
+import Image from "next/image";
 import { useDropzone } from "react-dropzone";
-import { GrCloudUpload } from "react-icons/gr";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+import { useUpdateProductImageMutation } from "@/hooks/mutations/useProductMutations";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const UpdateProductImage: React.FC<{
   product: Product;
 }> = ({ product }) => {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div>
+    <>
       <Button
+        variant="outline"
         size="sm"
-        variant="faded"
-        color="default"
-        type="submit"
-        className="rounded-md "
-        startContent={<Edit size={16} />}
-        onPress={onOpen}
+        onClick={() => setIsOpen(true)}
+        className="text-xs font-semibold gap-1.5 border-border hover:bg-muted/30 rounded-xl h-8 px-3 cursor-pointer"
       >
-        Update Images
+        <Edit2 className="h-3.5 w-3.5" />
+        Manage Images
       </Button>
 
-      <AppModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        title="Update Product Images"
-        isDismissable={false}
-        hideCloseButton
-        size="md"
-        scrollBehavior="inside"
-      >
-        <ProductImagesForm onClose={onClose} product={product} />
-      </AppModal>
-    </div>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[520px] bg-card border border-border/80 rounded-2xl p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/60">
+            <DialogTitle className="text-sm font-extrabold text-foreground tracking-tight">
+              Manage Product Images
+            </DialogTitle>
+            <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+              Select an image slot to replace it, or select "Add New" to upload another image (up to 5 total).
+            </p>
+          </DialogHeader>
+
+          <div className="px-6 py-5">
+            <ProductImagesForm onClose={() => setIsOpen(false)} product={product} />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
@@ -52,164 +57,187 @@ export const ProductImagesForm: React.FC<{
   product: Product;
   onClose: () => void;
 }> = ({ onClose, product }) => {
-  const { updateImages, imageLoading } = useProductStore();
-  const [images, setImages] = useState<string[]>(
-    product.images.map((img) => img.url)
-  );
+  const updateImagesMutation = useUpdateProductImageMutation({ onSuccess: onClose });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [selectedImgId, setSelectedImgId] = useState<string | null>(null);
-  const router = useRouter();
+  const [selectedImgId, setSelectedImgId] = useState<string | null>(
+    product.images && product.images.length > 0 ? null : "new"
+  );
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const MAX_IMAGES = 5;
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      if (images.length + acceptedFiles.length > 3) {
-        toast.info("You can only upload up to 3 images");
+      if (selectedImgId === "new" && product.images.length >= MAX_IMAGES) {
+        toast.info(`You can only have up to ${MAX_IMAGES} images`);
         return;
       }
-
-      const newFiles = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      );
-
-      // Create an array of new image URLs
-      const newImageUrls = acceptedFiles.map((file) =>
-        URL.createObjectURL(file)
-      );
-
-      // Update the images state with new URLs
-      setImages((prevFiles) => [...prevFiles, ...newImageUrls]);
-      setSelectedImage(newFiles[0]);
+      const file = acceptedFiles[0];
+      if (!file) return;
+      setSelectedImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
     },
-    [images.length]
+    [product.images.length, selectedImgId]
   );
-
-  const thumbs = images.map((image, i) => (
-    <div key={i} className="relative m-2 w-20 h-20">
-      <Image
-        src={image} // Directly use the image URL
-        alt={`Product Image ${i + 1}`}
-        className="w-full h-full object-cover rounded-lg"
-        width={80}
-        height={80}
-      />
-      <button
-        type="button"
-        className="absolute top-1 right-1 bg-white text-red-600 rounded-full p-1"
-        onClick={() => {
-          setImages(images.filter((f) => f !== image));
-          setSelectedImage(null);
-          setSelectedImgId(null);
-        }}
-      >
-        <Trash2 size={16} />
-      </button>
-    </div>
-  ));
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       "image/jpeg": [],
       "image/png": [],
+      "image/webp": [],
     },
-    multiple: false, // Allow only one image at a time
+    multiple: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedImage || !selectedImgId) {
-      alert("Please select an image to update");
+      toast.warning("Please select a slot (replace or add new) and upload an image.");
       return;
     }
 
     const formData = new FormData();
     formData.append("productId", product?._id);
-    formData.append("imgId", selectedImgId); // Replace with actual imgId
+    formData.append("imgId", selectedImgId === "new" ? "" : selectedImgId);
     formData.append("updateImg", selectedImage);
 
-    const config = { headers: { "Content-Type": "multipart/form-data" } };
-
-    await updateImages(formData, config);
-
-    router.refresh();
-    onClose();
+    updateImagesMutation.mutate(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full font-inter">
-      <div className="w-full">
-        {/* Existing Images (You'll need to fetch these from your database) */}
-        {product.images && product.images.length > 0 && (
-          <div className="col-span-1 mb-4">
-            <h3 className="mb-2">Select an image to update</h3>
-            <div className="flex flex-wrap gap-2">
-              {thumbs.map((thumb, i) => (
-                <div
-                  key={i}
-                  onClick={() => {
-                    setSelectedImgId(product?.images[i].public_id);
-                  }}
-                  className={`cursor-pointer border-2 ${
-                    selectedImgId &&
-                    product?.images[i]?.public_id === selectedImgId
-                      ? "border-primary rounded"
-                      : "border-transparent"
-                  }`}
-                >
-                  {thumb}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+    <form onSubmit={handleSubmit} className="w-full font-inter space-y-5">
 
-        {/* Image Upload Area */}
-        <div
-          {...getRootProps()}
-          className={`col-span-1 border-dashed border-1 rounded-lg py-16 px-4 flex gap-2 flex-wrap cursor-pointer bg-[#f4f4f5] dark:bg-[#27272A] ${
-            isDragActive ? "border-primary" : ""
-          }`}
-        >
-          <input {...getInputProps()} />
-          {isDragActive ? (
-            <p className="text-primary">Drop files here...</p>
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center">
-              <GrCloudUpload size={20} />
-              <p className="text-gray-500">
-                Drag & drop image here, or click to select a file
-              </p>
-            </div>
-          )}
-          {selectedImage && (
-            <div className="w-48 h-48 overflow-hidden rounded">
-              <Image
-                src={URL.createObjectURL(selectedImage)}
-                alt="Selected Image"
-                className="w-full h-full object-cover"
-                width={80}
-                height={80}
-              />
-            </div>
+      {/* Step 1: Choose slot to replace or Add New */}
+      <div className="space-y-2">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none">
+          Step 1 — Select slot (replace existing or add new)
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          {/* Existing images */}
+          {product.images &&
+            product.images.map((img) => (
+              <button
+                key={img.public_id}
+                type="button"
+                onClick={() => setSelectedImgId(img.public_id)}
+                className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${
+                  selectedImgId === img.public_id
+                    ? "border-primary ring-2 ring-primary/20"
+                    : "border-border/60 hover:border-border"
+                }`}
+              >
+                <Image
+                  src={img.url}
+                  alt="product image"
+                  fill
+                  className="object-cover"
+                />
+                {selectedImgId === img.public_id && (
+                  <div className="absolute inset-0 bg-primary/15 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-primary border-2 border-white" />
+                  </div>
+                )}
+              </button>
+            ))}
+
+          {/* Add new button slot if under cap */}
+          {product.images.length < MAX_IMAGES && (
+            <button
+              type="button"
+              onClick={() => setSelectedImgId("new")}
+              className={`relative w-20 h-20 rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all ${
+                selectedImgId === "new"
+                  ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                  : "border-border/60 hover:border-border bg-muted/10 hover:bg-muted/20"
+              }`}
+            >
+              <Plus className="w-5 h-5 text-muted-foreground" />
+              <span className="text-[9px] font-bold text-muted-foreground mt-1">Add New</span>
+            </button>
           )}
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mt-8 mb-4 justify-end">
-        <Button variant="light" color="default" onPress={onClose}>
-          Close
+      {/* Step 2: Upload replacement/new image */}
+      <div className="space-y-2">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none">
+          Step 2 — Upload image file
+        </p>
+        <div
+          {...getRootProps()}
+          className={`border-2 border-dashed rounded-xl py-6 px-4 flex flex-col items-center justify-center cursor-pointer transition-all ${
+            isDragActive
+              ? "border-primary bg-primary/5"
+              : "border-border/60 hover:border-border bg-muted/10 hover:bg-muted/20"
+          }`}
+        >
+          <input {...getInputProps()} />
+          <div className="flex flex-col items-center justify-center text-center space-y-2">
+            <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
+              <Upload className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">
+                {isDragActive ? "Drop image here" : "Drag & drop or click to browse"}
+              </p>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                JPG, PNG, WEBP supported
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Preview */}
+        {previewUrl && selectedImage && (
+          <div className="flex items-center gap-3 mt-2 p-3 rounded-xl bg-muted/20 border border-border/60">
+            <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-border/60 shrink-0">
+              <Image
+                src={previewUrl}
+                alt="Selected preview"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-foreground truncate">{selectedImage.name}</p>
+              <p className="text-[10px] text-muted-foreground font-semibold">
+                {(selectedImage.size / 1024).toFixed(0)} KB
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setSelectedImage(null); setPreviewUrl(null); }}
+              className="text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center justify-end gap-2 pt-4 border-t border-border/60">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onClose}
+          className="text-xs font-semibold rounded-xl h-9 px-5 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
+        >
+          Cancel
         </Button>
         <Button
-          variant="solid"
-          color="primary"
           type="submit"
-          isDisabled={imageLoading || !selectedImgId}
-          isLoading={imageLoading}
+          disabled={updateImagesMutation.isPending || !selectedImgId || !selectedImage}
+          className="bg-primary hover:bg-primary/90 text-white text-xs font-semibold h-9 px-5 rounded-xl cursor-pointer"
         >
-          Update Image
+          {updateImagesMutation.isPending
+            ? "Uploading..."
+            : selectedImgId === "new"
+            ? "Add Image"
+            : "Replace Image"}
         </Button>
       </div>
     </form>

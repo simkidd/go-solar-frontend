@@ -1,16 +1,14 @@
-import { BlogCardList } from "@/components/BlogCard";
 import PageHeader from "@/components/PageHeader";
-import PostsList from "@/components/PostsList";
-import Search from "@/components/Search";
 import { Post } from "@/interfaces/post.interface";
 import { getPosts } from "@/lib/data";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-
-const pageTitle = "Blogs";
+import BlogPageClient from "./BlogPageClient";
 
 export const metadata: Metadata = {
-  title: pageTitle,
+  title: "Blog | GoSolar",
+  description:
+    "Stay informed with the latest solar energy guides, industry insights, calculation tips, and clean energy news from Nigeria's top engineers.",
 };
 
 const BlogsPage = async () => {
@@ -21,44 +19,17 @@ const BlogsPage = async () => {
   }
 
   return (
-    <div className="w-full font-inter">
+    <div className="w-full font-inter bg-white dark:bg-zinc-950 overflow-hidden">
       <PageHeader
-        heading="Blog"
-        className="bg-blog-bg bg-no-repeat bg-bottom bg-cover text-white"
+        badge="Knowledge Centre"
+        heading="Solar Energy Insights"
+        subtitle="Expert guides, technical articles, and practical advice on solar energy, batteries, and energy independence for Nigeria."
+        image="/images/bg/about-us.jpg"
+        minHeight="min-h-[360px]"
+        align="left"
       />
 
-      <div className="container mx-auto px-2 pt-8 lg:hidden">
-        <div className="max-w-xl">
-          <Search placeholder="Search a post..." />
-        </div>
-      </div>
-      <section className="lg:py-28 py-14 w-full">
-        <div className="container mx-auto px-2">
-          <div className="grid lg:grid-cols-4 grid-cols-1 ">
-            <div className="col-span-3">
-              <PostsList posts={posts} />
-            </div>
-
-            <div className="col-span-1 lg:pl-4 mt-8 lg:mt-0 py-4">
-              <div className="hidden lg:block mb-4">
-                <Search placeholder="Search a post..." />
-              </div>
-
-              <div className="w-full">
-                <h2 className="text-lg font-semibold mb-6 w-fit relative before:absolute before:-bottom-2 before:w-12 before:h-[2px] before:bg-primary">
-                  Recent Post
-                </h2>
-
-                <div className="w-full flex flex-col space-y-2">
-                  {posts?.slice(0, 3).map((item) => (
-                    <BlogCardList key={item?._id} item={item} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <BlogPageClient initialPosts={posts} />
     </div>
   );
 };

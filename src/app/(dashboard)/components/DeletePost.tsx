@@ -1,37 +1,33 @@
 "use client";
+import React, { useState } from "react";
 import { Post } from "@/interfaces/post.interface";
-import { useBlogStore } from "@/lib/stores/blog.store";
-import { Button, useDisclosure } from "@heroui/react";
+import { useDeleteBlogPostMutation } from "@/hooks/mutations/useBlogMutations";
+import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
 import AppModal from "../../../components/AppModal";
 
 const DeletePost: React.FC<{ post: Post }> = ({ post }) => {
-  const {
-    isOpen: isDeleteModalOpen,
-    onOpen: onDeleteModalOpen,
-    onOpenChange: onDeleteModalOpenChange,
-    onClose: onDeleteModalClose,
-  } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <AppModal
-        isOpen={isDeleteModalOpen}
-        onOpenChange={onDeleteModalOpenChange}
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
         title="Confirmation"
         isDismissable={false}
         hideCloseButton
       >
-        <DeletePopup onClose={onDeleteModalClose} post={post} />
+        <DeletePopup onClose={() => setIsOpen(false)} post={post} />
       </AppModal>
-      <button
-        className="text-red-500 px-4 py-2 text-sm flex items-center"
-        onClick={() => onDeleteModalOpen()}
+      <Button
+        variant="destructive"
+        onClick={() => setIsOpen(true)}
+        className="gap-2"
       >
-        <Trash className="mr-2" size={16} />
+        <Trash className="h-4 w-4" />
         Delete
-      </button>
+      </Button>
     </>
   );
 };
@@ -42,39 +38,27 @@ export const DeletePopup: React.FC<{
   post: Post;
   onClose: () => void;
 }> = ({ post, onClose }) => {
-  const { loading, deletePost } = useBlogStore();
-  const router = useRouter();
+  const deleteBlogMutation = useDeleteBlogPostMutation({ onSuccess: onClose });
 
-  const handleDelete = async () => {
-    await deletePost(post?._id);
-    onClose();
-    router.push("/admin/blogs");
+  const handleDelete = () => {
+    deleteBlogMutation.mutate(post._id);
   };
 
   return (
-    <div className="flex flex-col">
-      <p>
+    <div className="flex flex-col pt-2 font-inter">
+      <p className="text-sm text-zinc-600 dark:text-zinc-300">
         Are you sure you want to delete <b>{post?.title}</b>?
       </p>
       <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-        <Button
-          variant="light"
-          color="default"
-          className="rounded-md"
-          onPress={onClose}
-        >
+        <Button variant="ghost" onClick={onClose} className="dark:text-zinc-300">
           Cancel
         </Button>
         <Button
-          variant="solid"
-          color="danger"
-          type="submit"
-          className="rounded-md "
-          isDisabled={loading}
-          isLoading={loading}
-          onPress={handleDelete}
+          variant="destructive"
+          disabled={deleteBlogMutation.isPending}
+          onClick={handleDelete}
         >
-          Delete
+          {deleteBlogMutation.isPending ? "Deleting..." : "Delete"}
         </Button>
       </div>
     </div>

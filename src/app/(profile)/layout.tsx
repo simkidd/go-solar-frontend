@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
 import HeaderShop from "../(ecommerce)/components/shop/HeaderShop";
-import "../globals.scss";
+import "../globals.css";
 import { Providers } from "../providers";
 import ProfileSidebar from "./components/ProfileSidebar";
 import Footer from "@/components/Footer";
@@ -37,13 +37,15 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={<LoadingSpinner />}>
             <HeaderShop />
-            <div className="min-h-screen light bg-[#f1f1f1] dark:bg-[#2a2b2f]">
-              <div className="w-full container max-w-[1100px] mx-auto px-2 py-4 grid grid-cols-1 lg:grid-cols-4 gap-5">
+            <div className="min-h-screen bg-muted/30 dark:bg-zinc-950/40 text-foreground transition-colors duration-300 py-8">
+              <div className="w-full container max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <div className="col-span-1">
                   <ProfileSidebar />
                 </div>
-                <main className="w-full lg:col-span-3 light bg-white dark:bg-[#222327] font-dmsans min-h-[70dvh]">
-                  {children}
+                <main className="w-full lg:col-span-3 bg-card border border-border/80 shadow-xs rounded-2xl p-6 min-h-[70dvh] flex flex-col justify-between">
+                  <div className="w-full">
+                    {children}
+                  </div>
                 </main>
               </div>
             </div>

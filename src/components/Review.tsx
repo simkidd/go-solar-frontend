@@ -1,121 +1,49 @@
 "use client";
+
+import React from "react";
 import { ReviewData } from "@/data/reviews";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { BiSolidQuoteAltRight } from "react-icons/bi";
+import { Star, User } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Review = () => {
-  const [selected, setSelected] = useState(0);
-  const reviewLength = ReviewData?.length || 0;
-
-  const transition = { type: "spring", duration: 3 };
-
-  const handleLeftArrow = () => {
-    setSelected((prev) => (prev === 0 ? reviewLength - 1 : prev - 1));
-  };
-
-  const handleRightArrow = () => {
-    setSelected((prev) => (prev === reviewLength - 1 ? 0 : prev + 1));
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSelected((prev) => (prev === reviewLength - 1 ? 0 : prev + 1));
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [reviewLength]);
+  // Use 4 reviews for a clean 4-column layout matching reference structure
+  const featuredReviews = ReviewData.slice(0, 4);
 
   return (
-    <div>
-      <div className="flex items-center justify-end gap-2 w-full mb-4">
-        <button
-          className="size-10 flex items-center justify-center border border-gray-500 hover:text-primary"
-          onClick={handleLeftArrow}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-3xl overflow-hidden border border-border shadow-xs font-inter">
+      {featuredReviews.map((rev, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: index * 0.1 }}
+          viewport={{ once: true }}
+          className="bg-card text-card-foreground p-8 flex flex-col justify-between h-[340px] hover:bg-secondary/40 transition-all duration-300 group cursor-default"
         >
-          <ArrowLeft />
-        </button>
-        <button
-          className="size-10 flex items-center justify-center border border-gray-500 hover:text-primary"
-          onClick={handleRightArrow}
-        >
-          <ArrowRight />
-        </button>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 w-full">
-        <div className="col-span-1 relative hidden lg:flex">
-          <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={transition}
-            className="w-[80%] h-[90%] absolute bottom-0 right-8 bg-gray-500"
-            key={selected}
-          >
-            <Image
-              src={ReviewData[selected]?.image}
-              alt="author image"
-              className="w-full h-full object-cover"
-              width={300}
-              height={300}
-            />
-          </motion.div>
-          <div className="absolute top-0 right-0 w-1/2 h-full light bg-[#f1f1f1] dark:bg-[#2a2b2f] z-[-1]"></div>
-        </div>
-
-        <div
-          key={selected}
-          className="col-span-2 lg:px-12 px-2 py-8 light bg-[#f1f1f1] dark:bg-[#2a2b2f]"
-        >
-          <div className="mb-4 text-primary">
-            <BiSolidQuoteAltRight size={50} />
+          {/* Star Rating */}
+          <div className="">
+            {/* Feedback Content */}
+            <blockquote className="text-xs sm:text-sm text-muted-foreground group-hover:text-foreground leading-relaxed font-semibold italic">
+              "{rev.content}"
+            </blockquote>
           </div>
-          <div className="mb-4 pl-4 border-l-4 border-l-primary">
-            <h4 className="text-2xl">
-              Be part of the green energy movement with GoSolar.
-            </h4>
-          </div>
-          <motion.p
-            className="mb-8"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={transition}
-          >
-            {ReviewData[selected]?.content}
-          </motion.p>
 
-          <motion.div
-            className="flex items-center"
-            key={selected}
-            initial={{ opacity: 0, y: -100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            transition={{ ...transition, duration: 2 }}
-          >
-            <div className="rounded-full size-12 bg-gray-500 mr-4 lg:hidden overflow-hidden">
-              <Image
-                src={ReviewData[selected]?.image}
-                alt="author image"
-                className="w-full h-full object-cover"
-                width={300}
-                height={300}
-              />
+          {/* Reviewer Meta info */}
+          <div className="flex items-center gap-3 pt-6 border-t border-border transition-colors">
+            <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground shrink-0 border border-border">
+              <User className="h-4.5 w-4.5 text-muted-foreground group-hover:text-primary" />
             </div>
-            <div className="flex flex-col">
-              <h6
-                className="text-lg text-primary leading-snug font-semibold"
-                key={selected}
-              >
-                {ReviewData[selected]?.name}
-              </h6>
-              <p className="text-sm">{ReviewData[selected]?.role}</p>
+            <div className="space-y-0.5">
+              <h5 className="font-extrabold text-xs text-foreground group-hover:text-primary transition-colors leading-snug">
+                {rev.name}
+              </h5>
+              <p className="text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
+                {rev.role}
+              </p>
             </div>
-          </motion.div>
-        </div>
-      </div>
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 };

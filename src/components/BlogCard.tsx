@@ -40,7 +40,7 @@ export const BlogCardAdmin: React.FC<{
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="w-full">
-        <Link href={`/admin/blogs/${post?._id}`}>
+        <Link href={`/dashboard/blogs/${post?._id}`}>
           <div className="w-full h-[142px] bg-gray-500 overflow-hidden rounded-t-lg">
             <Image
               src={post?.image}
@@ -58,14 +58,14 @@ export const BlogCardAdmin: React.FC<{
         </div>
         <div className="py-4 px-2 w-full">
           <div className="text-primary text-xl mb-2">
-            <Link href={`/admin/blogs/${post?._id}`}>
+            <Link href={`/dashboard/blogs/${post?._id}`}>
               <p>{post?.title}</p>
             </Link>
           </div>
           <p className="text-ellipsis line-clamp-2 mb-4 dark:text-white">
             {post?.content}
           </p>
-          <Link href={`/admin/blogs/${post?._id}`} className="text-primary">
+          <Link href={`/dashboard/blogs/${post?._id}`} className="text-primary">
             Read More
           </Link>
         </div>

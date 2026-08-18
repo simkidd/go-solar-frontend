@@ -5,39 +5,53 @@ export interface IImage {
   public_id: string;
 }
 
+export interface DatasheetRow {
+  key: string;
+  value: string;
+}
+
 export interface Product {
   _id: string;
   name: string;
   slug: string;
   description: string;
   price: number;
+  discountPrice?: number;
+  shippingClass?: "standard" | "medium" | "heavy_freight";
   category: Category;
   additionalInfo: string;
   quantityInStock: number;
   images: IImage[];
   brand: string;
-  outsideLocationDeliveryFee: number;
-  withinLocationDeliveryFee: number;
+  outsideLocationDeliveryFee?: number;
+  withinLocationDeliveryFee?: number;
   createdAt: string;
   updatedAt: string;
   isPublished: boolean;
   isDeleted: boolean;
-  currentOffer: Offer;
+  currentOffer?: Offer;
+  datasheet: DatasheetRow[];
+  showDatasheet: boolean;
+  productCode?: string;
 }
 
 export interface CreateProductInput {
   name: string;
   description: string;
   price: number;
+  discountPrice?: number;
+  shippingClass?: "standard" | "medium" | "heavy_freight";
   category: string;
   additionalInfo: string;
   quantityInStock: number;
   images: string[] | File[];
   brand: string;
-  outsideLocationDeliveryFee: number;
-  withinLocationDeliveryFee: number;
+  outsideLocationDeliveryFee?: number;
+  withinLocationDeliveryFee?: number;
   isPublished: boolean;
   currentOffer?: string;
+  datasheet: DatasheetRow[];
+  showDatasheet: boolean;
 }
 
 export interface UpdateProductInput {
@@ -45,6 +59,8 @@ export interface UpdateProductInput {
   name?: string;
   description?: string;
   price?: number;
+  discountPrice?: number;
+  shippingClass?: "standard" | "medium" | "heavy_freight";
   category?: string;
   additionalInfo?: string;
   quantityInStock?: number;
@@ -53,6 +69,8 @@ export interface UpdateProductInput {
   withinLocationDeliveryFee?: number;
   isPublished?: boolean;
   currentOffer?: string;
+  datasheet?: DatasheetRow[];
+  showDatasheet?: boolean;
 }
 
 export interface Category {
@@ -60,6 +78,7 @@ export interface Category {
   name: string;
   slug: string;
   description: string;
+  parent?: { _id: string; name: string; slug: string } | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -128,4 +147,26 @@ export interface UpdateOfferInput extends CreateOfferInput {
 export interface AddOfferProductDTO {
   products: string[];
   offer: string;
+}
+
+export interface IPagination {
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
+export interface PaginatedProductsResponse {
+  success: boolean;
+  message: string;
+  products: Product[];
+  pagination: IPagination;
+  brands?: string[];
+}
+
+export interface PaginatedCategoriesResponse {
+  success: boolean;
+  message: string;
+  categories: Category[];
+  pagination: IPagination;
 }

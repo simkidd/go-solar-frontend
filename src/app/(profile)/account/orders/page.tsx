@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 
 const UserOrdersPage = () => {
   return (
-    <div className="container mx-auto px-4 py-4">
-      <h2 className="flex items-center text-2xl font-bold mb-6">
+    <div className="space-y-6">
+      <h2 className="flex items-center text-xl font-black uppercase tracking-wider text-zinc-900 dark:text-white">
         <span>My Orders</span>
       </h2>
       <UserOrders />

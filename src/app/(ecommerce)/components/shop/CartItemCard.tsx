@@ -1,75 +1,99 @@
 "use client";
+
+import React from "react";
 import useCartStore, { CartItem } from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
-import { Button } from "@heroui/react";
-import { Minus, Plus, Trash } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
   const { increaseQuantity, decreaseQuantity, removeItem } = useCartStore();
 
   return (
-    <div className="w-full p-4">
-      <div className="grid grid-cols-[80px_auto] gap-4">
-        <div className="size-20 rounded-md overflow-hidden">
+    <div className="w-full py-5 border-b border-border/60 first:pt-0">
+      <div className="flex gap-4">
+        
+        {/* Item Image */}
+        <div className="h-16 w-16 min-w-[64px] rounded-xl overflow-hidden border border-border/80 relative bg-muted shrink-0 select-none">
           <Image
-            src={cartItem?.product?.images[0]?.url}
+            src={cartItem?.product?.images?.[0]?.url || "/placeholder-product.jpg"}
             alt={cartItem?.product?.name}
-            className="w-full h-full object-cover"
-            width={70}
-            height={70}
+            fill
+            className="object-cover"
           />
         </div>
-        <div className="w-full flex gap-1">
-          <div className="w-3/4">
-            <Link href={`/product/${cartItem?.product?.slug}`}>
-              <h3 className="text-base font-bold">{cartItem.product.name}</h3>
+
+        {/* Item Details */}
+        <div className="flex-1 flex flex-col justify-between min-w-0">
+          
+          <div className="space-y-0.5">
+            <Link href={`/products/${cartItem?.product?.slug}`} className="group">
+              <h3 className="text-xs font-extrabold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                {cartItem.product.name}
+              </h3>
             </Link>
-            <p className="text-sm text-gray-600 text-ellipsis line-clamp-1 my-1">
+            <p className="text-[10px] text-muted-foreground line-clamp-1">
               {cartItem.product.description}
             </p>
           </div>
-          <div className="w-auto ms-auto">
-            <p className="font-semibold">
-              {formatCurrency(cartItem?.product?.price, "NGN")}
+
+          <div className="flex items-center justify-between gap-2 mt-2">
+            
+            <p className="font-black text-xs text-primary">
+              {formatCurrency(
+                cartItem?.product?.discountPrice && cartItem?.product?.discountPrice > 0
+                  ? cartItem.product.discountPrice
+                  : cartItem?.product?.price,
+                "NGN"
+              )}
             </p>
+
+            <div className="flex items-center gap-2">
+              
+              {/* Quantity actions */}
+              <div className="flex items-center gap-1.5 border border-border/80 p-0.5 rounded-lg bg-card select-none">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => cartItem.qty > 1 && decreaseQuantity(cartItem?.product?._id)}
+                  disabled={cartItem?.qty <= 1}
+                  className="h-6 w-6 rounded-md hover:bg-muted"
+                >
+                  <Minus className="h-2.5 w-2.5" />
+                </Button>
+                <span className="text-[11px] font-black text-foreground px-1">{cartItem?.qty}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    if (cartItem.qty < cartItem.product.quantityInStock) {
+                      increaseQuantity(cartItem?.product?._id);
+                    }
+                  }}
+                  disabled={cartItem.qty >= cartItem.product.quantityInStock}
+                  className="h-6 w-6 rounded-md hover:bg-muted"
+                >
+                  <Plus className="h-2.5 w-2.5" />
+                </Button>
+              </div>
+
+              {/* Remove Action */}
+              <button
+                onClick={() => removeItem(cartItem?.product?._id)}
+                className="text-[9px] font-black uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors flex items-center gap-1 cursor-pointer h-7 px-2 rounded-lg hover:bg-rose-500/5"
+              >
+                <Trash2 className="h-3 w-3" />
+                Remove
+              </button>
+
+            </div>
+
           </div>
+
         </div>
-      </div>
-      <div className="w-full flex items-center justify-between mt-2">
-        <button
-          className="flex items-center text-red-500 hover:text-red-700 transition"
-          onClick={() => removeItem(cartItem?.product?._id)}
-        >
-          <Trash size={16} className="mr-1" />
-          Remove
-        </button>
-        <div className="flex items-center">
-          <Button
-            isIconOnly
-            className="disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center  bg-primary text-white"
-            onPress={() =>
-              cartItem.qty > 1 && decreaseQuantity(cartItem?.product?._id)
-            }
-            disabled={cartItem?.qty <= 1}
-          >
-            <Minus size={18} />
-          </Button>
-          <span className="px-4 text-sm">{cartItem?.qty}</span>
-          <Button
-            isIconOnly
-            className=" flex items-center justify-center  bg-primary text-white disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed"
-            disabled={cartItem.qty >= cartItem.product.quantityInStock}
-            onPress={() => {
-              if (cartItem.qty < cartItem.product.quantityInStock)
-                increaseQuantity(cartItem?.product?._id);
-            }}
-          >
-            <Plus size={18} />
-          </Button>
-        </div>
+
       </div>
     </div>
   );

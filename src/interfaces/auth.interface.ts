@@ -3,13 +3,12 @@ export interface LoginInput {
   password: string;
 }
 export interface SignUpInput {
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
-  fullname: string;
   phonenumber: string;
-  confirmPassword: string,
+  confirmPassword: string;
 }
 
 export interface User {
@@ -22,6 +21,8 @@ export interface User {
   isSuperAdmin: boolean;
   isAdmin: boolean;
   is_verified: boolean;
+  roleTitle?: string;
+  lastLogin?: string | Date;
   createdAt: Date;
   updatedAt: Date;
   token?: string;
@@ -37,6 +38,19 @@ export interface LoginResponse {
 
 export interface EmailInput {
   email: string;
+}
+
+export interface ForgetPasswordInput {
+  email: string;
+}
+
+export interface ResetPasswordInput {
+  password: string;
+  token?: string;
+}
+
+export interface VerifyAccountInput {
+  token: string;
 }
 
 export interface ChangePasswordInput {

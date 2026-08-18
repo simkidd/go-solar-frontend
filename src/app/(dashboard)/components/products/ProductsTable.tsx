@@ -1,669 +1,641 @@
 "use client";
-import AppModal from "@/components/AppModal";
+
 import useCategories from "@/hooks/useCategories";
-import useProducts from "@/hooks/useProducts";
-import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
-import { useProductStore } from "@/lib/stores/product.store";
+import { Product } from "@/interfaces/product.interface";
 import { formatCurrency, formatDate } from "@/utils/helpers";
+import { useDeleteProductMutation } from "@/hooks/mutations/useProductMutations";
+import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
+import { useAllProductsQuery } from "@/hooks/queries/useProductsQuery";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  Button,
-  Card,
-  CardBody,
-  Chip,
-  Dropdown,
-  DropdownItem,
   DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Pagination,
-  Select,
-  Selection,
-  SelectItem,
-  SortDescriptor,
-  Spinner,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Table,
   TableBody,
   TableCell,
-  TableColumn,
+  TableHead,
   TableHeader,
   TableRow,
-  useDisclosure,
-} from "@heroui/react";
+} from "@/components/ui/table";
 import {
-  ChevronDownIcon,
-  EllipsisVertical,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  ChevronDown,
+  ChevronUp,
+  MoreVertical,
   Eye,
-  RefreshCcw,
-  SearchIcon,
+  EyeOff,
+  RefreshCw,
+  Search,
   Trash,
-  Trash2,
+  Package,
+  AlertTriangle,
+  ImageOff,
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import CreateProductButton from "./CreateProductButton";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateProduct } from "@/lib/api/products";
+import { toast } from "sonner";
+import { PRODUCT_KEYS } from "@/hooks/queries/useProductsQuery";
 
 const columns = [
-  {
-    name: "Product",
-    uid: "name",
-    minWidth: 400,
-    sortable: true,
-  },
-  {
-    name: "Price",
-    uid: "price",
-    minWidth: 150,
-    sortable: true,
-  },
-  {
-    name: "Discount",
-    uid: "discount",
-    minWidth: 150,
-    sortable: true,
-  },
-  {
-    name: "Quantity",
-    uid: "quantity",
-  },
-  {
-    name: "Offer",
-    uid: "offer",
-  },
-  {
-    name: "Category",
-    uid: "category",
-  },
-  {
-    name: "Brand",
-    uid: "brand",
-  },
-  {
-    name: "Status",
-    uid: "status",
-    sortable: true,
-  },
-  {
-    name: "Date added",
-    uid: "dateAdded",
-    minWidth: 150,
-    sortable: true,
-  },
-  {
-    name: "Actions",
-    uid: "actions",
-    minWidth: 80,
-  },
+  { name: "Product Info", uid: "name" },
+  { name: "Unit Price", uid: "price" },
+  { name: "Quantity", uid: "quantity" },
+  { name: "Campaign Discount", uid: "discount" },
+  { name: "Category", uid: "category" },
+  { name: "Publishing Status", uid: "status" },
+  { name: "Date Added", uid: "dateAdded" },
+  { name: "Actions", uid: "actions" },
 ];
 
 const ProductsTable = () => {
-  const { loading, deleteProduct, addToOffer, offers } = useProductStore();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [visibleColumns, setVisibleColumns] = useState<Selection>(
-    new Set(columns.map((col) => col.uid))
-  );
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
-  const [page, setPage] = useState(1);
-  const [publishFilter, setPublishFilter] = useState(
-    searchParams.get("published") || "All"
-  );
-  const [categoryFilter, setCategoryFilter] = useState(
-    searchParams.get("category") || "All"
-  );
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [input, setInput] = useState<AddOfferProductDTO>({
-    offer: "",
-    products: [],
+  const { data: offers = [] } = useAllOffersQuery();
+  const deleteProductMutation = useDeleteProductMutation({
+    onSuccess: () => {
+      setIsDeleteDialogOpen(false);
+      setSelectedProduct(null);
+    },
   });
 
+  const queryClient = useQueryClient();
+  const togglePublishMutation = useMutation({
+    mutationFn: updateProduct,
+    onSuccess: (data) => {
+      toast.success(
+        data?.product?.isPublished
+          ? "Product published successfully"
+          : "Product set to draft successfully",
+      );
+      queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
+      setIsPublishDialogOpen(false);
+      setSelectedProduct(null);
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to update status");
+    },
+  });
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const router = useRouter();
+
+  const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
+  const [page, setPage] = useState(1);
+
+  const [publishFilter, setPublishFilter] = useState(
+    searchParams.get("published") || "All",
+  );
+  const [categoryFilter, setCategoryFilter] = useState(
+    searchParams.get("category") || "All",
+  );
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const { products, isError, isLoading, refetch } = useProducts();
   const { categories } = useCategories();
+  const selectedCategoryObj = categories.find((c) => c.name === categoryFilter);
 
-  const headerColumns = useMemo(() => {
-    if (visibleColumns === "all") return columns;
+  const {
+    data: productsRes,
+    isLoading,
+    refetch,
+  } = useAllProductsQuery({
+    page,
+    limit: 10,
+    q: filterValue,
+    status: publishFilter,
+    category: selectedCategoryObj ? selectedCategoryObj._id : "All",
+  });
 
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns]);
+  const products = productsRes?.products || [];
+  const pagination = productsRes?.pagination || { total: 0, pages: 1 };
 
-  const filteredItems = useMemo(() => {
-    let filteredProducts = [...products];
-
-    if (hasSearchFilter) {
-      filteredProducts = filteredProducts.filter((product) =>
-        product?.name.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
-
-    if (publishFilter !== "All") {
-      filteredProducts = filteredProducts.filter((product) =>
-        publishFilter === "published"
-          ? product.isPublished
-          : !product.isPublished
-      );
-    }
-
-    if (categoryFilter !== "All") {
-      filteredProducts = filteredProducts.filter((product) =>
-        product?.category?.name
-          .toLowerCase()
-          .includes(categoryFilter.toLowerCase())
-      );
-    }
-
-    return filteredProducts;
-  }, [products, filterValue, publishFilter, categoryFilter]);
-
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
-
-  const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
-
-  const sortedItems = useMemo(() => {
-    const sorted = [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column as keyof typeof a];
-      const second = b[sortDescriptor.column as keyof typeof b];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-
-    return sorted;
-  }, [sortDescriptor, items]);
-
-  const renderCell = useCallback((product: Product, columnKey: React.Key) => {
-    switch (columnKey) {
-      case "name":
-        return (
-          <div className="grid grid-cols-[55px_auto] gap-2 w-full py-2">
-            <div className="w-10 h-10">
-              <Image
-                src={product?.images[0].url}
-                alt={product?.name}
-                width={80}
-                height={80}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <span className="text-wrap">{product?.name}</span>
-          </div>
-        );
-      case "price":
-        return <div>{formatCurrency(product?.price, "NGN")}</div>;
-      case "discount":
-        return (
-          <div>
-            {product?.currentOffer?.isActive &&
-              product?.currentOffer?.percentageOff && (
-                <Chip color="success" variant="flat" size="sm">
-                  {product?.currentOffer?.percentageOff}% Off
-                </Chip>
-              )}
-          </div>
-        );
-      case "quantity":
-        return <div>{product?.quantityInStock}</div>;
-      case "offer":
-        return <div>{product?.currentOffer?.name}</div>;
-      case "category":
-        return <div>{product?.category?.name}</div>;
-      case "brand":
-        return <div>{product?.brand}</div>;
-      case "status":
-        return (
-          <Chip
-            color={product.isPublished ? "success" : "default"}
-            variant="flat"
-            size="sm"
-          >
-            {product.isPublished ? "Published" : "Draft"}
-          </Chip>
-        );
-      case "dateAdded":
-        return <div>{formatDate(product?.createdAt)}</div>;
-      case "actions":
-        return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <EllipsisVertical className="text-default-300" size={16} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem
-                  key={"view_details"}
-                  startContent={<Eye size={16} />}
-                  onPress={() => router.push(`/admin/products/${product?._id}`)}
-                >
-                  View details
-                </DropdownItem>
-                <DropdownItem
-                  key={"edit_product"}
-                  onPress={() => {
-                    setSelectedProduct(product);
-                    onOpen();
-                  }}
-                  startContent={<Trash size={16} />}
-                >
-                  Delete
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return null;
-    }
-  }, []);
+  const pages = pagination.pages;
 
   const handleDelete = () => {
     if (selectedProduct) {
-      deleteProduct(selectedProduct?._id);
-      router.refresh();
-      onClose();
+      deleteProductMutation.mutate(selectedProduct._id);
     }
   };
 
-  const onRowsPerPageChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
+  const onSearchChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set("q", value);
+      setFilterValue(value);
       setPage(1);
-    },
-    []
-  );
-
-  const onSearchChange = useCallback(
-    (value?: string) => {
-      const params = new URLSearchParams(searchParams);
-      if (value) {
-        params.set("q", value);
-        setFilterValue(value);
-        setPage(1);
-      } else {
-        params.delete("q");
-        setFilterValue("");
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onClear = useCallback(() => {
-    setFilterValue("");
-    setPage(1);
-  }, []);
-
-  const onPublishFilterChange = useCallback(
-    (keys: Selection) => {
-      const selectedStatus = Array.from(keys).join(", ");
-      const params = new URLSearchParams(searchParams);
-      if (selectedStatus) {
-        params.set("status", selectedStatus);
-        setPublishFilter(selectedStatus);
-      } else {
-        params.delete("status");
-        setPage(1);
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onCatFilterChange = useCallback(
-    (keys: Selection) => {
-      const selectedCat = Array.from(keys).join(", ");
-      const params = new URLSearchParams(searchParams);
-      if (selectedCat) {
-        params.set("category", selectedCat);
-        setCategoryFilter(selectedCat);
-      } else {
-        params.delete("category");
-        setPage(1);
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onResetFilters = useCallback(() => {
-    setFilterValue("");
-    setPublishFilter("All");
-    setPage(1);
-    setCategoryFilter("All");
-    const params = new URLSearchParams();
+    } else {
+      params.delete("q");
+      setFilterValue("");
+    }
     router.replace(`${pathname}?${params.toString()}`);
-  }, [pathname, router]);
-
-  const handleAddOffer = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Convert selectedKeys (Set of Key) to an array of strings
-    const productIds = Array.from(selectedKeys).map((key: any) =>
-      // Ensure the key is a string before adding
-      typeof key === "string" ? key : key.toString()
-    );
-    const offerPayload: AddOfferProductDTO = {
-      offer: input.offer,
-      products: productIds,
-    };
-
-    await addToOffer(offerPayload);
-    router.refresh();
-    onClose();
   };
 
-  const topContent = useMemo(() => {
-    const hasFilters =
-      filterValue || publishFilter !== "All" || categoryFilter !== "All";
+  const onPublishFilterChange = (status: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (status && status !== "All") {
+      params.set("status", status);
+      setPublishFilter(status);
+    } else {
+      params.delete("status");
+      setPublishFilter("All");
+    }
+    setPage(1);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end lg:flex-row flex-col">
-          <Input
-            isClearable
-            className="w-full lg:max-w-[44%]"
-            classNames={{
-              input: ["bg-transparent"],
-              innerWrapper: "bg-transparent ",
-              inputWrapper: [
-                "border-1",
-                "bg-white",
-                "dark:bg-[#222327]",
-                "hover:bg-default-200/70",
-                "focus-within:!bg-default-200/50",
-                "dark:hover:bg-default/70",
-                "dark:focus-within:!bg-default/60",
-              ],
-            }}
-            variant="bordered"
-            placeholder="Search..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-          <div className="flex items-center gap-3">
-            {hasFilters && (
-              <Button variant="flat" color="danger" onPress={onResetFilters}>
+  const onCatFilterChange = (category: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (category && category !== "All") {
+      params.set("category", category);
+      setCategoryFilter(category);
+    } else {
+      params.delete("category");
+      setCategoryFilter("All");
+    }
+    setPage(1);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  const onResetFilters = () => {
+    setFilterValue("");
+    setPublishFilter("All");
+    setCategoryFilter("All");
+    setPage(1);
+    router.replace(pathname);
+  };
+
+  return (
+    <div className="w-full space-y-5 font-inter">
+      {/* Delete confirmation dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+          <DialogHeader>
+            <DialogTitle className="text-foreground font-extrabold text-base">
+              Delete Product
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed font-semibold">
+              Are you sure you want to delete <b>{selectedProduct?.name}</b>?
+              This action cannot be undone and will remove it from the online
+              store.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4 flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setIsDeleteDialogOpen(false)}
+              className="text-xs font-semibold rounded-xl cursor-pointer text-muted-foreground hover:text-foreground"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteProductMutation.isPending}
+              className="text-xs font-semibold rounded-xl cursor-pointer"
+            >
+              {deleteProductMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Publish confirmation dialog */}
+      <Dialog open={isPublishDialogOpen} onOpenChange={setIsPublishDialogOpen}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle className="text-foreground font-extrabold text-base">
+              {selectedProduct?.isPublished
+                ? "Draft Product"
+                : "Publish Product"}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed font-semibold">
+              Are you sure you want to change the status of{" "}
+              <b>{selectedProduct?.name}</b> to{" "}
+              <b>{selectedProduct?.isPublished ? "Draft" : "Published"}</b>?
+              This will affect its visibility on the public storefront.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4 flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setIsPublishDialogOpen(false)}
+              className="text-xs font-semibold rounded-xl cursor-pointer text-muted-foreground hover:text-foreground"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedProduct) {
+                  togglePublishMutation.mutate({
+                    productId: selectedProduct._id,
+                    isPublished: !selectedProduct.isPublished,
+                  });
+                }
+              }}
+              disabled={togglePublishMutation.isPending}
+              className="text-xs font-semibold rounded-xl cursor-pointer bg-primary hover:bg-primary/90 text-white"
+            >
+              {togglePublishMutation.isPending
+                ? "Processing..."
+                : selectedProduct?.isPublished
+                  ? "Set as Draft"
+                  : "Publish"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Top Action Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+        <div>
+          <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
+            <Package className="h-5 w-5 text-primary" />
+            Product Inventory
+          </h2>
+          <p className="text-xs text-muted-foreground font-semibold mt-0.5">
+            Manage storefront products, brand listings, pricing levels, and
+            quantity stock levels.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            className="gap-2 border-border text-muted-foreground hover:text-foreground h-9 rounded-xl text-xs font-semibold cursor-pointer hover:bg-muted/30"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Refresh
+          </Button>
+
+          <CreateProductButton />
+        </div>
+      </div>
+
+      {/* Search & Filters */}
+      <div className="flex flex-col gap-4 bg-card text-card-foreground p-5 rounded-2xl border border-border/80 shadow-xs">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+            <Input
+              placeholder="Search products..."
+              value={filterValue}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="pl-10 bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {(hasSearchFilter ||
+              publishFilter !== "All" ||
+              categoryFilter !== "All") && (
+              <Button
+                variant="ghost"
+                onClick={onResetFilters}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50/50 dark:hover:bg-red-950/10 text-xs font-semibold rounded-xl cursor-pointer"
+              >
                 Reset
               </Button>
             )}
 
-            <Dropdown>
-              <DropdownTrigger>
+            {/* Categories filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
-                  variant="flat"
-                  className="truncate"
-                  endContent={<ChevronDownIcon className="text-small" />}
+                  variant="outline"
+                  className="border-border text-xs font-semibold rounded-xl h-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
                 >
                   {categoryFilter === "All" ? "All Categories" : categoryFilter}
+                  <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
                 </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Select Category"
-                disallowEmptySelection
-                variant="flat"
-                selectionMode="single"
-                selectedKeys={categoryFilter}
-                onSelectionChange={onCatFilterChange}
-              >
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="max-h-60 overflow-y-auto w-48 rounded-xl bg-card border border-border/80">
+                <DropdownMenuItem
+                  onClick={() => onCatFilterChange("All")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  All Categories
+                </DropdownMenuItem>
                 {categories.map((category) => (
-                  <DropdownItem key={category?.name}>
+                  <DropdownMenuItem
+                    key={category?._id}
+                    onClick={() => onCatFilterChange(category?.name)}
+                    className="cursor-pointer text-xs font-bold"
+                  >
                     {category?.name}
-                  </DropdownItem>
+                  </DropdownMenuItem>
                 ))}
-              </DropdownMenu>
-            </Dropdown>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-            <Dropdown>
-              <DropdownTrigger>
+            {/* Status filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
+                  variant="outline"
+                  className="border-border text-xs font-semibold rounded-xl h-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
                 >
-                  {publishFilter}
+                  {publishFilter === "All"
+                    ? "All Status"
+                    : publishFilter === "published"
+                      ? "Published"
+                      : "Draft"}
+                  <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
                 </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Published"
-                disallowEmptySelection
-                selectionMode="single"
-                selectedKeys={publishFilter}
-                onSelectionChange={onPublishFilterChange}
-              >
-                <DropdownItem key="All">All</DropdownItem>
-                <DropdownItem key="published">Published</DropdownItem>
-                <DropdownItem key="draft">Draft</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-36 rounded-xl bg-card border border-border/80">
+                <DropdownMenuItem
+                  onClick={() => onPublishFilterChange("All")}
+                  className="cursor-pointer text-xs font-bold"
                 >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+                  All Status
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onPublishFilterChange("published")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Published
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onPublishFilterChange("draft")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Draft
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {products.length} products
-          </span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
+
+        {/* Counter and row switcher */}
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+          <span>Total {products.length} products listed</span>
+        </div>
+      </div>
+
+      {/* Main Table */}
+      <div className="bg-card text-card-foreground rounded-2xl border border-border/80 shadow-xs overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
+              {columns.map((col) => (
+                <TableHead
+                  key={col.uid}
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none ${
+                    col.uid === "actions" ? "text-right" : ""
+                  }`}
+                >
+                  {col.name}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-32 text-center"
+                >
+                  <div className="space-y-3 flex flex-col justify-center items-center py-8">
+                    <Skeleton className="h-5 w-4/5 rounded-md" />
+                    <Skeleton className="h-5 w-3/5 rounded-md" />
+                    <Skeleton className="h-5 w-4/5 rounded-md" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : products.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-xs text-muted-foreground font-semibold"
+                >
+                  No products found in system inventory.
+                </TableCell>
+              </TableRow>
+            ) : (
+              products.map((product) => {
+                const qty = product?.quantityInStock;
+                const isOutOfStock = qty <= 0;
+                const isLowStock = qty > 0 && qty <= 10;
+
+                return (
+                  <TableRow
+                    key={product?._id}
+                    className="border-b border-border/60 hover:bg-muted/15 transition-colors"
+                  >
+                    {/* 1. Name & Image Details Info */}
+                    <TableCell className="py-3.5 text-xs text-foreground max-w-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 min-w-[40px] rounded-xl overflow-hidden border border-border/80 relative bg-muted select-none">
+                          {product?.images?.[0]?.url ? (
+                            <Image
+                              src={product.images[0].url}
+                              alt={product?.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <ImageOff className="w-4 h-4 text-muted-foreground/30" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <span className="font-extrabold text-foreground line-clamp-1 select-all">
+                            {product?.name}
+                          </span>
+                          <div className="flex items-center gap-2 text-[9px] uppercase tracking-wider font-extrabold text-muted-foreground select-none">
+                            <span>{product?.brand || "GoSolar"}</span>
+                            {product?.category?.name && (
+                              <>
+                                <span className="text-border/80">•</span>
+                                <span className="text-primary">
+                                  {product.category.name}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    {/* 2. Unit Price */}
+                    <TableCell className="py-3.5 text-xs font-bold text-foreground monospace select-all">
+                      {formatCurrency(product?.price, "NGN")}
+                    </TableCell>
+
+                    {/* 3. Quantity Stock Alerts */}
+                    <TableCell className="py-3.5 text-xs select-none">
+                      {isOutOfStock ? (
+                        <span className="text-rose-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-1">
+                          <AlertTriangle className="h-3.5 w-3.5 fill-rose-500/10" />
+                          Out of Stock
+                        </span>
+                      ) : isLowStock ? (
+                        <span className="text-amber-500 font-extrabold uppercase text-[10px] tracking-wider flex items-center gap-1">
+                          {qty} Left (Low)
+                        </span>
+                      ) : (
+                        <span className="font-semibold text-foreground">
+                          {qty}
+                        </span>
+                      )}
+                    </TableCell>
+
+                    {/* 4. Discount */}
+                    <TableCell className="py-3.5 text-xs select-none">
+                      {product?.currentOffer?.isActive &&
+                      product?.currentOffer?.percentageOff ? (
+                        <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">
+                          {product.currentOffer.percentageOff}% Off
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground/40">-</span>
+                      )}
+                    </TableCell>
+
+                    {/* 5. Category */}
+                    <TableCell className="py-3.5 text-xs text-muted-foreground font-semibold select-none">
+                      {product?.category?.name || "-"}
+                    </TableCell>
+
+                    {/* 6. Publishing Status */}
+                    <TableCell className="py-3.5 text-xs select-none">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest border ${
+                          product.isPublished
+                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                            : "bg-muted text-muted-foreground border-border/80"
+                        }`}
+                      >
+                        {product.isPublished ? "Published" : "Draft"}
+                      </span>
+                    </TableCell>
+
+                    {/* 7. Date Added */}
+                    <TableCell className="py-3.5 text-xs text-muted-foreground font-semibold select-none">
+                      {formatDate(product?.createdAt)}
+                    </TableCell>
+
+                    {/* 8. Actions Dropdown */}
+                    <TableCell className="py-3.5 text-xs select-none">
+                      <div className="flex justify-end">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="end"
+                            className="w-36 rounded-xl bg-card border border-border/80"
+                          >
+                            <DropdownMenuItem
+                              onClick={() =>
+                                router.push(
+                                  `/dashboard/products/${product?._id}`,
+                                )
+                              }
+                              className="cursor-pointer text-xs font-bold"
+                            >
+                              <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
+                              <span>Details</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedProduct(product);
+                                setIsPublishDialogOpen(true);
+                              }}
+                              className="cursor-pointer text-xs font-bold"
+                            >
+                              {product.isPublished ? (
+                                <>
+                                  <EyeOff className="mr-2 h-4 w-4 text-muted-foreground" />
+                                  <span>Set as Draft</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
+                                  <span>Publish</span>
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedProduct(product);
+                                setIsDeleteDialogOpen(true);
+                              }}
+                              className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50/50 dark:focus:bg-red-950/10 text-xs font-bold"
+                            >
+                              <Trash className="mr-2 h-4 w-4" />
+                              <span>Delete</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      {pages > 1 && (
+        <div className="flex items-center justify-between py-2 border-t border-border/80 select-none">
+          <div className="text-xs text-muted-foreground font-semibold">
+            Page {page} of {pages}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 1}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              className="border-border text-xs font-black uppercase tracking-wider rounded-xl cursor-pointer"
             >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="30">30</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    );
-  }, [
-    filterValue,
-    visibleColumns,
-    onSearchChange,
-    onRowsPerPageChange,
-    products.length,
-    hasSearchFilter,
-    publishFilter,
-  ]);
-
-  const bottomContent = useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center md:flex-row flex-col gap-4">
-        <div className="flex gap-4 items-center">
-          <span className="text-small text-default-400">
-            {selectedKeys === "all"
-              ? "All items selected"
-              : `${selectedKeys.size} of ${filteredItems.length} selected`}
-          </span>
-          {/* {selectedKeys && (
-            <AddProductsToOffer
-              productIds={Array.from(selectedKeys) as unknown as string[]}
-            />
-          )} */}
-        </div>
-
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          initialPage={1}
-          page={page}
-          total={pages}
-          onChange={setPage}
-          classNames={{
-            wrapper: "bg-white dark:bg-[#222327]",
-            item: "bg-transparent dark:text-white",
-            prev: "bg-white dark:bg-[#222327]",
-            next: "bg-white dark:bg-[#222327]",
-            cursor: "",
-          }}
-        />
-        {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div> */}
-      </div>
-    );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["min-h-fit", "bg-white", "dark:bg-[#222327]"],
-      th: ["dark:bg-transparent"],
-      td: ["text-sm"],
-    }),
-    []
-  );
-
-  return (
-    <div className="w-full">
-      <AppModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        title="Confirmation"
-        isDismissable={false}
-        hideCloseButton
-      >
-        <div className="flex flex-col">
-          <p>
-            Are you sure you want to delete <b>{selectedProduct?.name}</b>?
-          </p>
-          <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-            <Button variant="light" color="default" onPress={onClose}>
-              Cancel
+              Previous
             </Button>
             <Button
-              variant="solid"
-              color="danger"
-              type="submit"
-              isDisabled={loading}
-              isLoading={loading}
-              onPress={handleDelete}
-              endContent={<Trash2 size={16} />}
+              variant="outline"
+              size="sm"
+              disabled={page === pages}
+              onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
+              className="border-border text-xs font-black uppercase tracking-wider rounded-xl cursor-pointer"
             >
-              Delete
+              Next
             </Button>
           </div>
         </div>
-      </AppModal>
-
-      <div className="w-full flex justify-end mb-4">
-        <Button
-          variant="solid"
-          color="warning"
-          onPress={() => refetch()}
-          startContent={<RefreshCcw size={16} />}
-          size="sm"
-        >
-          Refresh
-        </Button>
-      </div>
-
-      <Table
-        isCompact
-        aria-label="Example table with custom cells, pagination and sorting"
-        isHeaderSticky
-        bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        classNames={classNames}
-        selectedKeys={selectedKeys}
-        sortDescriptor={sortDescriptor}
-        topContent={topContent}
-        topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
-        onSortChange={setSortDescriptor}
-      >
-        <TableHeader columns={headerColumns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-              allowsSorting={column.sortable}
-              minWidth={column.minWidth}
-            >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          emptyContent={"No products found"}
-          items={sortedItems}
-          isLoading={isLoading}
-          loadingContent={
-            <Card className="dark:bg-[#222327]">
-              <CardBody className="p-6">
-                <Spinner size="lg" />
-              </CardBody>
-            </Card>
-          }
-        >
-          {(item) => (
-            <TableRow key={item?._id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      )}
     </div>
   );
 };

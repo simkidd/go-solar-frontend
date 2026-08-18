@@ -36,7 +36,7 @@ const PostSearchResults = async ({
         (word) =>
           productTitle.includes(word) ||
           productContent.includes(word) ||
-          productTags.includes(word)
+          productTags.includes(word),
       );
     });
 
@@ -48,8 +48,15 @@ const PostSearchResults = async ({
   return (
     <div className="w-full font-dmsans">
       <PageHeader
-        heading={query ? `Search results for ${query}` : pageTitle}
-        className="text-white bg-search-bg bg-no-repeat bg-center bg-cover grayscale"
+        badge="Blog Search"
+        heading={query ? `Results for "${query}"` : pageTitle}
+        subtitle={
+          query
+            ? `Showing articles matching your search term.`
+            : "Search through our solar energy guides, tips, and news."
+        }
+        image="/images/bg/blog-bg.jpg"
+        minHeight="min-h-[320px] md:min-h-[380px]"
       />
 
       <section className="w-full">

@@ -1,5 +1,5 @@
 "use client";
-import { Button, Select, SelectItem } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { SearchIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
@@ -33,24 +33,10 @@ const Search = ({ placeholder, categories }: SearchProps) => {
       }
 
       let searchRoute: string;
-      if (pathname === "/shop") {
-        searchRoute = "/product/search";
-      } else if (pathname === "/blog") {
+      if (pathname.startsWith("/blog")) {
         searchRoute = "/blog/search";
-      } else if (pathname.includes("search")) {
-        // If already on a search page, use the current pathname
-        searchRoute = pathname;
-      } else if (pathname.match(/\/product\/[^\/]+/)) {
-        // If on a '/product/[slug]' route, go to '/product/search'
-        searchRoute = "/product/search";
-      } else if (
-        pathname.includes("products") &&
-        !pathname.includes("search")
-      ) {
-        // If on a '/[slug]/products' route, append '/search'
-        searchRoute = "/product/search";
       } else {
-        searchRoute = `${pathname}/search`;
+        searchRoute = "/products/search";
       }
 
       router.push(`${searchRoute}?${params.toString()}`);
@@ -73,28 +59,21 @@ const Search = ({ placeholder, categories }: SearchProps) => {
   return (
     <form
       onSubmit={handleSearch}
-      className="w-full flex items-center border border-primary rounded-[12px]"
+      className="w-full flex items-center border border-primary rounded-[12px] bg-white dark:bg-zinc-900 overflow-hidden"
     >
       {/* Category Dropdown (Conditional) */}
       {showCategoryDropdown && categories && (
-        <Select
-          items={categoriesWithAll}
+        <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          defaultSelectedKeys={"all"}
-          classNames={{
-            popoverContent: "w-max",
-            base: "lg:w-[180px] w-max",
-            mainWrapper: "",
-            value: "",
-          }}
+          className="lg:w-[160px] w-max h-9 lg:h-10 px-3 bg-transparent text-xs font-bold focus:outline-none border-r border-zinc-150 dark:border-zinc-800 text-zinc-700 dark:text-zinc-350 cursor-pointer"
         >
-          {(cat) => (
-            <SelectItem key={cat?.slug} textValue={cat?.name}>
-              {cat?.name}
-            </SelectItem>
-          )}
-        </Select>
+          {categoriesWithAll.map((cat) => (
+            <option key={cat.slug} value={cat.slug} className="dark:bg-zinc-900 text-zinc-800 dark:text-white">
+              {cat.name}
+            </option>
+          ))}
+        </select>
       )}
 
       {/* Search Input */}
@@ -103,12 +82,12 @@ const Search = ({ placeholder, categories }: SearchProps) => {
         placeholder={placeholder}
         value={term || ""}
         onChange={(e) => setTerm(e.target.value)}
-        className="flex-1 focus:outline-none h-9 lg:h-10 py-2 px-3 bg-transparent text-sm"
+        className="flex-1 focus:outline-none h-9 lg:h-10 py-2 px-3 bg-transparent text-xs text-zinc-800 dark:text-white"
       />
 
       {/* Search Button */}
-      <Button type="submit" color="primary">
-        <SearchIcon size={18} />
+      <Button type="submit" className="rounded-none h-9 lg:h-10 bg-primary hover:bg-primary/90 text-white shrink-0 px-4">
+        <SearchIcon className="h-4.5 w-4.5" />
       </Button>
     </form>
   );

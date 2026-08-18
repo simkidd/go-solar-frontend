@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import { CallbackResponse } from "@/interfaces/payment.interface";
 import {
   CreateOrderInput,
@@ -7,11 +8,11 @@ import {
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import useCartStore from "@/lib/stores/cart.store";
-import { Spinner } from "@heroui/react";
-import { CheckCircle, CircleX } from "lucide-react";
+import { Spinner } from "@/components/custom/Spinner";
+import { CircleX } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { usePaystackPayment } from "react-paystack";
+import { Button } from "@/components/ui/button";
 
 const Payment = () => {
   const {
@@ -100,11 +101,12 @@ const Payment = () => {
 
   if (loading) {
     return (
-      <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
-        <div className="relative light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-lg p-8 max-w-[500px]">
-          <div className="flex flex-col items-center gap-4">
+      <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4 font-inter">
+        <div className="relative bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-3xl p-8 max-w-sm w-full shadow-xl">
+          <div className="flex flex-col items-center gap-4 text-center">
             <Spinner size="lg" />
-            <h2 className="text-lg font-semibold">Processing Order...</h2>
+            <h2 className="text-sm font-bold text-zinc-900 dark:text-white">Processing Order...</h2>
+            <p className="text-xs text-zinc-400">Please do not refresh the page while we authenticate your transaction.</p>
           </div>
         </div>
       </div>
@@ -113,12 +115,14 @@ const Payment = () => {
 
   if (error) {
     return (
-      <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
-        <div className="relative light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-lg p-8 max-w-[500px]">
-          <div className="flex flex-col items-center">
-            <CircleX size={60} className="text-red-600" />
-            <p className="text-lg font-semibold my-4 text-center">{error}</p>
-            <button onClick={() => router.push("/payment")}>Go back</button>
+      <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4 font-inter">
+        <div className="relative bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-3xl p-8 max-w-sm w-full shadow-xl">
+          <div className="flex flex-col items-center text-center space-y-4">
+            <CircleX size={56} className="text-rose-500" />
+            <p className="text-sm font-bold text-zinc-900 dark:text-white">{error}</p>
+            <Button onClick={() => router.push("/payment")} className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl">
+              Go Back
+            </Button>
           </div>
         </div>
       </div>
@@ -126,28 +130,26 @@ const Payment = () => {
   }
 
   return (
-    <div>
-      <button
-        className="bg-primary text-white px-8 py-2"
+    <div className="font-inter">
+      <Button
+        className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 px-8"
         onClick={() => initializePayment({ onSuccess, onClose })}
       >
-        Proceed to payment
-      </button>
+        Proceed to Payment
+      </Button>
 
       {errorMsg && (
-        <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50 px-4">
-          <div className="relative light bg-[#f1f1f1] dark:bg-[#2a2b2f] rounded-lg p-8 max-w-[500px]">
-            <div className="flex flex-col items-center">
-              <CircleX size={60} className="text-red-600" />
-              <p className="text-lg font-semibold my-4 text-center">
-                {errorMsg}
-              </p>
-              <button
-                className="border border-primary mt-2 text-primary px-4 py-2 rounded-md"
+        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4">
+          <div className="relative bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-3xl p-8 max-w-sm w-full shadow-xl">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <CircleX size={56} className="text-rose-500" />
+              <p className="text-sm font-bold text-zinc-900 dark:text-white">{errorMsg}</p>
+              <Button
+                className="w-full bg-[#08AA08] hover:bg-[#079907] text-white rounded-xl font-bold text-xs uppercase"
                 onClick={() => setErrorMsg("")}
               >
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         </div>

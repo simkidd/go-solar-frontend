@@ -18,25 +18,23 @@ interface Children {
 }
 
 export const sidelist: Menu[] = [
-  { label: "Overview", href: "/admin", icon: MdDashboard },
+  { label: "Overview", href: "/dashboard", icon: MdDashboard },
   {
     label: "Products",
-    href: "/admin/products",
+    href: "/dashboard/products",
     icon: FaProductHunt,
     children: [
-      // { label: "Add product", href: "/admin/products/create" },
-      // { label: "Product list", href: "/admin/products" },
-      { label: "Categories", href: "/admin/categories" },
-      { label: "Brands", href: "/admin/brands" },
+      { label: "Categories", href: "/dashboard/categories" },
+      { label: "Brands", href: "/dashboard/brands" },
     ],
   },
-  { label: "Orders", href: "/admin/orders", icon: BiCart },
+  { label: "Orders", href: "/dashboard/orders", icon: BiCart },
   {
     label: "Customers",
-    href: "/admin/users",
+    href: "/dashboard/users",
     icon: BsPeople,
   },
-  { label: "Reviews", href: "/admin/reviews", icon: GiCarDoor },
-  { label: "Transactions", href: "/admin/transactions", icon: BiMoney },
-  { label: "Blog posts", href: "/admin/blogs", icon: BsNewspaper },
+  { label: "Reviews", href: "/dashboard/reviews", icon: GiCarDoor },
+  { label: "Transactions", href: "/dashboard/transactions", icon: BiMoney },
+  { label: "Blog posts", href: "/dashboard/blogs", icon: BsNewspaper },
 ];
