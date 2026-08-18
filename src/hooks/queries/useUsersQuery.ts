@@ -4,10 +4,26 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const USER_KEYS = {
   all: ["users"] as const,
+  me: ["users", "me"] as const,
   customers: () => [...USER_KEYS.all, "customers"] as const,
   admins: () => [...USER_KEYS.all, "admins"] as const,
   detail: (id: string) => [...USER_KEYS.all, "detail", id] as const,
 };
+
+// Fetch the currently authenticated user from the server
+export const useCurrentUserQuery = (enabled = true) => {
+  return useQuery<User>({
+    queryKey: USER_KEYS.me,
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/auth/me");
+      return data?.user;
+    },
+    enabled,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: false,
+  });
+};
+
 
 export interface PaginatedUsersResponse {
   users: User[];
