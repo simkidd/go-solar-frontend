@@ -13,16 +13,24 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronLeft,
+  LayoutDashboard,
+  Package,
+  Settings,
+  LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import CartSheet from "@/app/(ecommerce)/components/shop/CartSheet";
 import SearchModal from "./SearchModal";
@@ -198,46 +206,92 @@ const EcommerceNavbar = () => {
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full h-9 w-9 border border-border/80 hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
-                  >
-                    <User className="h-4 w-4" />
-                  </Button>
+                  <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border border-border/80 hover:border-primary/40 hover:bg-muted/60 transition-all duration-200 cursor-pointer group outline-none">
+                    <Avatar className="h-7 w-7 shrink-0">
+                      <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
+                        {user?.firstname?.[0]?.toUpperCase() ?? <User className="h-3 w-3" />}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-xs font-semibold text-foreground truncate max-w-[80px] hidden xl:block">
+                      {user?.firstname ?? "Account"}
+                    </span>
+                    <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors hidden xl:block" />
+                  </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-52">
-                  <div className="px-3 py-2 border-b border-border/60">
-                    <p className="text-sm font-semibold truncate text-foreground">
-                      {user ? `${user.firstname} ${user.lastname}` : ""}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {user?.email}
-                    </p>
+                <DropdownMenuContent align="end" className="w-60 p-0 overflow-hidden shadow-xl border border-border/60">
+                  {/* User Info Header */}
+                  <div className="px-4 py-3.5 bg-gradient-to-br from-primary/5 to-transparent border-b border-border/50">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10 shrink-0 border-2 border-primary/20">
+                        <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">
+                          {user?.firstname?.[0]?.toUpperCase() ?? "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-bold truncate text-foreground leading-tight">
+                          {user ? `${user.firstname} ${user.lastname}` : ""}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                          {user?.email}
+                        </p>
+                        {(user?.isAdmin || user?.isSuperAdmin) && (
+                          <Badge
+                            variant="outline"
+                            className="mt-1.5 text-[9px] font-bold px-1.5 py-0 h-4 border-primary/30 bg-primary/5 text-primary"
+                          >
+                            <ShieldCheck className="h-2.5 w-2.5 mr-1" />
+                            {user?.isSuperAdmin ? "Super Admin" : "Admin"}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  {(user?.isAdmin || user?.isSuperAdmin) && (
+
+                  {/* Menu Items */}
+                  <div className="py-1.5">
+                    {(user?.isAdmin || user?.isSuperAdmin) && (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/dashboard"
+                          className="cursor-pointer flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-foreground hover:text-primary"
+                        >
+                          <LayoutDashboard className="h-3.5 w-3.5 text-muted-foreground" />
+                          Admin Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard" className="cursor-pointer">
-                        Dashboard
+                      <Link
+                        href="/account/profile"
+                        className="cursor-pointer flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-foreground hover:text-primary"
+                      >
+                        <Settings className="h-3.5 w-3.5 text-muted-foreground" />
+                        My Profile
                       </Link>
                     </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem asChild>
-                    <Link href="/account/profile" className="cursor-pointer">
-                      My Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/account/orders" className="cursor-pointer">
-                      My Orders
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => logout()}
-                    className="text-rose-600 focus:text-rose-600 cursor-pointer"
-                  >
-                    Logout
-                  </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/account/orders"
+                        className="cursor-pointer flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-foreground hover:text-primary"
+                      >
+                        <Package className="h-3.5 w-3.5 text-muted-foreground" />
+                        My Orders
+                      </Link>
+                    </DropdownMenuItem>
+                  </div>
+
+                  <DropdownMenuSeparator className="my-0" />
+
+                  {/* Logout */}
+                  <div className="py-1.5">
+                    <DropdownMenuItem
+                      onClick={() => logout()}
+                      className="cursor-pointer flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-rose-600 focus:text-rose-600 focus:bg-rose-50/60 dark:focus:bg-rose-950/20"
+                    >
+                      <LogOut className="h-3.5 w-3.5" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
