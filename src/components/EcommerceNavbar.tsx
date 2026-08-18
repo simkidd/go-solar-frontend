@@ -11,6 +11,8 @@ import {
   ShoppingBag,
   Sparkles,
   ChevronDown,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,14 +36,25 @@ const EcommerceNavbar = () => {
 
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [activeCategoryMobile, setActiveCategoryMobile] = useState<any | null>(
+    null,
+  );
 
   // Fetch Categories Tree dynamically from Backend
   const { data: categoryTree = [] } = useCategoryTreeQuery();
 
-  // Close mobile drawer on route changes
+  // Close mobile drawer and reset category explorer on route changes
   useEffect(() => {
     setShowMobileMenu(false);
+    setActiveCategoryMobile(null);
   }, [pathname]);
+
+  // Reset category explorer when drawer is closed
+  useEffect(() => {
+    if (!showMobileMenu) {
+      setActiveCategoryMobile(null);
+    }
+  }, [showMobileMenu]);
 
   // Global Keyboard Shortcut (⌘K / Ctrl+K) to open Search Modal
   useEffect(() => {
@@ -65,15 +78,25 @@ const EcommerceNavbar = () => {
         <div className="w-full bg-primary/10 dark:bg-primary/20 border-b border-primary/10 py-2 text-[10px] font-bold text-primary select-none hidden md:block">
           <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="bg-primary text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-wider">PROMO</span>
+              <span className="bg-primary text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-wider">
+                PROMO
+              </span>
               <span>⚡ Free Shipping on Orders Over ₦2,500,000!</span>
             </div>
             <div className="flex items-center gap-4 text-[9px] uppercase tracking-wider">
-              <span className="cursor-pointer hover:text-primary transition-colors">English</span>
-              <span className="cursor-pointer hover:text-primary transition-colors">NGN (₦)</span>
+              <span className="cursor-pointer hover:text-primary transition-colors">
+                English
+              </span>
+              <span className="cursor-pointer hover:text-primary transition-colors">
+                NGN (₦)
+              </span>
               <span className="opacity-30">|</span>
-              <span className="cursor-pointer hover:text-primary transition-colors">Help Center</span>
-              <span className="cursor-pointer hover:text-primary transition-colors">Support: +234-800-GOSOLAR</span>
+              <span className="cursor-pointer hover:text-primary transition-colors">
+                Help Center
+              </span>
+              <span className="cursor-pointer hover:text-primary transition-colors">
+                Support: +234-800-GOSOLAR
+              </span>
             </div>
           </div>
         </div>
@@ -147,7 +170,9 @@ const EcommerceNavbar = () => {
               </div>
               <div className="flex items-center gap-2 px-4 flex-1 text-left">
                 <Search className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
-                <span className="text-muted-foreground/50 flex-1 truncate font-medium">Search solar panels, inverters, batteries...</span>
+                <span className="text-muted-foreground/50 flex-1 truncate font-medium">
+                  Search solar panels, inverters, batteries...
+                </span>
               </div>
               <div className="bg-primary text-white hover:bg-primary/90 h-full px-5 flex items-center justify-center font-black uppercase tracking-widest text-[9px] transition-colors shrink-0">
                 Search
@@ -226,7 +251,7 @@ const EcommerceNavbar = () => {
         </div>
 
         {/* ── Bottom Sub-navigation list ── */}
-        <div className="w-full bg-zinc-50/50 dark:bg-zinc-900/10 border-t border-border/60 py-2">
+        <div className="w-full bg-zinc-50/50 dark:bg-zinc-900/10 border-t border-border/60 py-2 hidden lg:block">
           <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
             {/* Dynamic Categories Link Pills */}
             <div className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth mr-6">
@@ -406,105 +431,181 @@ const EcommerceNavbar = () => {
                   </div>
 
                   {/* Navigation Links list */}
-                  <div className="space-y-1 px-6">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">
-                      Shop Categories
-                    </p>
-                    <Link
-                      href="/shop"
-                      onClick={() => setShowMobileMenu(false)}
-                      className={`block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors ${
-                        pathname === "/shop"
-                          ? "text-primary border-primary/20"
-                          : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
-                      }`}
-                    >
-                      All Products
-                    </Link>
-                    {categoryTree.map((category) => {
-                      const href = `/${category.slug}/products`;
-                      const active = pathname === href;
-                      return (
-                        <div key={category._id} className="space-y-1">
+                  <div className="px-6 relative overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      {!activeCategoryMobile ? (
+                        <motion.div
+                          key="main-menu"
+                          initial={{ x: -20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          exit={{ x: -20, opacity: 0 }}
+                          transition={{ duration: 0.18 }}
+                          className="space-y-1"
+                        >
+                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">
+                            Shop Categories
+                          </p>
                           <Link
-                            href={href}
+                            href="/shop"
                             onClick={() => setShowMobileMenu(false)}
                             className={`block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors ${
-                              active
+                              pathname === "/shop"
                                 ? "text-primary border-primary/20"
-                                : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350 dark:hover:text-white"
+                                : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
                             }`}
                           >
-                            {category.name}
+                            All Products
                           </Link>
-                          {/* List subcategories on mobile cleanly inside category block */}
-                          {category.subcategories &&
-                            category.subcategories.length > 0 && (
-                              <div className="pl-4 py-1 space-y-2 border-l border-border/60 ml-1">
-                                {category.subcategories.map((sub) => (
+                          {categoryTree.map((category) => {
+                            const href = `/${category.slug}/products`;
+                            const active = pathname === href;
+                            const hasSubs =
+                              category.subcategories &&
+                              category.subcategories.length > 0;
+
+                            if (hasSubs) {
+                              return (
+                                <button
+                                  key={category._id}
+                                  onClick={() =>
+                                    setActiveCategoryMobile(category)
+                                  }
+                                  className="w-full text-left flex items-center justify-between py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-zinc-650 hover:text-zinc-900 dark:text-zinc-350 dark:hover:text-white cursor-pointer"
+                                >
+                                  <span>{category.name}</span>
+                                  <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-primary transition-colors" />
+                                </button>
+                              );
+                            }
+
+                            return (
+                              <Link
+                                key={category._id}
+                                href={href}
+                                onClick={() => setShowMobileMenu(false)}
+                                className={`block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors ${
+                                  active
+                                    ? "text-primary border-primary/20"
+                                    : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350 dark:hover:text-white"
+                                }`}
+                              >
+                                {category.name}
+                              </Link>
+                            );
+                          })}
+
+                          {/* Authenticated user menu list on mobile */}
+                          {isAuthenticated ? (
+                            <>
+                              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest pt-5 pb-2">
+                                My Account
+                              </p>
+                              {(user?.isAdmin || user?.isSuperAdmin) && (
+                                <Link
+                                  href="/dashboard"
+                                  onClick={() => setShowMobileMenu(false)}
+                                  className="block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
+                                >
+                                  Dashboard
+                                </Link>
+                              )}
+                              <Link
+                                href="/account/profile"
+                                onClick={() => setShowMobileMenu(false)}
+                                className="block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
+                              >
+                                My Profile
+                              </Link>
+                              <Link
+                                href="/account/orders"
+                                onClick={() => setShowMobileMenu(false)}
+                                className="block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
+                              >
+                                My Orders
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  setShowMobileMenu(false);
+                                  logout();
+                                }}
+                                className="w-full text-left block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-rose-500 hover:text-rose-600 cursor-pointer"
+                              >
+                                Logout
+                              </button>
+                            </>
+                          ) : (
+                            <Link
+                              href="/auth/login"
+                              onClick={() => setShowMobileMenu(false)}
+                              className="block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-zinc-650 hover:text-primary dark:text-zinc-350"
+                            >
+                              Sign In / Register
+                            </Link>
+                          )}
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="sub-menu"
+                          initial={{ x: 20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          exit={{ x: 20, opacity: 0 }}
+                          transition={{ duration: 0.18 }}
+                          className="space-y-2"
+                        >
+                          {/* Back Button */}
+                          <button
+                            onClick={() => setActiveCategoryMobile(null)}
+                            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors pb-3 border-b border-border/60 w-full mb-3 cursor-pointer"
+                          >
+                            <ChevronLeft className="h-3.5 w-3.5" />
+                            <span>Go Back</span>
+                          </button>
+
+                          <div className="pb-1 select-none">
+                            <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
+                              Category
+                            </span>
+                            <h4 className="text-base font-extrabold text-foreground tracking-tight leading-tight uppercase Outfit">
+                              {activeCategoryMobile.name}
+                            </h4>
+                          </div>
+
+                          <Link
+                            href={`/${activeCategoryMobile.slug}/products`}
+                            onClick={() => setShowMobileMenu(false)}
+                            className="block py-2.5 text-xs font-black uppercase tracking-wider text-primary hover:underline"
+                          >
+                            View All {activeCategoryMobile.name} →
+                          </Link>
+
+                          <div className="pt-2 space-y-1">
+                            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">
+                              Subcategories
+                            </p>
+                            {activeCategoryMobile.subcategories.map(
+                              (sub: any) => {
+                                const subHref = `/${sub.slug}/products`;
+                                const subActive = pathname === subHref;
+                                return (
                                   <Link
                                     key={sub._id}
-                                    href={`/${sub.slug}/products`}
+                                    href={subHref}
                                     onClick={() => setShowMobileMenu(false)}
-                                    className="block py-1 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors"
+                                    className={`block py-2.5 text-sm font-bold border-b border-border/40 transition-colors ${
+                                      subActive
+                                        ? "text-primary border-primary/10 pl-1"
+                                        : "text-zinc-650 hover:text-foreground dark:text-zinc-350 dark:hover:text-white"
+                                    }`}
                                   >
                                     {sub.name}
                                   </Link>
-                                ))}
-                              </div>
+                                );
+                              },
                             )}
-                        </div>
-                      );
-                    })}
-
-                    {/* Authenticated user menu list on mobile */}
-                    {isAuthenticated ? (
-                      <>
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest pt-5 pb-2">
-                          My Account
-                        </p>
-                        {(user?.isAdmin || user?.isSuperAdmin) && (
-                          <Link
-                            href="/dashboard"
-                            onClick={() => setShowMobileMenu(false)}
-                            className="block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
-                          >
-                            Dashboard
-                          </Link>
-                        )}
-                        <Link
-                          href="/account/profile"
-                          onClick={() => setShowMobileMenu(false)}
-                          className="block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
-                        >
-                          My Profile
-                        </Link>
-                        <Link
-                          href="/account/orders"
-                          onClick={() => setShowMobileMenu(false)}
-                          className="block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
-                        >
-                          My Orders
-                        </Link>
-                        <button
-                          onClick={() => {
-                            setShowMobileMenu(false);
-                            logout();
-                          }}
-                          className="w-full text-left block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-rose-500 hover:text-rose-600 cursor-pointer"
-                        >
-                          Logout
-                        </button>
-                      </>
-                    ) : (
-                      <Link
-                        href="/auth/login"
-                        onClick={() => setShowMobileMenu(false)}
-                        className="block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 text-zinc-650 hover:text-primary dark:text-zinc-350"
-                      >
-                        Sign In / Register
-                      </Link>
-                    )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </ScrollArea>
 
