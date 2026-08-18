@@ -1,39 +1,54 @@
 /* eslint-disable react/no-unescaped-entities */
-
-import AboutSection from "@/components/home/AboutSection";
-import BlogSection from "@/components/home/BlogSection";
-import CounterSection from "@/components/home/CounterSection";
 import HeroSection from "@/components/home/HeroSection";
-import HomeContactCta from "@/components/home/HomeContactCta";
+import SolutionsSection from "@/components/home/SolutionsSection";
+import AboutSection from "@/components/home/AboutSection";
+import PackagesSection from "@/components/home/PackagesSection";
+import SimulatorSection from "@/components/home/SimulatorSection";
+import VisionSection from "@/components/home/VisionSection";
+import HowItWorks from "@/components/home/HowItWorks";
 import ShopSection from "@/components/home/ShopSection";
 import TestimonialSection from "@/components/home/TestimonialSection";
-import VisionSection from "@/components/home/VisionSection";
-import MarqueeComp from "@/components/MarqueeComp";
+import BlogSection from "@/components/home/BlogSection";
+import FaqNewsletterSection from "@/components/home/FaqNewsletterSection";
+import HomeContactCta from "@/components/home/HomeContactCta";
 
 const page = async () => {
   return (
-    <div className="w-full font-inter">
-      {/* hero section */}
+    <div className="w-full font-inter overflow-hidden bg-white dark:bg-zinc-950">
+      {/* 1. Hero Section (Cinematic Video/Image Background) */}
       <HeroSection />
 
-      <section className="w-full">
-        <div className="h-20 font-dmsans bg-primary flex items-center text-white text-xl">
-          <MarqueeComp />
-        </div>
-      </section>
-      {/* our vision section */}
-      <VisionSection />
-      {/* about section */}
+      {/* 2. Complete Solar Solutions Grid */}
+      <SolutionsSection />
+
+      {/* 3. About Section */}
       <AboutSection />
-      {/* counter section */}
-      <CounterSection />
-      {/* testimonial section */}
-      <TestimonialSection />
-      {/* blog section */}
-      <BlogSection />
-      {/* shop section */}
+
+      {/* 4. Pre-Configured Solar Packages */}
+      <PackagesSection />
+
+      {/* 5. Standalone Sizing Day/Night Simulator */}
+      <SimulatorSection />
+
+      {/* 6. Vision / Energy Independence */}
+      <VisionSection />
+
+      {/* 7. Step-By-Step Process */}
+      <HowItWorks />
+
+      {/* 8. Shop Products Showcase */}
       <ShopSection />
-      {/* contact section */}
+
+      {/* 9. Testimonials Section */}
+      <TestimonialSection />
+
+      {/* 10. Blog Insights */}
+      <BlogSection />
+
+      {/* 11. FAQ & Newsletter segment */}
+      <FaqNewsletterSection />
+
+      {/* 12. Footer Contact CTA banner */}
       <HomeContactCta />
     </div>
   );

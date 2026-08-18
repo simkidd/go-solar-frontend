@@ -1,56 +1,43 @@
 "use client";
-import { BreadcrumbItem, Breadcrumbs } from "@heroui/react";
+import React from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const BreadcrumbsComp = () => {
-  const pathname = usePathname(); // Get the current pathname
+  const pathname = usePathname();
 
   const formatLabel = (path: string) => {
-    // Replace hyphens with spaces and capitalize each word
     return path
-      .replace(/-/g, " ") // Replace hyphens with spaces
-      .split(" ") // Split into words
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
-      .join(" "); // Join words with spaces
+      .replace(/-/g, " ")
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
 
-  // Function to generate breadcrumb items based on the pathname
-  const generateBreadcrumbs = () => {
-    const paths = pathname.split("/").filter((path) => path !== ""); // Split the pathname into segments
-    const breadcrumbs = [];
-
-    // Add "Home" as the first breadcrumb
-    breadcrumbs.push(
-      <BreadcrumbItem key="home" href="/">
-        Home
-      </BreadcrumbItem>
-    );
-
-    // Generate breadcrumbs for each path segment
-    let currentPath = "";
-    paths.forEach((path, index) => {
-      currentPath += `/${path}`;
-      breadcrumbs.push(
-        <BreadcrumbItem key={path} href={currentPath}>
-          {formatLabel(path)}
-        </BreadcrumbItem>
-      );
-    });
-
-    return breadcrumbs;
-  };
+  const paths = pathname.split("/").filter((path) => path !== "");
 
   return (
-    <Breadcrumbs
-      size="lg"
-      itemClasses={{
-        separator: "px-2 text-default-400 dark:text-default-500",
-        item: "text-default-400 dark:text-default-500 data-[current=true]:text-white dark:data-[current=true]:text-white",
-      }}
-      separator="/"
-    >
-      {generateBreadcrumbs()}
-    </Breadcrumbs>
+    <nav className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-semibold text-zinc-400 dark:text-zinc-500">
+      <Link href="/" className="hover:text-white transition-colors">
+        Home
+      </Link>
+      {paths.map((path, index) => {
+        const currentPath = `/${paths.slice(0, index + 1).join("/")}`;
+        const isLast = index === paths.length - 1;
+        return (
+          <React.Fragment key={path}>
+            <span className="text-zinc-500 select-none">/</span>
+            {isLast ? (
+              <span className="text-white font-bold select-none">{formatLabel(path)}</span>
+            ) : (
+              <Link href={currentPath} className="hover:text-white transition-colors">
+                {formatLabel(path)}
+              </Link>
+            )}
+          </React.Fragment>
+        );
+      })}
+    </nav>
   );
 };
 

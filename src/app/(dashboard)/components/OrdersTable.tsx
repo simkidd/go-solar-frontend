@@ -1,68 +1,70 @@
 "use client";
-import useOrders from "@/hooks/useOrders";
+import { useAllOrdersQuery } from "@/hooks/queries/useOrdersQuery";
 import { Order, TrackingStatus } from "@/interfaces/order.interface";
-import { useOrderStore } from "@/lib/stores/order.store";
 import { formatCurrency, formatDate } from "@/utils/helpers";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  Button,
-  Card,
-  CardBody,
-  Chip,
-  Dropdown,
-  DropdownItem,
   DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Pagination,
-  Selection,
-  SortDescriptor,
-  Spinner,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Table,
   TableBody,
   TableCell,
-  TableColumn,
+  TableHead,
   TableHeader,
   TableRow,
-} from "@heroui/react";
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ChevronDownIcon,
-  EllipsisVertical,
+  ChevronDown,
+  MoreVertical,
   Eye,
-  RefreshCcw,
-  SearchIcon,
+  RefreshCw,
+  Search,
+  Settings2,
+  ShoppingBag,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
 
 const columns = [
-  { name: "Order ID", uid: "orderId", minWidth: "200px" },
-  {
-    name: "Billing Name",
-    uid: "billingName",
-    minWidth: "200px",
-    sortable: true,
-  },
-  { name: "Date", uid: "dateOrdered", minWidth: "300px" },
-  { name: "Total", uid: "total", minWidth: "150px" },
-  {
-    name: "Tracking Status",
-    uid: "trackingStatus",
-    minWidth: "150px",
-    sortable: true,
-  },
-  {
-    name: "Actions",
-    uid: "actions",
-  },
+  { name: "Order ID", uid: "orderId" },
+  { name: "Billing Name", uid: "billingName" },
+  { name: "Date", uid: "dateOrdered" },
+  { name: "Total", uid: "total" },
+  { name: "Tracking Status", uid: "trackingStatus" },
+  { name: "Actions", uid: "actions" },
 ];
 
-export const getChipColor = (status: TrackingStatus) => {
+export const getChipStyles = (status: any) => {
+  switch (status) {
+    case TrackingStatus.Processing:
+      return "bg-amber-55 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+    case TrackingStatus.Delivered:
+      return "bg-emerald-55 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20";
+    case TrackingStatus.Received:
+    case "Recieved":
+      return "bg-blue-55 text-blue-600 dark:text-blue-400 border border-blue-500/20";
+    default:
+      return "bg-muted text-muted-foreground border border-border";
+  }
+};
+
+export const getChipColor = (status: any) => {
   switch (status) {
     case TrackingStatus.Processing:
       return "warning";
     case TrackingStatus.Delivered:
       return "success";
     case TrackingStatus.Received:
+    case "Recieved":
       return "primary";
     default:
       return "default";
@@ -70,421 +72,297 @@ export const getChipColor = (status: TrackingStatus) => {
 };
 
 const OrdersTable = () => {
-  const { orders, isLoading, refetch } = useOrders();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [visibleColumns, setVisibleColumns] = useState<Selection>(
-    new Set(columns.map((col) => col.uid))
-  );
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
   const [statusFilter, setStatusFilter] = useState(
-    searchParams.get("status") || "All"
+    searchParams.get("status") || "All",
   );
+
+  const { data, isLoading, refetch } = useAllOrdersQuery({
+    page,
+    limit: 10,
+    q: filterValue,
+    status: statusFilter,
+  });
+  const orders = data?.orders || [];
+  const pagination = data?.pagination || { total: 0, pages: 1 };
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const headerColumns = useMemo(() => {
-    if (visibleColumns === "all") return columns;
+  const pages = pagination.pages;
 
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns]);
-
-  const filteredItems = useMemo(() => {
-    let filteredOrders = [...orders];
-
-    if (hasSearchFilter) {
-      filteredOrders = filteredOrders.filter(
-        (order) =>
-          order?.user?.firstname
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          order?.user?.lastname
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          order?.trackingId?.tracking_id
-            .toLowerCase()
-            .includes(filterValue.toLowerCase())
-      );
-    }
-
-    if (statusFilter !== "All") {
-      filteredOrders = filteredOrders.filter(
-        (order) => order?.trackingStatus === statusFilter
-      );
-    }
-
-    return filteredOrders;
-  }, [orders, filterValue, statusFilter, hasSearchFilter]);
-
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
-
-  const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
-
-  const sortedItems = useMemo(() => {
-    const sorted = [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column as keyof typeof a];
-      const second = b[sortDescriptor.column as keyof typeof b];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-
-    return sorted;
-  }, [sortDescriptor, items]);
-
-  const renderCell = useCallback((order: Order, columnKey: React.Key) => {
-    switch (columnKey) {
-      case "orderId":
-        return order?.trackingId?.tracking_id;
-      case "billingName":
-        return (
-          <div>{order?.user?.firstname + " " + order?.user?.lastname}</div>
-        );
-      case "dateOrdered":
-        return formatDate(order?.createdAt);
-      case "total":
-        return <div>{formatCurrency(order?.totalPricePaid, "NGN")}</div>;
-      case "trackingStatus":
-        return (
-          <Chip
-            color={getChipColor(order?.trackingStatus)}
-            size="sm"
-            variant="flat"
-          >
-            {order?.trackingStatus}
-          </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <EllipsisVertical className="text-default-300" size={16} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem
-                  key={"view"}
-                  startContent={<Eye size={16} />}
-                  onPress={() => router.push(`/admin/orders/${order?._id}`)}
-                >
-                  View
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return null;
-    }
-  }, []);
-
-  const onRowsPerPageChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
+  const onSearchChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set("q", value);
+      setFilterValue(value);
       setPage(1);
-    },
-    []
-  );
+    } else {
+      params.delete("q");
+      setFilterValue("");
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
-  const onSearchChange = useCallback(
-    (value?: string) => {
-      const params = new URLSearchParams(searchParams);
-      if (value) {
-        params.set("q", value);
-        setFilterValue(value);
-        setPage(1);
-      } else {
-        params.delete("q");
-        setFilterValue("");
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onClear = useCallback(() => {
-    setFilterValue("");
+  const onStatusFilterChange = (status: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (status && status !== "All") {
+      params.set("status", status);
+      setStatusFilter(status);
+    } else {
+      params.delete("status");
+      setStatusFilter("All");
+    }
     setPage(1);
-  }, []);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
-  const onStatusFilterChange = useCallback(
-    (keys: Selection) => {
-      const selectedStatus = Array.from(keys).join(", ");
-      const params = new URLSearchParams(searchParams);
-      if (selectedStatus) {
-        params.set("status", selectedStatus);
-        setStatusFilter(selectedStatus);
-      } else {
-        params.delete("status");
-        setPage(1);
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  const onResetFilters = useCallback(() => {
+  const onResetFilters = () => {
     setFilterValue("");
     setStatusFilter("All");
     setPage(1);
-    const params = new URLSearchParams();
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [pathname, router]);
-
-  const topContent = useMemo(() => {
-    const hasFilters = filterValue || statusFilter !== "All";
-
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end lg:flex-row flex-col">
-          <Input
-            isClearable
-            className="w-full lg:max-w-[44%]"
-            classNames={{
-              input: ["bg-transparent"],
-              innerWrapper: "bg-transparent ",
-              inputWrapper: [
-                "border-1",
-                "bg-white",
-                "dark:bg-[#222327]",
-                "hover:bg-default-200/70",
-                "focus-within:!bg-default-200/50",
-                "dark:hover:bg-default/70",
-                "dark:focus-within:!bg-default/60",
-              ],
-            }}
-            variant="bordered"
-            placeholder="Search..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-
-          <div className="flex gap-3">
-            {hasFilters && (
-              <Button variant="flat" color="danger" onPress={onResetFilters}>
-                Reset
-              </Button>
-            )}
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  {statusFilter}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Role Filter"
-                onSelectionChange={onStatusFilterChange}
-                selectionMode="single"
-              >
-                <DropdownItem key="All">All</DropdownItem>
-                <DropdownItem key={TrackingStatus.Processing}>
-                  Processing
-                </DropdownItem>
-                <DropdownItem key={TrackingStatus.Delivered}>
-                  Delivered
-                </DropdownItem>
-                <DropdownItem key={TrackingStatus.Received}>
-                  Recieved
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {orders.length} orders
-          </span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    );
-  }, [
-    filterValue,
-    visibleColumns,
-    onSearchChange,
-    onRowsPerPageChange,
-    orders.length,
-    hasSearchFilter,
-    onResetFilters,
-    statusFilter,
-    onClear,
-    onStatusFilterChange,
-  ]);
-
-  const bottomContent = useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center md:flex-row flex-col gap-4">
-        <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          initialPage={1}
-          page={page}
-          total={pages}
-          onChange={setPage}
-          classNames={{
-            wrapper: "bg-white dark:bg-[#222327]",
-            item: "bg-transparent dark:text-white",
-            prev: "bg-white dark:bg-[#222327]",
-            next: "bg-white dark:bg-[#222327]",
-            cursor: "",
-          }}
-        />
-        {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div> */}
-      </div>
-    );
-  }, [selectedKeys, page, pages, filteredItems.length]);
-
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["min-h-fit", "bg-white", "dark:bg-[#222327]"],
-      th: ["dark:bg-transparent"],
-      td: ["text-sm"],
-    }),
-    []
-  );
+    router.replace(pathname);
+  };
 
   return (
-    <div className="w-full">
-      <div className="w-full flex justify-end mb-4">
+    <div className="space-y-5 font-inter">
+      {/* Top Action Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+        <div>
+          <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
+            <ShoppingBag className="h-5 w-5 text-primary" />
+            Customer Order Management
+          </h2>
+          <p className="text-xs text-muted-foreground font-semibold mt-0.5">
+            Track customer system purchases, fulfillment status, and transaction
+            histories.
+          </p>
+        </div>
+
         <Button
-          variant="solid"
-          color="warning"
-          onPress={() => refetch}
-          startContent={<RefreshCcw size={16} />}
+          variant="outline"
           size="sm"
+          onClick={() => refetch()}
+          className="gap-2 border-border text-muted-foreground hover:text-foreground h-9 rounded-xl text-xs font-semibold cursor-pointer hover:bg-muted/30"
         >
+          <RefreshCw className="h-3.5 w-3.5" />
           Refresh
         </Button>
       </div>
 
-      <Table
-        isCompact
-        aria-label="Example table with custom cells, pagination and sorting"
-        isHeaderSticky
-        bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        classNames={classNames}
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
-        sortDescriptor={sortDescriptor}
-        topContent={topContent}
-        topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
-        onSortChange={setSortDescriptor}
-      >
-        <TableHeader columns={headerColumns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-              allowsSorting={column.sortable}
-            >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          emptyContent={"No orders found"}
-          items={sortedItems}
-          isLoading={isLoading}
-          loadingContent={
-            <Card className="dark:bg-[#222327]">
-              <CardBody className="p-6">
-                <Spinner size="lg" />
-              </CardBody>
-            </Card>
-          }
-        >
-          {(item) => (
-            <TableRow key={item?._id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
+      {/* Search & Filters */}
+      <div className="flex flex-col gap-4 bg-card text-card-foreground p-5 rounded-2xl border border-border/80 shadow-xs">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+            <Input
+              placeholder="Search by name or tracking ID..."
+              value={filterValue}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="pl-10 bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap select-none">
+            {(hasSearchFilter || statusFilter !== "All") && (
+              <Button
+                variant="ghost"
+                onClick={onResetFilters}
+                className="text-red-500 hover:text-red-650 hover:bg-red-50/50 dark:hover:bg-red-955/10 text-xs font-semibold rounded-xl cursor-pointer"
+              >
+                Reset
+              </Button>
+            )}
+
+            {/* Status Button Filters */}
+            <div className="flex gap-1 flex-wrap">
+              {["All", "Processing", "Delivered", "Received"].map((s) => {
+                const isSelected =
+                  statusFilter.toLowerCase() === s.toLowerCase() ||
+                  (statusFilter === "All" && s === "All");
+                return (
+                  <Button
+                    key={s}
+                    variant={isSelected ? "default" : "outline"}
+                    onClick={() =>
+                      onStatusFilterChange(
+                        s === "All" ? "All" : s.toLowerCase(),
+                      )
+                    }
+                    className={`h-10 text-xs font-semibold rounded-xl tracking-wider transition-all cursor-pointer ${
+                      isSelected
+                        ? "bg-primary text-primary-foreground shadow-xs"
+                        : "border-border text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                    }`}
+                  >
+                    {s}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Counter and row switcher */}
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+          <span>Total {orders.length} orders listed</span>
+        </div>
+      </div>
+
+      {/* Main Table */}
+      <div className="bg-card text-card-foreground rounded-2xl border border-border/80 shadow-xs overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
+              {columns.map((col) => (
+                <TableHead
+                  key={col.uid}
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none ${
+                    col.uid === "actions" ? "text-right" : ""
+                  }`}
+                >
+                  {col.name}
+                </TableHead>
+              ))}
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-32">
+                  <div className="space-y-2 flex flex-col justify-center items-center py-8">
+                    <Skeleton className="h-5 w-4/5" />
+                    <Skeleton className="h-5 w-3/5" />
+                    <Skeleton className="h-5 w-4/5" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : orders.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-xs text-muted-foreground font-semibold"
+                >
+                  No orders found in system inventory.
+                </TableCell>
+              </TableRow>
+            ) : (
+              orders.map((order) => (
+                <TableRow
+                  key={order?._id}
+                  className="border-b border-border/60 hover:bg-muted/15 transition-colors"
+                >
+                  {columns.map((col) => {
+                    const columnKey = col.uid;
+                    return (
+                      <TableCell
+                        key={columnKey}
+                        className="py-3.5 text-xs text-foreground"
+                      >
+                        {columnKey === "orderId" && (
+                          <span className="font-extrabold text-foreground font-mono select-all">
+                            #{order?.trackingId?.tracking_id}
+                          </span>
+                        )}
+                        {columnKey === "billingName" && (
+                          <span className="font-bold text-foreground select-all">
+                            {order?.user?.firstname +
+                              " " +
+                              order?.user?.lastname}
+                          </span>
+                        )}
+                        {columnKey === "dateOrdered" && (
+                          <span className="font-semibold text-muted-foreground select-none">
+                            {formatDate(order?.createdAt)}
+                          </span>
+                        )}
+                        {columnKey === "total" && (
+                          <span className="font-bold text-foreground monospace select-all">
+                            {formatCurrency(order?.totalPricePaid, "NGN")}
+                          </span>
+                        )}
+                        {columnKey === "trackingStatus" && (
+                          <div className="select-none">
+                            <span
+                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest border ${getChipStyles(order?.trackingStatus)}`}
+                            >
+                              {order?.trackingStatus}
+                            </span>
+                          </div>
+                        )}
+                        {columnKey === "actions" && (
+                          <div className="flex justify-end select-none">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer"
+                                >
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                align="end"
+                                className="w-32 rounded-xl bg-card border border-border/80"
+                              >
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    router.push(
+                                      `/dashboard/orders/${order?._id}`,
+                                    )
+                                  }
+                                  className="cursor-pointer text-xs font-bold"
+                                >
+                                  <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
+                                  <span>Details</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      {pages > 1 && (
+        <div className="flex items-center justify-between py-3 border-t border-border/60 select-none">
+          <div className="text-xs text-muted-foreground font-bold">
+            Page {page} of {pages}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 1}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              className="border-border text-xs font-black uppercase tracking-wider rounded-xl cursor-pointer"
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === pages}
+              onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
+              className="border-border text-xs font-black uppercase tracking-wider rounded-xl cursor-pointer"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

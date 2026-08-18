@@ -1,54 +1,110 @@
-// components/home/BlogSection.tsx
 "use client";
+
+import React from "react";
 import { motion } from "framer-motion";
-import BlogCard from "@/components/BlogCard";
+import { useBlogPostsQuery } from "@/hooks/queries/useBlogQuery";
+import { Calendar, ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 
-const BlogSection = ({ posts }: { posts?: any[] }) => {
-  if (!posts) return null;
+const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
+  const { data: queryPosts = [] } = useBlogPostsQuery();
+
+  const activePosts =
+    initialPosts && initialPosts.length > 0
+      ? initialPosts
+      : queryPosts;
+
+  if (!activePosts || activePosts.length === 0) {
+    return null;
+  }
+
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full py-16"
-    >
-      <div className="container mx-auto px-2">
-        <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
-          <div className="relative">
-            <h2 className="text-primary text-2xl font-bold mb-4">
-              Latest Blog Posts
+    <section className="py-20 lg:py-28 bg-background font-inter">
+      <div className="container mx-auto px-4">
+        {/* Header Block */}
+        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-12 select-none">
+          <div className="space-y-3">
+            <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
+              Knowledge Centre
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
+              Solar Energy Insights
             </h2>
-            <h2 className="lg:text-5xl text-4xl font-bold mb-4">
-              Stay Updated with Our Blog
-            </h2>
-            <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold">
-              Blog
-            </div>
           </div>
-
-          <Link href="/blog" className="ml-auto mt-auto">
-            <Button size="lg" className="bg-primary text-white px-8">
-              All Articles
+          <Link href="/blog" className="shrink-0">
+            <Button className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-11 px-8 rounded-full">
+              Read Blog
             </Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
-          {posts?.slice(0, 3).map((post) => (
-            <motion.div
-              key={post?._id}
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <BlogCard post={post} />
-            </motion.div>
-          ))}
+        {/* 1px Gap Border Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border rounded-3xl overflow-hidden border border-border shadow-xs">
+          {activePosts.slice(0, 3).map((post, index) => {
+            const dateStr = new Date(post.createdAt).toLocaleDateString(
+              "en-US",
+              {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              },
+            );
+            return (
+              <motion.div
+                key={post._id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-card text-card-foreground hover:bg-secondary/40 transition-colors flex flex-col justify-between h-[420px] group cursor-pointer"
+              >
+                <Link href={`/blog/${post.slug}`} className="flex flex-col justify-between h-full">
+                  <div>
+                    {/* Cover Image */}
+                    <div className="relative block h-48 bg-muted overflow-hidden">
+                      <Image
+                        src={post.image || "/images/bg/hero-bg.jpg"}
+                        alt={post.title}
+                        fill
+                        sizes="(max-w-768px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+
+                    <div className="p-6 space-y-3">
+                      {/* Meta Info */}
+                      <div className="flex items-center gap-2 text-[9px] font-extrabold text-muted-foreground uppercase tracking-widest">
+                        <Calendar className="h-3.5 w-3.5 text-primary" />
+                        <span>{dateStr}</span>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-sm font-extrabold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                        {post.title}
+                      </h3>
+
+                      {/* Excerpt */}
+                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 font-semibold">
+                        {post.content}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Read More link */}
+                  <div className="p-6 pt-0">
+                    <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-primary group-hover:translate-x-1.5 transition-transform inline-flex items-center gap-1.5">
+                      Read More <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
-        <div></div>
       </div>
-    </motion.section>
+    </section>
   );
 };
 

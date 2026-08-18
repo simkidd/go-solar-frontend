@@ -4,27 +4,16 @@ import 'react-phone-number-input/style.css'
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SessionProvider } from "@/context/SessionContext";
 import QueryProvider from "@/providers/Queryprovider";
-import { HeroUIProvider, ToastProvider } from "@heroui/react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "@/components/ui/sonner";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <QueryProvider>
-        <HeroUIProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-            <ToastContainer
-              autoClose={2000}
-              hideProgressBar={false}
-              closeOnClick
-              pauseOnHover
-              theme="dark"
-            />
-            <ToastProvider placement="top-center" />
-          </ThemeProvider>
-        </HeroUIProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+          <Toaster richColors closeButton position="top-right" />
+        </ThemeProvider>
       </QueryProvider>
     </SessionProvider>
   );

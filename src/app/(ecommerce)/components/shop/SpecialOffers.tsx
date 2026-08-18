@@ -1,30 +1,47 @@
 import { Offer } from "@/interfaces/product.interface";
 import React from "react";
-import { FaTag } from "react-icons/fa";
 
 const SpecialOffers: React.FC<{ offers: Offer[] }> = ({ offers }) => {
   return (
     <>
       {offers && offers.length > 0 && (
-        <section className="w-full bg-gradient-to-r from-gray-100 to-gray-200 dark:from-[#27282b] dark:to-[#2a2b2f] py-10">
-          <div className="flex items-center justify-between bg-red-600 text-white px-6 py-3 rounded-lg shadow-md">
-            <h3 className="text-2xl font-semibold">Special Offers</h3>
-            <FaTag className="text-3xl" />
+        <section className="w-full py-6 font-inter">
+          
+          {/* Section Header */}
+          <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none mb-8">
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                Limited Campaigns
+              </span>
+              <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
+                Special Active Offers
+              </h2>
+            </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 my-8 px-4 pb-6">
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 pb-6">
             {offers.slice(0, 1).map((offer) => (
               <div
                 key={offer._id}
-                className="relative lg:col-span-2 col-span-1 bg-white p-6 rounded-lg shadow-lg dark:bg-[#222327] dark:border-gray-700 border border-gray-200 overflow-hidden"
+                className="relative lg:col-span-2 col-span-1 bg-card border border-border/80 rounded-3xl p-6 overflow-hidden flex flex-col justify-between min-h-[220px] transition-all duration-300 hover:border-primary/20 hover:shadow-xs group"
               >
-                <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
+                {/* Accent Background Pattern */}
+                <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors duration-300" />
+                
+                <div className="absolute top-4 right-4 bg-primary/10 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full select-none">
                   Limited Time
                 </div>
-                <h3 className="md:text-3xl text-2xl font-bold mb-8 capitalize">
-                  {offer.name}
-                </h3>
-                <p className="md:text-7xl text-3xl font-bold text-red-600 mt-auto">
+
+                <div className="space-y-1.5 max-w-[70%]">
+                  <h3 className="text-lg font-black uppercase tracking-wider text-foreground leading-snug">
+                    {offer.name}
+                  </h3>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-extrabold">
+                    Sitewide discount applied automatically at checkout
+                  </p>
+                </div>
+
+                <p className="text-5xl font-black text-primary tracking-tight select-none mt-auto">
                   {offer.percentageOff}% Off
                 </p>
               </div>
@@ -34,15 +51,21 @@ const SpecialOffers: React.FC<{ offers: Offer[] }> = ({ offers }) => {
               {offers.slice(1, 3).map((offer) => (
                 <div
                   key={offer._id}
-                  className="relative bg-white p-6 rounded-lg shadow-lg dark:bg-[#222327] dark:border-gray-700 border border-gray-200 overflow-hidden"
+                  className="relative bg-card border border-border/80 rounded-3xl p-6 overflow-hidden flex flex-col justify-between min-h-[220px] transition-all duration-300 hover:border-primary/20 hover:shadow-xs group"
                 >
-                  <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
+                  <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors duration-300" />
+
+                  <div className="absolute top-4 right-4 bg-primary/10 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full select-none">
                     Limited Time
                   </div>
-                  <h3 className="text-2xl font-bold mb-8 capitalize">
-                    {offer.name}
-                  </h3>
-                  <p className="text-3xl font-bold text-red-600">
+
+                  <div className="space-y-1 max-w-[80%]">
+                    <h3 className="text-sm font-black uppercase tracking-wider text-foreground leading-snug">
+                      {offer.name}
+                    </h3>
+                  </div>
+
+                  <p className="text-4xl font-black text-primary tracking-tight select-none mt-auto">
                     {offer.percentageOff}% Off
                   </p>
                 </div>

@@ -1,198 +1,228 @@
 "use client";
+import React, { useState } from "react";
 import {
   Order,
   TrackingStatus,
   UpdateTrackingStatus,
 } from "@/interfaces/order.interface";
 import { formatCurrency, formatDateTime } from "@/utils/helpers";
-import { Accordion, AccordionItem } from "@heroui/accordion";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, MapPin, CreditCard, ChevronRight, PackageCheck } from "lucide-react";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
-import { getChipColor } from "./OrdersTable";
-import { useOrderStore } from "@/lib/stores/order.store";
-import { Button, Chip, Select, SelectItem } from "@heroui/react";
+import { useRouter } from "next/navigation";
+import { getChipStyles } from "./OrdersTable";
+import { useUpdateOrderStatusMutation } from "@/hooks/mutations/useOrderMutations";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const OrderDetails: React.FC<{
   order: Order;
 }> = ({ order }) => {
-  const { statusLoading, updateTrackingLevel } = useOrderStore();
+  const updateStatusMutation = useUpdateOrderStatusMutation();
   const router = useRouter();
   const [input, setInput] = useState<UpdateTrackingStatus>({
     trackingLevel: 1,
     trackingId: order?.trackingId?._id,
   });
 
-  const handleUpdateTracking = async () => {
-    await updateTrackingLevel(input);
-    router.refresh();
+  const handleUpdateTracking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    updateStatusMutation.mutate(input);
   };
 
   return (
-    <>
-      <div className="mb-8">
-        <h3 className="text-2xl font-medium">
-          Order ID:{" "}
-          <span className="text-xl">#{order?.trackingId?.tracking_id}</span>
-        </h3>
-        <p className="text-sm">
-          {formatDateTime(order?.trackingId?.createdAt as string)}
-        </p>
-      </div>
-      <div className="w-full">
-        <div className="bg-white dark:bg-[#222327] shadow rounded mb-4">
-          <Accordion selectionMode="multiple">
-            <AccordionItem
-              key="1"
-              aria-label="Accordion 1"
-              title={
-                <p className="text-base font-medium dark:text-white">{`Ordered Items (${order?.products.length})`}</p>
-              }
-            >
-              <div className="w-full space-y-4">
-                {order?.products.map((item) => (
-                  <div
-                    key={item?._id}
-                    className="grid lg:grid-cols-7 grid-cols-1"
-                  >
-                    <div className="col-span-1 lg:col-span-3 grid grid-cols-[100px_auto] gap-2 py-2 px-2 lg:border-r-1">
-                      <div className="w-[100px] h-[100px] overflow-hidden rounded">
-                        <Image
-                          src={item?.product?.images[0].url}
-                          alt={item?.product?.name}
-                          className="w-full h-full object-cover"
-                          width={150}
-                          height={150}
-                        />
-                      </div>
-                      <div className="flex flex-col justify-between">
-                        <h4 className="font-medium text-base">
-                          {item?.product?.name}
-                        </h4>
-                        <p>x{item?.qty}</p>
-                      </div>
-                    </div>
-                    <div className="hidden lg:block col-span-2 py-2 px-2 border-r-1">
-                      <p className="font-medium text-base mb-2">Description:</p>
-                      <p className="text-ellipsis line-clamp-2 text-sm mb-4">
-                        {item?.product?.description}
-                      </p>
-                    </div>
-                    <div className="col-span-2 py-2 px-2 space-y-1">
-                      <p className="text-sm flex items-center">
-                        Price:{" "}
-                        <span className="font-bold ms-auto">
-                          {formatCurrency(item?.product?.price, "NGN")}
-                        </span>
-                      </p>
-                      <p className="text-sm flex items-center">
-                        Delivery Fee:{" "}
-                        <span className="font-bold ms-auto">
-                          {formatCurrency(item?.deliveryFee, "NGN")}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </AccordionItem>
-          </Accordion>
+    <div className="space-y-6 font-inter">
+      {/* Header section */}
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-card text-card-foreground p-6 rounded-3xl border border-border/80 shadow-xs">
+        <div>
+          <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+            Order ID: <span className="font-mono text-lg text-primary">#{order?.trackingId?.tracking_id}</span>
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1 select-none">
+            Placed on: {formatDateTime(order?.trackingId?.createdAt as string)}
+          </p>
         </div>
+        <div className="flex items-center gap-3">
+          <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${getChipStyles(order?.trackingStatus)}`}>
+            {order?.trackingStatus}
+          </span>
+        </div>
+      </div>
 
-        <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
-          <div className="flex flex-col bg-white dark:bg-[#222327] shadow-sm px-4 py-4">
-            <h4 className="font-medium text-xl mb-4">
-              {order?.user?.firstname + " " + order?.user?.lastname}
-            </h4>
+      {/* Ordered Items Layout */}
+      <Card className="bg-card text-card-foreground border-border/80 shadow-xs rounded-3xl overflow-hidden">
+        <CardHeader className="pb-4 border-b border-border/60">
+          <CardTitle className="text-base font-extrabold text-foreground select-none">
+            Ordered Items ({order?.products.length})
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="divide-y divide-border/60 p-0">
+          {order?.products.map((item) => (
+            <div
+              key={item?._id}
+              className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 hover:bg-muted/5 transition-colors"
+            >
+              <div className="flex gap-4">
+                <div className="h-16 w-16 min-w-16 rounded-xl overflow-hidden border border-border/60 relative bg-muted/10">
+                  <Image
+                    src={item?.product?.images[0]?.url || "/placeholder-product.jpg"}
+                    alt={item?.product?.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-extrabold text-sm text-foreground line-clamp-1">
+                    {item?.product?.name}
+                  </h4>
+                  <p className="text-xs text-muted-foreground select-none">
+                    Quantity: <span className="font-bold text-foreground">x{item?.qty}</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground md:line-clamp-2 line-clamp-1 max-w-xl font-medium">
+                    {item?.product?.description}
+                  </p>
+                </div>
+              </div>
+              <div className="flex md:flex-col justify-between items-end gap-2 text-right">
+                <div className="text-sm font-extrabold text-foreground">
+                  Price: {formatCurrency(item?.product?.price, "NGN")}
+                </div>
+                <div className="text-xs text-muted-foreground font-semibold">
+                  Delivery Fee: {formatCurrency(item?.deliveryFee, "NGN")}
+                </div>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
-            <p className="flex items-center">
-              <Phone size={16} />
-              <span className="ml-2">{order?.user?.phoneNumber}</span>
-            </p>
-            <p className="flex items-center">
-              <Mail size={16} />
-              <span className="ml-2">{order?.user?.email}</span>
-            </p>
-
-            <h4 className="font-medium mt-6">Pick-up Address:</h4>
-            {order?.deliveryDetails?.suiteNumber && (
-              <p className="text-base">{order?.deliveryDetails?.suiteNumber}</p>
-            )}
-            <p className="text-base">{order?.deliveryDetails?.streetAddress}</p>
-            <p className="text-base">{order?.deliveryDetails?.city}</p>
-            <p className="text-base">{order?.deliveryDetails?.zipCode}</p>
-          </div>
-          <div className="bg-white dark:bg-[#222327] shadow rounded px-4 py-4 flex flex-col">
-            <h4 className="font-medium text-lg">Payment Details</h4>
-            <p className="mb-8 flex items-center">
-              Payment method:{" "}
-              <span className="ms-auto">{order?.paymentMethod}</span>
-            </p>
-            <p className="mt-auto font-bold flex items-center">
-              Total:{" "}
-              <span className="ms-auto ">
-                {formatCurrency(order?.totalPricePaid as number, "NGN")}
-              </span>
-            </p>
-          </div>
-          <div className="bg-white dark:bg-[#222327] shadow rounded px-4 py-4">
-            <div className="mb-8">
-              <h4 className="font-medium text-lg">Activity</h4>
-              <div>
-                Status:{" "}
-                <Chip
-                  color={getChipColor(order?.trackingStatus)}
-                  size="sm"
-                  variant="flat"
-                >
-                  {order?.trackingStatus}
-                </Chip>
+      {/* Details Cards Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Customer Address Card */}
+        <Card className="bg-card text-card-foreground border-border/80 shadow-xs rounded-3xl overflow-hidden">
+          <CardHeader className="pb-3 border-b border-border/60 select-none">
+            <CardTitle className="text-sm font-bold text-muted-foreground flex items-center gap-1.5">
+              <MapPin className="h-4 w-4 text-primary" />
+              Customer & Shipping Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4 space-y-4">
+            <div>
+              <h4 className="font-extrabold text-foreground text-base">
+                {order?.user?.firstname + " " + order?.user?.lastname}
+              </h4>
+              <div className="mt-2 space-y-1 text-sm text-muted-foreground font-semibold">
+                <p className="flex items-center gap-1.5">
+                  <Phone className="h-3.5 w-3.5 text-muted-foreground/60" />
+                  {order?.user?.phoneNumber || "No phone listed"}
+                </p>
+                <p className="flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5 text-muted-foreground/60" />
+                  {order?.user?.email}
+                </p>
               </div>
             </div>
 
-            {/* update order status */}
-            <form
-              className="mt-4 flex flex-col gap-2"
-              onSubmit={handleUpdateTracking}
-            >
+            <div className="pt-3 border-t border-border/60">
+              <h5 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 select-none">Delivery Address</h5>
+              <div className="text-sm text-foreground space-y-0.5 font-semibold">
+                {order?.deliveryDetails?.suiteNumber && (
+                  <p>{order?.deliveryDetails?.suiteNumber}</p>
+                )}
+                <p>{order?.deliveryDetails?.streetAddress}</p>
+                <p>{order?.deliveryDetails?.city}</p>
+                {order?.deliveryDetails?.zipCode && (
+                  <p className="text-xs text-muted-foreground mt-1">Zip: {order?.deliveryDetails?.zipCode}</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Payment Summary Card */}
+        <Card className="bg-card text-card-foreground border-border/80 shadow-xs rounded-3xl overflow-hidden">
+          <CardHeader className="pb-3 border-b border-border/60 select-none">
+            <CardTitle className="text-sm font-bold text-muted-foreground flex items-center gap-1.5">
+              <CreditCard className="h-4 w-4 text-primary" />
+              Payment Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4 flex flex-col justify-between h-[80%]">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground font-semibold">Method</span>
+                <span className="font-extrabold text-foreground capitalize">{order?.paymentMethod || "Card"}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground font-semibold">Status</span>
+                <span className="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full px-2.5 py-0.5 font-bold">
+                  Paid
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-border/60 mt-6 flex justify-between items-center select-none">
+              <span className="text-sm font-bold text-foreground">Total Amount</span>
+              <span className="text-lg font-black text-primary">
+                {formatCurrency(order?.totalPricePaid as number, "NGN")}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tracking Status Form Card */}
+        <Card className="bg-card text-card-foreground border-border/80 shadow-xs rounded-3xl overflow-hidden">
+          <CardHeader className="pb-3 border-b border-border/60 select-none">
+            <CardTitle className="text-sm font-bold text-muted-foreground flex items-center gap-1.5">
+              <PackageCheck className="h-4 w-4 text-primary" />
+              Tracking Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4 space-y-6">
+            <div className="space-y-2">
+              <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">Current Status</div>
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${getChipStyles(order?.trackingStatus)}`}>
+                  {order?.trackingStatus}
+                </span>
+              </div>
+            </div>
+
+            {/* update order status form */}
+            <form onSubmit={handleUpdateTracking} className="space-y-3.5 pt-2 border-t border-border/60">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">Update Status</label>
               <Select
-                label="Tracking Level"
-                placeholder="Update Order Status"
-                labelPlacement="outside"
-                value={input.trackingLevel}
-                onChange={(e) =>
-                  setInput({
-                    ...input,
-                    trackingLevel: Number(e.target.value),
-                  })
-                }
+                value={String(input.trackingLevel)}
+                onValueChange={(val) => setInput({ ...input, trackingLevel: Number(val) })}
               >
-                <SelectItem key={"1"} textValue={String(1)}>
-                  {TrackingStatus.Processing}
-                </SelectItem>
-                <SelectItem key={"2"} textValue={String(2)}>
-                  {TrackingStatus.Delivered}
-                </SelectItem>
-                <SelectItem key={"3"} textValue={String(3)}>
-                  {TrackingStatus.Received}
-                </SelectItem>
+                <SelectTrigger className="bg-background border-border rounded-xl">
+                  <SelectValue placeholder="Select tracking status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1" className="cursor-pointer">{TrackingStatus.Processing}</SelectItem>
+                  <SelectItem value="2" className="cursor-pointer">{TrackingStatus.Delivered}</SelectItem>
+                  <SelectItem value="3" className="cursor-pointer">{TrackingStatus.Received}</SelectItem>
+                </SelectContent>
               </Select>
 
               <Button
-                variant="solid"
-                color="primary"
                 type="submit"
-                isDisabled={statusLoading}
-                isLoading={statusLoading}
+                disabled={updateStatusMutation.isPending}
+                className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl cursor-pointer shadow-sm text-xs font-bold h-9"
               >
-                Update
+                {updateStatusMutation.isPending ? "Updating..." : "Save Tracking Status"}
               </Button>
             </form>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-    </>
+    </div>
   );
 };
 

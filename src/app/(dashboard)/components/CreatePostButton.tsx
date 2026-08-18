@@ -1,32 +1,32 @@
 "use client";
+import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
-import { Button, useDisclosure } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import React from "react";
 import CreateBlogPostForm from "./CreateBlogPostForm";
 
 const CreatePostButton = () => {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div>
       <AppModal
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
+        onOpenChange={setIsOpen}
         title="New Post"
         isDismissable={false}
         hideCloseButton
         size="2xl"
         scrollBehavior="inside"
       >
-        <CreateBlogPostForm onClose={onClose} />
+        <CreateBlogPostForm onClose={() => setIsOpen(false)} />
       </AppModal>
 
       <Button
-        color="primary"
-        startContent={<Plus size={16} />}
-        onPress={onOpen}
+        onClick={() => setIsOpen(true)}
+        className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
       >
+        <Plus className="h-4 w-4" />
         Add Post
       </Button>
     </div>

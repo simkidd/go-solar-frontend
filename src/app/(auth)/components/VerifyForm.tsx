@@ -1,22 +1,24 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
+import React, { useEffect, useMemo, useState } from "react";
 import { axiosInstance } from "@/lib/axios";
-import { useAuthStore } from "@/lib/stores/auth.store";
-import { Button, Input, Spinner } from "@heroui/react";
+import { useResendVerificationMutation } from "@/hooks/mutations/useAuthMutations";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/custom/Spinner";
 import { MailIcon, XCircleIcon } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useMemo, useState } from "react";
 
 const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
-  const { loading, resendVerification } = useAuthStore();
+  const resendMutation = useResendVerificationMutation();
   const [input, setInput] = useState({
     email: "",
   });
   const [loadingVerify, setLoadingVerify] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
-  const [resend, setResend] = useState(false);
-  const [showInput, setShowInput] = useState(false);
+  const [resend] = useState(false);
+  const [showInput] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -29,7 +31,7 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
       } catch (error) {
         const errorMsg = error as any;
         setError(true);
-        console.log(errorMsg?.response.data.message);
+        console.log(errorMsg?.response?.data?.message);
       } finally {
         setLoadingVerify(false);
       }
@@ -45,20 +47,20 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
     return validateEmail(input.email) ? false : true;
   }, [input.email]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    await resendVerification(input);
-    setInput({ email: "" });
+    resendMutation.mutate(input, {
+      onSuccess: () => setInput({ email: "" }),
+    });
   };
 
   if (loadingVerify) {
     return (
-      <div className="text-center py-4">
+      <div className="text-center py-8 space-y-3 font-inter">
         <Spinner size="lg" />
-        <h3 className="font-medium text-xl mt-3">Verifying...</h3>
-        <p className="text-gray-500 dark:text-gray-500">
-          This won't take long.
+        <h3 className="font-extrabold text-lg text-zinc-900 dark:text-white">Verifying your account...</h3>
+        <p className="text-xs text-zinc-400">
+          This won't take long. Please do not close this window.
         </p>
       </div>
     );
@@ -66,60 +68,50 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
 
   if (error && !success) {
     return (
-      <div className="login-form-container gap-2 pe-md-5">
+      <div className="space-y-6 font-inter">
         {!showInput ? (
-          <div className="flex flex-col items-center gap-4">
-          <XCircleIcon size={50} className="text-center text-red-400" />
-            <p className="text-center mb-4 text-red-400">
-              Invalid or expired verification code
+          <div className="flex flex-col items-center text-center space-y-4">
+            <XCircleIcon size={56} className="text-rose-500" />
+            <p className="text-sm font-bold text-rose-500">
+              Invalid or expired verification link
             </p>
-            {/* <p
-              className="text-primary text-center cursor-pointer"
-              onClick={() => setShowInput(true)}
-            >
-              Resend verification
-            </p> */}
           </div>
         ) : (
           <>
             {resend ? (
-              <p>We've sent a verification link to your email.</p>
+              <p className="text-sm text-zinc-500">We've sent a verification link to your email.</p>
             ) : (
-              <>
-                <h4 className="mb-4 text-center text-xl font-semibold">
-                  Request verification
+              <div className="space-y-4">
+                <h4 className="text-center text-base font-bold text-zinc-900 dark:text-white">
+                  Request Verification Link
                 </h4>
-                <form onSubmit={handleSubmit} className="mb-8">
-                  <div className="input-group mb-3">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="relative">
                     <Input
                       type="email"
                       placeholder="Enter email address"
-                      className="w-full"
-                      startContent={
-                        <MailIcon
-                          size={16}
-                          className="text-default-400 pointer-events-none flex-shrink-0"
-                        />
-                      }
-                      errorMessage={
-                        isEmailInvalid && "Please enter a valid email address"
-                      }
+                      className="w-full h-11 pl-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
                       value={input?.email}
                       onChange={(e) =>
                         setInput({ ...input, email: e.target.value })
                       }
                     />
+                    <MailIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
                   </div>
 
+                  {isEmailInvalid && (
+                    <p className="text-[11px] text-rose-500 font-semibold pl-1">Please enter a valid email address</p>
+                  )}
+
                   <Button
-                    isLoading={loading}
-                    className="w-full bg-primary text-white py-2 px-8 mt-8 disabled:!bg-gray-400"
-                    disabled={!input.email || loading}
+                    type="submit"
+                    className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11"
+                    disabled={!input.email || resendMutation.isPending}
                   >
-                    Resend
+                    {resendMutation.isPending ? "Sending..." : "Resend Link"}
                   </Button>
                 </form>
-              </>
+              </div>
             )}
           </>
         )}
@@ -129,11 +121,13 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
 
   if (success) {
     return (
-      <div className="text-center">
-        <h3 className="font-medium text-xl">You're all set!</h3>
-        <p>Thank you for verifying your email.</p>
-        <Link href="/account/login" className="text-primary">
-          Sign In
+      <div className="text-center space-y-4 font-inter py-6">
+        <h3 className="font-extrabold text-xl text-zinc-900 dark:text-white">You're all set!</h3>
+        <p className="text-xs text-zinc-500 leading-relaxed">Thank you for verifying your email address. You can now login to your account.</p>
+        <Link href="/auth/login" className="block pt-2">
+          <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-8">
+            Sign In
+          </Button>
         </Link>
       </div>
     );

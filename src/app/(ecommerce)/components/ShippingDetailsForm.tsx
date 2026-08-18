@@ -1,111 +1,113 @@
 "use client";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { DeliveryDetails } from "@/interfaces/product.interface";
-import React, { useEffect, useState } from "react";
 import StepButton from "./StepButtons";
 import useCartStore from "@/lib/stores/cart.store";
-import { toast } from "react-toastify";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 const ShippingDetailsForm = () => {
   const { user } = useAuthStore();
-  const { setDeliveryDetails, setCurrentStep, deliveryDetails } =
-    useCartStore();
+  const { setDeliveryDetails, setCurrentStep, deliveryDetails } = useCartStore();
   const router = useRouter();
-  const [shipping, setShipping] = useState<DeliveryDetails>({
-    suiteNumber: deliveryDetails.suiteNumber || "",
-    streetAddress: deliveryDetails.streetAddress || "",
-    city: deliveryDetails.city || "",
-    zipCode: deliveryDetails.zipCode || "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DeliveryDetails>({
+    defaultValues: {
+      suiteNumber: deliveryDetails?.suiteNumber || "",
+      streetAddress: deliveryDetails?.streetAddress || "",
+      city: deliveryDetails?.city || "",
+      zipCode: deliveryDetails?.zipCode || "",
+    },
   });
 
   useEffect(() => {
     if (!user) {
-      router.push("/account/login");
-      return;
+      router.push("/auth/login?redirectUrl=/checkout");
     }
   }, [router, user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setShipping((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (
-      !shipping.suiteNumber ||
-      !shipping.streetAddress ||
-      !shipping.city ||
-      !shipping.zipCode
-    ) {
-      toast.info("All fields are required to proceed");
-      return;
-    } else {
-      setDeliveryDetails(shipping);
-      setCurrentStep(2);
-    }
+  const onSubmit = (values: DeliveryDetails) => {
+    setDeliveryDetails(values);
+    setCurrentStep(2);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-400">
-          Suite Number
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-lg mx-auto space-y-4 font-inter">
+      <div className="space-y-1">
+        <label className="block text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+          Suite / Apt Number <span className="text-red-500">*</span>
         </label>
-        <input
-          type="text"
-          name="suiteNumber"
-          value={shipping.suiteNumber}
-          onChange={handleChange}
-          className="mt-1 p-2 w-full border border-gray-300  focus:outline-none focus:border-primary bg-transparent"
+        <Input
+          placeholder="e.g. Suite 4B or Flat 2"
+          {...register("suiteNumber", { required: "Suite number is required" })}
+          className="border-zinc-200 dark:border-zinc-800 rounded-xl"
         />
+        {errors.suiteNumber && (
+          <p className="text-[11px] text-rose-500 font-semibold pl-1">
+            {errors.suiteNumber.message}
+          </p>
+        )}
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-400">
-          Street Address
+
+      <div className="space-y-1">
+        <label className="block text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+          Street Address <span className="text-red-500">*</span>
         </label>
-        <input
-          type="text"
-          name="streetAddress"
-          value={shipping.streetAddress}
-          onChange={handleChange}
-          className="mt-1 p-2 w-full border border-gray-300  focus:outline-none focus:border-primary bg-transparent"
+        <Input
+          placeholder="e.g. 15 Aba Road, Rumuokoro"
+          {...register("streetAddress", { required: "Street address is required" })}
+          className="border-zinc-200 dark:border-zinc-800 rounded-xl"
         />
+        {errors.streetAddress && (
+          <p className="text-[11px] text-rose-500 font-semibold pl-1">
+            {errors.streetAddress.message}
+          </p>
+        )}
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-400">City</label>
-        <input
-          type="text"
-          name="city"
-          value={shipping.city}
-          onChange={handleChange}
-          className="mt-1 p-2 w-full border border-gray-300  focus:outline-none focus:border-primary bg-transparent"
-        />
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <label className="block text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+            City / State <span className="text-red-500">*</span>
+          </label>
+          <Input
+            placeholder="e.g. Port Harcourt"
+            {...register("city", { required: "City is required" })}
+            className="border-zinc-200 dark:border-zinc-800 rounded-xl"
+          />
+          {errors.city && (
+            <p className="text-[11px] text-rose-500 font-semibold pl-1">
+              {errors.city.message}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-1">
+          <label className="block text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+            Zip / Postal Code <span className="text-red-500">*</span>
+          </label>
+          <Input
+            placeholder="e.g. 500001"
+            {...register("zipCode", { required: "Postal code is required" })}
+            className="border-zinc-200 dark:border-zinc-800 rounded-xl"
+          />
+          {errors.zipCode && (
+            <p className="text-[11px] text-rose-500 font-semibold pl-1">
+              {errors.zipCode.message}
+            </p>
+          )}
+        </div>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-400">
-          Zip Code
-        </label>
-        <input
-          type="text"
-          name="zipCode"
-          value={shipping.zipCode}
-          onChange={handleChange}
-          className="mt-1 p-2 w-full border border-gray-300  focus:outline-none focus:border-primary bg-transparent"
-        />
+
+      <div className="pt-4">
+        <StepButton />
       </div>
-      <StepButton
-        nextDisabled={
-          !shipping.suiteNumber ||
-          !shipping.streetAddress ||
-          !shipping.city ||
-          !shipping.zipCode
-        }
-      />
     </form>
   );
 };

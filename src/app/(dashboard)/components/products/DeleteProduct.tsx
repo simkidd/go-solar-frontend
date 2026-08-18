@@ -1,39 +1,34 @@
 "use client";
+import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
 import { Product } from "@/interfaces/product.interface";
 import { deleteProduct } from "@/lib/api/products";
-import { Button, useDisclosure } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const DeleteProduct: React.FC<{ product: Product }> = ({ product }) => {
-  const {
-    isOpen: isDeleteModalOpen,
-    onOpen: onDeleteModalOpen,
-    onOpenChange: onDeleteModalOpenChange,
-    onClose: onDeleteModalClose,
-  } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <AppModal
-        isOpen={isDeleteModalOpen}
-        onOpenChange={onDeleteModalOpenChange}
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
         title="Confirmation"
         isDismissable={false}
         hideCloseButton
       >
-        <DeletePopup onClose={onDeleteModalClose} product={product} />
+        <DeletePopup onClose={() => setIsOpen(false)} product={product} />
       </AppModal>
       <Button
-        color="danger"
-        variant="light"
-        onPress={() => onDeleteModalOpen()}
+        variant="destructive"
+        onClick={() => setIsOpen(true)}
+        className="gap-2"
       >
-        <Trash className="mr-2" size={16} />
+        <Trash className="h-4 w-4" />
         Delete
       </Button>
     </>
@@ -65,22 +60,19 @@ export const DeletePopup: React.FC<{
 
   return (
     <div className="flex flex-col">
-      <p>
+      <p className="text-zinc-600 dark:text-zinc-300 text-sm">
         Are you sure you want to delete <b>{product?.name}</b>?
       </p>
       <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-        <Button variant="light" color="default" onPress={onClose}>
+        <Button variant="ghost" onClick={onClose} className="dark:text-zinc-300">
           Cancel
         </Button>
         <Button
-          variant="solid"
-          color="danger"
-          type="submit"
-          isDisabled={deleteProductMutation.isPending}
-          isLoading={deleteProductMutation.isPending}
-          onPress={handleDelete}
+          variant="destructive"
+          disabled={deleteProductMutation.isPending}
+          onClick={handleDelete}
         >
-          Delete
+          {deleteProductMutation.isPending ? "Deleting..." : "Delete"}
         </Button>
       </div>
     </div>

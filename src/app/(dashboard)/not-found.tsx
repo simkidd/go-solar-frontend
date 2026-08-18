@@ -1,5 +1,5 @@
-"use client"
-import { Button } from "@heroui/react";
+"use client";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function NotFound() {
@@ -8,8 +8,8 @@ export default function NotFound() {
       <div className="container mx-auto px-2 mb-8 flex flex-col items-center justify-center w-full h-full">
         <h2 className="text-3xl font-medium mb-8">Not Found</h2>
         <p className="mb-4">Could not find requested resource</p>
-        <Link href="/admin">
-          <Button variant="solid" color="primary">
+        <Link href="/dashboard">
+          <Button className="bg-primary hover:bg-primary/95 text-white">
             Return to Dashboard
           </Button>
         </Link>

@@ -1,12 +1,14 @@
 "use client";
+
+import React, { useState } from "react";
 import SocialShare from "@/components/SocialShare";
 import { Product } from "@/interfaces/product.interface";
 import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
-import { Button } from "@heroui/react";
-import { Minus, Plus } from "lucide-react";
-import React, { useState } from "react";
-import { BsCartPlus } from "react-icons/bs";
+import { Button } from "@/components/ui/button";
+import { Minus, Plus, Truck, Heart, Star } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
 
 const ProductDetail: React.FC<{
   product: Product;
@@ -14,155 +16,178 @@ const ProductDetail: React.FC<{
 }> = ({ product, productCode }) => {
   const { addItem } = useCartStore();
   const [quantity, setQuantity] = useState<number>(1);
-  const [deliveryOption, setDeliveryOption] = useState<"within" | "outside">(
-    "within"
-  );
-
-  const selectedDeliveryFee =
-    deliveryOption === "within"
-      ? product?.withinLocationDeliveryFee
-      : product?.outsideLocationDeliveryFee;
+  const [liked, setLiked] = useState<boolean>(false);
 
   const calculateNewPrice = (price: number, percentageOff: number) => {
     return price - (price * percentageOff) / 100;
   };
 
-  const newPrice =
-    product?.currentOffer?.isActive &&
-    product?.currentOffer?.percentageOff !== undefined
-      ? calculateNewPrice(product?.price, product?.currentOffer?.percentageOff)
-      : product?.price;
+  const hasDirectDiscount =
+    typeof product?.discountPrice === "number" &&
+    product.discountPrice > 0 &&
+    product.discountPrice < product.price;
+
+  const hasOfferDiscount =
+    Boolean(product?.currentOffer?.isActive && product?.currentOffer?.percentageOff);
+
+  const basePrice = hasDirectDiscount ? product.discountPrice! : product?.price;
+
+  const newPrice = hasOfferDiscount
+    ? calculateNewPrice(basePrice, product?.currentOffer!.percentageOff)
+    : basePrice;
+
+  const discountPercentage = hasDirectDiscount
+    ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
+    : hasOfferDiscount
+      ? product.currentOffer!.percentageOff
+      : 0;
+
+  const inStock = product?.quantityInStock > 0;
 
   return (
-    <div className="w-full flex flex-col lg:p-4">
-      <div className="mb-3">
-        <h2 className="font-bold text-2xl">{product?.name}</h2>
-        <p className="text-base">
-          Product code: <span className="font-semibold">{productCode}</span>
-        </p>
-        <p className="text-base">
-          Brand: <span className="font-semibold">{product?.brand}</span>
+    <div className="w-full flex flex-col font-inter space-y-6">
+      {/* ── Brand + Category Chips ── */}
+      <div className="flex items-center gap-2 select-none">
+        {product?.brand && (
+          <span className="text-[10px] font-black uppercase tracking-widest bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-2.5 py-1 rounded-md">
+            {product.brand}
+          </span>
+        )}
+        {product?.category?.name && (
+          <span className="text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary px-2.5 py-1 rounded-md">
+            {product.category.name}
+          </span>
+        )}
+      </div>
+
+      {/* ── Title ── */}
+      <div className="space-y-1.5">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight leading-tight">
+          {product?.name}
+        </h1>
+        <p className="text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm leading-relaxed font-semibold">
+          {product?.description || "High efficiency monocrystalline solar hardware component built to deliver reliable power."}
         </p>
       </div>
 
-      {product?.currentOffer?.isActive && (
-        <div className="bg-yellow-200 text-yellow-900 p-4 mb-4 rounded-md shadow-md">
-          <p className="text-lg font-semibold">Limited Time Offer!</p>
-          <p className="capitalize">{product?.currentOffer?.name}</p>
-        </div>
-      )}
-
-      <div className="flex justify-between items-center border-t border-b border-t-[#f1f1f1] dark:border-t-[#2a2b2f] border-b-[#f1f1f1] dark:border-b-[#2a2b2f] py-4 mb-4">
-        <h3 className="font-bold text-2xl space-x-2">
-          <span className="font-semibold">
-            {formatCurrency(newPrice, "NGN")}
+      {/* ── Stock status indicator & Rating ── */}
+      <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-900 pb-4">
+        <div className="flex items-center gap-1.5">
+          <span className={`w-2.5 h-2.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-rose-500"}`} />
+          <span className={`text-xs font-bold ${inStock ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+            {inStock ? "In Stock" : "Out of Stock"}
           </span>
-          {product?.currentOffer?.isActive &&
-            product?.currentOffer?.percentageOff && (
-              <span className="line-through text-gray-500 text-xl">
-                {formatCurrency(product?.price, "NGN")}
-              </span>
-            )}
-        </h3>
-
-        <p className="text-gray-500">
-          {product?.quantityInStock > 0 ? (
-            <span className="text-green-600">
-              {product?.quantityInStock < 5
-                ? `Only (${product?.quantityInStock} left)`
-                : "In Stock"}
+          {productCode && (
+            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 ml-2">
+              SKU: {productCode}
             </span>
-          ) : (
-            <span className="text-red-500">Out of stock</span>
           )}
-        </p>
-      </div>
-
-      <div className="flex gap-8 mb-6">
-        <div className="flex items-center ">
-          <Button
-            isIconOnly
-            className="disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed  bg-primary text-white"
-            disabled={quantity <= 1}
-            onPress={() => quantity > 1 && setQuantity(quantity - 1)}
-          >
-            <Minus size={18} />
-          </Button>
-          <span className="px-4 text-sm">{quantity}</span>
-          <Button
-            isIconOnly
-            className="bg-primary text-white disabled:text-gray-400 disabled:bg-opacity-50 disabled:cursor-not-allowed"
-            disabled={quantity >= product.quantityInStock}
-            onPress={() => {
-              if (quantity < product.quantityInStock) setQuantity(quantity + 1);
-            }}
-          >
-            <Plus size={18} />
-          </Button>
         </div>
 
-        <div>
-          <Button
-            size="lg"
-            className="bg-primary text-white py-3 px-6 flex items-center gap-2"
-            onPress={() =>
-              addItem({
-                product: {
-                  ...product,
-                  price: newPrice,
-                },
-                qty: quantity,
-                deliveryFee: selectedDeliveryFee,
-              })
-            }
-          >
-            Add To Cart
-            <BsCartPlus size={18} />
-          </Button>
-        </div>
-      </div>
-
-      <div>
-        <p className="">
-          Delivery Fee:{" "}
-          <span className="font-bold">
-            {formatCurrency(selectedDeliveryFee, "NGN")}
+        <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 text-amber-500">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} className={`w-3.5 h-3.5 fill-amber-400 text-amber-400`} />
+            ))}
+          </div>
+          <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 ml-1">
+            (4.8 / 12 reviews)
           </span>
-        </p>
-
-        <p className="mt-4">Location:</p>
-        <div className="flex gap-4 mt-1">
-          <button
-            className={`${
-              deliveryOption === "within"
-                ? "border border-primary text-primary"
-                : "border border-gray-500 text-gray-500"
-            } py-2 px-4 rounded-lg`}
-            onClick={() => setDeliveryOption("within")}
-          >
-            Port Harcourt
-          </button>
-          <button
-            className={`${
-              deliveryOption === "outside"
-                ? "border border-primary text-primary"
-                : "border border-gray-500 text-gray-500"
-            } py-2 px-4 rounded-lg`}
-            onClick={() => setDeliveryOption("outside")}
-          >
-            Others
-          </button>
         </div>
       </div>
 
-      <div className="flex gap-4 mt-4 items-center">
-        <div className="bg-gray-400 text-black py-2 px-3 rounded-md">
-          <p className="font-medium">Call us for Bulk Purchases:</p>
-          <p>0706 276 2879</p>
+      {/* ── Pricing Block ── */}
+      <div className="flex items-baseline gap-3">
+        <span className="text-3xl font-black text-[#08AA08] dark:text-[#09bd09]">
+          {formatCurrency(newPrice, "NGN")}
+        </span>
+        {product?.price > newPrice && (
+          <span className="line-through text-zinc-400 text-sm font-bold">
+            {formatCurrency(product?.price, "NGN")}
+          </span>
+        )}
+        {discountPercentage > 0 && (
+          <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded bg-amber-500 text-white shadow-xs tracking-wider">
+            {discountPercentage}% Off
+          </span>
+        )}
+      </div>
+
+      {/* ── Delivery Info Info ── */}
+      <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 text-xs">
+        <Truck size={15} className="text-primary" />
+        <span className="font-semibold">
+          Delivery fee: {formatCurrency(product?.withinLocationDeliveryFee || 0, "NGN")} (Within location)
+        </span>
+      </div>
+
+      {/* ── Add to Cart & Counter ── */}
+      <div className="flex flex-col gap-3 pt-2">
+        <div className="flex items-center gap-3">
+          {/* Quantity selector */}
+          <div className="flex items-center gap-1 border border-zinc-200 dark:border-zinc-800 p-0.5 rounded-xl bg-zinc-50 dark:bg-zinc-900">
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={quantity <= 1 || !inStock}
+              onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+              className="h-8 w-8 rounded-lg cursor-pointer"
+            >
+              <Minus size={12} />
+            </Button>
+            <span className="px-3 text-xs font-bold text-zinc-800 dark:text-zinc-200 select-none">
+              {quantity}
+            </span>
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={quantity >= product.quantityInStock || !inStock}
+              onClick={() => {
+                if (quantity < product.quantityInStock) setQuantity(quantity + 1);
+              }}
+              className="h-8 w-8 rounded-lg cursor-pointer"
+            >
+              <Plus size={12} />
+            </Button>
+          </div>
+
+          {/* Add to Cart Button */}
+          <Button
+            onClick={() => {
+              if (inStock) {
+                addItem({
+                  product: {
+                    ...product,
+                    price: newPrice,
+                  },
+                  qty: quantity,
+                  deliveryFee: product.withinLocationDeliveryFee || 0,
+                });
+                toast.success("Item added to cart!");
+              }
+            }}
+            disabled={!inStock}
+            className="flex-1 bg-[#08AA08] hover:bg-[#079907] disabled:bg-zinc-100 disabled:text-zinc-400 dark:disabled:bg-zinc-900 dark:disabled:text-zinc-600 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl h-10 cursor-pointer shadow-xs"
+          >
+            {inStock ? "Add To Cart" : "Out of Stock"}
+          </Button>
+
+          {/* Wishlist Button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setLiked(!liked)}
+            className="border-zinc-200 dark:border-zinc-850 rounded-xl h-10 w-10 shrink-0 text-zinc-400 hover:text-rose-500 cursor-pointer"
+          >
+            <Heart className={`w-4 h-4 ${liked ? "fill-rose-500 text-rose-500" : ""}`} />
+          </Button>
         </div>
-        <div>
-          <SocialShare />
-        </div>
+      </div>
+
+      {/* ── Social Share links ── */}
+      <div className="flex items-center gap-4 pt-4 border-t border-zinc-150 dark:border-zinc-850">
+        <span className="text-xs font-bold text-zinc-400 dark:text-zinc-600">Share Product:</span>
+        <SocialShare />
       </div>
     </div>
   );

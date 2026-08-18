@@ -46,7 +46,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   }, [setUser, setIsAuthenticated]);
 
   const logout = () => {
-    router.push("/account/login"); // Redirect to login page after logout
+    router.push("/auth/login"); // Redirect to login page after logout
     storeLogout();
   };
 

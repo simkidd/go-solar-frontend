@@ -1,23 +1,37 @@
 "use client";
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { useOrderStore } from "@/lib/stores/order.store";
-import { useProductStore } from "@/lib/stores/product.store";
-import { useUserStore } from "@/lib/stores/user.store";
+import { useAllUsersQuery } from "@/hooks/queries/useUsersQuery";
+import { useAllProductsQuery } from "@/hooks/queries/useProductsQuery";
+import { useAllOrdersQuery } from "@/hooks/queries/useOrdersQuery";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
-  Chip,
-  Card,
-  Button,
-  Skeleton,
-  CardBody,
-  Dropdown,
-  DropdownItem,
-  DropdownTrigger,
   DropdownMenu,
-} from "@heroui/react";
-import { ChevronDownIcon, SquareGanttChart } from "lucide-react";
-import Link from "next/link";
-import { useState, useEffect } from "react";
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  ChevronDown,
+  Users,
+  Package,
+  ShoppingCart,
+  DollarSign,
+  TrendingUp,
+  AlertTriangle,
+  ArrowUpRight,
+  ExternalLink,
+  Sun,
+  Zap,
+  CheckCircle2,
+  ListTodo,
+} from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import {
   CategoryScale,
@@ -29,9 +43,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Calendar } from "@heroui/calendar";
-import { today, getLocalTimeZone } from "@internationalized/date";
-import { formatCurrency } from "@/utils/helpers";
+import { formatCurrency, formatDate } from "@/utils/helpers";
+import Link from "next/link";
 
 Chart.register(
   CategoryScale,
@@ -52,18 +65,53 @@ interface DashboardStats {
   ordersPerMonth: {
     [key: string]: number;
   };
+  totalSolarLeads?: number;
+  pendingSolarLeads?: number;
+  totalRequestedKw?: number;
+  recentQuotes?: any[];
 }
+
+const getStatusBadgeClass = (status: string) => {
+  switch (status) {
+    case "Processing":
+      return "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-900/50";
+    case "Delivered":
+      return "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/50";
+    case "Received":
+      return "bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-900/50";
+    default:
+      return "bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700";
+  }
+};
+
+const getQuoteStatusBadgeClass = (status: string) => {
+  switch (status) {
+    case "New Lead":
+      return "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-900/50";
+    case "Contacted":
+      return "bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-900/50";
+    case "Quote Sent":
+      return "bg-purple-100 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-900/50";
+    case "Won":
+      return "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/50";
+    default:
+      return "bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700";
+  }
+};
 
 const OverviewComp = () => {
   const { user } = useAuthStore();
-  const { users } = useUserStore();
-  const { products } = useProductStore();
-  const { orders } = useOrderStore();
-  const [dashboardData, setDashboardData] = useState<DashboardStats | null>(
-    null
-  );
+  const { data: usersRes } = useAllUsersQuery({ limit: 1000 });
+  const { data: productsRes } = useAllProductsQuery({ page: 1, limit: 1000 });
+  const { data: ordersRes } = useAllOrdersQuery({ limit: 1000 });
+  const products = productsRes?.products || [];
+  const users = usersRes?.users || [];
+  const orders = ordersRes?.orders || [];
+  
+  const [dashboardData, setDashboardData] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState("month"); // Initial period is "month"
+  const [selectedPeriod, setSelectedPeriod] = useState("month");
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   useEffect(() => {
     (async () => {
@@ -98,188 +146,488 @@ const OverviewComp = () => {
       ordersData = labels.map((month) => ordersPerMonth[month]);
     }
 
-    const chartData = {
+    return {
       labels: labels,
       datasets: [
         {
-          label: "Revenue",
+          label: "Revenue (₦)",
           data: revenueData,
-          backgroundColor: "rgba(54, 162, 235, 0.2)",
-          borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1,
+          backgroundColor: "rgba(16, 185, 129, 0.04)",
+          borderColor: "#10b981",
+          borderWidth: 2,
+          tension: 0.35,
+          fill: true,
+          pointBackgroundColor: "#10b981",
         },
         {
           label: "Orders",
           data: ordersData,
-          backgroundColor: "rgba(255, 159, 64, 0.2)",
-          borderColor: "rgba(255, 159, 64, 1)",
-          borderWidth: 1,
+          backgroundColor: "rgba(249, 115, 22, 0.04)",
+          borderColor: "#f97316",
+          borderWidth: 2,
+          tension: 0.35,
+          fill: true,
+          pointBackgroundColor: "#f97316",
         },
       ],
     };
-
-    return chartData;
   };
 
   const chartData = getChartData();
   const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top" as const,
+        labels: {
+          color: "rgb(156, 163, 175)",
+          font: {
+            family: "Inter",
+            size: 11,
+          },
+        },
+      },
+      tooltip: {
+        padding: 12,
+        borderRadius: 8,
+        titleFont: { family: "Inter", size: 12, weight: "bold" as const },
+        bodyFont: { family: "Inter", size: 12 },
+      },
+    },
     scales: {
       y: {
         beginAtZero: true,
+        grid: {
+          color: "rgba(156, 163, 175, 0.06)",
+        },
+        ticks: {
+          color: "rgb(156, 163, 175)",
+          font: { family: "Inter", size: 11 },
+        },
+      },
+      x: {
+        grid: {
+          color: "rgba(156, 163, 175, 0.06)",
+        },
+        ticks: {
+          color: "rgb(156, 163, 175)",
+          font: { family: "Inter", size: 11 },
+        },
       },
     },
   };
 
-  const handlePeriodChange = (period: string) => {
-    setSelectedPeriod(period);
-  };
+  // Get most recent 5 orders
+  const recentOrders = useMemo(() => {
+    return [...orders]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+  }, [orders]);
+
+  // Identify low stock items (less than 5 units)
+  const lowStockCount = useMemo(() => {
+    return products.filter((p) => p.quantityInStock <= 5 && !p.isDeleted).length;
+  }, [products]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-9 gap-4">
-      <Card className="col-span-1 lg:col-span-3 dark:bg-[#222327] dark:text-white">
-        <CardBody>
-          <div className="flex gap-2 flex-col justify-between">
-            <div className="w-full">
-              {!user ? (
-                <>
-                  <Skeleton className="w-4/5 rounded-lg mb-2">
-                    <div className="h-4 w-4/5 rounded-lg bg-default-200"></div>
-                  </Skeleton>
-                  <Skeleton className="w-3/5 rounded-lg">
-                    <div className="h-4 w-3/5 rounded-lg bg-default-200"></div>
-                  </Skeleton>
-                </>
-              ) : (
-                <>
-                  <p className="mb-2 font-medium text-lg">
-                    {user?.firstname + " " + user?.lastname}
-                  </p>
+    <div className="space-y-6 pb-8 font-inter">
+      {/* Welcome Banner */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#1a1b1e] p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm relative overflow-hidden transition-all duration-300">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-6 -mt-6"></div>
+        <div className="relative z-10">
+          <h1 className="text-xl md:text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight flex items-center gap-2">
+            Welcome back, {user ? `${user.firstname} ${user.lastname}` : "Admin"} 👋
+          </h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5 font-medium">
+            Here's what is happening at the GoSolar store today.
+          </p>
+        </div>
+        <div className="flex gap-2 relative z-10">
+          {user?.isSuperAdmin && (
+            <Badge variant="outline" className="bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-900/50 font-bold px-3 py-1 text-xs">
+              Super Admin
+            </Badge>
+          )}
+          {user?.isAdmin && !user.isSuperAdmin && (
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 font-bold px-3 py-1 text-xs">
+              Admin
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      {/* Stats Cards Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Metric 1: Quotes Requested */}
+        <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl group">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+              Quotes Requested
+            </CardTitle>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform duration-300">
+              <Sun className="h-5 w-5" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
+              {isLoading ? <Skeleton className="h-9 w-16" /> : dashboardData?.totalSolarLeads ?? 0}
+            </div>
+            <div className="flex items-center gap-1.5 mt-2">
+              <Badge variant="secondary" className="bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-900/50 text-[10px] py-0.5 font-bold">
+                {dashboardData?.pendingSolarLeads ?? 0} New Requests
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Metric 2: Catalog Products */}
+        <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl group">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+              Catalog Products
+            </CardTitle>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-300">
+              <Package className="h-5 w-5" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
+              {products.length}
+            </div>
+            <div className="flex items-center gap-1.5 mt-2">
+              <Badge variant="secondary" className="bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/50 text-[10px] py-0.5 font-bold">
+                {products.filter((p) => p.isPublished).length} Active Products
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Metric 3: Registered Customers */}
+        <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl group">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+              Registered Customers
+            </CardTitle>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+              <Users className="h-5 w-5" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
+              {users.length}
+            </div>
+            <div className="flex items-center gap-1.5 mt-2">
+              <span className="text-xs text-zinc-500 font-medium">Customer database</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Metric 4: Total Orders */}
+        <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl group">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+              Total Orders
+            </CardTitle>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-orange-500/10 text-orange-600 dark:text-orange-400 group-hover:scale-110 transition-transform duration-300">
+              <ShoppingCart className="h-5 w-5" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
+              {orders.length}
+            </div>
+            <div className="flex items-center gap-1.5 mt-2">
+              <Badge variant="secondary" className="bg-orange-50 dark:bg-orange-950/20 text-orange-700 dark:text-orange-400 border-orange-100 dark:border-orange-900/50 text-[10px] py-0.5">
+                {orders.filter((o: any) => o.trackingStatus === "Processing").length} Processing
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Columns (Span 2) */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Revenue Chart */}
+          <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-zinc-100 dark:border-zinc-800/80">
+              <div>
+                <CardTitle className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  Revenue & Sales Trends
+                </CardTitle>
+                <div className="mt-3 flex items-center gap-6">
                   <div>
-                    {user?.isAdmin && (
-                      <Chip color="primary" size="sm">
-                        Admin
-                      </Chip>
-                    )}
-                    {user?.isSuperAdmin && (
-                      <Chip color="warning" size="sm">
-                        Super
-                      </Chip>
+                    <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Total Revenue</p>
+                    {isLoading ? (
+                      <Skeleton className="h-6 w-24 mt-1" />
+                    ) : (
+                      <p className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-0.5 flex items-center">
+                        <DollarSign className="h-4.5 w-4.5 -ml-1" />
+                        {formatCurrency(dashboardData?.totalRevenue || 0, "NGN").replace("NGN", "")}
+                      </p>
                     )}
                   </div>
-                </>
-              )}
-            </div>
-          </div>
-        </CardBody>
-      </Card>
-      <Card className="col-span-1 lg:col-span-2 dark:bg-[#222327] dark:text-white">
-        <CardBody>
-          <div className="flex flex-col gap-2">
-            <p>Products</p>
-            <p>{products.length}</p>
-          </div>
-          <div className="w-14 h-14 rounded-full flex items-center justify-center bg-primary bg-opacity-10 ms-auto">
-            <SquareGanttChart size={32} />
-          </div>
-        </CardBody>
-      </Card>
-      <Card className="col-span-1 lg:col-span-2 dark:bg-[#222327] dark:text-white">
-        <CardBody>
-          <div className="flex flex-col gap-2">
-            <p>Customers</p>
-            <p>{users.length}</p>
-          </div>
-          <div className="w-14 h-14 rounded-full flex items-center justify-center bg-primary bg-opacity-10 ms-auto">
-            <SquareGanttChart size={32} />
-          </div>
-        </CardBody>
-      </Card>
-      <Card className="col-span-1 lg:col-span-2 dark:bg-[#222327] dark:text-white">
-        <CardBody>
-          <div className="flex flex-col gap-2">
-            <p>Orders</p>
-            <p>{orders.length}</p>
-          </div>
-          <div className="w-14 h-14 rounded-full flex items-center justify-center bg-primary bg-opacity-10 ms-auto">
-            <SquareGanttChart size={32} />
-          </div>
-        </CardBody>
-      </Card>
-      <Card className="col-span-1 lg:col-span-6 dark:bg-[#222327] dark:text-white">
-        <CardBody>
-          <div className="mb-4 flex justify-between">
-            <div>
-              <div className="flex gap-2">
-                <p className="font-medium text-lg">Total Revenue:</p>
-                {isLoading ? (
-                  <Skeleton className="w-3/12 rounded-lg">
-                    <div className="h-4 w-3/12 rounded-lg bg-default-200"></div>
-                  </Skeleton>
-                ) : (
-                  <p className="text-xl font-bold">
-                    {formatCurrency(dashboardData?.totalRevenue || 0, "NGN")}
-                  </p>
-                )}
+                  <div>
+                    <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Completed Orders</p>
+                    {isLoading ? (
+                      <Skeleton className="h-6 w-12 mt-1" />
+                    ) : (
+                      <p className="text-lg font-black text-zinc-800 dark:text-zinc-200 mt-0.5">
+                        {dashboardData?.totalOrders || 0}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="mb-4 flex gap-2">
-                <p className="font-medium text-lg">Total Orders:</p>
-                {isLoading ? (
-                  <Skeleton className="w-3/12 rounded-lg">
-                    <div className="h-4 w-3/12 rounded-lg bg-default-200"></div>
-                  </Skeleton>
-                ) : (
-                  <p className="text-xl font-bold">
-                    {dashboardData?.totalOrders || 0}
-                  </p>
-                )}
-              </div>
-            </div>
-            
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  {selectedPeriod === "month" ? "Month" : "Year"}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem
-                  key="month"
-                  onPress={() => handlePeriodChange("month")}
-                >
-                  Month
-                </DropdownItem>
-                <DropdownItem
-                  key="year"
-                  onPress={() => handlePeriodChange("year")}
-                >
-                  Year
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-          <div className="w-full h-full">
-            <Line data={chartData} options={chartOptions} className="w-full" />
-          </div>
-        </CardBody>
-      </Card>
 
-      <Card className="col-span-1 lg:col-span-3 h-fit bg-white dark:bg-[#222327]">
-        <Calendar
-          aria-label="Date (Read Only)"
-          value={today(getLocalTimeZone())}
-          isReadOnly
-          classNames={{
-            content: "w-full",
-            gridHeader: "dark:bg-transparent",
-            headerWrapper: "dark:bg-transparent",
-            cellButton: "dark:text-white",
-            pickerHighlight: "bg-yellow-500",
-          }}
-        />
-      </Card>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1.5 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-semibold rounded-lg">
+                    {selectedPeriod === "month" ? "This Month" : "This Year"}
+                    <ChevronDown className="h-4 w-4 text-zinc-400" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-32">
+                  <DropdownMenuItem onClick={() => setSelectedPeriod("month")} className="cursor-pointer">
+                    This Month
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSelectedPeriod("year")} className="cursor-pointer">
+                    This Year
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="w-full h-80">
+                <Line data={chartData} options={chartOptions} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* New Solar Leads Tracker Card */}
+          <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl">
+            <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800/80">
+              <div>
+                <CardTitle className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                  <Sun className="h-5 w-5 text-amber-500" />
+                  Recent Quote Requests
+                </CardTitle>
+                <CardDescription className="text-xs text-zinc-500">
+                  Recent solar calculator estimation queries requested by users.
+                </CardDescription>
+              </div>
+              <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary/90 text-xs font-bold gap-1 rounded-lg">
+                <Link href="/dashboard/quotes">
+                  View All Requests
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+              {!dashboardData?.recentQuotes || dashboardData.recentQuotes.length === 0 ? (
+                <div className="py-12 text-center text-sm text-zinc-400">
+                  No quote requests submitted yet.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table className="w-full text-sm">
+                    <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/10">
+                      <TableRow className="border-b border-zinc-100 dark:border-zinc-800">
+                        <TableHead className="font-semibold text-zinc-500 h-10 px-4">Customer Name</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10">Calculated Load (kW)</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10">Recommended PV</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10 text-center">Status</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">Date</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {dashboardData.recentQuotes.map((quote) => (
+                        <TableRow key={quote._id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0">
+                          <TableCell className="font-bold text-zinc-900 dark:text-zinc-100 py-3.5 px-4">
+                            {quote.fullName}
+                          </TableCell>
+                          <TableCell className="font-semibold text-zinc-800 dark:text-zinc-300">
+                            {(quote.peakWatts / 1000).toFixed(2)} kW
+                          </TableCell>
+                          <TableCell className="text-zinc-500 text-xs font-semibold">
+                            {quote.recommendedPv}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="outline" className={`font-semibold text-[10px] px-2.5 py-0.5 rounded-full select-none ${getQuoteStatusBadgeClass(quote.status)}`}>
+                              {quote.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right text-zinc-500 text-xs px-4">
+                            {formatDate(quote.createdAt)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Orders Table */}
+          <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl">
+            <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800/80">
+              <div>
+                <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">
+                  Recent Orders
+                </CardTitle>
+                <CardDescription className="text-xs text-zinc-500">
+                  Manage and overview your store's latest sales.
+                </CardDescription>
+              </div>
+              <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary/90 text-xs font-bold gap-1 rounded-lg">
+                <Link href="/dashboard/orders">
+                  View All Orders
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+              {orders.length === 0 ? (
+                <div className="py-12 text-center text-sm text-zinc-400">
+                  No orders placed yet.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table className="w-full text-sm">
+                    <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/10">
+                      <TableRow className="border-b border-zinc-100 dark:border-zinc-800">
+                        <TableHead className="font-semibold text-zinc-500 h-10 px-4">Order ID</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10">Customer</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10">Date</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10 text-right">Amount</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10 text-center">Status</TableHead>
+                        <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {recentOrders.map((order) => (
+                        <TableRow key={order._id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0">
+                          <TableCell className="font-mono text-xs text-zinc-500 py-3.5 px-4">
+                            #{order._id.substring(order._id.length - 8).toUpperCase()}
+                          </TableCell>
+                          <TableCell className="font-medium text-zinc-900 dark:text-zinc-100">
+                            {order.user ? `${order.user.firstname} ${order.user.lastname}` : "Guest Customer"}
+                          </TableCell>
+                          <TableCell className="text-zinc-500 text-xs">
+                            {formatDate(order.createdAt)}
+                          </TableCell>
+                          <TableCell className="text-right font-semibold text-zinc-900 dark:text-zinc-100">
+                            {formatCurrency(order.totalPricePaid, "NGN")}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="outline" className={`font-semibold text-[10px] px-2.5 py-0.5 rounded-full select-none ${getStatusBadgeClass(order.trackingStatus)}`}>
+                              {order.trackingStatus}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right px-4">
+                            <Button asChild variant="ghost" size="icon" className="h-8 w-8 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg">
+                              <Link href={`/dashboard/orders?id=${order._id}`}>
+                                <ExternalLink className="h-4 w-4 text-zinc-400 hover:text-primary transition-colors" />
+                              </Link>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column (Span 1) */}
+        <div className="space-y-6">
+          {/* Calendar Card */}
+          <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl h-fit">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">
+                Calendar
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex justify-center p-3">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                className="rounded-xl border border-zinc-100 dark:border-zinc-800 w-full max-w-sm dark:bg-zinc-900/20 shadow-none"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Quick Notifications / Low Stock Warnings */}
+          <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl h-fit">
+            <CardHeader className="pb-4 border-b border-zinc-100 dark:border-zinc-800/80">
+              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">
+                Store Alerts
+              </CardTitle>
+              <CardDescription className="text-xs text-zinc-500">
+                Critical updates and inventory alerts.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-4">
+              {/* Stock Warning */}
+              {lowStockCount > 0 ? (
+                <div className="flex gap-3 items-start p-3 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/40 rounded-xl text-red-800 dark:text-red-300">
+                  <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0 animate-pulse" />
+                  <div>
+                    <p className="text-xs font-bold">Inventory Shortage</p>
+                    <p className="text-[11px] text-red-600/90 dark:text-red-300/80 mt-1 font-medium">
+                      There are {lowStockCount} items with less than 5 units left in stock. Reorder stock soon.
+                    </p>
+                    <Button asChild size="sm" variant="link" className="text-red-700 dark:text-red-400 font-bold p-0 h-auto text-[11px] mt-1 hover:underline">
+                      <Link href="/dashboard/products">Resolve stock</Link>
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-3 items-center p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 rounded-xl text-emerald-800 dark:text-emerald-300">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  <p className="text-xs font-semibold">All products in healthy stock!</p>
+                </div>
+              )}
+
+              {/* Quick Summary Info */}
+              <div className="space-y-2.5 pt-2">
+                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
+                  <span className="text-zinc-500 flex items-center gap-1.5">
+                    <ListTodo className="h-3.5 w-3.5 text-zinc-400" />
+                    Pending Quote Review:
+                  </span>
+                  <span className="text-amber-600 font-bold">
+                    {dashboardData?.pendingSolarLeads ?? 0}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
+                  <span className="text-zinc-500 flex items-center gap-1.5">
+                    <ShoppingCart className="h-3.5 w-3.5 text-zinc-400" />
+                    Pending Orders:
+                  </span>
+                  <span className="text-orange-500 font-bold">
+                    {orders.filter((o: any) => o.trackingStatus === "Processing").length}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-lg">
+                  <span className="text-zinc-500 flex items-center gap-1.5">
+                    <Package className="h-3.5 w-3.5 text-zinc-400" />
+                    Catalog Products:
+                  </span>
+                  <span className="text-zinc-900 dark:text-white font-bold">{products.length}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };

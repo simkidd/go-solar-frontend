@@ -1,5 +1,5 @@
 import { DeliveryDetails, Product } from "@/interfaces/product.interface";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -13,6 +13,7 @@ interface CartStore {
   loading: boolean;
   cartItems: CartItem[];
   addItem: (data: CartItem) => void;
+  addItems: (items: CartItem[]) => void;
   removeItem: (id: string) => void;
   increaseQuantity: (id: string) => void;
   decreaseQuantity: (id: string) => void;
@@ -55,15 +56,61 @@ const useCartStore = create(
       addItem: (data: CartItem) => {
         const { product, qty, deliveryFee } = data;
         const currentItems = get().cartItems; //all items already in cart
-        const isExisting = currentItems.find(
+        const existingIndex = currentItems.findIndex(
           (cartItem) => cartItem.product._id === product._id
         );
 
-        if (isExisting) {
-          return toast.info("Item already in cart");
+        if (existingIndex > -1) {
+          const updatedItems = [...currentItems];
+          const currentQty = updatedItems[existingIndex].qty;
+          const maxStock = product.quantityInStock || 10;
+          const newQty = Math.min(currentQty + qty, maxStock);
+
+          if (newQty === currentQty) {
+            toast.info(`${product.name} is already in cart at maximum available stock.`);
+            return;
+          }
+
+          updatedItems[existingIndex].qty = newQty;
+          set({ cartItems: updatedItems });
+          toast.success(`Updated ${product.name} quantity in cart 🛒`);
+          return;
         }
         set({ cartItems: [...currentItems, { product, qty, deliveryFee }] });
-        toast.success("Cart successfully updated 🛒");
+        toast.success("Added to cart 🛒");
+      },
+
+      // add multiple items to cart (batch operation for packages)
+      addItems: (items: CartItem[]) => {
+        const currentItems = [...get().cartItems];
+        let changed = false;
+
+        items.forEach((item) => {
+          const { product, qty, deliveryFee } = item;
+          const existingIndex = currentItems.findIndex(
+            (cartItem) => cartItem.product._id === product._id
+          );
+
+          if (existingIndex > -1) {
+            const currentQty = currentItems[existingIndex].qty;
+            const maxStock = product.quantityInStock || 10;
+            const newQty = Math.min(currentQty + qty, maxStock);
+            if (newQty !== currentQty) {
+              currentItems[existingIndex].qty = newQty;
+              changed = true;
+            }
+          } else {
+            currentItems.push({ product, qty, deliveryFee });
+            changed = true;
+          }
+        });
+
+        if (changed) {
+          set({ cartItems: currentItems });
+          toast.success("Cart successfully updated 🛒");
+        } else {
+          toast.info("All items are already in your cart at maximum available stock.");
+        }
       },
       // remove item from cart
       removeItem: (id: string) => {

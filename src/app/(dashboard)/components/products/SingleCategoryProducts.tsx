@@ -1,15 +1,8 @@
 "use client";
-import useProducts from "@/hooks/useProducts";
 import { Category } from "@/interfaces/product.interface";
 import CategoryProductsTable from "../CategoryProductsTable";
 
 const SingleCategoryProducts = ({ category }: { category: Category }) => {
-  const { products } = useProducts();
-
-  const catProducts = category
-    ? products.filter((product) => product?.category?._id === category?._id)
-    : [];
-
   return (
     <>
       <div className="w-full mb-4">
@@ -19,7 +12,7 @@ const SingleCategoryProducts = ({ category }: { category: Category }) => {
       </div>
 
       <div className="w-full mb-8">
-        <CategoryProductsTable products={catProducts} />
+        {category?._id && <CategoryProductsTable categoryId={category._id} />}
       </div>
     </>
   );

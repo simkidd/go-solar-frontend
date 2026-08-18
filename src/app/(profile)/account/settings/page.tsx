@@ -12,8 +12,10 @@ export const metadata: Metadata = {
 
 const SettingsPage = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">Account Settings</h1>
+    <div className="space-y-6">
+      <h1 className="text-xl font-black uppercase tracking-wider text-zinc-900 dark:text-white">
+        Account Settings
+      </h1>
 
       <div>
         <AccountPassordForm />

@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const productUrls: MetadataRoute.Sitemap = products.map((product) => ({
-    url: `${base_url}/product/${product?.slug}`,
+    url: `${base_url}/products/${product?.slug}`,
     lastModified: new Date(product?.updatedAt),
   }));
 
@@ -50,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     {
-      url: `${base_url}/account/login`,
+      url: `${base_url}/auth/login`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.5,
