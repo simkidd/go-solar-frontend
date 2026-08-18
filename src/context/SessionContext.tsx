@@ -10,6 +10,7 @@ import {
 } from "react";
 import { User } from "../interfaces/auth.interface";
 import { useRouter } from "next/navigation";
+import { useCurrentUserQuery } from "@/hooks/queries/useUsersQuery";
 
 interface SessionContextType {
   loading: boolean;
@@ -44,6 +45,17 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 
     setLoading(false);
   }, [setUser, setIsAuthenticated]);
+
+  // Fetch fresh user data from server (syncs role changes without re-login)
+  const { data: freshUser } = useCurrentUserQuery(isAuthenticated);
+
+  useEffect(() => {
+    if (freshUser) {
+      setUser(freshUser);
+      // Sync updated user data back to cookie so proxy reads fresh roles
+      Cookies.set(USER_DETAILS, JSON.stringify(freshUser));
+    }
+  }, [freshUser, setUser]);
 
   const logout = () => {
     router.push("/auth/login"); // Redirect to login page after logout

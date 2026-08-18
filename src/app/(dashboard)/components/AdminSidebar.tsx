@@ -139,6 +139,7 @@ const navigationItems = [
         name: "Admins & Staff",
         href: "/dashboard/admins",
         icon: ShieldCheck,
+        superAdminOnly: true,
       },
     ],
   },
@@ -194,9 +195,11 @@ const SidebarInnerContent = ({
                   </p>
                 )}
                 <div className="space-y-0.5">
-                  {group.items.map((item) => {
-                    const active = isActive(item.href);
-                    const Icon = item.icon;
+                  {group.items
+                    .filter((item) => !item.superAdminOnly || user?.isSuperAdmin)
+                    .map((item) => {
+                      const active = isActive(item.href);
+                      const Icon = item.icon;
 
                     const linkEl = (
                       <Link
