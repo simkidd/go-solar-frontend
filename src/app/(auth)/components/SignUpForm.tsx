@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   RefreshCw,
   ArrowRight,
+  Phone,
 } from "lucide-react";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
@@ -27,6 +28,17 @@ interface FormValues {
   password: string;
   confirmPassword: string;
 }
+
+const CustomPhoneInput = React.forwardRef<HTMLInputElement, any>((props, ref) => {
+  return (
+    <input
+      {...props}
+      ref={ref}
+      className="w-full h-full bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-xs font-semibold text-zinc-900 dark:text-white"
+    />
+  );
+});
+CustomPhoneInput.displayName = "CustomPhoneInput";
 
 // ─── Verification Confirmation Card ────────────────────────────────────────────
 const VerificationCard: React.FC<{ email: string }> = ({ email }) => {
@@ -278,11 +290,7 @@ const SignUpForm = () => {
                 (value && isValidPhoneNumber(value)) || "Invalid phone number",
             }}
             render={({ field }) => (
-              <div 
-                className={`relative border rounded-xl px-3 py-1 bg-zinc-50/50 dark:bg-zinc-950/20 flex items-center min-h-[44px] transition-all duration-250 ${
-                  isPhoneFocused ? 'border-primary ring-1 ring-primary/40' : 'border-zinc-200 dark:border-zinc-800'
-                }`}
-              >
+              <div className="relative">
                 <PhoneInput
                   placeholder="Phone number"
                   defaultCountry="NG"
@@ -290,7 +298,15 @@ const SignUpForm = () => {
                   onChange={field.onChange}
                   onFocus={() => setIsPhoneFocused(true)}
                   onBlur={() => setIsPhoneFocused(false)}
-                  className="w-full text-xs font-semibold focus:outline-none"
+                  inputComponent={CustomPhoneInput}
+                  className={`w-full h-11 pr-3 pl-10 border rounded-xl bg-zinc-50/50 dark:bg-zinc-950/20 flex items-center gap-2 transition-all duration-250 focus-within:ring-1 focus-within:ring-primary/40 focus-within:border-primary ${
+                    isPhoneFocused ? "border-primary" : "border-zinc-200 dark:border-zinc-800"
+                  }`}
+                />
+                <Phone 
+                  className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors duration-250 pointer-events-none z-10 ${
+                    isPhoneFocused ? "text-primary" : "text-zinc-400"
+                  }`} 
                 />
               </div>
             )}

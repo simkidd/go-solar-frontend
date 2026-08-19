@@ -25,6 +25,28 @@ export const useCreateProjectMutation = (options?: { onSuccess?: () => void }) =
   });
 };
 
+export const useUpdateProjectMutation = (options?: { onSuccess?: () => void }) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
+      const { data } = await axiosInstance.put(`/projects/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message || "Project updated successfully!");
+      queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.all });
+      options?.onSuccess?.();
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || "Failed to update project";
+      toast.error(message);
+    },
+  });
+};
+
 export const useDeleteProjectMutation = () => {
   const queryClient = useQueryClient();
 

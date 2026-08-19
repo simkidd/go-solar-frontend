@@ -45,9 +45,12 @@ import {
   AlertCircle,
   FileText,
   UserCheck,
+  ChevronDown,
 } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import { toast } from "sonner";
+import { useForm, Controller } from "react-hook-form";
+import AppModal from "@/components/AppModal";
 
 export interface QuoteLead {
   id: string;
@@ -61,7 +64,13 @@ export interface QuoteLead {
   recommendedBatteryKwh: number;
   recommendedSolarWatts: number;
   estimatedPrice: number;
-  status: "New Lead" | "Contacted" | "Quote Sent" | "Site Inspected" | "Won" | "Declined";
+  status:
+    | "New Lead"
+    | "Contacted"
+    | "Quote Sent"
+    | "Site Inspected"
+    | "Won"
+    | "Declined";
   source: "Energy Calculator" | "Contact Form" | "Phone Inquiry";
   createdAt: string;
   appliances: { name: string; qty: number; watts: number; hours: number }[];
@@ -155,7 +164,12 @@ const INITIAL_QUOTES: QuoteLead[] = [
       { name: "Central AC System", qty: 1, watts: 4500, hours: 10 },
       { name: "Deep Freezers", qty: 2, watts: 350, hours: 24 },
       { name: "Borehole Pump", qty: 1, watts: 2200, hours: 2 },
-      { name: "Full House Lighting & Security Cameras", qty: 1, watts: 600, hours: 24 },
+      {
+        name: "Full House Lighting & Security Cameras",
+        qty: 1,
+        watts: 600,
+        hours: 24,
+      },
     ],
   },
 ];
@@ -188,18 +202,53 @@ export const QuotesTable = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  // Form for manual quote
-  const [manualForm, setManualForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    location: "Port Harcourt",
-    dailyKwh: 10,
-    peakWatts: 3000,
-    recommendedInverter: "3.5 kVA Hybrid",
-    estimatedPrice: 2400000,
-    source: "Phone Inquiry" as const,
+  // react-hook-form for manual quote
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      location: "Port Harcourt",
+      dailyKwh: 10,
+      peakWatts: 3000,
+      recommendedInverter: "3.5 kVA Hybrid",
+      estimatedPrice: 2400000,
+      source: "Phone Inquiry" as "Phone Inquiry" | "Walk-in" | "Online Sizing",
+    },
   });
+
+  const handleSaveManual = (values: any) => {
+    const newLead: QuoteLead = {
+      id: `lead-${Date.now()}`,
+      name: values.name,
+      email: values.email || "customer@gosolar.ng",
+      phone: values.phone,
+      location: values.location,
+      dailyKwh: Number(values.dailyKwh),
+      peakWatts: Number(values.peakWatts),
+      recommendedInverter: values.recommendedInverter,
+      recommendedBatteryKwh: Number((values.dailyKwh * 0.7).toFixed(1)),
+      recommendedSolarWatts: Number((values.dailyKwh * 250).toFixed(0)),
+      estimatedPrice: Number(values.estimatedPrice),
+      status: "New Lead",
+      source: values.source,
+      createdAt: new Date().toISOString(),
+      appliances: [
+        { name: "General Lighting & Fans", qty: 10, watts: 80, hours: 12 },
+        { name: "Refrigeration Unit", qty: 1, watts: 250, hours: 24 },
+      ],
+    };
+
+    setQuotes((prev) => [newLead, ...prev]);
+    setIsCreateOpen(false);
+    toast.success("New quote lead logged!");
+  };
 
   const filteredQuotes = useMemo(() => {
     return quotes.filter((q) => {
@@ -217,7 +266,7 @@ export const QuotesTable = () => {
 
   const handleUpdateStatus = (id: string, newStatus: QuoteLead["status"]) => {
     setQuotes((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, status: newStatus } : q))
+      prev.map((q) => (q.id === id ? { ...q, status: newStatus } : q)),
     );
     toast.success(`Lead status updated to ${newStatus}`);
   };
@@ -229,55 +278,26 @@ export const QuotesTable = () => {
     toast.success("Quote request removed");
   };
 
-  const handleSaveManual = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualForm.name || !manualForm.phone) {
-      toast.error("Please provide customer name and phone");
-      return;
-    }
-
-    const newLead: QuoteLead = {
-      id: `lead-${Date.now()}`,
-      name: manualForm.name,
-      email: manualForm.email || "customer@gosolar.ng",
-      phone: manualForm.phone,
-      location: manualForm.location,
-      dailyKwh: Number(manualForm.dailyKwh),
-      peakWatts: Number(manualForm.peakWatts),
-      recommendedInverter: manualForm.recommendedInverter,
-      recommendedBatteryKwh: Number((manualForm.dailyKwh * 0.7).toFixed(1)),
-      recommendedSolarWatts: Number((manualForm.dailyKwh * 250).toFixed(0)),
-      estimatedPrice: Number(manualForm.estimatedPrice),
-      status: "New Lead",
-      source: manualForm.source,
-      createdAt: new Date().toISOString(),
-      appliances: [
-        { name: "General Lighting & Fans", qty: 10, watts: 80, hours: 12 },
-        { name: "Refrigeration Unit", qty: 1, watts: 250, hours: 24 },
-      ],
-    };
-
-    setQuotes((prev) => [newLead, ...prev]);
-    setIsCreateOpen(false);
-    toast.success("New quote lead logged!");
-  };
-
   return (
-    <div className="space-y-6 font-inter">
+    <div className="w-full space-y-5 font-inter">
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <Calculator className="h-5 w-5 text-primary" />
             Installation Quotes & Sizing Leads
           </h2>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-            Track customer energy calculator submissions and commercial site inspection requests.
+          <p className="text-xs text-muted-foreground font-semibold mt-0.5">
+            Track customer energy calculator submissions and commercial site
+            inspection requests.
           </p>
         </div>
 
         <Button
-          onClick={() => setIsCreateOpen(true)}
+          onClick={() => {
+            reset();
+            setIsCreateOpen(true);
+          }}
           className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
         >
           <Plus className="h-4 w-4" />
@@ -285,67 +305,130 @@ export const QuotesTable = () => {
         </Button>
       </div>
 
-      {/* Filter and Search */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white dark:bg-[#1a1b1e] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400" />
-          <Input
-            placeholder="Search leads by name, email, phone..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 h-9 text-xs bg-zinc-50/50 dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 rounded-lg"
-          />
+      {/* Search & Filters */}
+      <div className="flex flex-col gap-4 bg-card text-card-foreground p-5 rounded-2xl border border-border/80 shadow-xs">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+            <Input
+              placeholder="Search leads by name, email, phone..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {(searchTerm || statusFilter !== "All") && (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSearchTerm("");
+                  setStatusFilter("All");
+                }}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50/50 dark:hover:bg-red-950/10 text-xs font-semibold rounded-xl cursor-pointer"
+              >
+                Reset
+              </Button>
+            )}
+
+            {/* Pipeline Status Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-border text-xs font-semibold rounded-xl h-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                >
+                  {statusFilter === "All" ? "All Statuses" : statusFilter}
+                  <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48 rounded-xl bg-card border border-border/80">
+                <DropdownMenuItem
+                  onClick={() => setStatusFilter("All")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  All Statuses
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setStatusFilter("New Lead")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  New Lead
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setStatusFilter("Contacted")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Contacted
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setStatusFilter("Quote Sent")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Quote Sent
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setStatusFilter("Site Inspected")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Site Inspected
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setStatusFilter("Won")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Won / Closed
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setStatusFilter("Declined")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Declined
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-xs text-zinc-400">Pipeline Status:</span>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-9 px-2.5 bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold text-zinc-700 dark:text-zinc-300 outline-none"
-          >
-            <option value="All">All Statuses ({quotes.length})</option>
-            <option value="New Lead">New Lead</option>
-            <option value="Contacted">Contacted</option>
-            <option value="Quote Sent">Quote Sent</option>
-            <option value="Site Inspected">Site Inspected</option>
-            <option value="Won">Won / Closed</option>
-            <option value="Declined">Declined</option>
-          </select>
-
-          {(searchTerm || statusFilter !== "All") && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setSearchTerm("");
-                setStatusFilter("All");
-              }}
-              className="text-xs text-red-500 hover:text-red-600 h-9"
-            >
-              Reset
-            </Button>
-          )}
+        {/* Counter and status summary */}
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+          <span>Total {filteredQuotes.length} sizing leads listed</span>
         </div>
       </div>
 
-      {/* Leads Table */}
-      <div className="bg-white dark:bg-[#1a1b1e] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+      {/* Main Table */}
+      <div className="bg-card text-card-foreground rounded-2xl border border-border/80 shadow-xs overflow-hidden">
         <Table>
-          <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/20">
-            <TableRow className="border-b border-zinc-100 dark:border-zinc-800">
-              <TableHead className="font-semibold text-zinc-500 h-10 px-4">Client & Contact</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">Energy Req</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">Recommended System</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10 text-right">Est. Budget</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10 text-center">Pipeline Status</TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">Actions</TableHead>
+          <TableHeader>
+            <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none px-4">
+                Client & Contact
+              </TableHead>
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+                Energy Req
+              </TableHead>
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+                Recommended System
+              </TableHead>
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right">
+                Est. Budget
+              </TableHead>
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-center">
+                Pipeline Status
+              </TableHead>
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right px-4">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredQuotes.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-12 text-sm text-zinc-400">
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-12 text-sm text-zinc-400"
+                >
                   No quote requests found.
                 </TableCell>
               </TableRow>
@@ -390,11 +473,15 @@ export const QuotesTable = () => {
                   {/* Recommended System */}
                   <TableCell>
                     <div className="space-y-1">
-                      <Badge variant="outline" className="text-[10px] font-bold px-2 py-0 border-primary/30 text-primary bg-primary/5">
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] font-bold px-2 py-0 border-primary/30 text-primary bg-primary/5"
+                      >
                         {lead.recommendedInverter}
                       </Badge>
                       <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                        {lead.recommendedBatteryKwh}kWh Battery • {lead.recommendedSolarWatts}W PV
+                        {lead.recommendedBatteryKwh}kWh Battery •{" "}
+                        {lead.recommendedSolarWatts}W PV
                       </p>
                     </div>
                   </TableCell>
@@ -408,29 +495,56 @@ export const QuotesTable = () => {
                   <TableCell className="text-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border cursor-pointer hover:opacity-80 transition-opacity ${getStatusBadge(lead.status)}`}>
+                        <button
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border cursor-pointer hover:opacity-80 transition-opacity ${getStatusBadge(lead.status)}`}
+                        >
                           {lead.status}
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="center" className="w-40 text-xs">
+                      <DropdownMenuContent
+                        align="center"
+                        className="w-40 text-xs"
+                      >
                         <DropdownMenuLabel>Change Status</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleUpdateStatus(lead.id, "New Lead")}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleUpdateStatus(lead.id, "New Lead")
+                          }
+                        >
                           New Lead
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleUpdateStatus(lead.id, "Contacted")}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleUpdateStatus(lead.id, "Contacted")
+                          }
+                        >
                           Contacted
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleUpdateStatus(lead.id, "Quote Sent")}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleUpdateStatus(lead.id, "Quote Sent")
+                          }
+                        >
                           Quote Sent
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleUpdateStatus(lead.id, "Site Inspected")}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleUpdateStatus(lead.id, "Site Inspected")
+                          }
+                        >
                           Site Inspected
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleUpdateStatus(lead.id, "Won")}>
+                        <DropdownMenuItem
+                          onClick={() => handleUpdateStatus(lead.id, "Won")}
+                        >
                           Won / Closed
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleUpdateStatus(lead.id, "Declined")}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleUpdateStatus(lead.id, "Declined")
+                          }
+                        >
                           Declined
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -439,30 +553,43 @@ export const QuotesTable = () => {
 
                   {/* Actions */}
                   <TableCell className="text-right px-4">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setActiveQuote(lead);
-                          setIsViewOpen(true);
-                        }}
-                        className="h-8 w-8 text-zinc-500 hover:text-primary rounded-lg"
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-lg cursor-pointer hover:bg-muted"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-36 rounded-xl bg-card border border-border/80"
                       >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setActiveQuote(lead);
-                          setIsDeleteOpen(true);
-                        }}
-                        className="h-8 w-8 text-zinc-500 hover:text-red-600 rounded-lg"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setActiveQuote(lead);
+                            setIsViewOpen(true);
+                          }}
+                          className="cursor-pointer text-xs font-bold"
+                        >
+                          <Eye className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="border-border/60" />
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setActiveQuote(lead);
+                            setIsDeleteOpen(true);
+                          }}
+                          className="cursor-pointer text-xs font-bold text-rose-600 focus:text-rose-600 focus:bg-rose-50/50 dark:focus:bg-rose-950/20"
+                        >
+                          <Trash2 className="h-3.5 w-3.5 mr-2" />
+                          Delete Lead
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))
@@ -472,148 +599,204 @@ export const QuotesTable = () => {
       </div>
 
       {/* VIEW SIZING AUDIT MODAL */}
-      <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
-        <DialogContent className="max-w-lg bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-white">
-              Sizing & Energy Audit Details
-            </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-500">
-              Submitted customer requirements for {activeQuote?.name}
-            </DialogDescription>
-          </DialogHeader>
-
-          {activeQuote && (
-            <div className="space-y-4 py-2 text-sm">
-              {/* Contact card */}
-              <div className="bg-zinc-50 dark:bg-zinc-900/40 p-3 rounded-xl border border-zinc-100 dark:border-zinc-800 grid grid-cols-2 gap-2 text-xs">
-                <div>
-                  <span className="text-zinc-400">Phone:</span>
-                  <p className="font-semibold text-zinc-800 dark:text-zinc-200">{activeQuote.phone}</p>
-                </div>
-                <div>
-                  <span className="text-zinc-400">Email:</span>
-                  <p className="font-semibold text-zinc-800 dark:text-zinc-200">{activeQuote.email}</p>
-                </div>
-                <div>
-                  <span className="text-zinc-400">Location:</span>
-                  <p className="font-semibold text-zinc-800 dark:text-zinc-200">{activeQuote.location}</p>
-                </div>
-                <div>
-                  <span className="text-zinc-400">Submission Date:</span>
-                  <p className="font-semibold text-zinc-800 dark:text-zinc-200">{formatDate(activeQuote.createdAt)}</p>
-                </div>
-              </div>
-
-              {/* Sizing summary */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="p-2.5 bg-primary/5 rounded-xl border border-primary/20 text-center">
-                  <p className="text-[10px] uppercase font-bold text-primary">Inverter</p>
-                  <p className="text-sm font-extrabold text-zinc-900 dark:text-white mt-0.5">{activeQuote.recommendedInverter}</p>
-                </div>
-                <div className="p-2.5 bg-teal-50 dark:bg-teal-950/20 rounded-xl border border-teal-200 dark:border-teal-900/40 text-center">
-                  <p className="text-[10px] uppercase font-bold text-teal-700 dark:text-teal-400">Battery Bank</p>
-                  <p className="text-sm font-extrabold text-zinc-900 dark:text-white mt-0.5">{activeQuote.recommendedBatteryKwh} kWh</p>
-                </div>
-                <div className="p-2.5 bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-200 dark:border-amber-900/40 text-center">
-                  <p className="text-[10px] uppercase font-bold text-amber-700 dark:text-amber-400">Solar PV</p>
-                  <p className="text-sm font-extrabold text-zinc-900 dark:text-white mt-0.5">{activeQuote.recommendedSolarWatts} W</p>
-                </div>
-              </div>
-
-              {/* Appliance Audit List */}
-              <div className="space-y-1.5">
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                  Customer Appliance Load Profile
+      <AppModal
+        isOpen={isViewOpen}
+        onOpenChange={setIsViewOpen}
+        title="Sizing & Energy Audit Details"
+        size="xl"
+      >
+        {activeQuote && (
+          <div className="space-y-4 py-2 text-sm">
+            {/* Contact card */}
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/80 grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <span className="text-muted-foreground font-semibold">
+                  Phone:
+                </span>
+                <p className="font-bold text-foreground mt-0.5">
+                  {activeQuote.phone}
                 </p>
-                <div className="divide-y divide-zinc-100 dark:divide-zinc-800 border border-zinc-100 dark:border-zinc-800 rounded-xl overflow-hidden text-xs">
-                  {activeQuote.appliances.map((app, idx) => (
-                    <div key={idx} className="p-2.5 flex items-center justify-between bg-white dark:bg-[#1a1b1e]">
-                      <div>
-                        <p className="font-semibold text-zinc-900 dark:text-white">{app.name}</p>
-                        <p className="text-[10px] text-zinc-400">Qty: {app.qty} • {app.watts} Watts each</p>
-                      </div>
-                      <span className="text-zinc-600 dark:text-zinc-300 font-bold">
-                        {app.hours} hrs/day
-                      </span>
-                    </div>
-                  ))}
-                </div>
+              </div>
+              <div>
+                <span className="text-muted-foreground font-semibold">
+                  Email:
+                </span>
+                <p className="font-bold text-foreground mt-0.5">
+                  {activeQuote.email}
+                </p>
+              </div>
+              <div>
+                <span className="text-muted-foreground font-semibold">
+                  Location:
+                </span>
+                <p className="font-bold text-foreground mt-0.5">
+                  {activeQuote.location}
+                </p>
+              </div>
+              <div>
+                <span className="text-muted-foreground font-semibold">
+                  Submission Date:
+                </span>
+                <p className="font-bold text-foreground mt-0.5">
+                  {formatDate(activeQuote.createdAt)}
+                </p>
               </div>
             </div>
-          )}
 
-          <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setIsViewOpen(false)}>
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            {/* Sizing summary */}
+            <div className="grid grid-cols-3 gap-2">
+              <div className="p-2.5 bg-primary/5 rounded-xl border border-primary/20 text-center">
+                <p className="text-[10px] uppercase font-bold text-primary">
+                  Inverter
+                </p>
+                <p className="text-sm font-extrabold text-foreground mt-0.5">
+                  {activeQuote.recommendedInverter}
+                </p>
+              </div>
+              <div className="p-2.5 bg-teal-50 dark:bg-teal-950/20 rounded-xl border border-teal-200 dark:border-teal-900/40 text-center">
+                <p className="text-[10px] uppercase font-bold text-teal-700 dark:text-teal-400">
+                  Battery Bank
+                </p>
+                <p className="text-sm font-extrabold text-foreground mt-0.5">
+                  {activeQuote.recommendedBatteryKwh} kWh
+                </p>
+              </div>
+              <div className="p-2.5 bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-200 dark:border-amber-900/40 text-center">
+                <p className="text-[10px] uppercase font-bold text-amber-700 dark:text-amber-400">
+                  Solar PV
+                </p>
+                <p className="text-sm font-extrabold text-foreground mt-0.5">
+                  {activeQuote.recommendedSolarWatts} W
+                </p>
+              </div>
+            </div>
+
+            {/* Appliance Audit List */}
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                Customer Appliance Load Profile
+              </p>
+              <div className="divide-y divide-border border border-border rounded-xl overflow-hidden text-xs">
+                {activeQuote.appliances.map((app, idx) => (
+                  <div
+                    key={idx}
+                    className="p-2.5 flex items-center justify-between bg-card"
+                  >
+                    <div>
+                      <p className="font-bold text-foreground">{app.name}</p>
+                      <p className="text-[10px] text-muted-foreground font-semibold">
+                        Qty: {app.qty} • {app.watts} Watts each
+                      </p>
+                    </div>
+                    <span className="text-muted-foreground font-bold">
+                      {app.hours} hrs/day
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end pt-4 border-t border-border/60">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsViewOpen(false)}
+                className="text-muted-foreground hover:text-foreground text-xs font-bold h-10 px-4 rounded-xl cursor-pointer"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        )}
+      </AppModal>
 
       {/* MANUAL LEAD MODAL */}
-      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="max-w-md bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-white">
-              Log Walk-in / Phone Quote Lead
-            </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-500">
-              Record a new customer solar requirement.
-            </DialogDescription>
-          </DialogHeader>
+      <AppModal
+        isOpen={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        title="Log Walk-in / Phone Quote Lead"
+        size="xl"
+      >
+        <form
+          onSubmit={handleSubmit(handleSaveManual)}
+          className="w-full font-inter flex flex-col gap-6 pt-2"
+        >
+          {/* Details Section Card */}
+          <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
+            <div className="border-b border-border/60 pb-3 select-none">
+              <h3 className="text-sm font-extrabold text-foreground tracking-tight">
+                Quote & Load Details
+              </h3>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                Record walk-in or phone inquiry solar load profile requirements
+              </p>
+            </div>
 
-          <form onSubmit={handleSaveManual} className="space-y-3 py-2">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Customer Name</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                Customer Name <span className="text-red-500">*</span>
+              </label>
               <Input
                 placeholder="e.g. Chief Kingsley Obi"
-                value={manualForm.name}
-                onChange={(e) => setManualForm({ ...manualForm, name: e.target.value })}
-                required
-                className="h-9 text-xs"
+                {...register("name", { required: "Customer name is required" })}
+                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
               />
+              {errors.name && (
+                <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                  {errors.name.message}
+                </span>
+              )}
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Phone</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                  Phone <span className="text-red-500">*</span>
+                </label>
                 <Input
                   placeholder="+234 800 000 0000"
-                  value={manualForm.phone}
-                  onChange={(e) => setManualForm({ ...manualForm, phone: e.target.value })}
-                  required
-                  className="h-9 text-xs"
+                  {...register("phone", {
+                    required: "Phone number is required",
+                  })}
+                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
+                {errors.phone && (
+                  <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                    {errors.phone.message}
+                  </span>
+                )}
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Location</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                  Location
+                </label>
                 <Input
                   placeholder="e.g. Port Harcourt"
-                  value={manualForm.location}
-                  onChange={(e) => setManualForm({ ...manualForm, location: e.target.value })}
-                  className="h-9 text-xs"
+                  {...register("location")}
+                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Daily kWh</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                  Daily kWh
+                </label>
                 <Input
                   type="number"
                   placeholder="12"
-                  value={manualForm.dailyKwh}
-                  onChange={(e) => setManualForm({ ...manualForm, dailyKwh: Number(e.target.value) })}
-                  className="h-9 text-xs"
+                  {...register("dailyKwh", { valueAsNumber: true })}
+                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Target System</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                  Target System
+                </label>
                 <select
-                  value={manualForm.recommendedInverter}
-                  onChange={(e) => setManualForm({ ...manualForm, recommendedInverter: e.target.value })}
-                  className="w-full h-9 px-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900 text-xs"
+                  {...register("recommendedInverter")}
+                  className="w-full h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs font-bold text-foreground outline-none focus:ring-1 focus:ring-primary"
                 >
                   <option value="1.5 kVA Hybrid">1.5 kVA Hybrid</option>
                   <option value="2.5 kVA Hybrid">2.5 kVA Hybrid</option>
@@ -626,41 +809,57 @@ export const QuotesTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Estimated Budget (₦)</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                Estimated Budget (₦)
+              </label>
               <Input
                 type="number"
                 placeholder="2500000"
-                value={manualForm.estimatedPrice}
-                onChange={(e) => setManualForm({ ...manualForm, estimatedPrice: Number(e.target.value) })}
-                className="h-9 text-xs font-bold text-primary"
+                {...register("estimatedPrice", { valueAsNumber: true })}
+                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-bold text-primary"
               />
             </div>
+          </div>
 
-            <DialogFooter className="pt-2 gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setIsCreateOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" size="sm" className="bg-primary hover:bg-primary/90 text-white font-bold">
-                Save Lead
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/60">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCreateOpen(false)}
+              className="text-muted-foreground hover:text-foreground text-xs font-bold h-10 px-4 rounded-xl cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              size="sm"
+              className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-6 shadow-sm cursor-pointer"
+            >
+              Save Lead
+            </Button>
+          </div>
+        </form>
+      </AppModal>
 
       {/* DELETE CONFIRMATION MODAL */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="max-w-sm bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800">
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-zinc-900 dark:text-white">
+            <DialogTitle className="text-base font-extrabold text-foreground">
               Delete Quote Request
             </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-500 mt-2">
+            <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">
               Are you sure you want to delete lead <b>{activeQuote?.name}</b>?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4 flex gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setIsDeleteOpen(false)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsDeleteOpen(false)}
+            >
               Cancel
             </Button>
             <Button variant="destructive" size="sm" onClick={handleDelete}>
