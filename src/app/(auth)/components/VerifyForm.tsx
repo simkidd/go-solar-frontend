@@ -90,7 +90,7 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
             <div className="flex flex-col gap-2.5 w-full pt-2">
               <Button
                 onClick={() => setShowInputForm(true)}
-                className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase tracking-wider h-11 rounded-xl cursor-pointer"
+                className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-11 rounded-xl cursor-pointer"
               >
                 Request New Link
               </Button>
@@ -147,7 +147,7 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
                 <Button
                   type="submit"
                   disabled={!input.email || isEmailInvalid || resendMutation.isPending}
-                  className="flex-[2] bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 shadow-md shadow-emerald-550/10 cursor-pointer"
+                  className="flex-[2] bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 shadow-md shadow-emerald-550/5 cursor-pointer"
                 >
                   {resendMutation.isPending ? "Sending..." : "Send Link"}
                 </Button>
@@ -176,7 +176,7 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
         </div>
 
         <Link href="/auth/login" className="block pt-2">
-          <Button className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 shadow-md shadow-emerald-550/10 transition-all active:scale-[0.985] cursor-pointer">
+          <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 shadow-md shadow-emerald-550/5 transition-all active:scale-[0.985] cursor-pointer">
             Sign In
           </Button>
         </Link>

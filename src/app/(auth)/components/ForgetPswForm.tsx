@@ -62,7 +62,7 @@ const ForgetPswForm = () => {
 
       <Button
         type="submit"
-        className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 shadow-md shadow-emerald-550/10 transition-all active:scale-[0.985] cursor-pointer"
+        className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 shadow-md shadow-emerald-550/5 transition-all active:scale-[0.985] cursor-pointer"
         disabled={forgotPasswordMutation.isPending}
       >
         {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
