@@ -31,18 +31,6 @@ const HeroSection = () => {
       {/* ── Centered Hero Content ── */}
       <div className="relative z-20 max-w-4xl mx-auto px-6 py-20 text-center flex flex-col items-center space-y-8">
         
-        {/* Blinking Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md"
-        >
-          <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-          <span className="font-mono text-[10px] font-extrabold uppercase tracking-widest text-zinc-300">
-            Nigeria's Solar Energy Specialists
-          </span>
-        </motion.div>
 
         {/* Headline */}
         <motion.h1

@@ -134,7 +134,10 @@ const BusinessNavbar = () => {
           </button>
 
           {/* Logo brand */}
-          <Link href="/" className="flex items-center gap-2 select-none group mx-auto lg:mx-0 z-10">
+          <Link
+            href="/"
+            className="flex items-center gap-2 select-none group mx-auto lg:mx-0 z-10"
+          >
             <Image
               src={LogoIcon}
               alt="logo"

@@ -6,7 +6,7 @@ import { useResendVerificationMutation } from "@/hooks/mutations/useAuthMutation
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/custom/Spinner";
-import { MailIcon, XCircleIcon } from "lucide-react";
+import { MailIcon, XCircleIcon, CheckCircle2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
@@ -17,8 +17,8 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
   const [loadingVerify, setLoadingVerify] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
-  const [resend] = useState(false);
-  const [showInput] = useState(false);
+  const [showInputForm, setShowInputForm] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -39,7 +39,7 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
   }, [token]);
 
   const validateEmail = (input: string) =>
-    input.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+    input.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i);
 
   const isEmailInvalid = useMemo(() => {
     if (input.email === "") return false;
@@ -50,70 +50,110 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     resendMutation.mutate(input, {
-      onSuccess: () => setInput({ email: "" }),
+      onSuccess: () => {
+        setInput({ email: "" });
+        setShowInputForm(false);
+      },
     });
   };
 
   if (loadingVerify) {
     return (
-      <div className="text-center py-8 space-y-3 font-inter">
-        <Spinner size="lg" />
-        <h3 className="font-extrabold text-lg text-zinc-900 dark:text-white">Verifying your account...</h3>
-        <p className="text-xs text-zinc-400">
-          This won't take long. Please do not close this window.
-        </p>
+      <div className="text-center py-8 space-y-4 font-inter animate-pulse">
+        <div className="flex justify-center">
+          <Spinner size="lg" />
+        </div>
+        <div className="space-y-1.5">
+          <h3 className="font-extrabold text-lg text-zinc-900 dark:text-white">Verifying account</h3>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500 max-w-xs mx-auto leading-relaxed">
+            Please keep this window open while we secure and activate your solar access portal.
+          </p>
+        </div>
       </div>
     );
   }
 
   if (error && !success) {
     return (
-      <div className="space-y-6 font-inter">
-        {!showInput ? (
-          <div className="flex flex-col items-center text-center space-y-4">
-            <XCircleIcon size={56} className="text-rose-500" />
-            <p className="text-sm font-bold text-rose-500">
-              Invalid or expired verification link
-            </p>
+      <div className="space-y-6 font-inter py-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {!showInputForm ? (
+          <div className="flex flex-col items-center text-center space-y-5">
+            <div className="w-16 h-16 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-500/20 flex items-center justify-center">
+              <XCircleIcon className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
+            </div>
+            <div className="space-y-1.5">
+              <h2 className="text-xl font-extrabold text-zinc-900 dark:text-white tracking-tight">Verification Failed</h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xs mx-auto">
+                This verification link is invalid, expired, or has already been used.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2.5 w-full pt-2">
+              <Button
+                onClick={() => setShowInputForm(true)}
+                className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase tracking-wider h-11 rounded-xl cursor-pointer"
+              >
+                Request New Link
+              </Button>
+              <Link href="/auth/login" className="text-xs font-bold text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors py-2">
+                Back to sign in
+              </Link>
+            </div>
           </div>
         ) : (
-          <>
-            {resend ? (
-              <p className="text-sm text-zinc-500">We've sent a verification link to your email.</p>
-            ) : (
-              <div className="space-y-4">
-                <h4 className="text-center text-base font-bold text-zinc-900 dark:text-white">
-                  Request Verification Link
-                </h4>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="relative">
-                    <Input
-                      type="email"
-                      placeholder="Enter email address"
-                      className="w-full h-11 pl-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
-                      value={input?.email}
-                      onChange={(e) =>
-                        setInput({ ...input, email: e.target.value })
-                      }
-                    />
-                    <MailIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
-                  </div>
+          <div className="space-y-4">
+            <div className="space-y-1 text-center">
+              <h4 className="text-lg font-extrabold text-zinc-900 dark:text-white tracking-tight">
+                New Verification Link
+              </h4>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xs mx-auto">
+                Enter your account email below to receive a new activation link.
+              </p>
+            </div>
 
-                  {isEmailInvalid && (
-                    <p className="text-[11px] text-rose-500 font-semibold pl-1">Please enter a valid email address</p>
-                  )}
-
-                  <Button
-                    type="submit"
-                    className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11"
-                    disabled={!input.email || resendMutation.isPending}
-                  >
-                    {resendMutation.isPending ? "Sending..." : "Resend Link"}
-                  </Button>
-                </form>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1">
+                <div className="relative">
+                  <Input
+                    type="email"
+                    placeholder="Enter email address"
+                    value={input.email}
+                    onChange={(e) => setInput({ ...input, email: e.target.value })}
+                    onFocus={() => setIsEmailFocused(true)}
+                    onBlur={() => setIsEmailFocused(false)}
+                    className="w-full h-11 pl-10 border-zinc-200 dark:border-zinc-800 rounded-xl focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary transition-all duration-250 bg-zinc-50/50 dark:bg-zinc-950/20"
+                  />
+                  <MailIcon 
+                    className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors duration-250 pointer-events-none ${
+                      isEmailFocused ? "text-primary" : "text-zinc-400"
+                    }`} 
+                  />
+                </div>
+                {isEmailInvalid && (
+                  <p className="text-[11px] text-rose-500 font-semibold pl-1">
+                    Please enter a valid email address
+                  </p>
+                )}
               </div>
-            )}
-          </>
+
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowInputForm(false)}
+                  className="flex-1 h-11 rounded-xl text-xs font-bold border-zinc-200 dark:border-zinc-850"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={!input.email || isEmailInvalid || resendMutation.isPending}
+                  className="flex-[2] bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 shadow-md shadow-emerald-550/10 cursor-pointer"
+                >
+                  {resendMutation.isPending ? "Sending..." : "Send Link"}
+                </Button>
+              </div>
+            </form>
+          </div>
         )}
       </div>
     );
@@ -121,11 +161,22 @@ const VerifyForm: React.FC<{ token: string }> = ({ token }) => {
 
   if (success) {
     return (
-      <div className="text-center space-y-4 font-inter py-6">
-        <h3 className="font-extrabold text-xl text-zinc-900 dark:text-white">You're all set!</h3>
-        <p className="text-xs text-zinc-500 leading-relaxed">Thank you for verifying your email address. You can now login to your account.</p>
+      <div className="text-center space-y-6 font-inter py-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* Success Icon */}
+        <div className="w-16 h-16 rounded-2xl bg-[#08AA08]/10 border border-[#08AA08]/20 flex items-center justify-center mx-auto relative">
+          <CheckCircle2 className="w-8 h-8 text-[#08AA08]" strokeWidth={1.5} />
+          <div className="absolute inset-0 rounded-2xl border border-[#08AA08]/20 animate-ping opacity-30" />
+        </div>
+
+        <div className="space-y-1.5">
+          <h3 className="font-extrabold text-xl text-zinc-900 dark:text-white tracking-tight">Account Verified!</h3>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xs mx-auto">
+            Thank you for verifying your email address. Your account is fully active and ready to go.
+          </p>
+        </div>
+
         <Link href="/auth/login" className="block pt-2">
-          <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-8">
+          <Button className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 shadow-md shadow-emerald-550/10 transition-all active:scale-[0.985] cursor-pointer">
             Sign In
           </Button>
         </Link>

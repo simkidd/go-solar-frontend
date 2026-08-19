@@ -13,6 +13,7 @@ interface FormValues {
 const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
   const resetPasswordMutation = useResetPasswordMutation();
   const [isVisible, setIsVisible] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const {
     register,
@@ -43,11 +44,17 @@ const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
                 message: "Password must be at least 6 characters",
               },
             })}
-            className="w-full h-11 pl-10 pr-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
+            onFocus={() => setIsPasswordFocused(true)}
+            onBlur={() => setIsPasswordFocused(false)}
+            className="w-full h-11 pl-10 pr-10 border-zinc-200 dark:border-zinc-800 rounded-xl focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary transition-all duration-250 bg-zinc-50/50 dark:bg-zinc-950/20"
           />
-          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+          <LockIcon 
+            className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors duration-250 pointer-events-none ${
+              isPasswordFocused ? "text-primary" : "text-zinc-400"
+            }`} 
+          />
           <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 transition-colors"
             type="button"
             onClick={() => setIsVisible(!isVisible)}
           >
@@ -63,7 +70,7 @@ const ResetPswForm: React.FC<{ token: string }> = ({ token }) => {
 
       <Button
         type="submit"
-        className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11"
+        className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-11 shadow-md shadow-emerald-550/10 transition-all active:scale-[0.985] cursor-pointer"
         disabled={resetPasswordMutation.isPending}
       >
         {resetPasswordMutation.isPending ? "Resetting..." : "Reset Password"}
