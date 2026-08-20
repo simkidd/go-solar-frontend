@@ -15,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Calendar } from "@/components/ui/calendar";
+
 import {
   ChevronDown,
   Users,
@@ -111,7 +111,7 @@ const OverviewComp = () => {
   const [dashboardData, setDashboardData] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState("month");
-  const [date, setDate] = useState<Date | undefined>(new Date());
+
 
   useEffect(() => {
     (async () => {
@@ -547,20 +547,62 @@ const OverviewComp = () => {
 
         {/* Right Column (Span 1) */}
         <div className="space-y-6">
-          {/* Calendar Card */}
-          <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl h-fit">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">
-                Calendar
-              </CardTitle>
+          {/* Solar Load Analytics Card */}
+          <Card className="bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800 shadow-sm rounded-2xl h-fit relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-6 -mt-6"></div>
+            <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/80 flex flex-row items-center justify-between gap-4">
+              <div>
+                <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">
+                  Solar Load Analytics
+                </CardTitle>
+                <CardDescription className="text-xs text-zinc-500 mt-0.5">
+                  Sizing estimations requested by prospective leads.
+                </CardDescription>
+              </div>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-300">
+                <Zap className="h-5 w-5 animate-pulse" />
+              </div>
             </CardHeader>
-            <CardContent className="flex justify-center p-3">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                className="rounded-xl border border-zinc-100 dark:border-zinc-800 w-full max-w-sm dark:bg-zinc-900/20 shadow-none"
-              />
+            <CardContent className="pt-4 space-y-4 font-inter">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 bg-zinc-50/80 dark:bg-zinc-900/35 rounded-xl border border-zinc-100 dark:border-zinc-800/50">
+                  <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Total Sized</span>
+                  <p className="text-lg font-black text-primary mt-1">
+                    {isLoading ? (
+                      <Skeleton className="h-6 w-16" />
+                    ) : (
+                      `${(dashboardData?.totalRequestedKw || 0).toFixed(1)} kW`
+                    )}
+                  </p>
+                </div>
+                <div className="p-3 bg-zinc-50/80 dark:bg-zinc-900/35 rounded-xl border border-zinc-100 dark:border-zinc-800/50">
+                  <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Active Leads</span>
+                  <p className="text-lg font-black text-zinc-800 dark:text-zinc-200 mt-1">
+                    {isLoading ? (
+                      <Skeleton className="h-6 w-10" />
+                    ) : (
+                      dashboardData?.totalSolarLeads ?? 0
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/40 dark:bg-zinc-900/20 rounded-lg">
+                  <span className="text-zinc-500">Average System Size:</span>
+                  <span className="text-zinc-900 dark:text-white font-bold">
+                    {dashboardData?.totalSolarLeads && dashboardData.totalSolarLeads > 0
+                      ? `${((dashboardData.totalRequestedKw || 0) / dashboardData.totalSolarLeads).toFixed(2)} kW`
+                      : "0.00 kW"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs font-semibold py-1.5 px-3 bg-zinc-50/40 dark:bg-zinc-900/20 rounded-lg">
+                  <span className="text-zinc-500">Estimated Panels:</span>
+                  <span className="text-zinc-900 dark:text-white font-bold">
+                    {Math.round((dashboardData?.totalRequestedKw || 0) * 2.5)} units
+                  </span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 

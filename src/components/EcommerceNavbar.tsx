@@ -37,6 +37,7 @@ import SearchModal from "./SearchModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCategoryTreeQuery } from "@/hooks/queries/useCategoriesQuery";
+import { useAnnouncementQuery } from "@/hooks/queries/useAnnouncementQuery";
 
 const EcommerceNavbar = () => {
   const { isAuthenticated, user, logout } = useSession();
@@ -50,6 +51,9 @@ const EcommerceNavbar = () => {
 
   // Fetch Categories Tree dynamically from Backend
   const { data: categoryTree = [] } = useCategoryTreeQuery();
+
+  // Fetch active announcement banner
+  const { data: announcementData } = useAnnouncementQuery();
 
   // Close mobile drawer and reset category explorer on route changes
   useEffect(() => {
@@ -82,32 +86,27 @@ const EcommerceNavbar = () => {
       <SearchModal isOpen={isSearchOpen} onOpenChange={setIsSearchOpen} />
 
       <header className="w-full bg-white dark:bg-zinc-950 border-b border-border/80 sticky top-0 z-50 font-inter">
-        {/* ── Top Announcement & Utility Bar ── */}
-        <div className="w-full bg-primary/10 dark:bg-primary/20 border-b border-primary/10 py-2 text-[10px] font-bold text-primary select-none hidden md:block">
-          <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="bg-primary text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-wider">
-                PROMO
-              </span>
-              <span>⚡ Free Shipping on Orders Over ₦2,500,000!</span>
-            </div>
-            <div className="flex items-center gap-4 text-[9px] uppercase tracking-wider">
-              <span className="cursor-pointer hover:text-primary transition-colors">
-                English
-              </span>
-              <span className="cursor-pointer hover:text-primary transition-colors">
-                NGN (₦)
-              </span>
-              <span className="opacity-30">|</span>
-              <span className="cursor-pointer hover:text-primary transition-colors">
-                Help Center
-              </span>
-              <span className="cursor-pointer hover:text-primary transition-colors">
-                Support: +234-800-GOSOLAR
-              </span>
+        {/* ── Top Announcement Bar ── */}
+        {announcementData?.announcement?.isActive && (
+          <div className="w-full bg-primary/10 dark:bg-primary/20 border-b border-primary/10 py-2.5 text-[10.5px] font-black uppercase tracking-wider text-primary select-none overflow-hidden">
+            <div className="w-full overflow-hidden whitespace-nowrap">
+              <div className="animate-marquee">
+                {announcementData.announcement.link ? (
+                  <Link
+                    href={announcementData.announcement.link}
+                    className="hover:underline flex items-center gap-2"
+                  >
+                    <span>{announcementData.announcement.text}</span>
+                  </Link>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    {announcementData.announcement.text}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* ── Top Utility Header Bar ── */}
         <div className="container mx-auto px-4 lg:px-6 py-4 grid grid-cols-3 items-center lg:flex lg:justify-between lg:gap-8">
