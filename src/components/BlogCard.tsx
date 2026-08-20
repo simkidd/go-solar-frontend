@@ -5,6 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { Suspense } from "react";
 
+const getExcerpt = (post: Post) => {
+  if (post.excerpt) return post.excerpt;
+  if (!post.content) return "";
+  const plainText = post.content.replace(/<[^>]*>/g, "");
+  return plainText.length > 150 ? plainText.slice(0, 150) + "..." : plainText;
+};
+
 export const BlogCardList: React.FC<{ item: Post }> = ({ item }) => {
   return (
     <div className="flex">
@@ -63,7 +70,7 @@ export const BlogCardAdmin: React.FC<{
             </Link>
           </div>
           <p className="text-ellipsis line-clamp-2 mb-4 dark:text-white">
-            {post?.content}
+            {getExcerpt(post)}
           </p>
           <Link href={`/dashboard/blogs/${post?._id}`} className="text-primary">
             Read More
@@ -102,7 +109,9 @@ const BlogCard: React.FC<{
               <p>{post?.title}</p>
             </Link>
           </div>
-          <p className="text-ellipsis line-clamp-2 mb-4">{post?.content}</p>
+          <p className="text-ellipsis line-clamp-2 mb-4">
+            {getExcerpt(post)}
+          </p>
           <Link href={`/blog/${post?.slug}`} className="text-primary">
             Read More
           </Link>

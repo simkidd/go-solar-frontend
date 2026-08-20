@@ -44,6 +44,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useMemo, useRef } from "react";
+import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import AppModal from "@/components/AppModal";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -69,7 +70,50 @@ export const ProjectsTable = () => {
   const MAX_IMAGES = 5;
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const onDrop = (acceptedFiles: File[]) => {
+    const remaining = MAX_IMAGES - imageFiles.length;
+    const toAdd = acceptedFiles.slice(0, remaining);
+    if (toAdd.length === 0) return;
+
+    setImageFiles((prev) => [...prev, ...toAdd]);
+    setImagePreviews((prev) => [
+      ...prev,
+      ...toAdd.map((f) => URL.createObjectURL(f)),
+    ]);
+  };
+
+  const {
+    getRootProps: getCreateRootProps,
+    getInputProps: getCreateInputProps,
+    isDragActive: isCreateDragActive,
+    open: openCreateDropzone,
+  } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+      "image/webp": [],
+    },
+    noClick: true,
+    noKeyboard: true,
+  });
+
+  const {
+    getRootProps: getEditRootProps,
+    getInputProps: getEditInputProps,
+    isDragActive: isEditDragActive,
+    open: openEditDropzone,
+  } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+      "image/webp": [],
+    },
+    noClick: true,
+    noKeyboard: true,
+  });
 
   // Mutations
   const createMutation = useCreateProjectMutation({
@@ -118,20 +162,6 @@ export const ProjectsTable = () => {
     });
   }, [projects, searchTerm]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
-    const remaining = MAX_IMAGES - imageFiles.length;
-    const toAdd = files.slice(0, remaining);
-    setImageFiles((prev) => [...prev, ...toAdd]);
-    setImagePreviews((prev) => [
-      ...prev,
-      ...toAdd.map((f) => URL.createObjectURL(f)),
-    ]);
-    // reset input so same file can be re-selected
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
   const handleRemoveImage = (index: number) => {
     setImageFiles((prev) => prev.filter((_, i) => i !== index));
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
@@ -140,7 +170,6 @@ export const ProjectsTable = () => {
   const handleClearImages = () => {
     setImageFiles([]);
     setImagePreviews([]);
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleOpenCreate = () => {
@@ -550,6 +579,7 @@ export const ProjectsTable = () => {
         onOpenChange={setIsCreateOpen}
         title="Add Completed Project"
         size="2xl"
+        scrollBehavior="inside"
       >
         <form
           onSubmit={handleSubmit(handleSaveCreate)}
@@ -571,42 +601,93 @@ export const ProjectsTable = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
-                  Project Photos <span className="text-muted-foreground/60 font-semibold normal-case tracking-normal">({imagePreviews.length}/{MAX_IMAGES})</span>
+                  Project Photos{" "}
+                  <span className="text-muted-foreground/60 font-semibold normal-case tracking-normal">
+                    ({imagePreviews.length}/{MAX_IMAGES})
+                  </span>
                 </label>
                 {imagePreviews.length > 0 && (
-                  <button type="button" onClick={handleClearImages} className="text-[10px] text-red-500 hover:text-red-600 font-bold cursor-pointer">
+                  <button
+                    type="button"
+                    onClick={handleClearImages}
+                    className="text-[10px] text-red-500 hover:text-red-600 font-bold cursor-pointer"
+                  >
                     Clear all
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-5 gap-2">
-                {imagePreviews.map((src, i) => (
-                  <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-border/60 group">
-                    <Image src={src} alt={`Preview ${i + 1}`} fill className="object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(i)}
-                      className="absolute top-1 right-1 bg-black/60 text-white p-0.5 rounded-full hover:bg-black/80 transition-colors opacity-0 group-hover:opacity-100"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                    {i === 0 && (
-                      <span className="absolute bottom-1 left-1 bg-primary/80 text-white text-[8px] font-bold px-1 rounded">Cover</span>
-                    )}
-                  </div>
-                ))}
-                {imagePreviews.length < MAX_IMAGES && (
+
+              <div
+                {...getCreateRootProps()}
+                className={`border-2 border-dashed rounded-2xl p-4 transition-colors ${
+                  isCreateDragActive
+                    ? "border-primary bg-primary/5"
+                    : "border-border bg-muted/10 hover:bg-muted/20"
+                }`}
+              >
+                <input {...getCreateInputProps()} />
+
+                {imagePreviews.length === 0 ? (
                   <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl bg-muted/20 cursor-pointer hover:bg-muted/40 transition-colors"
+                    onClick={openCreateDropzone}
+                    className="flex flex-col items-center justify-center py-6 cursor-pointer select-none"
                   >
-                    <ImageIcon className="h-5 w-5 text-muted-foreground mb-1" />
-                    <span className="text-[9px] font-semibold text-muted-foreground text-center leading-tight">Add Photo</span>
+                    <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
+                    <span className="text-xs font-semibold text-foreground">
+                      Drag & drop photos here, or{" "}
+                      <span className="text-primary underline">browse</span>
+                    </span>
+                    <span className="text-[10px] text-muted-foreground/60 mt-1">
+                      Up to {MAX_IMAGES} images (JPG, PNG, WEBP)
+                    </span>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-5 gap-2">
+                    {imagePreviews.map((src, i) => (
+                      <div
+                        key={i}
+                        className="relative aspect-square rounded-xl overflow-hidden border border-border/60 group"
+                      >
+                        <Image
+                          src={src}
+                          alt={`Preview ${i + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveImage(i);
+                          }}
+                          className="absolute top-1 right-1 bg-black/60 text-white p-0.5 rounded-full hover:bg-black/80 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                        {i === 0 && (
+                          <span className="absolute bottom-1 left-1 bg-primary/80 text-white text-[8px] font-bold px-1 rounded select-none">
+                            Cover
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                    {imagePreviews.length < MAX_IMAGES && (
+                      <div
+                        onClick={openCreateDropzone}
+                        className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl bg-muted/20 cursor-pointer hover:bg-muted/40 transition-colors"
+                      >
+                        <Plus className="h-5 w-5 text-muted-foreground mb-1" />
+                        <span className="text-[9px] font-semibold text-muted-foreground text-center leading-tight">
+                          Add Photo
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-              <p className="text-[10px] text-muted-foreground/60 font-medium">First image is the cover. JPG, PNG, WEBP up to 5MB each.</p>
-              <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
+              <p className="text-[10px] text-muted-foreground/60 font-medium">
+                First image is the cover. JPG, PNG, WEBP up to 5MB each.
+              </p>
             </div>
 
             <div className="space-y-1">
@@ -751,64 +832,152 @@ export const ProjectsTable = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
-                  Project Photos <span className="text-muted-foreground/60 font-semibold normal-case tracking-normal">({imagePreviews.length}/{MAX_IMAGES})</span>
+                  Project Photos{" "}
+                  <span className="text-muted-foreground/60 font-semibold normal-case tracking-normal">
+                    ({imagePreviews.length}/{MAX_IMAGES})
+                  </span>
                 </label>
                 {imagePreviews.length > 0 && (
-                  <button type="button" onClick={handleClearImages} className="text-[10px] text-red-500 hover:text-red-600 font-bold cursor-pointer">
+                  <button
+                    type="button"
+                    onClick={handleClearImages}
+                    className="text-[10px] text-red-500 hover:text-red-600 font-bold cursor-pointer"
+                  >
                     Clear all
                   </button>
                 )}
               </div>
 
-              {/* Show existing server images when no new ones selected */}
-              {imagePreviews.length === 0 && activeProject?.images?.length > 0 && (
-                <div className="grid grid-cols-5 gap-2 mb-2">
-                  {(activeProject.images as string[]).map((src: string, i: number) => (
-                    <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-border/60">
-                      <Image src={src} alt={`Existing ${i + 1}`} fill className="object-cover" />
-                      {i === 0 && (
-                        <span className="absolute bottom-1 left-1 bg-primary/80 text-white text-[8px] font-bold px-1 rounded">Cover</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div
+                {...getEditRootProps()}
+                className={`border-2 border-dashed rounded-2xl p-4 transition-colors ${
+                  isEditDragActive
+                    ? "border-primary bg-primary/5"
+                    : "border-border bg-muted/10 hover:bg-muted/20"
+                }`}
+              >
+                <input {...getEditInputProps()} />
 
-              {/* New image thumbnails */}
-              <div className="grid grid-cols-5 gap-2">
-                {imagePreviews.map((src, i) => (
-                  <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-border/60 group">
-                    <Image src={src} alt={`Preview ${i + 1}`} fill className="object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(i)}
-                      className="absolute top-1 right-1 bg-black/60 text-white p-0.5 rounded-full hover:bg-black/80 transition-colors opacity-0 group-hover:opacity-100"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                    {i === 0 && (
-                      <span className="absolute bottom-1 left-1 bg-emerald-500/80 text-white text-[8px] font-bold px-1 rounded">New Cover</span>
-                    )}
-                  </div>
-                ))}
-                {imagePreviews.length < MAX_IMAGES && (
+                {imagePreviews.length === 0 &&
+                (!activeProject?.images ||
+                  activeProject.images.length === 0) ? (
                   <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl bg-muted/20 cursor-pointer hover:bg-muted/40 transition-colors"
+                    onClick={openEditDropzone}
+                    className="flex flex-col items-center justify-center py-6 cursor-pointer select-none"
                   >
-                    <ImageIcon className="h-5 w-5 text-muted-foreground mb-1" />
-                    <span className="text-[9px] font-semibold text-muted-foreground text-center leading-tight">
-                      {imagePreviews.length === 0 ? "Replace Photos" : "Add More"}
+                    <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
+                    <span className="text-xs font-semibold text-foreground">
+                      Drag & drop photos here, or{" "}
+                      <span className="text-primary underline">browse</span>
                     </span>
+                    <span className="text-[10px] text-muted-foreground/60 mt-1">
+                      Up to {MAX_IMAGES} images (JPG, PNG, WEBP)
+                    </span>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {/* Show existing server images when no new ones selected */}
+                    {imagePreviews.length === 0 &&
+                      activeProject?.images?.length > 0 && (
+                        <div>
+                          <p className="text-[10px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wider select-none">
+                            Current Photos
+                          </p>
+                          <div className="grid grid-cols-5 gap-2">
+                            {(activeProject.images as string[]).map(
+                              (src: string, i: number) => (
+                                <div
+                                  key={i}
+                                  className="relative aspect-square rounded-xl overflow-hidden border border-border/60"
+                                >
+                                  <Image
+                                    src={src}
+                                    alt={`Existing ${i + 1}`}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                  {i === 0 && (
+                                    <span className="absolute bottom-1 left-1 bg-primary/80 text-white text-[8px] font-bold px-1 rounded select-none">
+                                      Cover
+                                    </span>
+                                  )}
+                                </div>
+                              ),
+                            )}
+                            <div
+                              onClick={openEditDropzone}
+                              className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl bg-muted/20 cursor-pointer hover:bg-muted/40 transition-colors"
+                            >
+                              <Pencil className="h-5 w-5 text-muted-foreground mb-1" />
+                              <span className="text-[9px] font-semibold text-muted-foreground text-center leading-tight">
+                                Replace All
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                    {/* New image thumbnails */}
+                    {(imagePreviews.length > 0 ||
+                      !activeProject?.images ||
+                      activeProject.images.length === 0) && (
+                      <div>
+                        {activeProject?.images?.length > 0 && (
+                          <p className="text-[10px] font-bold text-emerald-600 mb-1.5 uppercase tracking-wider select-none">
+                            New Photos (Will Replace Current)
+                          </p>
+                        )}
+                        <div className="grid grid-cols-5 gap-2">
+                          {imagePreviews.map((src, i) => (
+                            <div
+                              key={i}
+                              className="relative aspect-square rounded-xl overflow-hidden border border-border/60 group"
+                            >
+                              <Image
+                                src={src}
+                                alt={`Preview ${i + 1}`}
+                                fill
+                                className="object-cover"
+                              />
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveImage(i);
+                                }}
+                                className="absolute top-1 right-1 bg-black/60 text-white p-0.5 rounded-full hover:bg-black/80 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                              {i === 0 && (
+                                <span className="absolute bottom-1 left-1 bg-emerald-500/85 text-white text-[8px] font-bold px-1 rounded select-none">
+                                  New Cover
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                          {imagePreviews.length < MAX_IMAGES && (
+                            <div
+                              onClick={openEditDropzone}
+                              className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl bg-muted/20 cursor-pointer hover:bg-muted/40 transition-colors"
+                            >
+                              <Plus className="h-5 w-5 text-muted-foreground mb-1" />
+                              <span className="text-[9px] font-semibold text-muted-foreground text-center leading-tight">
+                                Add Photo
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
               <p className="text-[10px] text-muted-foreground/60 font-medium">
-                Uploading new photos will replace all existing ones. First image becomes the cover.
+                Uploading new photos will replace all existing ones. First image
+                becomes the cover.
               </p>
-              <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
             </div>
-
 
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
