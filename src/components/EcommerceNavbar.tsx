@@ -155,7 +155,7 @@ const EcommerceNavbar = () => {
                 height={34}
                 className="object-contain group-hover:rotate-12 transition-transform duration-300"
               />
-              <span className="font-extrabold text-lg tracking-tight text-zinc-900 dark:text-white">
+              <span className="font-extrabold text-lg tracking-tight text-zinc-900 dark:text-white mt-2">
                 Go<span className="text-primary">Solar</span>
               </span>
             </Link>
@@ -209,7 +209,9 @@ const EcommerceNavbar = () => {
                   <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border border-border/80 hover:border-primary/40 hover:bg-muted/60 transition-all duration-200 cursor-pointer group outline-none">
                     <Avatar className="h-7 w-7 shrink-0">
                       <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
-                        {user?.firstname?.[0]?.toUpperCase() ?? <User className="h-3 w-3" />}
+                        {user?.firstname?.[0]?.toUpperCase() ?? (
+                          <User className="h-3 w-3" />
+                        )}
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-xs font-semibold text-foreground truncate max-w-[80px] hidden xl:block">
@@ -218,7 +220,10 @@ const EcommerceNavbar = () => {
                     <ChevronDown className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors hidden xl:block" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-60 p-0 overflow-hidden shadow-xl border border-border/60">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-60 p-0 overflow-hidden shadow-xl border border-border/60"
+                >
                   {/* User Info Header */}
                   <div className="px-4 py-3.5 bg-gradient-to-br from-primary/5 to-transparent border-b border-border/50">
                     <div className="flex items-center gap-3">

@@ -36,8 +36,11 @@ export const useUpdateBlogPostMutation = (options?: MutationOptions) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (input: UpdatePostInput) => {
-      const { data } = await axiosInstance.put(`/blogs/${input.id}`, input);
+    mutationFn: async (payload: FormData) => {
+      const id = payload.get("id");
+      const { data } = await axiosInstance.put(`/blogs/${id}`, payload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return data;
     },
     onSuccess: (data) => {

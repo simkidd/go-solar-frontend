@@ -6,6 +6,8 @@ export interface Post {
   author: string;
   image: string;
   tags: string[];
+  excerpt?: string;
+  readTime?: number;
   createdAt: string;
   updatedAt: string;
 }

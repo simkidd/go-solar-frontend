@@ -134,7 +134,10 @@ const BusinessNavbar = () => {
           </button>
 
           {/* Logo brand */}
-          <Link href="/" className="flex items-center gap-2 select-none group mx-auto lg:mx-0 z-10">
+          <Link
+            href="/"
+            className="flex items-center gap-2 select-none group mx-auto lg:mx-0 z-10"
+          >
             <Image
               src={LogoIcon}
               alt="logo"
@@ -142,7 +145,7 @@ const BusinessNavbar = () => {
               height={36}
               className="object-contain group-hover:rotate-12 transition-transform duration-300"
             />
-            <span className="font-extrabold text-xl tracking-tight text-foreground">
+            <span className="font-extrabold text-xl tracking-tight text-foreground mt-2">
               Go<span className="text-primary">Solar</span>
             </span>
           </Link>

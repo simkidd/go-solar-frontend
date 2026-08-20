@@ -176,7 +176,7 @@ const SidebarInnerContent = ({
             priority
           />
           {!isCollapsed && (
-            <span className="font-extrabold text-xl tracking-tight text-foreground">
+            <span className="font-extrabold text-xl tracking-tight text-foreground mt-2">
               Go<span className="text-primary">Solar</span>
             </span>
           )}
@@ -196,50 +196,52 @@ const SidebarInnerContent = ({
                 )}
                 <div className="space-y-0.5">
                   {group.items
-                    .filter((item) => !item.superAdminOnly || user?.isSuperAdmin)
+                    .filter(
+                      (item) => !item.superAdminOnly || user?.isSuperAdmin,
+                    )
                     .map((item) => {
                       const active = isActive(item.href);
                       const Icon = item.icon;
 
-                    const linkEl = (
-                      <Link
-                        href={item.href}
-                        onClick={onItemClick}
-                        className={`flex items-center h-9 px-3 rounded-lg text-xs font-medium transition-all duration-150 ${
-                          active
-                            ? "bg-primary/10 text-primary font-semibold border-l-2 border-primary rounded-l-none"
-                            : "text-zinc-600 dark:text-zinc-300 hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
-                        } ${isCollapsed ? "justify-center px-0" : ""}`}
-                      >
-                        <Icon
-                          className={`h-4 w-4 shrink-0 ${
+                      const linkEl = (
+                        <Link
+                          href={item.href}
+                          onClick={onItemClick}
+                          className={`flex items-center h-9 px-3 rounded-lg text-xs font-medium transition-all duration-150 ${
                             active
-                              ? "text-primary"
-                              : "text-zinc-500 dark:text-zinc-400"
-                          }`}
-                        />
-                        {!isCollapsed && (
-                          <span className="ml-3 truncate">{item.name}</span>
-                        )}
-                      </Link>
-                    );
-
-                    if (isCollapsed) {
-                      return (
-                        <Tooltip key={item.name}>
-                          <TooltipTrigger asChild>{linkEl}</TooltipTrigger>
-                          <TooltipContent
-                            side="right"
-                            className="bg-zinc-900 text-white border-none text-xs font-medium"
-                          >
-                            {item.name}
-                          </TooltipContent>
-                        </Tooltip>
+                              ? "bg-primary/10 text-primary font-semibold border-l-2 border-primary rounded-l-none"
+                              : "text-zinc-600 dark:text-zinc-300 hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                          } ${isCollapsed ? "justify-center px-0" : ""}`}
+                        >
+                          <Icon
+                            className={`h-4 w-4 shrink-0 ${
+                              active
+                                ? "text-primary"
+                                : "text-zinc-500 dark:text-zinc-400"
+                            }`}
+                          />
+                          {!isCollapsed && (
+                            <span className="ml-3 truncate">{item.name}</span>
+                          )}
+                        </Link>
                       );
-                    }
 
-                    return <div key={item.name}>{linkEl}</div>;
-                  })}
+                      if (isCollapsed) {
+                        return (
+                          <Tooltip key={item.name}>
+                            <TooltipTrigger asChild>{linkEl}</TooltipTrigger>
+                            <TooltipContent
+                              side="right"
+                              className="bg-zinc-900 text-white border-none text-xs font-medium"
+                            >
+                              {item.name}
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      }
+
+                      return <div key={item.name}>{linkEl}</div>;
+                    })}
                 </div>
               </div>
             ))}

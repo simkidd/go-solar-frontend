@@ -93,7 +93,8 @@ const SingleBlogPage = async ({ params }: IPost) => {
   const category = post.tags[0] || "Solar insights";
   const authorRole = getAuthorRole(post.author);
   const authorBio = getAuthorBio(post.author);
-  const readTime = getReadTime(post.content);
+  const readTime = post.readTime || getReadTime(post.content);
+  const excerpt = post.excerpt || getExcerpt(post.content);
 
   // Filter related articles (same category tag, excluding current post)
   const related = posts
@@ -103,49 +104,7 @@ const SingleBlogPage = async ({ params }: IPost) => {
   // Other posts (footer showcase)
   const footerPosts = posts.filter((p) => p.slug !== slug).slice(0, 3);
 
-  const paragraphs = post.content.split("\n\n").filter(Boolean);
 
-  const renderParagraph = (para: string, index: number) => {
-    const cleanPara = para.trim();
-    if (cleanPara.startsWith("## ")) {
-      return (
-        <h2 key={index} className="text-xl font-bold text-zinc-900 dark:text-white mt-8 mb-4">
-          {cleanPara.slice(3)}
-        </h2>
-      );
-    }
-    if (cleanPara.startsWith("### ")) {
-      return (
-        <h3 key={index} className="text-lg font-bold text-zinc-900 dark:text-white mt-6 mb-3">
-          {cleanPara.slice(4)}
-        </h3>
-      );
-    }
-    if (cleanPara.includes("\n- ") || cleanPara.startsWith("- ")) {
-      const lines = cleanPara.split("\n");
-      const listItems = lines
-        .filter((l) => l.trim().startsWith("-"))
-        .map((l) => l.trim().slice(1).trim());
-      const beforeText = lines.filter((l) => !l.trim().startsWith("-")).join(" ");
-      return (
-        <div key={index} className="space-y-2 my-4">
-          {beforeText && <p>{beforeText}</p>}
-          <ul className="list-disc pl-5 space-y-1.5">
-            {listItems.map((item, idx) => (
-              <li key={idx} className="text-zinc-650 dark:text-zinc-400">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      );
-    }
-    return (
-      <p key={index} className="leading-relaxed text-zinc-600 dark:text-zinc-400 my-4 text-sm sm:text-base">
-        {cleanPara}
-      </p>
-    );
-  };
 
   return (
     <div className="w-full font-inter bg-white dark:bg-zinc-950 overflow-hidden">
@@ -201,13 +160,14 @@ const SingleBlogPage = async ({ params }: IPost) => {
             <article className="lg:col-span-3 space-y-8">
               {/* Excerpt */}
               <p className="text-lg sm:text-xl text-zinc-500 dark:text-zinc-350 leading-relaxed pb-8 border-b border-zinc-150 dark:border-zinc-800 font-medium">
-                {getExcerpt(post.content)}
+                {excerpt}
               </p>
 
               {/* Formatted Article Body */}
-              <div className="text-zinc-650 dark:text-zinc-400 space-y-4">
-                {paragraphs.map((para, i) => renderParagraph(para, i))}
-              </div>
+              <div
+                dangerouslySetInnerHTML={{ __html: post.content }}
+                className="blog-content-rich text-zinc-650 dark:text-zinc-450 space-y-4 text-sm sm:text-base leading-relaxed"
+              />
 
               {/* Author Biography Card */}
               <div className="mt-12 pt-8 border-t border-zinc-150 dark:border-zinc-800 flex items-start gap-4 bg-zinc-50/50 dark:bg-zinc-900/10 p-6 rounded-2xl">

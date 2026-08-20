@@ -187,3 +187,120 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
+
+/* Quill Editor Dark Mode styling overrides */
+.dark .ql-toolbar.ql-snow {
+  background-color: #18181b;
+  border-color: #27272a !important;
+}
+.dark .ql-toolbar.ql-snow .ql-stroke {
+  stroke: #e4e4e7;
+}
+.dark .ql-toolbar.ql-snow .ql-fill {
+  fill: #e4e4e7;
+}
+.dark .ql-toolbar.ql-snow .ql-picker {
+  color: #e4e4e7;
+}
+.dark .ql-toolbar.ql-snow .ql-picker-options {
+  background-color: #18181b;
+  border-color: #27272a;
+}
+.dark .ql-container.ql-snow {
+  border-color: #27272a !important;
+  background-color: rgba(24, 24, 27, 0.3);
+}
+.dark .ql-editor {
+  color: #f4f4f5;
+  min-height: 200px;
+}
+.dark .ql-editor.ql-blank::before {
+  color: #71717a;
+}
+
+/* Rich Text Content Formatting Helper */
+.blog-content-rich p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.75;
+}
+.blog-content-rich h1,
+.blog-content-rich h2,
+.blog-content-rich h3,
+.blog-content-rich h4,
+.blog-content-rich h5,
+.blog-content-rich h6 {
+  font-weight: 700;
+  color: var(--foreground);
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+.blog-content-rich h1 { font-size: 1.5rem; }
+.blog-content-rich h2 { font-size: 1.25rem; }
+.blog-content-rich h3 { font-size: 1.125rem; }
+.blog-content-rich ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.blog-content-rich ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.blog-content-rich li {
+  margin-bottom: 0.375rem;
+}
+.blog-content-rich blockquote {
+  border-left: 4px solid var(--primary);
+  padding-left: 1rem;
+  font-style: italic;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: var(--muted-foreground);
+}
+
+/* Tiptap Editor Canvas Styling (.ProseMirror) */
+.ProseMirror {
+  outline: none;
+}
+.ProseMirror p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3 {
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.ProseMirror h1 { font-size: 1.35rem; }
+.ProseMirror h2 { font-size: 1.2rem; }
+.ProseMirror h3 { font-size: 1.1rem; }
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.ProseMirror li {
+  margin-bottom: 0.25rem;
+}
+.ProseMirror blockquote {
+  border-left: 3px solid var(--primary);
+  padding-left: 0.75rem;
+  font-style: italic;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  color: var(--muted-foreground);
+}

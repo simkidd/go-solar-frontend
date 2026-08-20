@@ -30,6 +30,10 @@ const PackagesSection = () => {
     return "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900/50";
   };
 
+  if (!packages || packages.length === 0) {
+    return null;
+  }
+
   return (
     <section className="w-full py-24 bg-white dark:bg-zinc-950 font-inter">
       <div className="container mx-auto px-4 space-y-16">
@@ -60,7 +64,9 @@ const PackagesSection = () => {
             ))}
           </div>
         ) : homePackages.length === 0 ? (
-          <p className="text-center text-sm text-zinc-500 font-semibold py-8">No packages currently available.</p>
+          <p className="text-center text-sm text-zinc-500 font-semibold py-8">
+            No packages currently available.
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {homePackages.map((pkg: any, index) => {
@@ -101,12 +107,14 @@ const PackagesSection = () => {
                           System Specifications
                         </span>
                         <ul className="grid grid-cols-1 gap-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                          {pkg.tagline.split(" + ").map((spec: string, i: number) => (
-                            <li key={i} className="flex items-center gap-2">
-                              <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
-                              <span>{spec}</span>
-                            </li>
-                          ))}
+                          {pkg.tagline
+                            .split(" + ")
+                            .map((spec: string, i: number) => (
+                              <li key={i} className="flex items-center gap-2">
+                                <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
+                                <span>{spec}</span>
+                              </li>
+                            ))}
                         </ul>
                       </div>
                     )}
