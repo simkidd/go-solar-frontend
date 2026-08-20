@@ -122,13 +122,13 @@ const ProductCard: React.FC<{
       </div>
 
       {/* Content wrapper */}
-      <div className="p-5 flex flex-col justify-between flex-1 space-y-4">
+      <div className="p-3.5 sm:p-5 flex flex-col justify-between flex-1 space-y-3 sm:space-y-4">
         <div className="space-y-2">
           {/* Brand & Category Tags */}
-          <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-muted-foreground select-none">
+          <div className="flex flex-wrap justify-between items-center gap-1 text-[9px] font-black uppercase tracking-widest text-muted-foreground select-none">
             <span>{item?.brand || "GoSolar"}</span>
             {item?.category?.name && (
-              <span className="text-primary bg-primary/5 dark:bg-primary/10 px-2 py-0.5 rounded-md">
+              <span className="text-primary bg-primary/5 dark:bg-primary/10 px-1.5 py-0.5 rounded-md truncate max-w-[80px] sm:max-w-none">
                 {item.category.name}
               </span>
             )}
@@ -145,14 +145,14 @@ const ProductCard: React.FC<{
           </Link>
         </div>
 
-        <div className="space-y-3 pt-3 border-t border-border/60">
+        <div className="space-y-2.5 sm:space-y-3 pt-2.5 sm:pt-3 border-t border-border/60">
           {/* Price line */}
-          <div className="flex items-baseline gap-1.5 select-none">
-            <span className="text-sm sm:text-base font-black text-primary">
+          <div className="flex flex-wrap items-baseline gap-1 sm:gap-1.5 select-none">
+            <span className="text-xs sm:text-base font-black text-primary">
               {formatCurrency(newPrice, "NGN")}
             </span>
             {newPrice < item?.price && (
-              <span className="line-through text-muted-foreground text-[10px] font-semibold">
+              <span className="line-through text-muted-foreground text-[9px] sm:text-[10px] font-semibold">
                 {formatCurrency(item?.price, "NGN")}
               </span>
             )}
@@ -171,7 +171,7 @@ const ProductCard: React.FC<{
               }
             }}
             disabled={!inStock}
-            className={`w-full text-[10px] font-black uppercase tracking-wider rounded-xl h-9.5 cursor-pointer transition-all duration-200 ${
+            className={`w-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl py-2 h-8 sm:h-9.5 cursor-pointer transition-all duration-200 ${
               inStock
                 ? "bg-primary hover:bg-primary/90 text-white shadow-xs"
                 : "bg-muted text-muted-foreground cursor-not-allowed border border-border/80"
