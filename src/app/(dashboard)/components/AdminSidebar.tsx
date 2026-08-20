@@ -44,6 +44,7 @@ import {
   MessageSquare,
   ShieldCheck,
   Sparkles,
+  Megaphone,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -109,6 +110,11 @@ const navigationItems = [
         name: "Store Banners",
         href: "/dashboard/banners",
         icon: Sparkles,
+      },
+      {
+        name: "Announcement Bar",
+        href: "/dashboard/announcement",
+        icon: Megaphone,
       },
       {
         name: "Projects",
