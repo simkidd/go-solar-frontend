@@ -50,19 +50,25 @@ import {
   Plus,
   RefreshCw,
   Eye,
+  ChevronDown,
 } from "lucide-react";
 import { formatDate } from "@/utils/helpers";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import AppModal from "@/components/AppModal";
 import {
   useAdminUsersQuery,
   useCreateAccountMutation,
   useUpdateUserRoleMutation,
+  useCurrentUserQuery,
 } from "@/hooks/queries/useUsersQuery";
 import UserDetails from "./UserDetails";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const AdminsTable = () => {
   const { data: admins = [], isLoading, refetch } = useAdminUsersQuery();
+  const { data: currentUser } = useCurrentUserQuery();
+  const isSuperAdmin = currentUser?.isSuperAdmin ?? false;
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
 
@@ -72,30 +78,31 @@ export const AdminsTable = () => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [targetRevokeAdmin, setTargetRevokeAdmin] = useState<any | null>(null);
+  const [isPromoteOpen, setIsPromoteOpen] = useState(false);
+  const [targetPromoteAdmin, setTargetPromoteAdmin] = useState<any | null>(null);
 
-  // Invite Form state
-  const [inviteForm, setInviteForm] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    phoneNumber: "",
-    roleType: "admin", // admin or superAdmin
-    roleTitle: "Solar Technical Specialist",
-    password: "",
+  // react-hook-form for invite admin form
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      email: "",
+      phoneNumber: "",
+      roleType: "admin",
+      roleTitle: "Solar Technical Specialist",
+      password: "",
+    },
   });
 
   const createAdminMutation = useCreateAccountMutation({
     onSuccess: () => {
       setIsInviteOpen(false);
-      setInviteForm({
-        firstname: "",
-        lastname: "",
-        email: "",
-        phoneNumber: "",
-        roleType: "admin",
-        roleTitle: "Solar Technical Specialist",
-        password: "",
-      });
+      reset();
       toast.success("Administrator account created successfully!");
     },
   });
@@ -135,40 +142,30 @@ export const AdminsTable = () => {
     });
   }, [admins, searchTerm, roleFilter]);
 
-  const handleSaveInvite = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (
-      !inviteForm.firstname ||
-      !inviteForm.lastname ||
-      !inviteForm.email ||
-      !inviteForm.phoneNumber ||
-      !inviteForm.password
-    ) {
-      toast.error("Please fill in all administrator details");
-      return;
-    }
-
+  const handleSaveInvite = (values: any) => {
     createAdminMutation.mutate({
-      firstname: inviteForm.firstname,
-      lastname: inviteForm.lastname,
-      email: inviteForm.email,
-      phoneNumber: inviteForm.phoneNumber,
-      password: inviteForm.password,
-      role: inviteForm.roleType,
-      roleTitle: inviteForm.roleTitle,
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      phoneNumber: values.phoneNumber,
+      password: values.password,
+      role: values.roleType,
+      roleTitle: values.roleTitle,
     });
   };
 
-  const handleToggleSuperAdmin = (admin: any) => {
-    const nextSuper = !admin.isSuperAdmin;
+  const handleToggleSuperAdmin = () => {
+    if (!targetPromoteAdmin) return;
+    const nextSuper = !targetPromoteAdmin.isSuperAdmin;
     updateRoleMutation.mutate({
-      userid: admin._id,
+      userid: targetPromoteAdmin._id,
       payload: {
         isSuperAdmin: nextSuper,
-        // Make sure it remains admin
         isAdmin: true,
       },
     });
+    setIsPromoteOpen(false);
+    setTargetPromoteAdmin(null);
   };
 
   const handleConfirmRevoke = () => {
@@ -188,15 +185,15 @@ export const AdminsTable = () => {
   };
 
   return (
-    <div className="space-y-6 font-inter">
+    <div className="w-full space-y-5 font-inter">
       {/* Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <ShieldCheck className="h-5 w-5 text-primary" />
             Administrator Directory
           </h2>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+          <p className="text-xs text-muted-foreground font-semibold mt-0.5">
             Manage administrative staff, permissions, and security roles.
           </p>
         </div>
@@ -206,14 +203,17 @@ export const AdminsTable = () => {
             variant="outline"
             size="sm"
             onClick={() => refetch()}
-            className="gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 h-9 rounded-lg text-xs"
+            className="gap-2 border-border text-muted-foreground hover:text-foreground h-9 rounded-xl text-xs font-semibold cursor-pointer hover:bg-muted/30"
           >
             <RefreshCw className="h-4 w-4" />
             Refresh
           </Button>
 
           <Button
-            onClick={() => setIsInviteOpen(true)}
+            onClick={() => {
+              reset();
+              setIsInviteOpen(true);
+            }}
             className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
           >
             <Plus className="h-4 w-4" />
@@ -222,56 +222,101 @@ export const AdminsTable = () => {
         </div>
       </div>
 
-      {/* Filters Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch bg-white dark:bg-[#1a1b1e] p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-          <Input
-            placeholder="Search administrators..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 h-9 text-xs bg-zinc-50/50 dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 rounded-lg"
-          />
+      {/* Search & Filters */}
+      <div className="flex flex-col gap-4 bg-card text-card-foreground p-5 rounded-2xl border border-border/80 shadow-xs">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+            <Input
+              placeholder="Search administrators..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {(searchTerm || roleFilter !== "All") && (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSearchTerm("");
+                  setRoleFilter("All");
+                }}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50/50 dark:hover:bg-red-950/10 text-xs font-semibold rounded-xl cursor-pointer"
+              >
+                Reset
+              </Button>
+            )}
+
+            {/* Privilege Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-border text-xs font-semibold rounded-xl h-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                >
+                  {roleFilter === "All"
+                    ? "All Privileges"
+                    : roleFilter === "Super Admin"
+                      ? "Super Admins"
+                      : "Store Admins"}
+                  <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-44 rounded-xl bg-card border border-border/80">
+                <DropdownMenuItem
+                  onClick={() => setRoleFilter("All")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  All Privileges
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setRoleFilter("Super Admin")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Super Admins
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setRoleFilter("Store Admin")}
+                  className="cursor-pointer text-xs font-bold"
+                >
+                  Store Admins
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-zinc-400">Privilege:</span>
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
-            className="h-9 px-2.5 bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold text-zinc-700 dark:text-zinc-300 outline-none"
-          >
-            <option value="All">All Privileges ({admins.length})</option>
-            <option value="Super Admin">Super Admins</option>
-            <option value="Store Admin">Store Admins</option>
-          </select>
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+          <span>Total {filteredAdmins.length} administrators listed</span>
         </div>
       </div>
 
-      {/* Admins Table */}
-      <div className="bg-white dark:bg-[#1a1b1e] rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+      {/* Main Table */}
+      <div className="bg-card text-card-foreground rounded-2xl border border-border/80 shadow-xs overflow-hidden">
         <Table>
-          <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/20">
-            <TableRow className="border-b border-zinc-100 dark:border-zinc-800">
-              <TableHead className="font-semibold text-zinc-500 h-10 px-4">
+          <TableHeader>
+            <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none px-4">
                 Administrator
               </TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
                 Contact
               </TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
                 Assigned Privilege
               </TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
                 Status
               </TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
                 Date Appointed
               </TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
                 Last Login
               </TableHead>
-              <TableHead className="font-semibold text-zinc-500 h-10 text-right px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right px-4">
                 Actions
               </TableHead>
             </TableRow>
@@ -383,39 +428,50 @@ export const AdminsTable = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-zinc-400 rounded-lg"
+                          className="h-8 w-8 rounded-lg cursor-pointer hover:bg-muted"
                         >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 text-xs">
-                        <DropdownMenuLabel>Permissions</DropdownMenuLabel>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-48 rounded-xl bg-card border border-border/80"
+                      >
+                        <DropdownMenuLabel className="font-bold text-xs">
+                          Permissions
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator className="border-border/60" />
                         <DropdownMenuItem
                           onClick={() => handleOpenDetails(adm._id)}
-                          className="cursor-pointer"
+                          className="cursor-pointer text-xs font-bold"
                         >
-                          <Eye className="h-4 w-4 mr-2 text-zinc-500" />
+                          <Eye className="h-4 w-4 mr-2 text-muted-foreground" />
                           <span>View Details</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleToggleSuperAdmin(adm)}
-                          className="cursor-pointer"
-                          disabled={updateRoleMutation.isPending}
-                        >
-                          <KeyRound className="h-4 w-4 mr-2 text-primary" />
-                          <span>
-                            {adm.isSuperAdmin
-                              ? "Demote to Admin"
-                              : "Promote to Super Admin"}
-                          </span>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        {isSuperAdmin && (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setTargetPromoteAdmin(adm);
+                              setIsPromoteOpen(true);
+                            }}
+                            className="cursor-pointer text-xs font-bold"
+                            disabled={updateRoleMutation.isPending}
+                          >
+                            <KeyRound className="h-4 w-4 mr-2 text-primary" />
+                            <span>
+                              {adm.isSuperAdmin
+                                ? "Demote to Admin"
+                                : "Promote to Super Admin"}
+                            </span>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator className="border-border/60" />
                         <DropdownMenuItem
                           onClick={() => {
                             setTargetRevokeAdmin(adm);
                             setIsRevokeOpen(true);
                           }}
-                          className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20"
+                          className="cursor-pointer text-xs font-bold text-rose-600 focus:text-rose-600 focus:bg-rose-50/50 dark:focus:bg-rose-950/20"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           <span>Revoke Access</span>
@@ -432,12 +488,12 @@ export const AdminsTable = () => {
 
       {/* DETAILS SLIDING SIDE SHEET */}
       <Sheet open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <SheetContent className="sm:max-w-md w-full overflow-y-auto border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#1a1b1e] p-6">
-          <SheetHeader className="border-b border-zinc-100 dark:border-zinc-800/80 pb-4 mb-4">
-            <SheetTitle className="text-lg font-extrabold text-zinc-950 dark:text-white">
+        <SheetContent className="sm:max-w-md w-full overflow-y-auto border-border/80 bg-card text-card-foreground p-6">
+          <SheetHeader className="border-b border-border/60 pb-4 mb-4">
+            <SheetTitle className="text-lg font-extrabold text-foreground">
               Administrator Profile Details
             </SheetTitle>
-            <SheetDescription className="text-xs text-zinc-500">
+            <SheetDescription className="text-xs text-muted-foreground mt-2">
               Assigned system role attributes, privileges, and verification
               audits.
             </SheetDescription>
@@ -452,162 +508,235 @@ export const AdminsTable = () => {
       </Sheet>
 
       {/* CREATE ADMIN DIALOG */}
-      <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-        <DialogContent className="max-w-md bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-              <UserPlus className="h-5 w-5 text-primary" />
-              Add Administrator
-            </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-500">
-              Grant staff or partners administrative access to the GoSolar
-              dashboard.
-            </DialogDescription>
-          </DialogHeader>
+      <AppModal
+        isOpen={isInviteOpen}
+        onOpenChange={setIsInviteOpen}
+        title="Add Administrator"
+        size="lg"
+      >
+        <form
+          onSubmit={handleSubmit(handleSaveInvite)}
+          className="w-full font-inter flex flex-col gap-6 pt-2"
+        >
+          {/* Details Card */}
+          <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
+            <div className="border-b border-border/60 pb-3 select-none">
+              <h3 className="text-sm font-extrabold text-foreground tracking-tight">
+                Administrator Profile
+              </h3>
+              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                Grant staff or partners administrative access to the GoSolar
+                dashboard
+              </p>
+            </div>
 
-          <form onSubmit={handleSaveInvite} className="space-y-3 py-2">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  First Name
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                  First Name <span className="text-red-500">*</span>
                 </label>
                 <Input
                   placeholder="e.g. David"
-                  value={inviteForm.firstname}
-                  onChange={(e) =>
-                    setInviteForm({ ...inviteForm, firstname: e.target.value })
-                  }
-                  required
-                  className="h-9 text-xs"
+                  {...register("firstname", {
+                    required: "First name is required",
+                  })}
+                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
+                {errors.firstname && (
+                  <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                    {errors.firstname.message}
+                  </span>
+                )}
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  Last Name
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                  Last Name <span className="text-red-500">*</span>
                 </label>
                 <Input
                   placeholder="e.g. Okoye"
-                  value={inviteForm.lastname}
-                  onChange={(e) =>
-                    setInviteForm({ ...inviteForm, lastname: e.target.value })
-                  }
-                  required
-                  className="h-9 text-xs"
+                  {...register("lastname", {
+                    required: "Last name is required",
+                  })}
+                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
+                {errors.lastname && (
+                  <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                    {errors.lastname.message}
+                  </span>
+                )}
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                Email Address
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                Email Address <span className="text-red-500">*</span>
               </label>
               <Input
                 type="email"
                 placeholder="staff@gosolar.ng"
-                value={inviteForm.email}
-                onChange={(e) =>
-                  setInviteForm({ ...inviteForm, email: e.target.value })
-                }
-                required
-                className="h-9 text-xs"
+                {...register("email", { required: "Email is required" })}
+                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
               />
+              {errors.email && (
+                <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                  {errors.email.message}
+                </span>
+              )}
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                Phone Number
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                Phone Number <span className="text-red-500">*</span>
               </label>
               <Input
                 placeholder="e.g. +234 803 111 2222"
-                value={inviteForm.phoneNumber}
-                onChange={(e) =>
-                  setInviteForm({ ...inviteForm, phoneNumber: e.target.value })
-                }
-                required
-                className="h-9 text-xs"
+                {...register("phoneNumber", {
+                  required: "Phone number is required",
+                })}
+                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
               />
+              {errors.phoneNumber && (
+                <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                  {errors.phoneNumber.message}
+                </span>
+              )}
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
                   Privilege
                 </label>
                 <select
-                  value={inviteForm.roleType}
-                  onChange={(e) =>
-                    setInviteForm({ ...inviteForm, roleType: e.target.value })
-                  }
-                  className="w-full h-9 px-2 bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold outline-none"
+                  {...register("roleType")}
+                  className="w-full h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs font-bold text-foreground outline-none focus:ring-1 focus:ring-primary"
                 >
                   <option value="admin">Store Admin</option>
                   <option value="superAdmin">Super Admin</option>
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  Role Title
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                  Role Title <span className="text-red-500">*</span>
                 </label>
                 <Input
                   placeholder="e.g. Inventory Lead"
-                  value={inviteForm.roleTitle}
-                  onChange={(e) =>
-                    setInviteForm({ ...inviteForm, roleTitle: e.target.value })
-                  }
-                  required
-                  className="h-9 text-xs"
+                  {...register("roleTitle", {
+                    required: "Role title is required",
+                  })}
+                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
                 />
+                {errors.roleTitle && (
+                  <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                    {errors.roleTitle.message}
+                  </span>
+                )}
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                System Password
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                System Password <span className="text-red-500">*</span>
               </label>
               <Input
                 type="password"
                 placeholder="Minimum 6 characters"
-                value={inviteForm.password}
-                onChange={(e) =>
-                  setInviteForm({ ...inviteForm, password: e.target.value })
-                }
-                required
-                className="h-9 text-xs"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: { value: 6, message: "Min length is 6" },
+                })}
+                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
               />
+              {errors.password && (
+                <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                  {errors.password.message}
+                </span>
+              )}
             </div>
+          </div>
 
-            <DialogFooter className="pt-2 gap-2">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsInviteOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                size="sm"
-                className="bg-primary hover:bg-primary/90 text-white font-bold"
-                disabled={createAdminMutation.isPending}
-              >
-                {createAdminMutation.isPending ? "Creating..." : "Create Admin"}
-              </Button>
-            </DialogFooter>
-          </form>
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/60">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsInviteOpen(false)}
+              className="text-muted-foreground hover:text-foreground text-xs font-bold h-10 px-4 rounded-xl cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              size="sm"
+              className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-6 shadow-sm cursor-pointer"
+              disabled={createAdminMutation.isPending}
+            >
+              {createAdminMutation.isPending ? "Creating..." : "Create Admin"}
+            </Button>
+          </div>
+        </form>
+      </AppModal>
+
+      {/* CONFIRM PROMOTE / DEMOTE */}
+      <Dialog open={isPromoteOpen} onOpenChange={setIsPromoteOpen}>
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
+          <DialogHeader>
+            <DialogTitle className="text-base font-extrabold text-foreground">
+              {targetPromoteAdmin?.isSuperAdmin ? "Demote to Store Admin" : "Promote to Super Admin"}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">
+              {targetPromoteAdmin?.isSuperAdmin ? (
+                <>
+                  This will remove Super Admin privileges from{" "}
+                  <strong className="text-foreground">
+                    {targetPromoteAdmin?.firstname} {targetPromoteAdmin?.lastname}
+                  </strong>. They will retain Store Admin access.
+                </>
+              ) : (
+                <>
+                  This will grant full Super Admin privileges to{" "}
+                  <strong className="text-foreground">
+                    {targetPromoteAdmin?.firstname} {targetPromoteAdmin?.lastname}
+                  </strong>. Proceed with caution.
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="pt-2 gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsPromoteOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleToggleSuperAdmin}
+              disabled={updateRoleMutation.isPending}
+              className="bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl px-5 cursor-pointer"
+            >
+              {updateRoleMutation.isPending
+                ? "Updating..."
+                : targetPromoteAdmin?.isSuperAdmin
+                ? "Yes, Demote"
+                : "Yes, Promote"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* CONFIRM ACCESS REVOCATION */}
       <Dialog open={isRevokeOpen} onOpenChange={setIsRevokeOpen}>
-        <DialogContent className="max-w-sm bg-white dark:bg-[#1a1b1e] border-zinc-100 dark:border-zinc-800">
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-zinc-900 dark:text-white">
+            <DialogTitle className="text-base font-extrabold text-foreground">
               Confirm Revocation
             </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-500">
+            <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">
               Are you sure you want to revoke administrative access for{" "}
-              <strong className="text-zinc-800 dark:text-white">
+              <strong className="text-foreground">
                 {targetRevokeAdmin?.firstname} {targetRevokeAdmin?.lastname}
               </strong>
               ? They will be demoted to a regular customer profile.

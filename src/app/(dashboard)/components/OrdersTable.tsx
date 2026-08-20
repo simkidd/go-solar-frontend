@@ -178,32 +178,34 @@ const OrdersTable = () => {
               </Button>
             )}
 
-            {/* Status Button Filters */}
-            <div className="flex gap-1 flex-wrap">
-              {["All", "Processing", "Delivered", "Received"].map((s) => {
-                const isSelected =
-                  statusFilter.toLowerCase() === s.toLowerCase() ||
-                  (statusFilter === "All" && s === "All");
-                return (
-                  <Button
-                    key={s}
-                    variant={isSelected ? "default" : "outline"}
-                    onClick={() =>
-                      onStatusFilterChange(
-                        s === "All" ? "All" : s.toLowerCase(),
-                      )
-                    }
-                    className={`h-10 text-xs font-semibold rounded-xl tracking-wider transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-primary text-primary-foreground shadow-xs"
-                        : "border-border text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                    }`}
-                  >
-                    {s}
-                  </Button>
-                );
-              })}
-            </div>
+            {/* Status Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-border text-xs font-semibold rounded-xl h-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                >
+                  {statusFilter === "All"
+                    ? "All Statuses"
+                    : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+                  <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-40 rounded-xl bg-card border border-border/80">
+                <DropdownMenuItem onClick={() => onStatusFilterChange("All")} className="cursor-pointer text-xs font-bold">
+                  All Statuses
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onStatusFilterChange("processing")} className="cursor-pointer text-xs font-bold">
+                  Processing
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onStatusFilterChange("delivered")} className="cursor-pointer text-xs font-bold">
+                  Delivered
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onStatusFilterChange("received")} className="cursor-pointer text-xs font-bold">
+                  Received
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 

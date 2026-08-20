@@ -13,21 +13,21 @@ export const metadata: Metadata = {
 const ForgotPassword = () => {
   return (
     <div className="w-full space-y-6">
-      <div>
-        <h2 className="text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight">Forgot password?</h2>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+      <div className="space-y-1">
+        <h2 className="text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight leading-tight">Forgot password?</h2>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
           No worries. Enter your registered email address and we’ll send you a link to reset your password.
         </p>
       </div>
 
       <ForgetPswForm />
 
-      <div className="space-y-4 border-t border-zinc-100 dark:border-zinc-800 pt-6">
-        <p className="text-xs text-center text-zinc-500">
+      <div className="border-t border-zinc-100 dark:border-zinc-800/80 pt-5 text-center">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
           Remembered your password?{" "}
           <Link
             href="/auth/login"
-            className="font-semibold text-primary hover:underline"
+            className="font-bold text-primary hover:text-primary/80 transition-colors"
           >
             Sign in
           </Link>
