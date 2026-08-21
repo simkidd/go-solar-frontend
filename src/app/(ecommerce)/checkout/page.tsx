@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import useCartStore from "@/lib/stores/cart.store";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { useSession } from "@/context/SessionContext";
 import { formatCurrency } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,13 +28,7 @@ const CheckoutPageContent = () => {
   const { user } = useAuthStore();
   const router = useRouter();
 
-  // Redirect to login if user is not authenticated
-  useEffect(() => {
-    if (!user) {
-      toast.info("Please sign in to proceed with checkout.");
-      router.push("/auth/login?redirect=/checkout");
-    }
-  }, [user, router]);
+
 
   // Shipping details state
   const [email, setEmail] = useState(user?.email || "");
@@ -191,12 +186,12 @@ const CheckoutPageContent = () => {
     }
   };
 
-  if (!user || cartItems.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
         <ShoppingBag className="h-10 w-10 text-zinc-300" />
         <p className="text-sm font-semibold text-zinc-500">
-          Your cart is empty or you need to log in.
+          Your cart is empty.
         </p>
         <Link href="/shop">
           <Button className="bg-[#08AA08] text-white rounded-xl">
@@ -589,6 +584,16 @@ const CheckoutPageContent = () => {
 };
 
 const CheckoutPage = () => {
+  const { loading } = useSession();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <CheckoutPageContent />
