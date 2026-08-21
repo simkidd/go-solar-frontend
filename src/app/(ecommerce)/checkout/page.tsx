@@ -444,26 +444,6 @@ const CheckoutPageContent = () => {
                     </p>
                   </div>
                 </label>
-
-                <label className="flex items-center gap-3 cursor-pointer select-none">
-                  <input
-                    type="radio"
-                    name="payment-method"
-                    value="cashOnDelivery"
-                    checked={selectedPaymentMethod === "cashOnDelivery"}
-                    onChange={() => setSelectedPaymentMethod("cashOnDelivery")}
-                    className="accent-[#08AA08] h-4.5 w-4.5"
-                  />
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
-                      Cash On Delivery
-                    </span>
-                    <p className="text-[10px] text-zinc-400">
-                      Pay physically in cash upon successful installation
-                      (subject to verify)
-                    </p>
-                  </div>
-                </label>
               </div>
             </div>
           </div>
