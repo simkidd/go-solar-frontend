@@ -3,20 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 
 export interface StoreSettings {
   _id: string;
-  vatRate: number;
   baseShippingFee: number;
   freeShippingThreshold: number;
-  usdExchangeRate: number;
 
   supportPhone: string;
   supportEmail: string;
   officeAddress: string;
   whatsappNumber: string;
   whatsappMessage: string;
-  facebookUrl?: string;
-  instagramUrl?: string;
-  twitterUrl?: string;
-  linkedinUrl?: string;
 
   bankName: string;
   accountNumber: string;

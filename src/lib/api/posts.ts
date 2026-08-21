@@ -3,7 +3,7 @@ import { FALLBACK_POSTS } from "../data";
 
 export const getPosts = async () => {
   try {
-    const { data } = await axiosInstance.get("/blogs");
+    const { data } = await axiosInstance.get("/blogs/published");
     if (data?.blogs && data.blogs.length > 0) {
       return data.blogs;
     }

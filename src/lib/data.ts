@@ -179,7 +179,7 @@ Before getting quotes, understand your own requirements:
 
 export const getPosts = async () => {
   try {
-    const { data } = await axiosInstance.get("/blogs");
+    const { data } = await axiosInstance.get("/blogs/published");
 
     if (data?.blogs && data.blogs.length > 0) {
       return data.blogs;
