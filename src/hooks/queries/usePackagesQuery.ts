@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 
 export const PACKAGE_KEYS = {
   all: ["packages"] as const,
-  lists: (params?: Record<string, any>) => [...PACKAGE_KEYS.all, "list", params] as const,
+  lists: (params?: Record<string, any>) =>
+    [...PACKAGE_KEYS.all, "list", params] as const,
   detail: (id: string) => [...PACKAGE_KEYS.all, "detail", id] as const,
 };
 

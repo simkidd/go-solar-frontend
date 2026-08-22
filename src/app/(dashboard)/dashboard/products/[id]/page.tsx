@@ -1,6 +1,6 @@
 import SingleProductComp from "@/app/(dashboard)/components/products/SingleProductComp";
 import { Product } from "@/interfaces/product.interface";
-import { getProductById, getProducts } from "@/lib/api/products";
+import { getProductById, getProducts } from "@/lib/api/products.api";
 import { Metadata } from "next";
 
 interface IProduct {
@@ -11,7 +11,7 @@ export const generateMetadata = async ({
   params,
 }: IProduct): Promise<Metadata> => {
   const { id } = await params;
-  const product: Product = await getProductById(id);
+  const product = await getProductById(id);
 
   return {
     title: product?.name,
@@ -28,6 +28,7 @@ export const generateStaticParams = async () => {
     }));
   } catch (error) {
     console.log(error);
+    return [];
   }
 };
 

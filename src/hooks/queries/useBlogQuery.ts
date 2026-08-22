@@ -8,12 +8,17 @@ export const BLOG_KEYS = {
   detail: (id: string) => [...BLOG_KEYS.all, "detail", id] as const,
 };
 
-export const useBlogPostsQuery = () => {
-  return useQuery<Post[]>({
-    queryKey: BLOG_KEYS.lists(),
+export const useBlogPostsQuery = (params?: { page?: number; limit?: number; q?: string }) => {
+  return useQuery<{ blogs: Post[]; totalPages: number; currentPage: number; totalBlogs: number }>({
+    queryKey: [...BLOG_KEYS.lists(), params],
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/blogs");
-      return data?.blogs || [];
+      const { data } = await axiosInstance.get("/blogs", { params });
+      return {
+        blogs: data?.blogs || [],
+        totalPages: data?.totalPages || 1,
+        currentPage: data?.currentPage || 1,
+        totalBlogs: data?.totalBlogs || 0,
+      };
     },
   });
 };

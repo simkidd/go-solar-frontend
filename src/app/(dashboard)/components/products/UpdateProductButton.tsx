@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
 import { Product } from "@/interfaces/product.interface";
 import { ErrorResponse } from "@/interfaces/types";
-import { updateProduct } from "@/lib/api/products";
+import { updateProduct } from "@/lib/api/products.api";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";

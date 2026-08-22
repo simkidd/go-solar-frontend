@@ -11,26 +11,20 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { useCreateBlogPostMutation } from "@/hooks/mutations/useBlogMutations";
 import RichTextEditor from "@/components/RichTextEditor";
+import { Switch } from "@/components/ui/switch";
 
 interface FileWithPreview extends File {
   preview: string;
 }
 
 const tagsList = [
-  "Inverter Battery",
-  "Solar Panels",
-  "Power Storage",
-  "Energy Storage",
-  "Battery Technology",
-  "Lithium Battery",
+  "Solar Energy",
+  "Batteries",
+  "Inverters",
+  "Solar Installation",
+  "Maintenance",
+  "Buying Guides",
   "Renewable Energy",
-  "Energy Storage Solutions",
-  "Hybrid Inverters",
-  "Clean Energy Solutions",
-  "Carbon Footprint Reduction",
-  "Smart Energy Solutions",
-  "Product Reviews",
-  "Industry Trends",
 ];
 
 interface FormValues {
@@ -39,6 +33,7 @@ interface FormValues {
   author: string;
   tags: string[];
   excerpt?: string;
+  isPublished?: boolean;
 }
 
 const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
@@ -51,7 +46,7 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: { title: "", content: "", author: "", tags: [], excerpt: "" },
+    defaultValues: { title: "", content: "", author: "", tags: [], excerpt: "", isPublished: true },
   });
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -88,6 +83,7 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     formData.append("excerpt", values.excerpt || "");
     formData.append("author", values.author);
     formData.append("tags", JSON.stringify(values.tags || []));
+    formData.append("isPublished", String(values.isPublished ?? true));
     formData.append("image", file);
     createBlogMutation.mutate(formData);
   };
@@ -168,6 +164,26 @@ const CreateBlogPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               />
             )}
           />
+        </div>
+
+        <div className="flex items-center gap-3 pt-3">
+          <Controller
+            control={control}
+            name="isPublished"
+            render={({ field }) => (
+              <Switch
+                id="isPublished"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+          <label
+            htmlFor="isPublished"
+            className="text-xs font-bold text-zinc-700 dark:text-zinc-300 select-none cursor-pointer"
+          >
+            Publish Immediately (Visible to users)
+          </label>
         </div>
       </div>
 

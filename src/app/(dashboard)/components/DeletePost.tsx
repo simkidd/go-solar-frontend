@@ -23,7 +23,7 @@ const DeletePost: React.FC<{ post: Post }> = ({ post }) => {
       <Button
         variant="destructive"
         onClick={() => setIsOpen(true)}
-        className="gap-2"
+        className="h-9 font-semibold text-xs rounded-lg gap-1.5 shadow-sm"
       >
         <Trash className="h-4 w-4" />
         Delete
@@ -50,7 +50,11 @@ export const DeletePopup: React.FC<{
         Are you sure you want to delete <b>{post?.title}</b>?
       </p>
       <div className="flex items-center gap-2 mt-8 mb-4 ms-auto">
-        <Button variant="ghost" onClick={onClose} className="dark:text-zinc-300">
+        <Button
+          variant="ghost"
+          onClick={onClose}
+          className="dark:text-zinc-300"
+        >
           Cancel
         </Button>
         <Button

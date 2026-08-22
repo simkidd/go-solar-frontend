@@ -12,9 +12,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarDays, FileText, CheckCircle2 } from "lucide-react";
+import { CalendarDays, CheckCircle2, ShoppingCart } from "lucide-react";
 import { useCreateQuoteMutation } from "@/hooks/mutations/useQuoteMutations";
 import { useForm } from "react-hook-form";
+import useCartStore from "@/lib/stores/cart.store";
 
 interface InquiryFormValues {
   fullName: string;
@@ -27,11 +28,38 @@ interface InquiryFormValues {
 }
 
 const AddToCartBtn = ({ pkg }: { pkg: any }) => {
+  const { addItem, cartItems } = useCartStore();
+  const isInCart = cartItems.some((item) => item.product._id === pkg._id);
   const [isOpen, setIsOpen] = useState(false);
-  const [inquiryType, setInquiryType] = useState<"assessment" | "quote">("assessment");
   const [submitted, setSubmitted] = useState(false);
 
+  const handleAddToCart = () => {
+    const images = pkg.constituents
+      ?.map((c: any) => c.product?.images?.[0])
+      .filter(Boolean) || [];
+
+    addItem({
+      product: {
+        _id: pkg._id,
+        name: pkg.name,
+        slug: pkg.slug,
+        price: pkg.price,
+        discountPrice: pkg.discountPrice,
+        description: pkg.description,
+        images: images.length > 0 ? images : [{ url: "/images/bg/hero-bg.jpg", public_id: "hero" }],
+        quantityInStock: pkg.inStock ? 100 : 0,
+        additionalInfo: pkg.highlights?.join(", ") || "",
+        brand: "GoSolar System",
+        datasheet: [],
+        showDatasheet: false,
+      } as any,
+      qty: 1,
+      deliveryFee: 0,
+    });
+  };
+
   const createQuoteMutation = useCreateQuoteMutation({
+    showToast: false,
     onSuccess: () => {
       setSubmitted(true);
     },
@@ -54,8 +82,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
     },
   });
 
-  const handleOpenDialog = (type: "assessment" | "quote") => {
-    setInquiryType(type);
+  const handleOpenDialog = () => {
     setSubmitted(false);
     reset();
     setIsOpen(true);
@@ -74,9 +101,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
       ? `${pkg.pvKwp} kWp Solar PV Panels`
       : "Solar PV Panels Array";
 
-    const notes = `[Package Inquiry: ${pkg.name}] type: ${
-      inquiryType === "assessment" ? "Free Onsite Assessment" : "Package Quote Request"
-    }. Additional Message: ${values.message || "None."}`;
+    const notes = `[Package Inquiry: ${pkg.name}] type: Free Onsite Assessment. Additional Message: ${values.message || "None."}`;
 
     createQuoteMutation.mutate({
       fullName: values.fullName,
@@ -95,35 +120,35 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
   };
 
   return (
-    <div className="space-y-3.5 pt-2">
-      {/* Main Call to Action: Book Assessment */}
+    <div className="space-y-3 pt-2">
+      {/* Main Call to Action: Add Setup to Cart */}
       <Button
-        onClick={() => handleOpenDialog("assessment")}
-        className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-extrabold text-xs uppercase tracking-widest rounded-xl h-11 shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-colors"
+        onClick={handleAddToCart}
+        disabled={isInCart}
+        className="w-full bg-[#08AA08] hover:bg-[#079907] disabled:bg-zinc-100 disabled:text-zinc-400 dark:disabled:bg-zinc-900/50 dark:disabled:text-zinc-650 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl h-11 shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-colors"
       >
-        <CalendarDays className="h-4.5 w-4.5" />
-        Book Onsite Assessment
+        {isInCart ? (
+          <>
+            <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400" />
+            Setup in Cart
+          </>
+        ) : (
+          <>
+            <ShoppingCart className="h-4.5 w-4.5" />
+            Add Setup to Cart
+          </>
+        )}
       </Button>
 
-      {/* Secondary buttons */}
-      <div className="flex gap-2 font-bold text-xs">
-        <Button
-          onClick={() => handleOpenDialog("quote")}
-          variant="outline"
-          className="flex-1 border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold rounded-xl h-11 text-xs cursor-pointer"
-        >
-          <FileText className="h-4 w-4 mr-1.5 text-zinc-500" />
-          Request Quote
-        </Button>
-        <a href="/contact-us" className="flex-1">
-          <Button
-            variant="outline"
-            className="w-full border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold rounded-xl h-11 text-xs cursor-pointer"
-          >
-            Talk to Expert
-          </Button>
-        </a>
-      </div>
+      {/* Secondary Button: Book Free Assessment */}
+      <Button
+        onClick={handleOpenDialog}
+        variant="outline"
+        className="w-full border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold rounded-xl h-11 text-xs cursor-pointer flex items-center justify-center gap-1.5"
+      >
+        <CalendarDays className="h-4 w-4 text-zinc-550" />
+        Book Free Assessment
+      </Button>
 
       {/* Inquiry Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -152,9 +177,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 font-inter text-left">
               <DialogHeader className="space-y-1.5 pb-2 border-b border-border/60 select-none">
                 <DialogTitle className="text-sm font-extrabold text-foreground tracking-tight uppercase">
-                  {inquiryType === "assessment"
-                    ? "Book Free Assessment"
-                    : "Request Package Quote"}
+                  Book Free Assessment
                 </DialogTitle>
                 <DialogDescription className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
                   Configuring solar setup: {pkg.name}

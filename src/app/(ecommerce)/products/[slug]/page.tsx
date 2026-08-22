@@ -14,10 +14,9 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import ViewHistoryComp from "../../components/ViewHistory";
-import { getProducts, getPubilshedProducts } from "@/lib/api/products";
+import { getProducts, getPubilshedProducts } from "@/lib/api/products.api";
 import FaqNewsletterSection from "@/components/home/FaqNewsletterSection";
 import Link from "next/link";
-import { PACKAGES_DATA } from "@/data/packages";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface IProduct {
@@ -30,18 +29,6 @@ export const generateMetadata = async ({
   const { slug } = await params;
   const products: Product[] = await getPubilshedProducts();
   let product = products.find((product) => product?.slug === slug);
-
-  if (!product) {
-    const staticPkg = PACKAGES_DATA.find((p) => p.slug === slug);
-    if (staticPkg) {
-      product = {
-        name: staticPkg.name,
-        description: staticPkg.desc,
-        images: [],
-        slug: staticPkg.slug,
-      } as any;
-    }
-  }
 
   return {
     title: `${product?.name || "Product"} | GoSolar`,
@@ -63,10 +50,7 @@ export const generateStaticParams = async () => {
     const dbSlugs = products.map((product: any) => ({
       slug: product?.slug,
     }));
-    const staticSlugs = PACKAGES_DATA.map((pkg) => ({
-      slug: pkg.slug,
-    }));
-    return [...dbSlugs, ...staticSlugs];
+    return [...dbSlugs];
   } catch (error) {
     console.log(error);
     return [];
@@ -77,29 +61,6 @@ const ProductPage = async ({ params }: IProduct) => {
   const { slug } = await params;
   const products: Product[] = await getProducts();
   let product = products.find((product) => product?.slug === slug);
-
-  if (!product) {
-    const staticPkg = PACKAGES_DATA.find((p) => p.slug === slug);
-    if (staticPkg) {
-      product = {
-        _id: staticPkg.id,
-        name: staticPkg.name,
-        slug: staticPkg.slug,
-        brand: "GoSolar",
-        price: staticPkg.price,
-        description: staticPkg.desc,
-        images: [],
-        category: { _id: "cat-pkg", name: "Packages", slug: "packages" },
-        quantityInStock: 10,
-        withinLocationDeliveryFee: 15000,
-        outsideLocationDeliveryFee: 35000,
-        isPublished: true,
-        powerOutput: staticPkg.inverterRange,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      } as any;
-    }
-  }
 
   const productCode = product ? getProductCodeFromSlug(product.slug) : "";
 
@@ -156,25 +117,25 @@ const ProductPage = async ({ params }: IProduct) => {
       </section>
 
       {/* ── Tabbed Info Section ── */}
-      <section className="w-full border-t border-border bg-background py-10 lg:py-14 select-none">
+      <section className="w-full bg-muted/15 py-12 lg:py-16">
         <div className="container mx-auto px-4 max-w-5xl">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent h-auto p-0 space-x-8 mb-4 select-none">
+            <TabsList className="w-full justify-start rounded-none border-b border-border/80 bg-transparent h-auto p-0 flex gap-8 mb-6 select-none overflow-x-auto scrollbar-none">
               <TabsTrigger
                 value="overview"
-                className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
+                className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-all duration-300 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger
                 value="specs"
-                className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
+                className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-all duration-300 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
               >
                 Specifications
               </TabsTrigger>
               <TabsTrigger
                 value="delivery"
-                className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
+                className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-all duration-300 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
               >
                 Delivery & Warranty
               </TabsTrigger>
@@ -183,9 +144,9 @@ const ProductPage = async ({ params }: IProduct) => {
             {/* Panel 1: Overview */}
             <TabsContent
               value="overview"
-              className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left select-text space-y-4 pt-4"
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left select-text space-y-4 pt-2"
             >
-              <h3 className="text-base font-extrabold text-foreground select-none">
+              <h3 className="text-xs font-black uppercase tracking-wider text-foreground/80 select-none mb-1">
                 Product Overview
               </h3>
               <ProductDesc product={product} />
@@ -194,21 +155,21 @@ const ProductPage = async ({ params }: IProduct) => {
             {/* Panel 2: Specs */}
             <TabsContent
               value="specs"
-              className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left select-text space-y-4"
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left select-text pt-2"
             >
               {product?.showDatasheet && product?.datasheet?.length > 0 ? (
-                <div className="overflow-hidden rounded-2xl border border-border/60 bg-muted/20">
+                <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-xs">
                   <table className="w-full text-xs">
                     <tbody>
                       {product.datasheet.map((row, idx) => (
                         <tr
                           key={idx}
-                          className={idx % 2 === 0 ? "bg-muted/10" : "bg-card"}
+                          className="border-b border-border/40 last:border-b-0 hover:bg-muted/30 dark:hover:bg-muted/10 transition-colors"
                         >
-                          <td className="py-3.5 px-5 font-semibold text-muted-foreground w-2/5 border-r border-border/60 select-none">
+                          <td className="py-3.5 px-5 font-bold text-muted-foreground w-1/3 border-r border-border/40 select-none bg-muted/10 dark:bg-muted/5">
                             {row.key}
                           </td>
-                          <td className="py-3.5 px-5 font-semibold text-foreground">
+                          <td className="py-3.5 px-5 font-semibold text-foreground bg-card">
                             {row.value}
                           </td>
                         </tr>
@@ -226,77 +187,77 @@ const ProductPage = async ({ params }: IProduct) => {
             {/* Panel 3: Delivery & Warranty */}
             <TabsContent
               value="delivery"
-              className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left"
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left pt-2"
             >
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start select-text">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start select-text">
                 {/* Details */}
-                <div className="md:col-span-8 space-y-6">
-                  <div className="space-y-6">
-                    <div className="flex gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <div className="lg:col-span-8 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex gap-4 p-5 rounded-2xl border border-border/60 bg-card hover:border-primary/20 hover:shadow-xs transition-all duration-300">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-xs">
                         <Truck className="h-5 w-5" />
                       </div>
                       <div className="space-y-1">
                         <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
-                          Express Logistics Delivery
+                          Express Delivery
                         </h4>
-                        <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
+                        <p className="text-[11px] text-muted-foreground leading-relaxed font-semibold">
                           1–5 working days delivery in Lagos, Port Harcourt, and
-                          Uyo Experience Centers. Same-day logistics coverage
-                          available for orders processed before 11AM.
+                          Uyo Experience Centers. Same-day coverage before 11AM.
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <div className="flex gap-4 p-5 rounded-2xl border border-border/60 bg-card hover:border-primary/20 hover:shadow-xs transition-all duration-300">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-xs">
                         <RefreshCcw className="h-5 w-5" />
                       </div>
                       <div className="space-y-1">
                         <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
-                          7-Day Returns coverage
+                          7-Day Returns
                         </h4>
-                        <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
-                          Unused hardware components in original packaging are
-                          accepted for refund or replacement claims within 7
-                          days. Remote engineering support available for returns
-                          verification.
+                        <p className="text-[11px] text-muted-foreground leading-relaxed font-semibold">
+                          Unused hardware components in original packaging
+                          accepted for refund/replacement. Remote engineering
+                          support available.
                         </p>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="flex gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                        <ShieldCheck className="h-5 w-5" />
-                      </div>
-                      <div className="space-y-1">
-                        <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
-                          Manufacturer Warranty
-                        </h4>
-                        <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
-                          All systems and monocrystalline solar components
-                          include official manufacturer warranty coverage.
-                          Support engineers assist with registration.
-                        </p>
-                      </div>
+                  <div className="flex gap-4 p-5 rounded-2xl border border-border/60 bg-card hover:border-primary/20 hover:shadow-xs transition-all duration-300">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-xs">
+                      <ShieldCheck className="h-5 w-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
+                        Manufacturer Warranty
+                      </h4>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed font-semibold">
+                        All systems and monocrystalline solar components include
+                        official manufacturer warranty coverage. Support
+                        engineers assist with registration.
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Switch Expert Advisor Callout */}
-                <div className="md:col-span-4 bg-emerald-55 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 p-6 rounded-3xl space-y-3.5 text-emerald-800 dark:text-emerald-300">
-                  <div className="flex items-center gap-1.5 font-black uppercase tracking-wider text-[11px] text-emerald-700 dark:text-emerald-400 select-none">
-                    <ShieldCheck className="h-4 w-4" /> Ready to Switch?
+                <div className="lg:col-span-4 bg-emerald-50/40 dark:bg-emerald-950/10 border border-emerald-100/60 dark:border-emerald-900/30 p-6 rounded-3xl space-y-4 text-emerald-800 dark:text-emerald-300 backdrop-blur-xs">
+                  <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[10px] text-emerald-700 dark:text-emerald-400 select-none">
+                    <ShieldCheck className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400" />
+                    Ready to Switch?
                   </div>
-                  <p className="text-xs leading-relaxed font-medium">
+                  <p className="text-xs leading-relaxed font-medium text-emerald-800/80 dark:text-emerald-300/80">
                     Consult our design engineers to verify this product carries
                     your household or commercial load safely before checkout.
                   </p>
                   <Link
                     href="/contact-us"
-                    className="inline-block text-xs font-bold underline hover:text-emerald-600 dark:hover:text-emerald-250 mt-1"
+                    className="inline-flex items-center gap-1 text-xs font-bold underline hover:text-emerald-600 dark:hover:text-emerald-250 mt-1"
                   >
-                    Talk to an Expert →
+                    <span>Talk to an Expert</span>
+                    <span>→</span>
                   </Link>
                 </div>
               </div>

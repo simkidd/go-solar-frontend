@@ -1,4 +1,4 @@
-import { PACKAGES_DATA, PackageData } from "@/data/packages";
+import { PackageData } from "@/interfaces/package.interface";
 
 export interface SizingAppliance {
   id: string;
@@ -108,6 +108,7 @@ const getPanelDescription = (pkg: PackageData): string => {
  */
 export const calculateSystemSizing = (
   items: SizingAppliance[],
+  packages: PackageData[] = [],
 ): SizingResults => {
   // ─────────────────────────────────────────────────────────────
   // STEP 1: Calculate connected load and daily energy
@@ -180,26 +181,29 @@ export const calculateSystemSizing = (
   // STEP 6: Filter packages
   // ─────────────────────────────────────────────────────────────
 
-  const suitablePackages = PACKAGES_DATA.filter((pkg) => {
+  const suitablePackages = packages.filter((pkg) => {
     const inverterKva = getInverterKva(pkg.inverterRange);
-
     const inverterWatts = inverterKva * 1000;
-
-    const batteryWh = getPackageBatteryCapacity(pkg);
-
-    const solarWatts = getPackageSolarCapacity(pkg);
-
-    const inverterIsEnough = inverterWatts >= designLoad;
-
-    const batteryIsEnough = batteryWh >= requiredBatteryWh;
-
-    const solarIsEnough = solarWatts >= requiredSolarWatts;
-
-    return inverterIsEnough && batteryIsEnough && solarIsEnough;
+    return inverterWatts >= designLoad;
   })
-    // Smallest suitable package first
+    // Smallest suitable inverter capacity first.
+    // If inverter capacities are equal, pick the one that fits the battery requirement best.
     .sort((a, b) => {
-      return getInverterKva(a.inverterRange) - getInverterKva(b.inverterRange);
+      const invA = getInverterKva(a.inverterRange);
+      const invB = getInverterKva(b.inverterRange);
+      if (invA !== invB) {
+        return invA - invB;
+      }
+
+      const batA = getPackageBatteryCapacity(a);
+      const batB = getPackageBatteryCapacity(b);
+      const aEnough = batA >= requiredBatteryWh;
+      const bEnough = batB >= requiredBatteryWh;
+
+      if (aEnough && !bEnough) return -1;
+      if (!aEnough && bEnough) return 1;
+
+      return batA - batB;
     });
 
   // ─────────────────────────────────────────────────────────────

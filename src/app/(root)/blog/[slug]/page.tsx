@@ -1,6 +1,6 @@
 import PageHeader from "@/components/PageHeader";
 import { Post } from "@/interfaces/post.interface";
-import { getPosts } from "@/lib/api/posts";
+import { getPosts } from "@/lib/api/posts.api";
 import { formatDate } from "@/utils/helpers";
 import { CalendarCheck, ArrowUpRight, BookOpen, Clock, User, Twitter, Facebook, Linkedin, MessageCircle } from "lucide-react";
 import { Metadata } from "next";
@@ -47,27 +47,6 @@ export const generateStaticParams = async () => {
   }
 };
 
-const getAuthorRole = (authorName: string) => {
-  const roles: Record<string, string> = {
-    "Adebayo Oladele": "Managing Director",
-    "Emeka Okafor": "Lead Solar Engineer",
-    "Fatima Bello": "Energy Storage Specialist",
-    "Chukwudi Eze": "Commercial Solutions Manager",
-    "Ngozi Adeyemi": "Customer Experience Manager",
-  };
-  return roles[authorName] || "Solar Specialist";
-};
-
-const getAuthorBio = (authorName: string) => {
-  const bios: Record<string, string> = {
-    "Adebayo Oladele": "15 years in renewable energy. Electrical engineer with an MSc in Renewable Energy Systems from the University of Lagos. Founded GoSolar in 2009.",
-    "Emeka Okafor": "BSc Electrical Engineering, 12 years experience. Specialises in large-scale hybrid and off-grid system design. Responsible for all technical commissioning.",
-    "Fatima Bello": "Joined GoSolar in 2018 with a background in electrochemistry. Nigeria's leading expert in lithium battery storage systems and BMS configuration.",
-    "Chukwudi Eze": "MBA + BEng. Manages GoSolar's commercial and industrial client portfolio. Has delivered over 2MW of commercial solar across Nigeria and West Africa.",
-    "Ngozi Adeyemi": "Ensures every GoSolar client receives outstanding service from initial enquiry through to post-installation support. 8 years in renewable energy customer service.",
-  };
-  return bios[authorName] || "GoSolar engineer and renewable energy specialist with extensive experience in solar system design and installation across Nigeria.";
-};
 
 const getReadTime = (content: string) => {
   if (!content) return 5;
@@ -91,8 +70,6 @@ const SingleBlogPage = async ({ params }: IPost) => {
   }
 
   const category = post.tags[0] || "Solar insights";
-  const authorRole = getAuthorRole(post.author);
-  const authorBio = getAuthorBio(post.author);
   const readTime = post.readTime || getReadTime(post.content);
   const excerpt = post.excerpt || getExcerpt(post.content);
 
@@ -138,7 +115,7 @@ const SingleBlogPage = async ({ params }: IPost) => {
           </h1>
           <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-450 dark:text-zinc-400 font-mono">
             <span className="flex items-center gap-1">
-              <User className="h-3.5 w-3.5 text-[#08AA08]" /> {post.author} • {authorRole}
+              <User className="h-3.5 w-3.5 text-[#08AA08]" /> {post.author}
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
@@ -169,26 +146,6 @@ const SingleBlogPage = async ({ params }: IPost) => {
                 className="blog-content-rich text-zinc-650 dark:text-zinc-450 space-y-4 text-sm sm:text-base leading-relaxed"
               />
 
-              {/* Author Biography Card */}
-              <div className="mt-12 pt-8 border-t border-zinc-150 dark:border-zinc-800 flex items-start gap-4 bg-zinc-50/50 dark:bg-zinc-900/10 p-6 rounded-2xl">
-                <div className="w-14 h-14 bg-zinc-100 dark:bg-zinc-850 text-[#08AA08] rounded-full flex-shrink-0 flex items-center justify-center font-heading font-bold text-lg border border-zinc-150 dark:border-zinc-800">
-                  {post.author
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </div>
-                <div className="space-y-1">
-                  <div className="font-heading font-bold text-zinc-950 dark:text-white">
-                    {post.author}
-                  </div>
-                  <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#08AA08]">
-                    {authorRole}
-                  </div>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed pt-1">
-                    {authorBio}
-                  </p>
-                </div>
-              </div>
 
               {/* Share block */}
               <div className="mt-8 pt-8 border-t border-zinc-150 dark:border-zinc-800 flex items-center gap-3">

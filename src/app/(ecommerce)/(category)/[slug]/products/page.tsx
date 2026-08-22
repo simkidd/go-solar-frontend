@@ -1,7 +1,7 @@
 import Cta from "@/app/(ecommerce)/components/shop/Cta";
 import ProductsList from "@/app/(ecommerce)/components/shop/ProductsList";
 import { Category } from "@/interfaces/product.interface";
-import { getCategories } from "@/lib/data";
+import { getCategories } from "@/lib/api/products.api";
 import { Metadata } from "next";
 
 interface IProp {
@@ -30,6 +30,7 @@ export const generateStaticParams = async () => {
     }));
   } catch (error) {
     console.log(error);
+    return [];
   }
 };
 

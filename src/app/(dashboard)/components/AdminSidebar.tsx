@@ -44,6 +44,7 @@ import {
   MessageSquare,
   ShieldCheck,
   Sparkles,
+  Megaphone,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -111,6 +112,11 @@ const navigationItems = [
         icon: Sparkles,
       },
       {
+        name: "Announcement Bar",
+        href: "/dashboard/announcement",
+        icon: Megaphone,
+      },
+      {
         name: "Projects",
         href: "/dashboard/projects",
         icon: Briefcase,
@@ -140,6 +146,16 @@ const navigationItems = [
         href: "/dashboard/admins",
         icon: ShieldCheck,
         superAdminOnly: true,
+      },
+    ],
+  },
+  {
+    group: "System Settings",
+    items: [
+      {
+        name: "Store Settings",
+        href: "/dashboard/settings",
+        icon: Settings,
       },
     ],
   },
@@ -296,12 +312,22 @@ const SidebarInnerContent = ({
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild className="cursor-pointer">
               <Link
-                href="/account/profile"
+                href="/dashboard/profile"
+                onClick={onItemClick}
+                className="flex items-center"
+              >
+                <User className="mr-2 h-4 w-4" />
+                <span>My Profile</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link
+                href="/dashboard/settings"
                 onClick={onItemClick}
                 className="flex items-center"
               >
                 <Settings className="mr-2 h-4 w-4" />
-                <span>My Settings</span>
+                <span>Store Settings</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

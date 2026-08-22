@@ -9,7 +9,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
-  const { data: queryPosts = [] } = useBlogPostsQuery();
+  const { data } = useBlogPostsQuery();
+  const queryPosts = data?.blogs || [];
 
   const activePosts =
     initialPosts && initialPosts.length > 0

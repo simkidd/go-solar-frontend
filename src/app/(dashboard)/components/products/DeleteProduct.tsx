@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
 import { Product } from "@/interfaces/product.interface";
-import { deleteProduct } from "@/lib/api/products";
+import { deleteProduct } from "@/lib/api/products.api";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash } from "lucide-react";

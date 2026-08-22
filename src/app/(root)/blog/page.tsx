@@ -1,8 +1,6 @@
 import PageHeader from "@/components/PageHeader";
-import { Post } from "@/interfaces/post.interface";
-import { getPosts } from "@/lib/data";
+import { getPosts } from "@/lib/api/posts.api";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 import BlogPageClient from "./BlogPageClient";
 
 export const metadata: Metadata = {
@@ -12,11 +10,7 @@ export const metadata: Metadata = {
 };
 
 const BlogsPage = async () => {
-  const posts: Post[] = await getPosts();
-
-  if (!posts) {
-    notFound();
-  }
+  const posts = await getPosts();
 
   return (
     <div className="w-full font-inter bg-white dark:bg-zinc-950 overflow-hidden">

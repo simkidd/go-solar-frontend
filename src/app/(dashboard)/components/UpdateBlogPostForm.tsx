@@ -12,26 +12,20 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { useUpdateBlogPostMutation } from "@/hooks/mutations/useBlogMutations";
 import RichTextEditor from "@/components/RichTextEditor";
+import { Switch } from "@/components/ui/switch";
 
 interface FileWithPreview extends File {
   preview: string;
 }
 
 const tagsList = [
-  "Inverter Battery",
-  "Solar Panels",
-  "Power Storage",
-  "Energy Storage",
-  "Battery Technology",
-  "Lithium Battery",
+  "Solar Energy",
+  "Batteries",
+  "Inverters",
+  "Solar Installation",
+  "Maintenance",
+  "Buying Guides",
   "Renewable Energy",
-  "Energy Storage Solutions",
-  "Hybrid Inverters",
-  "Clean Energy Solutions",
-  "Carbon Footprint Reduction",
-  "Smart Energy Solutions",
-  "Product Reviews",
-  "Industry Trends",
 ];
 
 interface FormValues {
@@ -40,6 +34,7 @@ interface FormValues {
   author: string;
   tags: string[];
   excerpt?: string;
+  isPublished?: boolean;
 }
 
 const UpdateBlogPostForm: React.FC<{
@@ -61,6 +56,7 @@ const UpdateBlogPostForm: React.FC<{
       author: post?.author || "",
       tags: post?.tags || [],
       excerpt: post?.excerpt || "",
+      isPublished: post?.isPublished ?? true,
     },
   });
 
@@ -96,6 +92,7 @@ const UpdateBlogPostForm: React.FC<{
     formData.append("author", values.author);
     formData.append("excerpt", values.excerpt || "");
     formData.append("tags", JSON.stringify(values.tags || []));
+    formData.append("isPublished", String(values.isPublished ?? true));
     if (file) {
       formData.append("image", file);
     }
@@ -178,6 +175,26 @@ const UpdateBlogPostForm: React.FC<{
               />
             )}
           />
+        </div>
+
+        <div className="flex items-center gap-3 pt-3">
+          <Controller
+            control={control}
+            name="isPublished"
+            render={({ field }) => (
+              <Switch
+                id="isPublished"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+          <label
+            htmlFor="isPublished"
+            className="text-xs font-bold text-zinc-700 dark:text-zinc-300 select-none cursor-pointer"
+          >
+            Publish Immediately (Visible to users)
+          </label>
         </div>
       </div>
 
