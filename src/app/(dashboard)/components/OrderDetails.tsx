@@ -6,7 +6,14 @@ import {
   UpdateTrackingStatus,
 } from "@/interfaces/order.interface";
 import { formatCurrency, formatDateTime } from "@/utils/helpers";
-import { Mail, Phone, MapPin, CreditCard, ChevronRight, PackageCheck } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  CreditCard,
+  ChevronRight,
+  PackageCheck,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getChipStyles } from "./OrdersTable";
@@ -31,6 +38,11 @@ const OrderDetails: React.FC<{
     trackingId: order?.trackingId?._id,
   });
 
+  const totalDeliveryFee = order?.products.reduce(
+    (sum: number, item: any) => sum + (item?.deliveryFee || 0),
+    0,
+  ) || 0;
+
   const handleUpdateTracking = async (e: React.FormEvent) => {
     e.preventDefault();
     updateStatusMutation.mutate(input);
@@ -42,14 +54,19 @@ const OrderDetails: React.FC<{
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-card text-card-foreground p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
           <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            Order ID: <span className="font-mono text-lg text-primary">#{order?.trackingId?.tracking_id}</span>
+            Order ID:{" "}
+            <span className="font-mono text-lg text-primary">
+              #{order?.trackingId?.tracking_id}
+            </span>
           </h3>
           <p className="text-xs text-muted-foreground mt-1 select-none">
             Placed on: {formatDateTime(order?.trackingId?.createdAt as string)}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${getChipStyles(order?.trackingStatus)}`}>
+          <span
+            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${getChipStyles(order?.trackingStatus)}`}
+          >
             {order?.trackingStatus}
           </span>
         </div>
@@ -71,7 +88,7 @@ const OrderDetails: React.FC<{
               <div className="flex gap-4">
                 <div className="h-16 w-16 min-w-16 rounded-xl overflow-hidden border border-border/60 relative bg-muted/10">
                   <Image
-                    src={item?.product?.images[0]?.url || "/placeholder-product.jpg"}
+                    src={item?.product?.images?.[0]?.url || "/placeholder-product.jpg"}
                     alt={item?.product?.name}
                     fill
                     className="object-cover"
@@ -81,12 +98,46 @@ const OrderDetails: React.FC<{
                   <h4 className="font-extrabold text-sm text-foreground line-clamp-1">
                     {item?.product?.name}
                   </h4>
-                  <p className="text-xs text-muted-foreground select-none">
-                    Quantity: <span className="font-bold text-foreground">x{item?.qty}</span>
-                  </p>
+                  <div className="flex items-center gap-2 select-none">
+                    <p className="text-xs text-muted-foreground">
+                      Quantity:{" "}
+                      <span className="font-bold text-foreground">
+                        x{item?.qty}
+                      </span>
+                    </p>
+                    <span
+                      className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md border ${
+                        !item?.product?.category
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/40"
+                          : "bg-zinc-100 text-zinc-650 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700/50"
+                      }`}
+                    >
+                      {!item?.product?.category ? "Package" : "Product"}
+                    </span>
+                  </div>
                   <p className="text-xs text-muted-foreground md:line-clamp-2 line-clamp-1 max-w-xl font-medium">
                     {item?.product?.description}
                   </p>
+                  {!item?.product?.category && item?.product?.constituents?.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-border/40 space-y-1.5">
+                      <p className="text-[9px] uppercase tracking-wider font-extrabold text-muted-foreground">
+                        Included Components:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {item.product.constituents.map((c: any, cIdx: number) => (
+                          <div
+                            key={cIdx}
+                            className="bg-muted/40 border border-border/40 px-2 py-1 rounded-lg flex items-center gap-1.5 text-[10px] font-bold text-foreground"
+                          >
+                            <span className="text-primary font-black">
+                              {c.qty * item.qty}x
+                            </span>
+                            <span>{c.product?.name || "Component"}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex md:flex-col justify-between items-end gap-2 text-right">
@@ -130,7 +181,9 @@ const OrderDetails: React.FC<{
             </div>
 
             <div className="pt-3 border-t border-border/60">
-              <h5 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 select-none">Delivery Address</h5>
+              <h5 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 select-none">
+                Delivery Address
+              </h5>
               <div className="text-sm text-foreground space-y-0.5 font-semibold">
                 {order?.deliveryDetails?.suiteNumber && (
                   <p>{order?.deliveryDetails?.suiteNumber}</p>
@@ -138,7 +191,9 @@ const OrderDetails: React.FC<{
                 <p>{order?.deliveryDetails?.streetAddress}</p>
                 <p>{order?.deliveryDetails?.city}</p>
                 {order?.deliveryDetails?.zipCode && (
-                  <p className="text-xs text-muted-foreground mt-1">Zip: {order?.deliveryDetails?.zipCode}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Zip: {order?.deliveryDetails?.zipCode}
+                  </p>
                 )}
               </div>
             </div>
@@ -156,11 +211,33 @@ const OrderDetails: React.FC<{
           <CardContent className="pt-4 flex flex-col justify-between h-[80%]">
             <div className="space-y-3">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground font-semibold">Method</span>
-                <span className="font-extrabold text-foreground capitalize">{order?.paymentMethod || "Card"}</span>
+                <span className="text-muted-foreground font-semibold">
+                  Method
+                </span>
+                <span className="font-extrabold text-foreground capitalize">
+                  {order?.paymentMethod || "Card"}
+                </span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground font-semibold">Status</span>
+                <span className="text-muted-foreground font-semibold">
+                  Items Base Total
+                </span>
+                <span className="font-extrabold text-foreground">
+                  {formatCurrency(order?.totalPricePaid - totalDeliveryFee, "NGN")}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground font-semibold">
+                  Shipping & Delivery
+                </span>
+                <span className="font-extrabold text-foreground">
+                  {formatCurrency(totalDeliveryFee, "NGN")}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground font-semibold">
+                  Status
+                </span>
                 <span className="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full px-2.5 py-0.5 font-bold">
                   Paid
                 </span>
@@ -168,7 +245,9 @@ const OrderDetails: React.FC<{
             </div>
 
             <div className="pt-4 border-t border-border/60 mt-6 flex justify-between items-center select-none">
-              <span className="text-sm font-bold text-foreground">Total Amount</span>
+              <span className="text-sm font-bold text-foreground">
+                Total Amount
+              </span>
               <span className="text-lg font-black text-primary">
                 {formatCurrency(order?.totalPricePaid as number, "NGN")}
               </span>
@@ -186,28 +265,45 @@ const OrderDetails: React.FC<{
           </CardHeader>
           <CardContent className="pt-4 space-y-6">
             <div className="space-y-2">
-              <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">Current Status</div>
+              <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">
+                Current Status
+              </div>
               <div className="flex items-center gap-2">
-                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${getChipStyles(order?.trackingStatus)}`}>
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${getChipStyles(order?.trackingStatus)}`}
+                >
                   {order?.trackingStatus}
                 </span>
               </div>
             </div>
 
             {/* update order status form */}
-            <form onSubmit={handleUpdateTracking} className="space-y-3.5 pt-2 border-t border-border/60">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">Update Status</label>
+            <form
+              onSubmit={handleUpdateTracking}
+              className="space-y-3.5 pt-2 border-t border-border/60"
+            >
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">
+                Update Status
+              </label>
               <Select
                 value={String(input.trackingLevel)}
-                onValueChange={(val) => setInput({ ...input, trackingLevel: Number(val) })}
+                onValueChange={(val) =>
+                  setInput({ ...input, trackingLevel: Number(val) })
+                }
               >
                 <SelectTrigger className="bg-background border-border rounded-xl">
                   <SelectValue placeholder="Select tracking status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1" className="cursor-pointer">{TrackingStatus.Processing}</SelectItem>
-                  <SelectItem value="2" className="cursor-pointer">{TrackingStatus.Delivered}</SelectItem>
-                  <SelectItem value="3" className="cursor-pointer">{TrackingStatus.Received}</SelectItem>
+                  <SelectItem value="1" className="cursor-pointer">
+                    {TrackingStatus.Processing}
+                  </SelectItem>
+                  <SelectItem value="2" className="cursor-pointer">
+                    {TrackingStatus.Delivered}
+                  </SelectItem>
+                  <SelectItem value="3" className="cursor-pointer">
+                    {TrackingStatus.Received}
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
@@ -216,7 +312,9 @@ const OrderDetails: React.FC<{
                 disabled={updateStatusMutation.isPending}
                 className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl cursor-pointer shadow-sm text-xs font-bold h-9"
               >
-                {updateStatusMutation.isPending ? "Updating..." : "Save Tracking Status"}
+                {updateStatusMutation.isPending
+                  ? "Updating..."
+                  : "Save Tracking Status"}
               </Button>
             </form>
           </CardContent>

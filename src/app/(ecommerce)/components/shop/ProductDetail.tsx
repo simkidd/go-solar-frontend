@@ -155,7 +155,6 @@ const ProductDetail: React.FC<{
                   qty: quantity,
                   deliveryFee: product.withinLocationDeliveryFee || 0,
                 });
-                toast.success("Item added to cart!");
               }
             }}
             disabled={!inStock}

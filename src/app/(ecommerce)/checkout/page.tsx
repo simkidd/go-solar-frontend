@@ -94,8 +94,8 @@ const CheckoutPageContent = () => {
       (acc, item) => acc + item.deliveryFee * item.qty,
       0,
     );
-    const tax = Math.round(subtotal * 0.05); // 5% VAT
-    const total = subtotal + shippingFee + tax;
+    const tax = 0;
+    const total = subtotal + shippingFee;
     return { subtotal, shippingFee, tax, total };
   };
 
@@ -569,8 +569,8 @@ const CheckoutPageContent = () => {
                         <p className="text-xs font-bold text-zinc-900 dark:text-white line-clamp-1 max-w-[150px]">
                           {item.product?.name}
                         </p>
-                        <p className="text-[9px] text-zinc-400">
-                          GoSolar setup
+                        <p className="text-[10px] text-muted-foreground font-semibold">
+                          Qty: <span className="font-extrabold text-foreground">{item.qty}</span>
                         </p>
                       </div>
                     </div>
@@ -594,13 +594,6 @@ const CheckoutPageContent = () => {
                   <span>Shipping</span>
                   <span className="text-zinc-900 dark:text-white font-extrabold">
                     {formatCurrency(shippingFee, "NGN")}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span>Tax</span>
-                  <span className="text-zinc-900 dark:text-white font-extrabold">
-                    {formatCurrency(tax, "NGN")}
                   </span>
                 </div>
 

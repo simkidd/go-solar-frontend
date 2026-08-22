@@ -128,35 +128,41 @@ const CartPage = () => {
                             </h3>
 
                             {/* Quantity buttons */}
-                            <div className="flex items-center gap-1 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-150 dark:border-zinc-800 rounded-xl w-fit p-1 select-none mt-1.5">
-                              <button
-                                onClick={() => {
-                                  if (cartItem.qty > 1) {
-                                    decreaseQuantity(cartItem.product._id);
-                                  }
-                                }}
-                                disabled={cartItem.qty <= 1}
-                                className="h-6 w-6 rounded-lg flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
-                              >
-                                <Minus className="h-3 w-3" />
-                              </button>
-                              <span className="text-xs font-bold w-6 text-center text-zinc-800 dark:text-zinc-200">
-                                {cartItem.qty}
+                            {!cartItem.product.category ? (
+                              <span className="inline-flex items-center mt-2 px-2.5 py-1 text-xs font-black uppercase tracking-wider text-muted-foreground bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-150 dark:border-zinc-800 rounded-xl select-none">
+                                Qty: 1
                               </span>
-                              <button
-                                onClick={() => {
-                                  if (
-                                    cartItem.qty <
-                                    (cartItem.product.quantityInStock || 10)
-                                  ) {
-                                    increaseQuantity(cartItem.product._id);
-                                  }
-                                }}
-                                className="h-6 w-6 rounded-lg flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                              >
-                                <Plus className="h-3 w-3" />
-                              </button>
-                            </div>
+                            ) : (
+                              <div className="flex items-center gap-1 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-150 dark:border-zinc-800 rounded-xl w-fit p-1 select-none mt-1.5">
+                                <button
+                                  onClick={() => {
+                                    if (cartItem.qty > 1) {
+                                      decreaseQuantity(cartItem.product._id);
+                                    }
+                                  }}
+                                  disabled={cartItem.qty <= 1}
+                                  className="h-6 w-6 rounded-lg flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                                >
+                                  <Minus className="h-3 w-3" />
+                                </button>
+                                <span className="text-xs font-bold w-6 text-center text-zinc-800 dark:text-zinc-200">
+                                  {cartItem.qty}
+                                </span>
+                                <button
+                                  onClick={() => {
+                                    if (
+                                      cartItem.qty <
+                                      (cartItem.product.quantityInStock || 10)
+                                    ) {
+                                      increaseQuantity(cartItem.product._id);
+                                    }
+                                  }}
+                                  className="h-6 w-6 rounded-lg flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                                >
+                                  <Plus className="h-3 w-3" />
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -212,8 +218,14 @@ const CartPage = () => {
 
                       <div className="flex justify-between items-center">
                         <span>Shipping</span>
-                        <span className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 rounded-full px-2 py-0.5 text-[10px] font-extrabold">
-                          Free
+                        <span className="font-extrabold text-zinc-900 dark:text-white">
+                          {deliveryFee > 0 ? (
+                            formatCurrency(deliveryFee, "NGN")
+                          ) : (
+                            <span className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 rounded-full px-2 py-0.5 text-[10px] font-extrabold">
+                              Free
+                            </span>
+                          )}
                         </span>
                       </div>
 

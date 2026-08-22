@@ -10,7 +10,15 @@ import { Spinner } from "@/components/custom/Spinner";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Package, Calendar, Tag, CreditCard, ArrowRight, ArrowUpRight } from "lucide-react";
+import {
+  Package,
+  Calendar,
+  Tag,
+  CreditCard,
+  ArrowRight,
+  ArrowUpRight,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const getBadgeStyles = (status: string) => {
   switch (status) {
@@ -27,58 +35,69 @@ const getBadgeStyles = (status: string) => {
 
 const UserOrders = () => {
   const { data: userOrders = [], isLoading: loading } = useUserOrdersQuery();
-  const [activeTab, setActiveTab] = useState<"All" | "Processing" | "Delivered" | "Received">("All");
+  const [activeTab, setActiveTab] = useState<
+    "All" | "Processing" | "Delivered" | "Received"
+  >("All");
 
   const filteredOrders = useMemo(() => {
     if (activeTab === "All") return userOrders;
-    return userOrders.filter((order: any) => order?.trackingStatus === activeTab);
+    return userOrders.filter(
+      (order: any) => order?.trackingStatus === activeTab,
+    );
   }, [userOrders, activeTab]);
 
   return (
     <div className="font-inter space-y-6">
-      
       {/* ── Status Tabs Filters ── */}
       <div className="flex border-b border-border/60 pb-px gap-1.5 overflow-x-auto no-scrollbar">
-        {(["All", "Processing", "Delivered", "Received"] as const).map((tab) => {
-          const count = tab === "All" 
-            ? userOrders.length 
-            : userOrders.filter((o: any) => o?.trackingStatus === tab).length;
+        {(["All", "Processing", "Delivered", "Received"] as const).map(
+          (tab) => {
+            const count =
+              tab === "All"
+                ? userOrders.length
+                : userOrders.filter((o: any) => o?.trackingStatus === tab)
+                    .length;
 
-          return (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2.5 text-[10px] font-black uppercase tracking-wider border-b-2 transition-all duration-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                activeTab === tab
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {tab === "All" ? "All Orders" : tab}
-              <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-black ${
-                activeTab === tab 
-                  ? "bg-primary/10 text-primary" 
-                  : "bg-muted text-muted-foreground"
-              }`}>
-                {count}
-              </span>
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2.5 text-[10px] font-black uppercase tracking-wider border-b-2 transition-all duration-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  activeTab === tab
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab === "All" ? "All Orders" : tab}
+                <span
+                  className={`text-[9px] px-1.5 py-0.5 rounded-full font-black ${
+                    activeTab === tab
+                      ? "bg-primary/10 text-primary"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          },
+        )}
       </div>
 
       {/* ── Main List Content ── */}
       {loading ? (
         <div className="py-16 flex flex-col justify-center items-center gap-3">
           <Spinner size="lg" />
-          <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest animate-pulse">Loading orders...</p>
+          <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest animate-pulse">
+            Loading orders...
+          </p>
         </div>
       ) : (
         <div className="space-y-5">
           {filteredOrders && filteredOrders.length > 0 ? (
             filteredOrders.map((order: any) => (
-              <div 
-                key={order?._id} 
+              <div
+                key={order?._id}
                 className="border border-border/80 rounded-2xl overflow-hidden bg-zinc-50/50 dark:bg-zinc-900/10 hover:border-primary/30 transition-colors duration-300"
               >
                 {/* Header Row */}
@@ -90,18 +109,32 @@ const UserOrders = () => {
                     </span>
                     <span className="hidden sm:inline text-border">|</span>
                     <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-black">
-                      ID: <span className="font-mono text-foreground text-xs select-all">{order?.trackingId?.tracking_id}</span>
+                      ID:{" "}
+                      <span className="font-mono text-foreground text-xs select-all">
+                        {order?.trackingId?.tracking_id}
+                      </span>
                     </span>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Chip className={getBadgeStyles(getChipColor(order?.trackingStatus))}>
+                    <Chip
+                      variant="outline"
+                      className={cn(
+                        "text-[10px]",
+                        getBadgeStyles(getChipColor(order?.trackingStatus)),
+                      )}
+                    >
                       {order?.trackingStatus}
                     </Chip>
-                    <Link href={`/account/orders/${order?.trackingId?.tracking_id}`}>
-                      <Button size="sm" className="bg-primary hover:bg-primary/90 text-white font-bold text-[10px] uppercase tracking-wider h-8 rounded-lg cursor-pointer">
+                    <Link
+                      href={`/account/orders/${order?.trackingId?.tracking_id}`}
+                    >
+                      <Button
+                        size="sm"
+                        className="bg-primary hover:bg-primary/90 text-white font-bold text-[10px] uppercase tracking-wider h-8 rounded-lg cursor-pointer"
+                      >
                         View Details
-                        <ArrowUpRight className="h-3 w-3 ml-1" />
+                        <ArrowUpRight className="h-3 w-3" />
                       </Button>
                     </Link>
                   </div>
@@ -118,7 +151,10 @@ const UserOrders = () => {
                       >
                         <div className="w-12 h-12 rounded-xl overflow-hidden relative shrink-0 border border-border bg-zinc-50 dark:bg-zinc-800">
                           <Image
-                            src={item?.product?.images[0].url}
+                            src={
+                              item?.product?.images?.[0]?.url ||
+                              "/placeholder-product.jpg"
+                            }
                             alt={item?.product?.name}
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -128,9 +164,23 @@ const UserOrders = () => {
                           <p className="text-xs font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
                             {item?.product?.name}
                           </p>
-                          <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
-                            Qty: <span className="font-extrabold text-foreground">{item?.qty}</span>
-                          </p>
+                          <div className="flex items-center gap-2 mt-0.5 select-none">
+                            <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+                              Qty:{" "}
+                              <span className="font-extrabold text-foreground">
+                                {item?.qty}
+                              </span>
+                            </p>
+                            <span
+                              className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md border ${
+                                !item?.product?.category
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/40"
+                                  : "bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700/50"
+                              }`}
+                            >
+                              {!item?.product?.category ? "Package" : "Product"}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -147,7 +197,6 @@ const UserOrders = () => {
                     </span>
                   </div>
                 </div>
-
               </div>
             ))
           ) : (
@@ -156,11 +205,18 @@ const UserOrders = () => {
                 <Package className="h-6 w-6" />
               </div>
               <div className="space-y-1">
-                <p className="text-xs font-black uppercase tracking-wider text-foreground">No orders found</p>
-                <p className="text-[10px] text-muted-foreground">You do not have any orders matching the "{activeTab}" filter.</p>
+                <p className="text-xs font-black uppercase tracking-wider text-foreground">
+                  No orders found
+                </p>
+                <p className="text-[10px] text-muted-foreground">
+                  You do not have any orders matching the "{activeTab}" filter.
+                </p>
               </div>
               <Link href="/shop" className="pt-2">
-                <Button variant="outline" className="border-primary text-primary hover:bg-primary/5 font-bold text-[10px] uppercase tracking-widest rounded-full h-8 px-4 cursor-pointer">
+                <Button
+                  variant="outline"
+                  className="border-primary text-primary hover:bg-primary/5 font-bold text-[10px] uppercase tracking-widest rounded-full h-8 px-4 cursor-pointer"
+                >
                   Start Shopping
                 </Button>
               </Link>

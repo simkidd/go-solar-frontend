@@ -7,10 +7,18 @@ import { useUpdateOrderStatusMutation } from "@/hooks/mutations/useOrderMutation
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/custom/Chip";
-import { ArrowLeft, ShieldCheck, CreditCard, MapPin, PackageOpen } from "lucide-react";
+import {
+  ArrowLeft,
+  ShieldCheck,
+  CreditCard,
+  MapPin,
+  PackageOpen,
+} from "lucide-react";
 import Image from "next/image";
 import { notFound, useRouter } from "next/navigation";
 import Link from "next/link";
+import { Spinner } from "@/components/custom/Spinner";
+import { cn } from "@/lib/utils";
 
 const getBadgeStyles = (status: string) => {
   switch (status) {
@@ -28,13 +36,24 @@ const getBadgeStyles = (status: string) => {
 const AccountOrderDetails: React.FC<{
   id: string;
 }> = ({ id }) => {
-  const { data: userOrders = [] } = useUserOrdersQuery();
+  const { data: userOrders = [], isPending } = useUserOrdersQuery();
   const updateStatusMutation = useUpdateOrderStatusMutation();
   const router = useRouter();
 
   const order = userOrders.find(
-    (order: any) => order?.trackingId?.tracking_id === id
+    (order: any) => order?.trackingId?.tracking_id === id,
   );
+
+  if (isPending) {
+    return (
+      <div className="py-16 flex flex-col justify-center items-center gap-3">
+        <Spinner size="lg" />
+        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest animate-pulse">
+          Loading order details...
+        </p>
+      </div>
+    );
+  }
 
   if (!order) {
     notFound();
@@ -42,7 +61,7 @@ const AccountOrderDetails: React.FC<{
 
   const totalDeliveryFee = order?.products.reduce(
     (sum: number, item: any) => sum + (item?.deliveryFee || 0),
-    0
+    0,
   );
 
   const handleConfirmReceipt = () => {
@@ -54,7 +73,6 @@ const AccountOrderDetails: React.FC<{
 
   return (
     <div className="space-y-6 font-inter">
-      
       {/* Header Bar */}
       <div className="flex items-center gap-3">
         <Button
@@ -80,31 +98,64 @@ const AccountOrderDetails: React.FC<{
         </div>
         <ul className="divide-y divide-border/60 px-6 text-xs font-bold text-muted-foreground">
           <li className="flex justify-between py-3.5">
-            <span className="uppercase text-[10px] tracking-wider font-extrabold text-muted-foreground">Order ID</span>
-            <span className="font-black text-foreground">{order?.trackingId?.tracking_id}</span>
+            <span className="uppercase text-[10px] tracking-wider font-extrabold text-muted-foreground">
+              Order ID
+            </span>
+            <span className="font-black text-foreground">
+              {order?.trackingId?.tracking_id}
+            </span>
           </li>
           <li className="flex justify-between py-3.5">
-            <span className="uppercase text-[10px] tracking-wider font-extrabold text-muted-foreground">Order Date</span>
-            <span className="font-extrabold text-foreground">{formatDate(order?.createdAt)}</span>
+            <span className="uppercase text-[10px] tracking-wider font-extrabold text-muted-foreground">
+              Order Date
+            </span>
+            <span className="font-extrabold text-foreground">
+              {formatDate(order?.createdAt)}
+            </span>
           </li>
           <li className="flex justify-between py-3.5">
-            <span className="uppercase text-[10px] tracking-wider font-extrabold text-muted-foreground">Tracking ID</span>
-            <span className="font-extrabold text-foreground select-all">{order?.trackingId?.tracking_id}</span>
+            <span className="uppercase text-[10px] tracking-wider font-extrabold text-muted-foreground">
+              Tracking ID
+            </span>
+            <span className="font-extrabold text-foreground select-all">
+              {order?.trackingId?.tracking_id}
+            </span>
+          </li>
+          <li className="flex justify-between py-3.5 items-center">
+            <span className="uppercase text-[10px] tracking-wider font-extrabold text-muted-foreground">
+              Status
+            </span>
+            <Chip
+              variant="outline"
+              className={cn(
+                "text-xs",
+                getBadgeStyles(getChipColor(order?.trackingStatus)),
+              )}
+            >
+              {order?.trackingStatus}
+            </Chip>
           </li>
           <li className="flex justify-between py-3.5">
-            <span className="uppercase text-[10px] tracking-wider font-extrabold text-muted-foreground">Delivery Fee</span>
-            <span className="font-extrabold text-foreground">{formatCurrency(totalDeliveryFee, "NGN")}</span>
+            <span className="uppercase text-[10px] tracking-wider font-extrabold text-muted-foreground">
+              Delivery Fee
+            </span>
+            <span className="font-extrabold text-foreground">
+              {formatCurrency(totalDeliveryFee, "NGN")}
+            </span>
           </li>
           <li className="flex justify-between py-4 text-sm font-black text-foreground border-t border-border">
-            <span className="uppercase text-xs tracking-wider font-black">Total Paid Amount</span>
-            <span className="text-primary">{formatCurrency(order?.totalPricePaid, "NGN")}</span>
+            <span className="uppercase text-xs tracking-wider font-black">
+              Total Paid Amount
+            </span>
+            <span className="text-primary">
+              {formatCurrency(order?.totalPricePaid, "NGN")}
+            </span>
           </li>
         </ul>
       </div>
 
       {/* Payment & Address Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
         {/* Payment Info */}
         <div className="border border-border/85 rounded-2xl overflow-hidden shadow-xs bg-zinc-50/50 dark:bg-zinc-900/10">
           <div className="px-6 py-3.5 bg-muted/40 border-b border-border/80">
@@ -115,25 +166,40 @@ const AccountOrderDetails: React.FC<{
           </div>
           <div className="space-y-4 px-6 py-4 text-xs font-bold text-muted-foreground">
             <div>
-              <p className="font-extrabold text-muted-foreground/60 uppercase tracking-widest text-[9px] mb-1">Method</p>
-              <span className="capitalize text-foreground font-black text-xs">{order?.paymentMethod}</span>
+              <p className="font-extrabold text-muted-foreground/60 uppercase tracking-widest text-[9px] mb-1">
+                Method
+              </p>
+              <span className="capitalize text-foreground font-black text-xs">
+                {order?.paymentMethod}
+              </span>
             </div>
             <div>
-              <p className="font-extrabold text-muted-foreground/60 uppercase tracking-widest text-[9px] mb-1.5">Breakdown</p>
+              <p className="font-extrabold text-muted-foreground/60 uppercase tracking-widest text-[9px] mb-1.5">
+                Breakdown
+              </p>
               <div className="space-y-1 pl-1">
                 <div className="flex justify-between max-w-xs">
                   <span>Items Base Total:</span>
-                  <span className="font-extrabold text-foreground">{formatCurrency(order?.totalPricePaid - totalDeliveryFee, "NGN")}</span>
+                  <span className="font-extrabold text-foreground">
+                    {formatCurrency(
+                      order?.totalPricePaid - totalDeliveryFee,
+                      "NGN",
+                    )}
+                  </span>
                 </div>
                 <div className="flex justify-between max-w-xs">
                   <span>Shipping/Delivery:</span>
-                  <span className="font-extrabold text-foreground">{formatCurrency(totalDeliveryFee, "NGN")}</span>
+                  <span className="font-extrabold text-foreground">
+                    {formatCurrency(totalDeliveryFee, "NGN")}
+                  </span>
                 </div>
               </div>
             </div>
             <div className="flex justify-between max-w-xs pt-3 border-t border-border/60 text-sm font-black text-foreground">
               <span>Total Price:</span>
-              <span className="text-primary">{formatCurrency(order?.totalPricePaid, "NGN")}</span>
+              <span className="text-primary">
+                {formatCurrency(order?.totalPricePaid, "NGN")}
+              </span>
             </div>
           </div>
         </div>
@@ -150,14 +216,19 @@ const AccountOrderDetails: React.FC<{
             <p className="text-sm font-black text-foreground">
               {order?.user?.firstname} {order?.user?.lastname}
             </p>
-            <p className="font-semibold">{order?.deliveryDetails?.suiteNumber}</p>
-            <p className="font-semibold">{order?.deliveryDetails?.streetAddress}</p>
+            <p className="font-semibold">
+              {order?.deliveryDetails?.suiteNumber}
+            </p>
+            <p className="font-semibold">
+              {order?.deliveryDetails?.streetAddress}
+            </p>
             <p className="font-semibold">{order?.deliveryDetails?.city}</p>
             <p className="font-semibold">{order?.deliveryDetails?.zipCode}</p>
-            <p className="pt-2 border-t border-border/60 font-black text-foreground">{order?.user?.phoneNumber}</p>
+            <p className="pt-2 border-t border-border/60 font-black text-foreground">
+              {order?.user?.phoneNumber}
+            </p>
           </div>
         </div>
-
       </div>
 
       {/* Items Ordered Card */}
@@ -167,18 +238,12 @@ const AccountOrderDetails: React.FC<{
             <PackageOpen className="h-4.5 w-4.5 text-primary" />
             Items Ordered
           </h3>
-          <div className="flex gap-4 items-center">
-            <Chip className={getBadgeStyles(getChipColor(order?.trackingStatus))}>
-              {order?.trackingStatus}
-            </Chip>
-
-            <Link
-              href={`${order?.trackingId?.tracking_id}/track`}
-              className="text-[10px] font-black uppercase tracking-wider hover:underline text-primary cursor-pointer"
-            >
-              Track Progress
-            </Link>
-          </div>
+          <Link
+            href={`${order?.trackingId?.tracking_id}/track`}
+            className="text-[10px] font-black uppercase tracking-wider hover:underline text-primary cursor-pointer"
+          >
+            Track Progress
+          </Link>
         </div>
         <ul className="divide-y divide-border/60">
           {order?.products.map((item: any) => (
@@ -188,7 +253,10 @@ const AccountOrderDetails: React.FC<{
             >
               <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 relative border border-border/80 bg-zinc-50">
                 <Image
-                  src={item?.product?.images[0].url}
+                  src={
+                    item?.product?.images?.[0]?.url ||
+                    "/placeholder-product.jpg"
+                  }
                   alt={item?.product?.name}
                   fill
                   className="object-cover"
@@ -202,10 +270,45 @@ const AccountOrderDetails: React.FC<{
                   <span className="font-black text-foreground">
                     {formatCurrency(item?.product?.price, "NGN")}
                   </span>
-                  <span className="text-muted-foreground font-extrabold text-[10px] uppercase">
-                    Quantity: {item?.qty}
-                  </span>
+                  <div className="flex items-center gap-2 select-none">
+                    <span className="text-muted-foreground font-extrabold text-[10px] uppercase">
+                      Quantity: {item?.qty}
+                    </span>
+                    <span
+                      className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md border ${
+                        !item?.product?.category
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/40"
+                          : "bg-zinc-100 text-zinc-650 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700/50"
+                      }`}
+                    >
+                      {!item?.product?.category ? "Package" : "Product"}
+                    </span>
+                  </div>
                 </div>
+
+                {!item?.product?.category &&
+                  item?.product?.constituents?.length > 0 && (
+                    <div className="mt-2.5 pt-2.5 border-t border-border/40 space-y-1.5">
+                      <p className="text-[9px] uppercase tracking-wider font-extrabold text-muted-foreground">
+                        Included Components:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {item.product.constituents.map(
+                          (c: any, cIdx: number) => (
+                            <div
+                              key={cIdx}
+                              className="bg-muted/40 border border-border/40 px-2 py-1 rounded-lg flex items-center gap-1.5 text-[10px] font-bold text-foreground"
+                            >
+                              <span className="text-primary font-black">
+                                {c.qty * item.qty}x
+                              </span>
+                              <span>{c.product?.name || "Component"}</span>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  )}
               </div>
             </li>
           ))}
@@ -214,7 +317,9 @@ const AccountOrderDetails: React.FC<{
 
       {order?.trackingLevel === 2 && (
         <div className="flex justify-end gap-4 items-center pt-4 border-t border-border/60">
-          <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Have you received your order?</p>
+          <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+            Have you received your order?
+          </p>
           <Button
             className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-6 cursor-pointer"
             disabled={updateStatusMutation.isPending}
