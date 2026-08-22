@@ -3,23 +3,41 @@
 import React, { useState, useEffect, Suspense } from "react";
 import useCartStore from "@/lib/stores/cart.store";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { useSession } from "@/context/SessionContext";
 import { formatCurrency } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, ArrowRight, ShoppingBag, ShieldCheck } from "lucide-react";
+import {
+  Check,
+  ArrowRight,
+  ShoppingBag,
+  ShieldCheck,
+  ShoppingCart,
+  Loader2,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { usePaystackPayment } from "react-paystack";
+import { useForm } from "react-hook-form";
 import { axiosInstance } from "@/lib/axios";
 import { toast } from "sonner";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { CallbackResponse } from "@/interfaces/payment.interface";
 import {
   CreateOrderInput,
   DeliveryDetails,
 } from "@/interfaces/product.interface";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+interface CheckoutFormInput {
+  email: string;
+  phone: string;
+  streetAddress: string;
+  city: string;
+  zipCode: string;
+  suiteNumber?: string;
+  billingSameAsShipping: boolean;
+  billingAddress?: string;
+}
 
 const CheckoutPageContent = () => {
   const { cartItems, totalPricePaid, setTotalPricePaid, clearCart } =
@@ -27,33 +45,37 @@ const CheckoutPageContent = () => {
   const { user } = useAuthStore();
   const router = useRouter();
 
-  // Redirect to login if user is not authenticated
-  useEffect(() => {
-    if (!user) {
-      toast.info("Please sign in to proceed with checkout.");
-      router.push("/auth/login?redirect=/checkout");
-    }
-  }, [user, router]);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<CheckoutFormInput>({
+    defaultValues: {
+      email: user?.email || "",
+      phone: user?.phoneNumber || "",
+      streetAddress: "",
+      city: "",
+      zipCode: "",
+      suiteNumber: "",
+      billingSameAsShipping: true,
+      billingAddress: "",
+    },
+  });
 
-  // Shipping details state
-  const [email, setEmail] = useState(user?.email || "");
-  const [phone, setPhone] = useState(user?.phoneNumber || "");
-  const [streetAddress, setStreetAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [suiteNumber, setSuiteNumber] = useState("");
+  const emailVal = watch("email");
+  const phoneVal = watch("phone");
+  const streetAddressVal = watch("streetAddress");
+  const cityVal = watch("city");
+  const zipCodeVal = watch("zipCode");
+  const suiteNumberVal = watch("suiteNumber");
+  const billingSameAsShippingVal = watch("billingSameAsShipping");
+  const billingAddressVal = watch("billingAddress");
 
   const [isEditingEmail, setIsEditingEmail] = useState(!user?.email);
   const [isEditingPhone, setIsEditingPhone] = useState(!user?.phoneNumber);
   const [isEditingAddress, setIsEditingAddress] = useState(true);
-
-  // Billing address state
-  const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
-  const [billingAddress, setBillingAddress] = useState("");
-
-  // Coupon code state
-  const [couponCode, setCouponCode] = useState("");
-  const [discountAmount, setDiscountAmount] = useState(0); // Optional promo discounts
 
   // Payment Method selection
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -72,8 +94,8 @@ const CheckoutPageContent = () => {
       (acc, item) => acc + item.deliveryFee * item.qty,
       0,
     );
-    const tax = Math.round(subtotal * 0.05); // 5% VAT
-    const total = subtotal + shippingFee + tax - discountAmount;
+    const tax = 0;
+    const total = subtotal + shippingFee;
     return { subtotal, shippingFee, tax, total };
   };
 
@@ -86,46 +108,19 @@ const CheckoutPageContent = () => {
     }
   }, [total, setTotalPricePaid]);
 
-  // Apply Coupon Logic
-  const handleApplyCoupon = () => {
-    if (couponCode.toLowerCase() === "solar50") {
-      setDiscountAmount(50000);
-      toast.success("₦50,000 discount applied successfully!");
-    } else if (couponCode.trim()) {
-      toast.error("Invalid coupon code.");
-    }
-  };
-
   // Paystack Config
-  const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "";
-  const paystackConfig = {
-    reference: (user?._id || "guest") + "-" + Date.now(),
-    email: email || user?.email || "billing@gosolar.com",
-    publicKey,
-    amount: total * 100, // in kobo
-    metadata: {
-      custom_fields: [
-        {
-          display_name: "Customer Name",
-          variable_name: "customer_name",
-          value: user ? `${user.firstname} ${user.lastname}` : "Customer",
-        },
-      ],
-    },
-  };
-
-  const initializePaystackPayment = usePaystackPayment(paystackConfig);
 
   // Complete Order API call
   const handleCompleteOrder = async (
+    formData: CheckoutFormInput,
     paymentRef?: string,
     paymentData?: string,
   ) => {
     const deliveryDetails: DeliveryDetails = {
-      suiteNumber,
-      streetAddress: streetAddress || "No Address Provided",
-      city: city || "Nigeria",
-      zipCode: zipCode || "23401",
+      suiteNumber: formData.suiteNumber || "",
+      streetAddress: formData.streetAddress || "No Address Provided",
+      city: formData.city || "Nigeria",
+      zipCode: formData.zipCode || "23401",
     };
 
     const input: CreateOrderInput = {
@@ -151,7 +146,7 @@ const CheckoutPageContent = () => {
       if (data.success) {
         clearCart();
         toast.success("Order placed successfully!");
-        router.push("/orders/success");
+        router.push("/checkout/success");
       } else {
         toast.error("Failed to place order.");
       }
@@ -166,41 +161,70 @@ const CheckoutPageContent = () => {
   };
 
   // Handle Checkout Action Button
-  const handleCheckoutSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!streetAddress || !city || !phone) {
-      toast.info("Please fill in shipping address and contact details.");
-      return;
-    }
-
+  const handleCheckoutSubmit = async (formData: CheckoutFormInput) => {
     if (selectedPaymentMethod === "paystack") {
-      initializePaystackPayment({
-        onSuccess: (response: CallbackResponse) => {
-          if (response.status === "success" && response?.reference) {
-            handleCompleteOrder(response.reference, JSON.stringify(response));
-          }
-        },
-        onClose: () => {
-          toast.warning("Payment canceled.");
-        },
-      });
+      const deliveryDetails: DeliveryDetails = {
+        suiteNumber: formData.suiteNumber || "",
+        streetAddress: formData.streetAddress || "No Address Provided",
+        city: formData.city || "Nigeria",
+        zipCode: formData.zipCode || "23401",
+      };
+
+      const input = {
+        products: cartItems.map(({ deliveryFee, product, qty }) => ({
+          product: product?._id,
+          qty,
+          deliveryFee,
+        })),
+        deliveryDetails,
+        totalPricePaid: total,
+        paymentMethod: selectedPaymentMethod,
+      };
+
+      try {
+        setLoading(true);
+        const { data } = await axiosInstance.post(
+          "/users/orders/initialize-payment",
+          input,
+        );
+
+        if (data.success && data.authorization_url) {
+          window.location.href = data.authorization_url;
+        } else {
+          toast.error("Failed to initialize payment.");
+        }
+      } catch (error: any) {
+        const errMsg =
+          error?.response?.data?.message ||
+          "An error occurred while initializing payment.";
+        toast.error(errMsg);
+      } finally {
+        setLoading(false);
+      }
     } else {
       // Cash on delivery or alternate method
-      handleCompleteOrder();
+      handleCompleteOrder(formData);
     }
   };
 
-  if (!user || cartItems.length === 0) {
+  if (cartItems.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
-        <ShoppingBag className="h-10 w-10 text-zinc-300" />
-        <p className="text-sm font-semibold text-zinc-500">
-          Your cart is empty or you need to log in.
-        </p>
+      <div className="flex flex-col items-center justify-center min-h-[65vh] text-center space-y-6 max-w-md mx-auto px-6">
+        <div className="h-16 w-16 bg-zinc-100 dark:bg-zinc-900 text-zinc-400 dark:text-zinc-600 rounded-full flex items-center justify-center">
+          <ShoppingCart className="h-8 w-8" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
+            Your Cart is Empty
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-sm">
+            Looks like you haven't added anything to your cart yet. Head back to
+            the store to configure your solar setups.
+          </p>
+        </div>
         <Link href="/shop">
-          <Button className="bg-[#08AA08] text-white rounded-xl">
-            Return to Store
+          <Button className="bg-[#08AA08] hover:bg-[#079907] text-white font-bold rounded-xl gap-2 px-6 h-11 text-xs">
+            Go Shopping
           </Button>
         </Link>
       </div>
@@ -249,16 +273,28 @@ const CheckoutPageContent = () => {
                       Email
                     </span>
                     {isEditingEmail ? (
-                      <Input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="your-email@email.com"
-                        className="max-w-md h-9 text-xs"
-                      />
+                      <div className="flex-1 max-w-md">
+                        <Input
+                          type="email"
+                          {...register("email", {
+                            required: "Email is required",
+                            pattern: {
+                              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                              message: "Invalid email address",
+                            },
+                          })}
+                          placeholder="your-email@email.com"
+                          className="h-9 text-xs"
+                        />
+                        {errors.email && (
+                          <p className="text-[10px] text-red-500 font-semibold mt-1">
+                            {errors.email.message}
+                          </p>
+                        )}
+                      </div>
                     ) : (
                       <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                        {email}
+                        {emailVal}
                       </p>
                     )}
                   </div>
@@ -277,16 +313,24 @@ const CheckoutPageContent = () => {
                       Phone
                     </span>
                     {isEditingPhone ? (
-                      <Input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+234 80 1234 5678"
-                        className="max-w-md h-9 text-xs"
-                      />
+                      <div className="flex-1 max-w-md">
+                        <Input
+                          type="tel"
+                          {...register("phone", {
+                            required: "Phone number is required",
+                          })}
+                          placeholder="+234 80 1234 5678"
+                          className="h-9 text-xs"
+                        />
+                        {errors.phone && (
+                          <p className="text-[10px] text-red-500 font-semibold mt-1">
+                            {errors.phone.message}
+                          </p>
+                        )}
+                      </div>
                     ) : (
                       <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                        {phone}
+                        {phoneVal}
                       </p>
                     )}
                   </div>
@@ -306,35 +350,60 @@ const CheckoutPageContent = () => {
                     </span>
                     {isEditingAddress ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-xl">
-                        <Input
-                          placeholder="Street Address"
-                          value={streetAddress}
-                          onChange={(e) => setStreetAddress(e.target.value)}
-                          className="h-9 text-xs"
-                        />
-                        <Input
-                          placeholder="City/State"
-                          value={city}
-                          onChange={(e) => setCity(e.target.value)}
-                          className="h-9 text-xs"
-                        />
-                        <Input
-                          placeholder="Suite/Apartment Number (Optional)"
-                          value={suiteNumber}
-                          onChange={(e) => setSuiteNumber(e.target.value)}
-                          className="h-9 text-xs"
-                        />
-                        <Input
-                          placeholder="Zip Code"
-                          value={zipCode}
-                          onChange={(e) => setZipCode(e.target.value)}
-                          className="h-9 text-xs"
-                        />
+                        <div>
+                          <Input
+                            placeholder="Street Address"
+                            {...register("streetAddress", {
+                              required: "Street Address is required",
+                            })}
+                            className="h-9 text-xs"
+                          />
+                          {errors.streetAddress && (
+                            <p className="text-[10px] text-red-500 font-semibold mt-1">
+                              {errors.streetAddress.message}
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <Input
+                            placeholder="City/State"
+                            {...register("city", {
+                              required: "City/State is required",
+                            })}
+                            className="h-9 text-xs"
+                          />
+                          {errors.city && (
+                            <p className="text-[10px] text-red-500 font-semibold mt-1">
+                              {errors.city.message}
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <Input
+                            placeholder="Suite/Apartment Number (Optional)"
+                            {...register("suiteNumber")}
+                            className="h-9 text-xs"
+                          />
+                        </div>
+                        <div>
+                          <Input
+                            placeholder="Zip Code"
+                            {...register("zipCode", {
+                              required: "Zip Code is required",
+                            })}
+                            className="h-9 text-xs"
+                          />
+                          {errors.zipCode && (
+                            <p className="text-[10px] text-red-500 font-semibold mt-1">
+                              {errors.zipCode.message}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     ) : (
                       <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                        {suiteNumber ? `${suiteNumber}, ` : ""}
-                        {streetAddress}, {city} (Zip: {zipCode})
+                        {suiteNumberVal ? `${suiteNumberVal}, ` : ""}
+                        {streetAddressVal}, {cityVal} (Zip: {zipCodeVal})
                       </p>
                     )}
                   </div>
@@ -380,8 +449,8 @@ const CheckoutPageContent = () => {
                   <input
                     type="radio"
                     name="billing-same"
-                    checked={billingSameAsShipping}
-                    onChange={() => setBillingSameAsShipping(true)}
+                    checked={billingSameAsShippingVal === true}
+                    onChange={() => setValue("billingSameAsShipping", true)}
                     className="accent-[#08AA08] h-4.5 w-4.5"
                   />
                   <span className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
@@ -396,8 +465,10 @@ const CheckoutPageContent = () => {
                       <input
                         type="radio"
                         name="billing-same"
-                        checked={!billingSameAsShipping}
-                        onChange={() => setBillingSameAsShipping(false)}
+                        checked={billingSameAsShippingVal === false}
+                        onChange={() =>
+                          setValue("billingSameAsShipping", false)
+                        }
                         className="accent-[#08AA08] h-4.5 w-4.5"
                       />
                       <span className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
@@ -406,14 +477,25 @@ const CheckoutPageContent = () => {
                     </div>
                   </label>
 
-                  {!billingSameAsShipping && (
+                  {!billingSameAsShippingVal && (
                     <div className="pl-7 pt-1 max-w-xl">
                       <Input
                         placeholder="Enter Billing Address"
-                        value={billingAddress}
-                        onChange={(e) => setBillingAddress(e.target.value)}
+                        {...register("billingAddress", {
+                          validate: (val) => {
+                            if (!billingSameAsShippingVal && !val) {
+                              return "Billing address is required when different from shipping address";
+                            }
+                            return true;
+                          },
+                        })}
                         className="h-9 text-xs"
                       />
+                      {errors.billingAddress && (
+                        <p className="text-[10px] text-red-500 font-semibold mt-1">
+                          {errors.billingAddress.message}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -444,32 +526,12 @@ const CheckoutPageContent = () => {
                     </p>
                   </div>
                 </label>
-
-                <label className="flex items-center gap-3 cursor-pointer select-none">
-                  <input
-                    type="radio"
-                    name="payment-method"
-                    value="cashOnDelivery"
-                    checked={selectedPaymentMethod === "cashOnDelivery"}
-                    onChange={() => setSelectedPaymentMethod("cashOnDelivery")}
-                    className="accent-[#08AA08] h-4.5 w-4.5"
-                  />
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
-                      Cash On Delivery
-                    </span>
-                    <p className="text-[10px] text-zinc-400">
-                      Pay physically in cash upon successful installation
-                      (subject to verify)
-                    </p>
-                  </div>
-                </label>
               </div>
             </div>
           </div>
 
           {/* Right Column: Checkout Summary Card */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
             <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 p-6 rounded-3xl space-y-6">
               {/* Summary Items Header */}
               <div className="flex items-center justify-between pb-3 border-b dark:border-zinc-800">
@@ -507,8 +569,8 @@ const CheckoutPageContent = () => {
                         <p className="text-xs font-bold text-zinc-900 dark:text-white line-clamp-1 max-w-[150px]">
                           {item.product?.name}
                         </p>
-                        <p className="text-[9px] text-zinc-400">
-                          GoSolar setup
+                        <p className="text-[10px] text-muted-foreground font-semibold">
+                          Qty: <span className="font-extrabold text-foreground">{item.qty}</span>
                         </p>
                       </div>
                     </div>
@@ -535,21 +597,7 @@ const CheckoutPageContent = () => {
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span>Tax</span>
-                  <span className="text-zinc-900 dark:text-white font-extrabold">
-                    {formatCurrency(tax, "NGN")}
-                  </span>
-                </div>
 
-                {discountAmount > 0 && (
-                  <div className="flex justify-between items-center text-red-500">
-                    <span>Discount</span>
-                    <span className="font-extrabold">
-                      -{formatCurrency(discountAmount, "NGN")}
-                    </span>
-                  </div>
-                )}
 
                 <div className="flex justify-between items-center pt-3 border-t dark:border-zinc-800 text-sm font-extrabold text-zinc-900 dark:text-white">
                   <span>Total</span>
@@ -560,22 +608,13 @@ const CheckoutPageContent = () => {
               {/* Checkout Action Button triggers */}
               <div className="space-y-3.5 pt-4 border-t dark:border-zinc-800">
                 <Button
-                  onClick={handleCheckoutSubmit}
+                  onClick={handleSubmit(handleCheckoutSubmit)}
                   disabled={loading}
                   className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-bold rounded-xl h-11 text-xs gap-1.5"
                 >
                   {loading ? "Processing Order..." : "Continue"}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
-
-                <Link href="/energy-calculator" className="w-full block">
-                  <Button
-                    variant="outline"
-                    className="w-full border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold rounded-xl h-11 text-xs"
-                  >
-                    Get Quote
-                  </Button>
-                </Link>
               </div>
 
               {/* Disclaimer block */}
@@ -590,14 +629,7 @@ const CheckoutPageContent = () => {
                   Get this product as part of a complete solar setup that
                   includes panels, batteries, and expert installation all
                   optimized for performance and savings. Installation is
-                  completely free.{" "}
-                  <Link
-                    href="/energy-calculator"
-                    className="text-zinc-950 dark:text-white font-bold hover:underline inline-flex items-center gap-0.5"
-                  >
-                    Get Quote <span className="text-[8px]">↗</span>
-                  </Link>{" "}
-                  to see what's included.
+                  completely free.
                 </p>
               </div>
             </div>
@@ -609,6 +641,16 @@ const CheckoutPageContent = () => {
 };
 
 const CheckoutPage = () => {
+  const { loading } = useSession();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="h-6 w-6 animate-spin text-[#08AA08]" />
+      </div>
+    );
+  }
+
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <CheckoutPageContent />

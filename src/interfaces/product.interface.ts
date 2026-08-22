@@ -1,4 +1,5 @@
 import { CartItem } from "@/lib/stores/cart.store";
+import type { PackageConstituent } from "./package.interface";
 
 export interface IImage {
   url: string;
@@ -33,6 +34,7 @@ export interface Product {
   datasheet: DatasheetRow[];
   showDatasheet: boolean;
   productCode?: string;
+  constituents?: PackageConstituent[];
 }
 
 export interface CreateProductInput {

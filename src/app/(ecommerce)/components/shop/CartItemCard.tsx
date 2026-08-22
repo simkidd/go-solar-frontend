@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { SheetClose } from "@/components/ui/sheet";
 
 const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
   const { increaseQuantity, decreaseQuantity, removeItem } = useCartStore();
@@ -29,11 +30,20 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
         <div className="flex-1 flex flex-col justify-between min-w-0">
           
           <div className="space-y-0.5">
-            <Link href={`/products/${cartItem?.product?.slug}`} className="group">
-              <h3 className="text-xs font-extrabold text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                {cartItem.product.name}
-              </h3>
-            </Link>
+            <SheetClose asChild>
+              <Link
+                href={
+                  !cartItem?.product?.category
+                    ? `/packages/${cartItem?.product?.slug}`
+                    : `/products/${cartItem?.product?.slug}`
+                }
+                className="group"
+              >
+                <h3 className="text-xs font-extrabold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                  {cartItem.product.name}
+                </h3>
+              </Link>
+            </SheetClose>
             <p className="text-[10px] text-muted-foreground line-clamp-1">
               {cartItem.product.description}
             </p>
@@ -53,31 +63,37 @@ const CartItemCard: React.FC<{ cartItem: CartItem }> = ({ cartItem }) => {
             <div className="flex items-center gap-2">
               
               {/* Quantity actions */}
-              <div className="flex items-center gap-1.5 border border-border/80 p-0.5 rounded-lg bg-card select-none">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => cartItem.qty > 1 && decreaseQuantity(cartItem?.product?._id)}
-                  disabled={cartItem?.qty <= 1}
-                  className="h-6 w-6 rounded-md hover:bg-muted"
-                >
-                  <Minus className="h-2.5 w-2.5" />
-                </Button>
-                <span className="text-[11px] font-black text-foreground px-1">{cartItem?.qty}</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    if (cartItem.qty < cartItem.product.quantityInStock) {
-                      increaseQuantity(cartItem?.product?._id);
-                    }
-                  }}
-                  disabled={cartItem.qty >= cartItem.product.quantityInStock}
-                  className="h-6 w-6 rounded-md hover:bg-muted"
-                >
-                  <Plus className="h-2.5 w-2.5" />
-                </Button>
-              </div>
+              {!cartItem?.product?.category ? (
+                <span className="text-[11px] font-black text-muted-foreground select-none px-2.5 py-1 bg-muted/40 border border-border/40 rounded-lg">
+                  Qty: 1
+                </span>
+              ) : (
+                <div className="flex items-center gap-1.5 border border-border/80 p-0.5 rounded-lg bg-card select-none">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => cartItem.qty > 1 && decreaseQuantity(cartItem?.product?._id)}
+                    disabled={cartItem?.qty <= 1}
+                    className="h-6 w-6 rounded-md hover:bg-muted"
+                  >
+                    <Minus className="h-2.5 w-2.5" />
+                  </Button>
+                  <span className="text-[11px] font-black text-foreground px-1">{cartItem?.qty}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      if (cartItem.qty < cartItem.product.quantityInStock) {
+                        increaseQuantity(cartItem?.product?._id);
+                      }
+                    }}
+                    disabled={cartItem.qty >= cartItem.product.quantityInStock}
+                    className="h-6 w-6 rounded-md hover:bg-muted"
+                  >
+                    <Plus className="h-2.5 w-2.5" />
+                  </Button>
+                </div>
+              )}
 
               {/* Remove Action */}
               <button

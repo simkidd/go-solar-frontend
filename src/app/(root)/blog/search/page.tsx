@@ -2,7 +2,7 @@ import PageHeader from "@/components/PageHeader";
 import PostsList from "@/components/PostsList";
 import Search from "@/components/Search";
 import { Post } from "@/interfaces/post.interface";
-import { getPosts } from "@/lib/data";
+import { getPosts } from "@/lib/api/posts.api";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 

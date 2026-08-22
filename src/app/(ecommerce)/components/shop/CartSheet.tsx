@@ -99,7 +99,7 @@ export const CartSheet = () => {
               </div>
               <div className="flex justify-between items-center text-xs font-semibold">
                 <span className="text-muted-foreground uppercase tracking-wider">
-                  Tax & Delivery
+                  Delivery Fee
                 </span>
                 <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">
                   At Checkout

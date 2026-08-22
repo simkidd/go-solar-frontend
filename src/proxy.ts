@@ -6,11 +6,7 @@ import { User } from "./interfaces/auth.interface";
 // Specify protected and public routes
 const adminRoutes = ["/dashboard", "/admin"];
 const publicRoutes = ["/shop", "/products", "/blog", "/"];
-const privateRoutes = [
-  "/account/profile",
-  "/account/orders",
-  "/orders/success",
-];
+const privateRoutes = ["/account/profile", "/account/orders"];
 const authRoutes = [
   "/auth/login",
   "/auth/register",
@@ -18,7 +14,7 @@ const authRoutes = [
   "/auth/forgot-password",
 ];
 
-const checkoutRoutes = ["/checkout"];
+const checkoutRoutes = ["/checkout", "/checkout/success"];
 
 // Utility function to check user roles
 const isAdminUser = (user: User | null): boolean => {

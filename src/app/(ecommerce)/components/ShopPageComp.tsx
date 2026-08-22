@@ -14,6 +14,8 @@ import { Zap, ShieldCheck, Truck, Headphones, ArrowRight, CreditCard, RotateCcw 
 import Link from "next/link";
 import ProductCard from "./shop/ProductCard";
 import { Button } from "@/components/ui/button";
+import { AlertCircle, RefreshCcw } from "lucide-react";
+
 
 const ShopFeaturesBar = () => (
   <section className="w-full py-8 bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-border/80 select-none">
@@ -97,11 +99,13 @@ const ShopPageComp = () => {
     products: allProducts,
     isError: productsError,
     isLoading: productsLoading,
+    refetch: refetchProducts,
   } = useProducts();
   const {
     categories: allCategories,
     isLoading: categoriesLoading,
     isError: categoriesError,
+    refetch: refetchCategories,
   } = useCategories();
 
   const publishedProducts = useMemo(
@@ -149,10 +153,40 @@ const ShopPageComp = () => {
     return (
       <section className="w-full font-inter bg-background text-foreground">
         <ShopFeaturesBar />
-        <div className="container mx-auto px-4 py-10">
-          <p className="text-center text-rose-500 font-bold">
-            Error loading shop data. Please try again later.
-          </p>
+        <div className="w-full flex items-center justify-center py-20 px-4 font-inter">
+          <div className="flex flex-col items-center max-w-sm text-center space-y-4">
+            <AlertCircle className="w-8 h-8 text-zinc-400 dark:text-zinc-500 stroke-[1.5]" />
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">
+                Failed to load shop data
+              </h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Please check your connection and try again.
+              </p>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  refetchCategories();
+                  refetchProducts();
+                }}
+                className="text-xs rounded-xl"
+              >
+                <RefreshCcw className="w-3.5 h-3.5" />
+                Retry
+              </Button>
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="text-xs rounded-xl text-zinc-550 hover:text-zinc-950 dark:hover:text-zinc-50"
+              >
+                <Link href="/">Home</Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
     );

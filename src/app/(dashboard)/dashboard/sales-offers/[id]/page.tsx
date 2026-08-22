@@ -1,6 +1,6 @@
 import OfferProducts from "@/app/(dashboard)/components/OfferProducts";
 import { Offer } from "@/interfaces/product.interface";
-import { getOffer, getOffers } from "@/lib/data";
+import { getOffer, getOffers } from "@/lib/api/offers.api";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
@@ -15,7 +15,7 @@ export const generateMetadata = async ({
   params,
 }: IOffer): Promise<Metadata> => {
   const { id } = await params;
-  const offer: Offer = await getOffer(id);
+  const offer = await getOffer(id);
 
   return {
     title: offer?.name,
@@ -32,12 +32,13 @@ export const generateStaticParams = async () => {
     }));
   } catch (error) {
     console.log(error);
+    return [];
   }
 };
 
 const SingleOfferPage = async ({ params }: IOffer) => {
   const { id } = await params;
-  const offer: Offer = await getOffer(id);
+  const offer = await getOffer(id);
 
   if (!offer) {
     notFound();

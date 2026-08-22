@@ -25,8 +25,8 @@ import {
   getProductById,
   deleteProduct,
   updateProduct,
-} from "@/lib/api/products";
-import { addToOffer, getOffers } from "@/lib/api/offers";
+} from "@/lib/api/products.api";
+import { addToOffer, getOffers } from "@/lib/api/offers.api";
 import { formatCurrency } from "@/utils/helpers";
 import { PRODUCT_KEYS } from "@/hooks/queries/useProductsQuery";
 import { Button } from "@/components/ui/button";
@@ -67,7 +67,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
     isLoading,
     isError,
     refetch,
-  } = useQuery<Product>({
+  } = useQuery<Product | null>({
     queryKey: ["getProductById", id],
     queryFn: async () => getProductById(id),
   });
@@ -135,23 +135,25 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
     notFound();
   }
 
+  const typedProduct = product as Product;
+
   const calculateNewPrice = (price: number, percentageOff: number) => {
     return price - (price * percentageOff) / 100;
   };
 
   const basePrice =
-    product?.discountPrice && product.discountPrice > 0
-      ? product.discountPrice
-      : product?.price;
+    typedProduct?.discountPrice && typedProduct.discountPrice > 0
+      ? typedProduct.discountPrice
+      : typedProduct?.price;
 
   const newPrice =
-    product?.currentOffer?.isActive &&
-    product?.currentOffer?.percentageOff !== undefined
-      ? calculateNewPrice(basePrice, product?.currentOffer?.percentageOff)
+    typedProduct?.currentOffer?.isActive &&
+    typedProduct?.currentOffer?.percentageOff !== undefined
+      ? calculateNewPrice(basePrice, typedProduct?.currentOffer?.percentageOff)
       : basePrice;
 
   const hasOffer =
-    product?.currentOffer?.isActive && product?.currentOffer?.percentageOff;
+    typedProduct?.currentOffer?.isActive && typedProduct?.currentOffer?.percentageOff;
 
   return (
     <div className="w-full font-inter space-y-6">
@@ -169,7 +171,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
       >
         <UpdateProductForm
           onClose={() => setIsEditOpen(false)}
-          product={product}
+          product={typedProduct}
         />
       </AppModal>
 
@@ -178,12 +180,12 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
         <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
           <DialogHeader>
             <DialogTitle className="text-foreground font-extrabold text-base">
-              {product?.isPublished ? "Draft Product" : "Publish Product"}
+              {typedProduct?.isPublished ? "Draft Product" : "Publish Product"}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed font-semibold">
               Are you sure you want to change the status of{" "}
-              <b>{product?.name}</b> to{" "}
-              <b>{product?.isPublished ? "Draft" : "Published"}</b>? This will
+              <b>{typedProduct?.name}</b> to{" "}
+              <b>{typedProduct?.isPublished ? "Draft" : "Published"}</b>? This will
               immediately toggle its storefront visibility.
             </DialogDescription>
           </DialogHeader>
@@ -201,15 +203,15 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
               disabled={togglePublishMutation.isPending}
               onClick={() => {
                 togglePublishMutation.mutate({
-                  productId: product._id,
-                  isPublished: !product.isPublished,
+                  productId: typedProduct._id,
+                  isPublished: !typedProduct.isPublished,
                 });
               }}
               className="bg-primary hover:bg-primary/90 text-white text-xs font-semibold h-10 px-5 rounded-xl cursor-pointer"
             >
               {togglePublishMutation.isPending
                 ? "Updating..."
-                : `Yes, ${product?.isPublished ? "Draft" : "Publish"}`}
+                : `Yes, ${typedProduct?.isPublished ? "Draft" : "Publish"}`}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -223,7 +225,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
               Delete Product
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed font-semibold">
-              Are you sure you want to delete <b>{product?.name}</b>? This
+              Are you sure you want to delete <b>{typedProduct?.name}</b>? This
               action cannot be undone and will permanently remove this item from
               catalog databases.
             </DialogDescription>
@@ -241,7 +243,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
               type="button"
               disabled={deleteProductMutation.isPending}
               onClick={() => {
-                deleteProductMutation.mutate(product._id);
+                deleteProductMutation.mutate(typedProduct._id);
               }}
               className="bg-red-500 hover:bg-red-600 text-white text-xs font-semibold h-10 px-5 rounded-xl cursor-pointer"
             >
@@ -303,7 +305,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
               onClick={() => {
                 addToOfferMutation.mutate({
                   offer: selectedOffer,
-                  products: [product._id],
+                  products: [typedProduct._id],
                 });
               }}
               className="bg-primary hover:bg-primary/90 text-white text-xs font-semibold h-10 px-5 rounded-xl cursor-pointer"
@@ -338,9 +340,9 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
             <h2 className="text-xl font-extrabold text-foreground tracking-tight">
-              {product?.name}
+              {typedProduct?.name}
             </h2>
-            {product?.isPublished ? (
+            {typedProduct?.isPublished ? (
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                 Published
               </span>
@@ -353,7 +355,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
           <p className="text-xs text-muted-foreground font-semibold">
             Product Code:{" "}
             <span className="font-mono text-[10px] select-all bg-muted/65 px-1.5 py-0.5 rounded text-foreground uppercase">
-              {product?.productCode || `GSL-${product?._id.slice(-6).toUpperCase()}`}
+              {typedProduct?.productCode || `GSL-${typedProduct?._id.slice(-6).toUpperCase()}`}
             </span>
           </p>
         </div>
@@ -365,7 +367,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
             onClick={() => setIsPublishOpen(true)}
             className="text-xs font-semibold h-9 px-4 rounded-xl border-border text-muted-foreground hover:text-foreground cursor-pointer hover:bg-muted/30"
           >
-            {product?.isPublished ? "Set as Draft" : "Publish"}
+            {typedProduct?.isPublished ? "Set as Draft" : "Publish"}
           </Button>
 
           <Button
@@ -409,7 +411,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
             </div>
 
             <div className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line select-text">
-              {product?.description ||
+              {typedProduct?.description ||
                 "No description provided for this product."}
             </div>
           </div>
@@ -425,13 +427,13 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                   Storefront gallery thumbnails
                 </p>
               </div>
-              <UpdateProductImage product={product} />
+              <UpdateProductImage product={typedProduct} />
             </div>
 
             <div className="w-full pt-2">
-              {product?.images && product.images.length > 0 ? (
+              {typedProduct?.images && typedProduct.images.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {product.images.map((img) => (
+                  {typedProduct.images.map((img) => (
                     <div
                       key={img.public_id}
                       className="relative aspect-square rounded-xl overflow-hidden border border-border/60 bg-muted/20"
@@ -456,9 +458,9 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
           </div>
 
           {/* Card 3: Technical Specifications Datasheet */}
-          {product?.showDatasheet &&
-            product?.datasheet &&
-            product.datasheet.length > 0 && (
+          {typedProduct?.showDatasheet &&
+            typedProduct?.datasheet &&
+            typedProduct.datasheet.length > 0 && (
               <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
                 <div className="border-b border-border/60 pb-3 select-none">
                   <h3 className="text-sm font-extrabold text-foreground tracking-tight">
@@ -470,7 +472,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                 </div>
 
                 <div className="border border-border/60 rounded-xl overflow-hidden divide-y divide-border/50 select-text">
-                  {product.datasheet.map((spec, idx) => (
+                  {typedProduct.datasheet.map((spec, idx) => (
                     <div
                       key={idx}
                       className="grid grid-cols-3 text-xs p-3.5 hover:bg-muted/10 transition-colors"
@@ -500,33 +502,33 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
             </div>
 
             <div className="pt-1">
-              {product?.quantityInStock > 0 ? (
+              {typedProduct?.quantityInStock > 0 ? (
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-xs font-semibold select-none">
                     <span
                       className={
-                        product.quantityInStock < 10
+                        typedProduct.quantityInStock < 10
                           ? "text-amber-500 font-bold"
                           : "text-emerald-500 font-bold"
                       }
                     >
-                      {product.quantityInStock < 10
+                      {typedProduct.quantityInStock < 10
                         ? "Low stock threshold"
                         : "In stock"}
                     </span>
                     <span className="font-bold text-foreground">
-                      {product.quantityInStock} units available
+                      {typedProduct.quantityInStock} units available
                     </span>
                   </div>
                   <div className="h-2 w-full bg-muted rounded-full overflow-hidden select-none">
                     <div
                       className={`h-full rounded-full transition-all duration-300 ${
-                        product.quantityInStock < 10
+                        typedProduct.quantityInStock < 10
                           ? "bg-amber-500"
                           : "bg-emerald-500"
                       }`}
                       style={{
-                        width: `${Math.min((product.quantityInStock / 60) * 100, 100)}%`,
+                        width: `${Math.min((typedProduct.quantityInStock / 60) * 100, 100)}%`,
                       }}
                     />
                   </div>
@@ -557,9 +559,9 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                   <span className="font-black text-2xl text-primary">
                     {formatCurrency(newPrice, "NGN")}
                   </span>
-                  {newPrice < product.price && (
+                  {newPrice < typedProduct.price && (
                     <span className="line-through text-muted-foreground/60 text-sm font-semibold">
-                      {formatCurrency(product.price, "NGN")}
+                      {formatCurrency(typedProduct.price, "NGN")}
                     </span>
                   )}
                 </div>
@@ -571,16 +573,16 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                     Regular Retail Price:
                   </span>
                   <span className="font-bold text-foreground">
-                    {formatCurrency(product.price, "NGN")}
+                    {formatCurrency(typedProduct.price, "NGN")}
                   </span>
                 </div>
-                {product.discountPrice && product.discountPrice > 0 ? (
+                {typedProduct.discountPrice && typedProduct.discountPrice > 0 ? (
                   <div className="flex justify-between items-center py-0.5">
                     <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
                       Base Discount Price:
                     </span>
                     <span className="font-bold text-foreground">
-                      {formatCurrency(product.discountPrice, "NGN")}
+                      {formatCurrency(typedProduct.discountPrice, "NGN")}
                     </span>
                   </div>
                 ) : null}
@@ -591,12 +593,12 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                   <div className="flex items-center gap-1">
                     <Sparkles className="h-3 w-3 text-amber-500" />
                     <p className="text-[10px] font-black uppercase tracking-wider">
-                      {product?.currentOffer?.name}
+                      {typedProduct?.currentOffer?.name}
                     </p>
                   </div>
                   <p className="text-[10px] font-semibold text-amber-600">
                     Active discount campaign applied (
-                    {product?.currentOffer?.percentageOff}% off)
+                    {typedProduct?.currentOffer?.percentageOff}% off)
                   </p>
                 </div>
               )}
@@ -618,7 +620,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                   Shipping tier:
                 </span>
                 <span className="font-bold text-foreground capitalize">
-                  {product?.shippingClass?.replace("_", " ") || "Standard"}
+                  {typedProduct?.shippingClass?.replace("_", " ") || "Standard"}
                 </span>
               </div>
               <div className="flex justify-between items-center py-0.5">
@@ -627,7 +629,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                 </span>
                 <span className="font-bold text-foreground">
                   {formatCurrency(
-                    product?.withinLocationDeliveryFee || 0,
+                    typedProduct?.withinLocationDeliveryFee || 0,
                     "NGN",
                   )}
                 </span>
@@ -638,18 +640,18 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                 </span>
                 <span className="font-bold text-foreground">
                   {formatCurrency(
-                    product?.outsideLocationDeliveryFee || 0,
+                    typedProduct?.outsideLocationDeliveryFee || 0,
                     "NGN",
                   )}
                 </span>
               </div>
 
-              {product?.additionalInfo && (
+              {typedProduct?.additionalInfo && (
                 <div className="border-t border-border/60 pt-3 mt-1 text-[10px] text-muted-foreground/80 leading-relaxed font-semibold">
                   <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
                     Additional details:
                   </p>
-                  {product.additionalInfo}
+                  {typedProduct.additionalInfo}
                 </div>
               )}
             </div>
@@ -670,7 +672,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                   Category shelf:
                 </span>
                 <span className="font-bold text-foreground">
-                  {product?.category?.name || "Uncategorized"}
+                  {typedProduct?.category?.name || "Uncategorized"}
                 </span>
               </div>
               <div className="flex justify-between items-center py-0.5">
@@ -678,7 +680,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                   Brand vendor:
                 </span>
                 <span className="font-bold text-foreground">
-                  {product?.brand || "Generic"}
+                  {typedProduct?.brand || "Generic"}
                 </span>
               </div>
             </div>

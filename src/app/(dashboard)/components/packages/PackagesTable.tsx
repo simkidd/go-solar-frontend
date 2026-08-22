@@ -23,7 +23,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import AppModal from "@/components/AppModal";
@@ -424,7 +423,7 @@ export const PackagesTable = () => {
                   key={pkg._id}
                   className="border-b border-border/60 hover:bg-muted/15 transition-colors"
                 >
-                  {/* 1. Package Name */}
+                  {/* Package Name */}
                   <TableCell className="py-3.5 text-xs text-foreground max-w-xs">
                     <div className="space-y-1">
                       <span className="font-extrabold text-foreground block">{pkg.name}</span>
@@ -488,7 +487,7 @@ export const PackagesTable = () => {
                     {formatCurrency(pkg.price, "NGN")}
                   </TableCell>
 
-                  {/* 6. Actions */}
+                  {/* Actions */}
                   <TableCell className="py-3.5 text-xs select-none">
                     <div className="flex justify-end">
                       <DropdownMenu>
@@ -501,14 +500,14 @@ export const PackagesTable = () => {
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-44 rounded-xl bg-card border border-border/80 font-semibold text-xs">
-                          <DropdownMenuItem asChild className="cursor-pointer">
+                        <DropdownMenuContent align="end" className="w-40 rounded-xl bg-card border border-border/80">
+                          <DropdownMenuItem asChild className="cursor-pointer text-xs font-bold">
                             <Link
                               href={`/packages/${pkg.slug}`}
                               target="_blank"
-                              className="flex items-center gap-2"
+                              className="flex items-center"
                             >
-                              <ExternalLink className="h-4 w-4" />
+                              <ExternalLink className="mr-2 h-4 w-4 text-muted-foreground" />
                               <span>Preview Store</span>
                             </Link>
                           </DropdownMenuItem>
@@ -517,9 +516,9 @@ export const PackagesTable = () => {
                               setActivePackage(pkg);
                               setIsViewOpen(true);
                             }}
-                            className="cursor-pointer"
+                            className="cursor-pointer text-xs font-bold"
                           >
-                            <Eye className="h-4 w-4 mr-2" />
+                            <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
                             <span>View Specs</span>
                           </DropdownMenuItem>
                           <DropdownMenuItem
@@ -527,21 +526,20 @@ export const PackagesTable = () => {
                               setActivePackage(pkg);
                               setIsEditOpen(true);
                             }}
-                            className="cursor-pointer"
+                            className="cursor-pointer text-xs font-bold"
                           >
-                            <Pencil className="h-4 w-4 mr-2 text-primary" />
+                            <Pencil className="mr-2 h-4 w-4 text-primary" />
                             <span>Edit Package</span>
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => {
                               setActivePackage(pkg);
                               setIsDeleteOpen(true);
                             }}
-                            className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20"
+                            className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20 text-xs font-bold"
                           >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            <span>Delete Package</span>
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            <span>Delete</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

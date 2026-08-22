@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import AppModal from "@/components/AppModal";
 import { AddOfferProductDTO, Product } from "@/interfaces/product.interface";
 import { ErrorResponse } from "@/interfaces/types";
-import { addToOffer, getOffers } from "@/lib/api/offers";
+import { addToOffer, getOffers } from "@/lib/api/offers.api";
 import { Button } from "@/components/ui/button";
 import {
   Select,

@@ -1,6 +1,7 @@
 import { Post } from "@/interfaces/post.interface";
 import { Product } from "@/interfaces/product.interface";
-import { getPosts, getProducts, getPubilshedProducts } from "@/lib/data";
+import { getPosts } from "@/lib/api/posts.api";
+import { getPubilshedProducts } from "@/lib/api/products.api";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

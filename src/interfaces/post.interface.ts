@@ -10,6 +10,12 @@ export interface Post {
   readTime?: number;
   createdAt: string;
   updatedAt: string;
+  isPublished?: boolean;
+  createdBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
 }
 
 export interface CreatePostInput {

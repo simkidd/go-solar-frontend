@@ -9,6 +9,8 @@ import {
   FilterIcon,
   ChevronLeft,
   ChevronRight,
+  AlertCircle,
+  RefreshCcw,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import FilterComp from "./FilterComp";
@@ -32,6 +34,7 @@ const ProductsList = ({
     categories: allCategories,
     isLoading: categoriesLoading,
     isError: categoriesError,
+    refetch: refetchCategories,
   } = useCategories();
 
   const { data: serverBanners = [] } = useActiveBannersQuery();
@@ -41,10 +44,6 @@ const ProductsList = ({
     () => allCategories.find((cat) => cat.slug === categorySlug),
     [allCategories, categorySlug],
   );
-
-  const searchQuery = useMemo(() => {
-    return query || searchParams.get("q") || "";
-  }, [query, searchParams]);
 
   const itemPerPage = 20;
 
@@ -76,22 +75,21 @@ const ProductsList = ({
     setTempSelectedBrands(activeBrands);
   }, [activeMinPrice, activeMaxPrice, activeBrands]);
 
-  const activeBrandsString = searchParams.get("brands") || "";
-
   // Fetch published products filtered, sorted, and paginated from the backend
   const {
     data: productsRes,
     isLoading: productsLoading,
     isError: productsError,
+    refetch: refetchProducts,
   } = usePublishedProductsQuery({
     page,
     limit: itemPerPage,
-    q: searchQuery,
-    category: category?._id || "All",
-    sort: activeSort,
-    minPrice: activeMinPrice,
-    maxPrice: activeMaxPrice,
-    brands: activeBrandsString,
+    q: searchParams.get("q") || query || undefined,
+    category: category?._id || undefined,
+    sort: searchParams.get("sort") || undefined,
+    minPrice: searchParams.get("minPrice") ? activeMinPrice : undefined,
+    maxPrice: searchParams.get("maxPrice") ? activeMaxPrice : undefined,
+    brands: searchParams.get("brands") || undefined,
   });
 
   const publishedProducts = productsRes?.products || [];
@@ -146,7 +144,7 @@ const ProductsList = ({
   );
   const promoBanner = useMemo(() => {
     return serverBanners.find(
-      (b: any) => b.placement === "storefront_promo_strip"
+      (b: any) => b.placement === "storefront_promo_strip",
     );
   }, [serverBanners]);
 
@@ -196,8 +194,40 @@ const ProductsList = ({
 
   if (productsError || categoriesError) {
     return (
-      <div className="text-center font-bold text-rose-500 py-12 font-inter">
-        Error loading products. Please try again later.
+      <div className="w-full flex items-center justify-center py-16 px-4 font-inter">
+        <div className="flex flex-col items-center max-w-sm text-center space-y-4">
+          <AlertCircle className="w-8 h-8 text-zinc-400 dark:text-zinc-500 stroke-[1.5]" />
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">
+              Failed to load products
+            </h3>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              Please check your connection and try again.
+            </p>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                refetchCategories();
+                refetchProducts();
+              }}
+              className="text-xs rounded-xl"
+            >
+              <RefreshCcw className="w-3.5 h-3.5" />
+              Retry
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="text-xs rounded-xl text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-50"
+            >
+              <Link href="/">Home</Link>
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
