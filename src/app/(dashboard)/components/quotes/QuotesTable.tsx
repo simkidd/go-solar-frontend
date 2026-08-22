@@ -3,6 +3,7 @@ import { formatCurrency, formatDate } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -52,6 +53,13 @@ import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
 import AppModal from "@/components/AppModal";
 
+import {
+  useCreateQuoteMutation,
+  useUpdateQuoteStatusMutation,
+  useDeleteQuoteMutation,
+} from "@/hooks/mutations/useQuoteMutations";
+import { useQuotesQuery } from "@/hooks/queries/useQuotesQuery";
+
 export interface QuoteLead {
   id: string;
   name: string;
@@ -77,102 +85,56 @@ export interface QuoteLead {
   notes?: string;
 }
 
-const INITIAL_QUOTES: QuoteLead[] = [
-  {
-    id: "lead-101",
-    name: "Dr. Emmanuel Okoro",
-    email: "e.okoro@medhaven.ng",
-    phone: "+234 803 456 7890",
-    location: "Port Harcourt, Rivers State",
-    dailyKwh: 14.8,
-    peakWatts: 3800,
-    recommendedInverter: "5.0 kVA Hybrid",
-    recommendedBatteryKwh: 10.0,
-    recommendedSolarWatts: 3200,
-    estimatedPrice: 3850000,
-    status: "New Lead",
-    source: "Energy Calculator",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    appliances: [
-      { name: "Inverter AC (1.5HP)", qty: 2, watts: 1100, hours: 6 },
-      { name: "Double Door Refrigerator", qty: 1, watts: 250, hours: 24 },
-      { name: "Ceiling Fans", qty: 6, watts: 70, hours: 12 },
-      { name: "LED Bulbs", qty: 15, watts: 12, hours: 10 },
-      { name: "Smart TVs (55 inch)", qty: 2, watts: 120, hours: 8 },
-    ],
-  },
-  {
-    id: "lead-102",
-    name: "Amina Bello",
-    email: "amina.bello@techpoint.io",
-    phone: "+234 812 998 3344",
-    location: "Lekki Phase 1, Lagos",
-    dailyKwh: 24.5,
-    peakWatts: 6200,
-    recommendedInverter: "7.5 kVA Hybrid",
-    recommendedBatteryKwh: 15.0,
-    recommendedSolarWatts: 4800,
-    estimatedPrice: 5600000,
-    status: "Contacted",
-    source: "Energy Calculator",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    appliances: [
-      { name: "Inverter ACs (2.0HP)", qty: 3, watts: 1500, hours: 8 },
-      { name: "Deep Freezer", qty: 1, watts: 300, hours: 24 },
-      { name: "Water Pumping Machine", qty: 1, watts: 1200, hours: 1.5 },
-      { name: "Office Workstations", qty: 5, watts: 150, hours: 9 },
-    ],
-  },
-  {
-    id: "lead-103",
-    name: "Engr. Tunde Adeleke",
-    email: "tunde@adeleke-logistics.com",
-    phone: "+234 905 112 4455",
-    location: "Ikeja, Lagos",
-    dailyKwh: 8.2,
-    peakWatts: 2100,
-    recommendedInverter: "3.5 kVA Hybrid",
-    recommendedBatteryKwh: 5.0,
-    recommendedSolarWatts: 1600,
-    estimatedPrice: 2250000,
-    status: "Quote Sent",
-    source: "Contact Form",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-    appliances: [
-      { name: "Standing Fans", qty: 4, watts: 65, hours: 10 },
-      { name: "Refrigerator", qty: 1, watts: 200, hours: 24 },
-      { name: "LED Lighting", qty: 10, watts: 15, hours: 8 },
-      { name: "Laptops & Router", qty: 3, watts: 80, hours: 12 },
-    ],
-  },
-  {
-    id: "lead-104",
-    name: "Chief Victor Nwosu",
-    email: "victor.nwosu@transcorp.ng",
-    phone: "+234 802 334 5566",
-    location: "New Owerri, Imo State",
-    dailyKwh: 36.0,
-    peakWatts: 9500,
-    recommendedInverter: "10.0 kVA Hybrid",
-    recommendedBatteryKwh: 20.0,
-    recommendedSolarWatts: 7200,
-    estimatedPrice: 8400000,
-    status: "Site Inspected",
-    source: "Phone Inquiry",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(),
-    appliances: [
-      { name: "Central AC System", qty: 1, watts: 4500, hours: 10 },
-      { name: "Deep Freezers", qty: 2, watts: 350, hours: 24 },
-      { name: "Borehole Pump", qty: 1, watts: 2200, hours: 2 },
-      {
-        name: "Full House Lighting & Security Cameras",
-        qty: 1,
-        watts: 600,
-        hours: 24,
-      },
-    ],
-  },
-];
+const mapBackendQuote = (q: any): QuoteLead => {
+  let source: QuoteLead["source"] = "Energy Calculator";
+  if (q.notes?.includes("Contact Form")) {
+    source = "Contact Form";
+  } else if (q.notes?.includes("Phone Inquiry")) {
+    source = "Phone Inquiry";
+  }
+
+  let recommendedBatteryKwh = 10;
+  const batMatch = q.recommendedBattery?.match(/(\d+(\.\d+)?)\s*kWh/i);
+  if (batMatch) {
+    recommendedBatteryKwh = parseFloat(batMatch[1]);
+  }
+
+  let recommendedSolarWatts = 4500;
+  const pvMatch = q.recommendedPv?.match(/(\d+(\.\d+)?)\s*(kWp|kW|W)/i);
+  if (pvMatch) {
+    const value = parseFloat(pvMatch[1]);
+    recommendedSolarWatts = pvMatch[3].toLowerCase() === "w" ? value : Math.round(value * 1000);
+  }
+
+  let estimatedPrice = 2500000;
+  if (q.dailyKwh) {
+    estimatedPrice = Math.round(q.dailyKwh * 250000);
+  }
+
+  return {
+    id: q._id,
+    name: q.fullName,
+    email: q.email,
+    phone: q.phoneNumber,
+    location: q.address || `${q.city}, ${q.state}`,
+    dailyKwh: q.dailyKwh,
+    peakWatts: q.peakWatts,
+    recommendedInverter: q.recommendedInverter,
+    recommendedBatteryKwh: recommendedBatteryKwh,
+    recommendedSolarWatts: recommendedSolarWatts,
+    estimatedPrice: estimatedPrice,
+    status: q.status || "New Lead",
+    source: source,
+    createdAt: q.createdAt,
+    appliances: (q.appliances || []).map((app: any) => ({
+      name: app.name,
+      qty: app.quantity,
+      watts: app.powerWatts,
+      hours: app.hoursPerDay,
+    })),
+    notes: q.notes || "",
+  };
+};
 
 const getStatusBadge = (status: QuoteLead["status"]) => {
   switch (status) {
@@ -192,7 +154,17 @@ const getStatusBadge = (status: QuoteLead["status"]) => {
 };
 
 export const QuotesTable = () => {
-  const [quotes, setQuotes] = useState<QuoteLead[]>(INITIAL_QUOTES);
+  const { data: quotesData = [], isLoading } = useQuotesQuery();
+  const createMutation = useCreateQuoteMutation({
+    onSuccess: () => setIsCreateOpen(false),
+  });
+  const updateQuoteStatusMutation = useUpdateQuoteStatusMutation();
+  const deleteMutation = useDeleteQuoteMutation();
+
+  const quotes = useMemo(() => {
+    return quotesData.map(mapBackendQuote);
+  }, [quotesData]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
@@ -224,34 +196,29 @@ export const QuotesTable = () => {
   });
 
   const handleSaveManual = (values: any) => {
-    const newLead: QuoteLead = {
-      id: `lead-${Date.now()}`,
-      name: values.name,
+    createMutation.mutate({
+      fullName: values.name,
       email: values.email || "customer@gosolar.ng",
-      phone: values.phone,
-      location: values.location,
+      phoneNumber: values.phone,
+      state: "Rivers",
+      city: values.location,
+      address: values.location,
       dailyKwh: Number(values.dailyKwh),
       peakWatts: Number(values.peakWatts),
       recommendedInverter: values.recommendedInverter,
-      recommendedBatteryKwh: Number((values.dailyKwh * 0.7).toFixed(1)),
-      recommendedSolarWatts: Number((values.dailyKwh * 250).toFixed(0)),
-      estimatedPrice: Number(values.estimatedPrice),
-      status: "New Lead",
-      source: values.source,
-      createdAt: new Date().toISOString(),
+      recommendedBattery: `${(values.dailyKwh * 0.7).toFixed(1)} kWh Battery`,
+      recommendedPv: `${(values.dailyKwh * 250).toFixed(0)} W Solar PV`,
       appliances: [
-        { name: "General Lighting & Fans", qty: 10, watts: 80, hours: 12 },
-        { name: "Refrigeration Unit", qty: 1, watts: 250, hours: 24 },
+        { name: "General Lighting & Fans", quantity: 10, powerWatts: 80, hoursPerDay: 12 },
+        { name: "Refrigeration Unit", quantity: 1, powerWatts: 250, hoursPerDay: 24 },
       ],
-    };
-
-    setQuotes((prev) => [newLead, ...prev]);
-    setIsCreateOpen(false);
-    toast.success("New quote lead logged!");
+      status: "New Lead",
+      notes: `[Manual Lead logged from Dashboard] Source: ${values.source}`,
+    });
   };
 
   const filteredQuotes = useMemo(() => {
-    return quotes.filter((q) => {
+    return quotes.filter((q: QuoteLead) => {
       const matchesSearch =
         q.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         q.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -265,17 +232,16 @@ export const QuotesTable = () => {
   }, [quotes, searchTerm, statusFilter]);
 
   const handleUpdateStatus = (id: string, newStatus: QuoteLead["status"]) => {
-    setQuotes((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, status: newStatus } : q)),
-    );
-    toast.success(`Lead status updated to ${newStatus}`);
+    updateQuoteStatusMutation.mutate({ id, status: newStatus });
   };
 
   const handleDelete = () => {
     if (!activeQuote) return;
-    setQuotes((prev) => prev.filter((q) => q.id !== activeQuote.id));
-    setIsDeleteOpen(false);
-    toast.success("Quote request removed");
+    deleteMutation.mutate(activeQuote.id, {
+      onSuccess: () => {
+        setIsDeleteOpen(false);
+      },
+    });
   };
 
   return (
@@ -423,7 +389,40 @@ export const QuotesTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredQuotes.length === 0 ? (
+            {isLoading ? (
+              [...Array(3)].map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell className="px-4 py-3.5">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-40" />
+                      <Skeleton className="h-3 w-48" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-3 w-16" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-2">
+                      <Skeleton className="h-4.5 w-24 rounded-full" />
+                      <Skeleton className="h-3 w-36" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-28" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-6 w-20 rounded-full" />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Skeleton className="h-8 w-8 rounded-full ml-auto" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : filteredQuotes.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -433,7 +432,7 @@ export const QuotesTable = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredQuotes.map((lead) => (
+              filteredQuotes.map((lead: QuoteLead) => (
                 <TableRow
                   key={lead.id}
                   className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0"

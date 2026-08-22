@@ -615,15 +615,6 @@ const CheckoutPageContent = () => {
                   {loading ? "Processing Order..." : "Continue"}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
-
-                <Link href="/energy-calculator" className="w-full block">
-                  <Button
-                    variant="outline"
-                    className="w-full border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold rounded-xl h-11 text-xs"
-                  >
-                    Get Quote
-                  </Button>
-                </Link>
               </div>
 
               {/* Disclaimer block */}
@@ -638,14 +629,7 @@ const CheckoutPageContent = () => {
                   Get this product as part of a complete solar setup that
                   includes panels, batteries, and expert installation all
                   optimized for performance and savings. Installation is
-                  completely free.{" "}
-                  <Link
-                    href="/energy-calculator"
-                    className="text-zinc-950 dark:text-white font-bold hover:underline inline-flex items-center gap-0.5"
-                  >
-                    Get Quote <span className="text-[8px]">↗</span>
-                  </Link>{" "}
-                  to see what's included.
+                  completely free.
                 </p>
               </div>
             </div>

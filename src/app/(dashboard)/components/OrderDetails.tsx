@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Order, TrackingStatus } from "@/interfaces/order.interface";
 import { formatCurrency, formatDateTime } from "@/utils/helpers";
@@ -31,6 +31,67 @@ interface TrackingFormValues {
   trackingLevel: number;
 }
 
+// ── Fulfillment form as a child so useForm defaultValues are
+//    initialised with the already-loaded order — no reset() needed.
+const FulfillmentForm: React.FC<{ order: Order }> = ({ order }) => {
+  const updateStatusMutation = useUpdateOrderStatusMutation();
+
+  const { control, handleSubmit } = useForm<TrackingFormValues>({
+    defaultValues: { trackingLevel: order.trackingLevel ?? 1 },
+  });
+
+  const onSubmit = (values: TrackingFormValues) => {
+    if (!order.trackingId?._id) return;
+    updateStatusMutation.mutate({
+      trackingLevel: values.trackingLevel,
+      trackingId: order.trackingId._id,
+    });
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-3 pt-4 border-t border-border/60"
+    >
+      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">
+        Update Status
+      </p>
+      <Controller
+        name="trackingLevel"
+        control={control}
+        render={({ field }) => (
+          <Select
+            value={String(field.value)}
+            onValueChange={(val) => field.onChange(Number(val))}
+          >
+            <SelectTrigger className="bg-background border-border rounded-xl font-bold text-xs select-none">
+              <SelectValue placeholder="Select tracking status" />
+            </SelectTrigger>
+            <SelectContent className="font-semibold text-xs">
+              <SelectItem value="1" className="cursor-pointer">
+                {TrackingStatus.Processing}
+              </SelectItem>
+              <SelectItem value="2" className="cursor-pointer">
+                {TrackingStatus.Delivered}
+              </SelectItem>
+              <SelectItem value="3" className="cursor-pointer">
+                {TrackingStatus.Received}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+      />
+      <Button
+        type="submit"
+        disabled={updateStatusMutation.isPending}
+        className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl cursor-pointer shadow-sm text-xs font-extrabold uppercase tracking-wider h-10 transition-colors"
+      >
+        {updateStatusMutation.isPending ? "Updating..." : "Save Status"}
+      </Button>
+    </form>
+  );
+};
+
 const OrderDetails: React.FC<{
   id: string;
 }> = ({ id }) => {
@@ -39,32 +100,13 @@ const OrderDetails: React.FC<{
     isLoading: isLoadingOrder,
     error: orderError,
   } = useOrderByIdQuery(id);
-  const updateStatusMutation = useUpdateOrderStatusMutation();
   const router = useRouter();
-
-  const { control, handleSubmit, reset } = useForm<TrackingFormValues>({
-    defaultValues: { trackingLevel: 1 },
-  });
-
-  useEffect(() => {
-    if (order?.trackingLevel !== undefined) {
-      reset({ trackingLevel: order.trackingLevel });
-    }
-  }, [order?.trackingLevel, reset]);
 
   const totalDeliveryFee =
     order?.products.reduce(
       (sum: number, item: any) => sum + (item?.deliveryFee || 0),
       0,
     ) || 0;
-
-  const onSubmit = (values: TrackingFormValues) => {
-    if (!order?.trackingId?._id) return;
-    updateStatusMutation.mutate({
-      trackingLevel: values.trackingLevel,
-      trackingId: order.trackingId._id,
-    });
-  };
 
   if (isLoadingOrder) {
     return (
@@ -391,48 +433,8 @@ const OrderDetails: React.FC<{
               })}
             </div>
 
-            {/* Update form */}
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="space-y-3 pt-4 border-t border-border/60"
-            >
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">
-                Update Status
-              </p>
-              <Controller
-                name="trackingLevel"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    value={String(field.value)}
-                    onValueChange={(val) => field.onChange(Number(val))}
-                  >
-                    <SelectTrigger className="bg-background border-border rounded-xl font-bold text-xs select-none">
-                      <SelectValue placeholder="Select tracking status" />
-                    </SelectTrigger>
-                    <SelectContent className="font-semibold text-xs">
-                      <SelectItem value="1" className="cursor-pointer">
-                        {TrackingStatus.Processing}
-                      </SelectItem>
-                      <SelectItem value="2" className="cursor-pointer">
-                        {TrackingStatus.Delivered}
-                      </SelectItem>
-                      <SelectItem value="3" className="cursor-pointer">
-                        {TrackingStatus.Received}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-
-              <Button
-                type="submit"
-                disabled={updateStatusMutation.isPending}
-                className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl cursor-pointer shadow-sm text-xs font-extrabold uppercase tracking-wider h-10 transition-colors"
-              >
-                {updateStatusMutation.isPending ? "Updating..." : "Save Status"}
-              </Button>
-            </form>
+            {/* Update form — mounted with correct defaultValues once order is loaded */}
+            <FulfillmentForm key={order.trackingLevel} order={order} />
           </div>
         </div>
       </div>

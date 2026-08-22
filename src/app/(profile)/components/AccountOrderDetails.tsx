@@ -1,12 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
 import { useUserOrdersQuery } from "@/hooks/queries/useOrdersQuery";
 import { useUpdateOrderStatusMutation } from "@/hooks/mutations/useOrderMutations";
 import { formatCurrency, formatDate } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/custom/Chip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import {
   ArrowLeft,
   ShieldCheck,
@@ -39,6 +48,7 @@ const AccountOrderDetails: React.FC<{
   const { data: userOrders = [], isPending } = useUserOrdersQuery();
   const updateStatusMutation = useUpdateOrderStatusMutation();
   const router = useRouter();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const order = userOrders.find(
     (order: any) => order?.trackingId?.tracking_id === id,
@@ -69,6 +79,7 @@ const AccountOrderDetails: React.FC<{
       trackingLevel: 3,
       trackingId: order?.trackingId?._id,
     });
+    setConfirmOpen(false);
   };
 
   return (
@@ -323,10 +334,48 @@ const AccountOrderDetails: React.FC<{
           <Button
             className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-6 cursor-pointer"
             disabled={updateStatusMutation.isPending}
-            onClick={handleConfirmReceipt}
+            onClick={() => setConfirmOpen(true)}
           >
             Confirm Receipt
           </Button>
+
+          <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+            <DialogContent
+              className="max-w-sm rounded-2xl font-inter"
+              hideCloseButton
+            >
+              <DialogHeader className="space-y-2">
+                <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                </div>
+                <DialogTitle className="text-center text-base font-extrabold text-foreground">
+                  Confirm Receipt
+                </DialogTitle>
+                <DialogDescription className="text-center text-xs text-muted-foreground font-medium">
+                  Are you sure you have received this order? This action cannot
+                  be undone and will mark your order as{" "}
+                  <span className="font-bold text-foreground">Received</span>.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2 mt-2">
+                <DialogClose asChild>
+                  <Button
+                    variant="outline"
+                    className="flex-1 rounded-xl text-xs font-bold cursor-pointer"
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-extrabold uppercase tracking-wider cursor-pointer"
+                  disabled={updateStatusMutation.isPending}
+                  onClick={handleConfirmReceipt}
+                >
+                  {updateStatusMutation.isPending ? "Confirming..." : "Yes, Confirm"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       )}
     </div>

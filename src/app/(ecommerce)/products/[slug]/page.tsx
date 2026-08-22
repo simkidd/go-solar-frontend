@@ -17,7 +17,6 @@ import ViewHistoryComp from "../../components/ViewHistory";
 import { getProducts, getPubilshedProducts } from "@/lib/api/products.api";
 import FaqNewsletterSection from "@/components/home/FaqNewsletterSection";
 import Link from "next/link";
-import { PACKAGES_DATA } from "@/data/packages";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface IProduct {
@@ -30,18 +29,6 @@ export const generateMetadata = async ({
   const { slug } = await params;
   const products: Product[] = await getPubilshedProducts();
   let product = products.find((product) => product?.slug === slug);
-
-  // if (!product) {
-  //   const staticPkg = PACKAGES_DATA.find((p) => p.slug === slug);
-  //   if (staticPkg) {
-  //     product = {
-  //       name: staticPkg.name,
-  //       description: staticPkg.desc,
-  //       images: [],
-  //       slug: staticPkg.slug,
-  //     } as any;
-  //   }
-  // }
 
   return {
     title: `${product?.name || "Product"} | GoSolar`,
@@ -63,9 +50,6 @@ export const generateStaticParams = async () => {
     const dbSlugs = products.map((product: any) => ({
       slug: product?.slug,
     }));
-    // const staticSlugs = PACKAGES_DATA.map((pkg) => ({
-    //   slug: pkg.slug,
-    // }));
     return [...dbSlugs];
   } catch (error) {
     console.log(error);

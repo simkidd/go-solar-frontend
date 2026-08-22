@@ -24,3 +24,29 @@ export interface SolarPackage {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface PackageComponent {
+  id: string;
+  name: string;
+  qty: number;
+  price: number;
+  slug: string;
+  categoryName: string;
+  categorySlug: string;
+  imageUrl: string;
+}
+
+export interface PackageData {
+  id: string;
+  name: string;
+  inverterRange: string;
+  desc: string;
+  spec: string;
+  price: number;
+  slug: string;
+  badgeColor: string;
+  constituents: PackageComponent[];
+  batteryCapacityWh: number;
+  solarPanelWatts: number;
+  batteryType: "AGM" | "Lithium";
+}

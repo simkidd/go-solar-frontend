@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarDays, FileText, CheckCircle2, ShoppingCart } from "lucide-react";
+import { CalendarDays, CheckCircle2, ShoppingCart } from "lucide-react";
 import { useCreateQuoteMutation } from "@/hooks/mutations/useQuoteMutations";
 import { useForm } from "react-hook-form";
 import useCartStore from "@/lib/stores/cart.store";
@@ -31,7 +31,6 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
   const { addItem, cartItems } = useCartStore();
   const isInCart = cartItems.some((item) => item.product._id === pkg._id);
   const [isOpen, setIsOpen] = useState(false);
-  const [inquiryType, setInquiryType] = useState<"assessment" | "quote">("assessment");
   const [submitted, setSubmitted] = useState(false);
 
   const handleAddToCart = () => {
@@ -60,6 +59,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
   };
 
   const createQuoteMutation = useCreateQuoteMutation({
+    showToast: false,
     onSuccess: () => {
       setSubmitted(true);
     },
@@ -82,8 +82,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
     },
   });
 
-  const handleOpenDialog = (type: "assessment" | "quote") => {
-    setInquiryType(type);
+  const handleOpenDialog = () => {
     setSubmitted(false);
     reset();
     setIsOpen(true);
@@ -102,9 +101,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
       ? `${pkg.pvKwp} kWp Solar PV Panels`
       : "Solar PV Panels Array";
 
-    const notes = `[Package Inquiry: ${pkg.name}] type: ${
-      inquiryType === "assessment" ? "Free Onsite Assessment" : "Package Quote Request"
-    }. Additional Message: ${values.message || "None."}`;
+    const notes = `[Package Inquiry: ${pkg.name}] type: Free Onsite Assessment. Additional Message: ${values.message || "None."}`;
 
     createQuoteMutation.mutate({
       fullName: values.fullName,
@@ -143,34 +140,15 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
         )}
       </Button>
 
-      {/* Secondary buttons */}
-      <div className="grid grid-cols-2 gap-2 font-bold text-xs">
-        <Button
-          onClick={() => handleOpenDialog("assessment")}
-          variant="outline"
-          className="border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold rounded-xl h-11 text-xs cursor-pointer flex items-center justify-center gap-1.5"
-        >
-          <CalendarDays className="h-4 w-4 text-zinc-550" />
-          Free Assessment
-        </Button>
-        <Button
-          onClick={() => handleOpenDialog("quote")}
-          variant="outline"
-          className="border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold rounded-xl h-11 text-xs cursor-pointer flex items-center justify-center gap-1.5"
-        >
-          <FileText className="h-4 w-4 text-zinc-550" />
-          Request Quote
-        </Button>
-      </div>
-
-      <a href="/contact-us" className="block w-full">
-        <Button
-          variant="outline"
-          className="w-full border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold rounded-xl h-11 text-xs cursor-pointer"
-        >
-          Talk to an Expert
-        </Button>
-      </a>
+      {/* Secondary Button: Book Free Assessment */}
+      <Button
+        onClick={handleOpenDialog}
+        variant="outline"
+        className="w-full border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold rounded-xl h-11 text-xs cursor-pointer flex items-center justify-center gap-1.5"
+      >
+        <CalendarDays className="h-4 w-4 text-zinc-550" />
+        Book Free Assessment
+      </Button>
 
       {/* Inquiry Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -199,9 +177,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 font-inter text-left">
               <DialogHeader className="space-y-1.5 pb-2 border-b border-border/60 select-none">
                 <DialogTitle className="text-sm font-extrabold text-foreground tracking-tight uppercase">
-                  {inquiryType === "assessment"
-                    ? "Book Free Assessment"
-                    : "Request Package Quote"}
+                  Book Free Assessment
                 </DialogTitle>
                 <DialogDescription className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
                   Configuring solar setup: {pkg.name}
