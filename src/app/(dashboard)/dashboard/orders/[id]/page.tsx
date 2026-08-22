@@ -1,6 +1,6 @@
 import OrderDetails from "@/app/(dashboard)/components/OrderDetails";
 import { Order } from "@/interfaces/order.interface";
-import { getOrder, getOrders } from "@/lib/data";
+import { getOrder, getOrders } from "@/lib/api/orders.api";
 import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";

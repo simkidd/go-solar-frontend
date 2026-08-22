@@ -1,7 +1,7 @@
 import SingleBlogComp from "@/app/(dashboard)/components/SingleBlogComp";
-import { Post } from "@/interfaces/post.interface";
-import { getPost, getPosts } from "@/lib/data";
+import { getPost, getPosts } from "@/lib/api/posts.api";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 interface IPost {
   params: Promise<{ id: string }>;
@@ -11,7 +11,7 @@ export const generateMetadata = async ({
   params,
 }: IPost): Promise<Metadata> => {
   const { id } = await params;
-  const post: Post = await getPost(id);
+  const post = await getPost(id);
 
   return {
     title: post?.title ? `${post.title} | Admin View` : "Blog Details",
@@ -28,11 +28,17 @@ export const generateStaticParams = async () => {
     }));
   } catch (error) {
     console.log(error);
+    return [];
   }
 };
 
 const SinglePostPage = async ({ params }: IPost) => {
   const { id } = await params;
+  const post = await getPost(id);
+
+  if (!post) {
+    notFound();
+  }
 
   return (
     <div className="w-full font-inter max-w-6xl mx-auto py-4">

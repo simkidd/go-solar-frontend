@@ -1,6 +1,6 @@
 import PageHeader from "@/components/PageHeader";
 import { Post } from "@/interfaces/post.interface";
-import { getPosts } from "@/lib/api/posts";
+import { getPosts } from "@/lib/api/posts.api";
 import { formatDate } from "@/utils/helpers";
 import { CalendarCheck, ArrowUpRight, BookOpen, Clock, User, Twitter, Facebook, Linkedin, MessageCircle } from "lucide-react";
 import { Metadata } from "next";

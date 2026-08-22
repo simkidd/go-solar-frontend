@@ -14,7 +14,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import ViewHistoryComp from "../../components/ViewHistory";
-import { getProducts, getPubilshedProducts } from "@/lib/api/products";
+import { getProducts, getPubilshedProducts } from "@/lib/api/products.api";
 import FaqNewsletterSection from "@/components/home/FaqNewsletterSection";
 import Link from "next/link";
 import { PACKAGES_DATA } from "@/data/packages";
@@ -31,17 +31,17 @@ export const generateMetadata = async ({
   const products: Product[] = await getPubilshedProducts();
   let product = products.find((product) => product?.slug === slug);
 
-  if (!product) {
-    const staticPkg = PACKAGES_DATA.find((p) => p.slug === slug);
-    if (staticPkg) {
-      product = {
-        name: staticPkg.name,
-        description: staticPkg.desc,
-        images: [],
-        slug: staticPkg.slug,
-      } as any;
-    }
-  }
+  // if (!product) {
+  //   const staticPkg = PACKAGES_DATA.find((p) => p.slug === slug);
+  //   if (staticPkg) {
+  //     product = {
+  //       name: staticPkg.name,
+  //       description: staticPkg.desc,
+  //       images: [],
+  //       slug: staticPkg.slug,
+  //     } as any;
+  //   }
+  // }
 
   return {
     title: `${product?.name || "Product"} | GoSolar`,
@@ -63,10 +63,10 @@ export const generateStaticParams = async () => {
     const dbSlugs = products.map((product: any) => ({
       slug: product?.slug,
     }));
-    const staticSlugs = PACKAGES_DATA.map((pkg) => ({
-      slug: pkg.slug,
-    }));
-    return [...dbSlugs, ...staticSlugs];
+    // const staticSlugs = PACKAGES_DATA.map((pkg) => ({
+    //   slug: pkg.slug,
+    // }));
+    return [...dbSlugs];
   } catch (error) {
     console.log(error);
     return [];
@@ -77,29 +77,6 @@ const ProductPage = async ({ params }: IProduct) => {
   const { slug } = await params;
   const products: Product[] = await getProducts();
   let product = products.find((product) => product?.slug === slug);
-
-  if (!product) {
-    const staticPkg = PACKAGES_DATA.find((p) => p.slug === slug);
-    if (staticPkg) {
-      product = {
-        _id: staticPkg.id,
-        name: staticPkg.name,
-        slug: staticPkg.slug,
-        brand: "GoSolar",
-        price: staticPkg.price,
-        description: staticPkg.desc,
-        images: [],
-        category: { _id: "cat-pkg", name: "Packages", slug: "packages" },
-        quantityInStock: 10,
-        withinLocationDeliveryFee: 15000,
-        outsideLocationDeliveryFee: 35000,
-        isPublished: true,
-        powerOutput: staticPkg.inverterRange,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      } as any;
-    }
-  }
 
   const productCode = product ? getProductCodeFromSlug(product.slug) : "";
 

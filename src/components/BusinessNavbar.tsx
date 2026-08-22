@@ -144,6 +144,7 @@ const BusinessNavbar = () => {
               width={36}
               height={36}
               className="object-contain group-hover:rotate-12 transition-transform duration-300"
+              style={{ height: "auto" }}
             />
             <span className="font-extrabold text-xl tracking-tight text-foreground mt-2">
               Go<span className="text-primary">Solar</span>

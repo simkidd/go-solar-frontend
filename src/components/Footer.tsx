@@ -12,21 +12,23 @@ const Footer = () => {
   return (
     <footer className="w-full bg-zinc-50 dark:bg-zinc-950/20 text-zinc-550 dark:text-zinc-400 py-16 border-t border-border font-inter">
       <div className="container mx-auto px-4 space-y-12">
-        
         {/* Main Columns Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          
           {/* Brand Info */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2 select-none group">
+            <Link
+              href="/"
+              className="flex items-center gap-2 select-none group"
+            >
               <Image
                 src={LogoIcon}
                 alt="logo"
                 width={36}
                 height={36}
                 className="object-contain group-hover:rotate-12 transition-transform duration-300"
+                style={{ height: "auto" }}
               />
-              <span className="font-extrabold text-lg text-zinc-900 dark:text-white tracking-tight">
+              <span className="font-extrabold text-lg text-zinc-900 dark:text-white tracking-tight mt-2">
                 Go<span className="text-primary">Solar</span>
               </span>
             </Link>
@@ -37,9 +39,12 @@ const Footer = () => {
             {/* Social Badges with hover fill animations */}
             <div className="flex items-center gap-3 pt-2">
               {[
-                { href: "https://www.facebook.com/Gosolar.ng", icon: FaFacebookF },
+                {
+                  href: "https://www.facebook.com/Gosolar.ng",
+                  icon: FaFacebookF,
+                },
                 { href: "https://twitter.com/Gosolarng", icon: FaXTwitter },
-                { href: "#", icon: FaInstagram }
+                { href: "#", icon: FaInstagram },
               ].map((social, idx) => {
                 const Icon = social.icon;
                 return (
@@ -68,7 +73,7 @@ const Footer = () => {
                 { label: "Shop Catalog", href: "/shop" },
                 { label: "Contact Us", href: "/contact-us" },
                 { label: "Terms & Conditions", href: "/terms-and-conditions" },
-                { label: "Privacy Policy", href: "/privacy-policy" }
+                { label: "Privacy Policy", href: "/privacy-policy" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link
@@ -89,10 +94,19 @@ const Footer = () => {
             </h5>
             <ul className="space-y-2 text-xs font-bold">
               {[
-                { label: "Residential Solar", href: "/contact-us?subject=Residential" },
-                { label: "Commercial Solar", href: "/contact-us?subject=Commercial" },
-                { label: "Industrial Systems", href: "/contact-us?subject=Industrial" },
-                { label: "Sizing Audit", href: "/energy-calculator" }
+                {
+                  label: "Residential Solar",
+                  href: "/contact-us?subject=Residential",
+                },
+                {
+                  label: "Commercial Solar",
+                  href: "/contact-us?subject=Commercial",
+                },
+                {
+                  label: "Industrial Systems",
+                  href: "/contact-us?subject=Industrial",
+                },
+                { label: "Sizing Audit", href: "/energy-calculator" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link
@@ -125,7 +139,10 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="h-4.5 w-4.5 text-primary shrink-0" />
-                <a href="tel:+2347062762879" className="hover:text-primary transition-colors">
+                <a
+                  href="tel:+2347062762879"
+                  className="hover:text-primary transition-colors"
+                >
                   0706 276 2879
                 </a>
               </li>
@@ -152,7 +169,6 @@ const Footer = () => {
 
         {/* Bottom Copyright & Switcher Bar */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-          
           {/* Left section: Copyright */}
           <div className="text-center md:text-left select-none">
             <p>&copy; {today.getFullYear()} GoSolar. All rights reserved.</p>
@@ -174,7 +190,6 @@ const Footer = () => {
             </a>
           </p>
         </div>
-
       </div>
     </footer>
   );

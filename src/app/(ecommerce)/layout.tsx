@@ -1,5 +1,3 @@
-import Footer from "@/components/Footer";
-import HeaderShop from "@/app/(ecommerce)/components/shop/HeaderShop";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
@@ -8,6 +6,7 @@ import "../globals.css";
 import { Providers } from "../providers";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { config } from "@/utils/config";
+import LayoutWrapper from "./components/LayoutWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -102,9 +101,7 @@ export default function RootLayout({
         />
         <Providers>
           <Suspense fallback={<LoadingSpinner />}>
-            <HeaderShop />
-            <main className="min-h-[70dvh]">{children}</main>
-            <Footer />
+            <LayoutWrapper>{children}</LayoutWrapper>
           </Suspense>
         </Providers>
       </body>

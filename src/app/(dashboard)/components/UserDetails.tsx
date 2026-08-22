@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { getUserById } from "@/lib/api/users";
+import { getUserById } from "@/lib/api/users.api";
 import { formatDate } from "@/utils/helpers";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -1,6 +1,6 @@
 import SingleCategoryProducts from "@/app/(dashboard)/components/products/SingleCategoryProducts";
 import { Category } from "@/interfaces/product.interface";
-import { getCategories } from "@/lib/data";
+import { getCategories } from "@/lib/api/products.api";
 
 export const dynamic = "force-dynamic";
 import { ArrowLeft } from "lucide-react";
@@ -33,6 +33,7 @@ export const generateStaticParams = async () => {
     }));
   } catch (error) {
     console.log(error);
+    return [];
   }
 };
 

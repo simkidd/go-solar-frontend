@@ -153,6 +153,7 @@ const EcommerceNavbar = () => {
                 width={34}
                 height={34}
                 className="object-contain group-hover:rotate-12 transition-transform duration-300"
+                style={{ height: "auto" }}
               />
               <span className="font-extrabold text-lg tracking-tight text-zinc-900 dark:text-white mt-2">
                 Go<span className="text-primary">Solar</span>

@@ -49,7 +49,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import CreateProductButton from "./CreateProductButton";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateProduct } from "@/lib/api/products";
+import { updateProduct } from "@/lib/api/products.api";
 import { toast } from "sonner";
 import { PRODUCT_KEYS } from "@/hooks/queries/useProductsQuery";
 
