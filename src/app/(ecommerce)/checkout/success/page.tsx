@@ -1,7 +1,15 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
-import { CheckIcon, XCircle, Loader2, Copy, Check, ShoppingBag, ArrowRight } from "lucide-react";
+import {
+  CheckIcon,
+  XCircle,
+  Loader2,
+  Copy,
+  Check,
+  ShoppingBag,
+  ArrowRight,
+} from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import useCartStore from "@/lib/stores/cart.store";
 import { axiosInstance } from "@/lib/axios";
@@ -15,7 +23,9 @@ const OrderSuccessContent = () => {
 
   const reference = searchParams.get("reference");
   const [verifying, setVerifying] = useState(!!reference);
-  const [status, setStatus] = useState<"success" | "error" | "default">("default");
+  const [status, setStatus] = useState<"success" | "error" | "default">(
+    "default",
+  );
   const [errorMsg, setErrorMsg] = useState("");
   const [copied, setCopied] = useState(false);
 
@@ -25,9 +35,12 @@ const OrderSuccessContent = () => {
 
       try {
         setVerifying(true);
-        const { data } = await axiosInstance.post("/users/orders/verify-payment", {
-          paymentReference: reference,
-        });
+        const { data } = await axiosInstance.post(
+          "/users/orders/verify-payment",
+          {
+            paymentReference: reference,
+          },
+        );
 
         if (data.success) {
           clearCart();
@@ -39,7 +52,9 @@ const OrderSuccessContent = () => {
         }
       } catch (error: any) {
         setStatus("error");
-        const errMsg = error?.response?.data?.message || "Verification failed. Please contact support.";
+        const errMsg =
+          error?.response?.data?.message ||
+          "Verification failed. Please contact support.";
         setErrorMsg(errMsg);
         toast.error(errMsg);
       } finally {
@@ -73,7 +88,8 @@ const OrderSuccessContent = () => {
               Verifying Payment
             </h2>
             <p className="text-xs text-zinc-550 dark:text-zinc-400 leading-relaxed px-4">
-              We are securely finalizing your transaction details with Paystack. Please do not reload or close this page.
+              We are securely finalizing your transaction details with Paystack.
+              Please do not reload or close this page.
             </p>
           </div>
           <div className="h-1.5 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
@@ -97,7 +113,8 @@ const OrderSuccessContent = () => {
               Verification Failed
             </h2>
             <p className="text-xs text-zinc-550 dark:text-zinc-400 leading-relaxed px-4">
-              {errorMsg || "We couldn't confirm your transaction. If money was debited, please contact support with the reference code below."}
+              {errorMsg ||
+                "We couldn't confirm your transaction. If money was debited, please contact support with the reference code below."}
             </p>
           </div>
 
@@ -110,7 +127,11 @@ const OrderSuccessContent = () => {
                 onClick={handleCopyReference}
                 className="text-[11px] font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white flex items-center gap-1 transition-colors"
               >
-                {copied ? <Check className="h-3 w-3 text-[#08AA08]" /> : <Copy className="h-3 w-3" />}
+                {copied ? (
+                  <Check className="h-3 w-3 text-[#08AA08]" />
+                ) : (
+                  <Copy className="h-3 w-3" />
+                )}
                 {copied ? "Copied" : "Copy"}
               </button>
             </div>
@@ -143,7 +164,6 @@ const OrderSuccessContent = () => {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800/80 rounded-[32px] shadow-2xl p-8 md:p-12 relative overflow-hidden space-y-8">
-          
           {/* Header Section */}
           <div className="flex flex-col items-center text-center space-y-4">
             <div className="relative">
@@ -152,13 +172,14 @@ const OrderSuccessContent = () => {
                 <CheckIcon className="h-8 w-8 text-white stroke-[3px]" />
               </div>
             </div>
-            
+
             <div className="space-y-1.5">
               <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
                 Order Confirmed!
               </h2>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md leading-relaxed">
-                Thank you for your order. Your clean energy transformation is officially underway. A receipt has been sent to your email.
+                Thank you for your order. Your clean energy transformation is
+                officially underway. A receipt has been sent to your email.
               </p>
             </div>
           </div>
@@ -167,7 +188,9 @@ const OrderSuccessContent = () => {
           {reference && (
             <div className="bg-zinc-50/50 dark:bg-zinc-950/30 border border-zinc-100 dark:border-zinc-800/50 rounded-2xl p-4.5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="space-y-0.5 text-center sm:text-left">
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Order Reference</p>
+                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                  Order Reference
+                </p>
                 <p className="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-100 select-all truncate max-w-[280px]">
                   {reference}
                 </p>
@@ -176,7 +199,11 @@ const OrderSuccessContent = () => {
                 onClick={handleCopyReference}
                 className="shrink-0 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-350 hover:text-zinc-900 dark:hover:text-white font-bold text-xs h-9.5 px-4 rounded-xl flex items-center gap-1.5 transition-all active:scale-[0.97]"
               >
-                {copied ? <Check className="h-3.5 w-3.5 text-[#08AA08]" /> : <Copy className="h-3.5 w-3.5" />}
+                {copied ? (
+                  <Check className="h-3.5 w-3.5 text-[#08AA08]" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" />
+                )}
                 {copied ? "Copied" : "Copy Code"}
               </button>
             </div>
@@ -187,32 +214,47 @@ const OrderSuccessContent = () => {
             <h3 className="text-sm font-extrabold text-zinc-900 dark:text-white tracking-tight">
               What's Next?
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Step 1 */}
               <div className="bg-emerald-50/20 dark:bg-emerald-950/5 border border-emerald-100/40 dark:border-emerald-900/10 p-4 rounded-2xl relative space-y-2">
-                <span className="text-[10px] font-bold text-[#08AA08] bg-emerald-500/10 px-2 py-0.5 rounded-full">Step 1</span>
-                <h4 className="text-xs font-bold text-zinc-900 dark:text-white">Order Confirmed</h4>
+                <span className="text-[10px] font-bold text-[#08AA08] bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                  Step 1
+                </span>
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
+                  Order Confirmed
+                </h4>
                 <p className="text-[10px] text-zinc-550 dark:text-zinc-400 leading-relaxed">
-                  Your payment has been cleared, and your order details are dispatched to our processing center.
+                  Your payment has been cleared, and your order details are
+                  dispatched to our processing center.
                 </p>
               </div>
 
               {/* Step 2 */}
               <div className="bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-100 dark:border-zinc-800/40 p-4 rounded-2xl space-y-2">
-                <span className="text-[10px] font-bold text-zinc-400 bg-zinc-200/50 dark:bg-zinc-800 px-2 py-0.5 rounded-full">Step 2</span>
-                <h4 className="text-xs font-bold text-zinc-900 dark:text-white">Shipment & Delivery</h4>
+                <span className="text-[10px] font-bold text-zinc-400 bg-zinc-200/50 dark:bg-zinc-800 px-2 py-0.5 rounded-full">
+                  Step 2
+                </span>
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
+                  Shipment & Delivery
+                </h4>
                 <p className="text-[10px] text-zinc-550 dark:text-zinc-400 leading-relaxed">
-                  Our dispatch logistics will ship your hardware. Delivery typically takes 4-5 working days.
+                  Our dispatch logistics will ship your hardware. Delivery
+                  typically takes 4-5 working days.
                 </p>
               </div>
 
               {/* Step 3 */}
               <div className="bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-100 dark:border-zinc-800/40 p-4 rounded-2xl space-y-2">
-                <span className="text-[10px] font-bold text-zinc-400 bg-zinc-200/50 dark:bg-zinc-800 px-2 py-0.5 rounded-full">Step 3</span>
-                <h4 className="text-xs font-bold text-zinc-900 dark:text-white">Free Installation</h4>
+                <span className="text-[10px] font-bold text-zinc-400 bg-zinc-200/50 dark:bg-zinc-800 px-2 py-0.5 rounded-full">
+                  Step 3
+                </span>
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
+                  Free Installation
+                </h4>
                 <p className="text-[10px] text-zinc-550 dark:text-zinc-400 leading-relaxed">
-                  Our certified engineer team will contact you to schedule your system mounting and grid optimization.
+                  Our certified engineer team will contact you to schedule your
+                  system mounting and grid optimization.
                 </p>
               </div>
             </div>
@@ -235,7 +277,6 @@ const OrderSuccessContent = () => {
               Continue Shopping
             </button>
           </div>
-
         </div>
       </div>
     </div>
