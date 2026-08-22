@@ -35,6 +35,9 @@ export const useUpdateOrderStatusMutation = () => {
     },
     onSuccess: (data) => {
       toast.success(data?.message || "Tracking status updated!");
+      if (data?.order?._id) {
+        queryClient.invalidateQueries({ queryKey: ORDER_KEYS.detail(data.order._id) });
+      }
       queryClient.invalidateQueries({ queryKey: ORDER_KEYS.all });
     },
     onError: (error: any) => {
