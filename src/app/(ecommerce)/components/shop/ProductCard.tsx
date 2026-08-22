@@ -7,7 +7,7 @@ import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, ImageOff, Star } from "lucide-react";
+import { Heart, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const ProductCard: React.FC<{

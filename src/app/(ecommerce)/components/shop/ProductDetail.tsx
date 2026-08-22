@@ -6,7 +6,7 @@ import { Product } from "@/interfaces/product.interface";
 import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Truck, Heart, Star } from "lucide-react";
+import { Minus, Plus, Truck, Heart } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -70,30 +70,22 @@ const ProductDetail: React.FC<{
         </p>
       </div>
 
-      {/* ── Stock status indicator & Rating ── */}
-      <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-900 pb-4">
+      {/* ── Stock status indicator ── */}
+      <div className="flex items-center gap-3 border-b border-zinc-100 dark:border-zinc-900 pb-4 select-none">
         <div className="flex items-center gap-1.5">
-          <span className={`w-2.5 h-2.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-rose-500"}`} />
+          <span className={`w-2 h-2 rounded-full ${inStock ? "bg-emerald-500" : "bg-rose-500"}`} />
           <span className={`text-xs font-bold ${inStock ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
             {inStock ? "In Stock" : "Out of Stock"}
           </span>
-          {productCode && (
-            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 ml-2">
+        </div>
+        {productCode && (
+          <>
+            <span className="w-1 h-1 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600">
               SKU: {productCode}
             </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1">
-          <div className="flex items-center gap-0.5 text-amber-500">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className={`w-3.5 h-3.5 fill-amber-400 text-amber-400`} />
-            ))}
-          </div>
-          <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 ml-1">
-            (4.8 / 12 reviews)
-          </span>
-        </div>
+          </>
+        )}
       </div>
 
       {/* ── Pricing Block ── */}
@@ -187,7 +179,7 @@ const ProductDetail: React.FC<{
       {/* ── Social Share links ── */}
       <div className="flex items-center gap-4 pt-4 border-t border-zinc-150 dark:border-zinc-850">
         <span className="text-xs font-bold text-zinc-400 dark:text-zinc-600">Share Product:</span>
-        <SocialShare />
+        <SocialShare title={product?.name} />
       </div>
     </div>
   );

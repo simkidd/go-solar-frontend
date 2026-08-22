@@ -47,6 +47,7 @@ import {
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
+import { useDebounce } from "@/hooks";
 import CreateProductButton from "./CreateProductButton";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProduct } from "@/lib/api/products.api";
@@ -97,6 +98,22 @@ const ProductsTable = () => {
 
   const [filterValue, setFilterValue] = useState(searchParams.get("q") || "");
   const [page, setPage] = useState(1);
+  const debouncedFilterValue = useDebounce(filterValue, 500);
+
+  // Sync URL search params and page with debounced query value
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    const currentQ = searchParams.get("q") || "";
+    if (debouncedFilterValue !== currentQ) {
+      if (debouncedFilterValue) {
+        params.set("q", debouncedFilterValue);
+      } else {
+        params.delete("q");
+      }
+      setPage(1);
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  }, [debouncedFilterValue, pathname, router, searchParams]);
 
   const [publishFilter, setPublishFilter] = useState(
     searchParams.get("published") || "All",
@@ -121,7 +138,7 @@ const ProductsTable = () => {
   } = useAllProductsQuery({
     page,
     limit: 10,
-    q: filterValue,
+    q: debouncedFilterValue,
     status: publishFilter,
     category: selectedCategoryObj ? selectedCategoryObj._id : "All",
   });
@@ -138,16 +155,7 @@ const ProductsTable = () => {
   };
 
   const onSearchChange = (value: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (value) {
-      params.set("q", value);
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      params.delete("q");
-      setFilterValue("");
-    }
-    router.replace(`${pathname}?${params.toString()}`);
+    setFilterValue(value);
   };
 
   const onPublishFilterChange = (status: string) => {

@@ -46,12 +46,12 @@ const columns = [
 export const getChipStyles = (status: any) => {
   switch (status) {
     case TrackingStatus.Processing:
-      return "bg-amber-55 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+      return "bg-amber-50 text-amber-600 dark:text-amber-400 border border-amber-500/20";
     case TrackingStatus.Delivered:
-      return "bg-emerald-55 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20";
+      return "bg-emerald-50 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20";
     case TrackingStatus.Received:
     case "Recieved":
-      return "bg-blue-55 text-blue-600 dark:text-blue-400 border border-blue-500/20";
+      return "bg-blue-50 text-blue-600 dark:text-blue-400 border border-blue-500/20";
     default:
       return "bg-muted text-muted-foreground border border-border";
   }

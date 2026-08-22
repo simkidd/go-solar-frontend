@@ -26,3 +26,4 @@ export * from "./mutations/useBannerMutations";
 
 // UI / Device Hooks
 export { useIsMobile } from "./use-mobile";
+export { useDebounce } from "./useDebounce";

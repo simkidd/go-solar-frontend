@@ -1,9 +1,10 @@
 "use client";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import AppModal from "@/components/AppModal";
 import { Category } from "@/interfaces/product.interface";
 import { formatDate } from "@/utils/helpers";
 import { useCategoriesQuery } from "@/hooks/queries/useCategoriesQuery";
+import { useDebounce } from "@/hooks";
 import { useDeleteCategoryMutation } from "@/hooks/mutations/useCategoryMutations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,6 +60,22 @@ const CategoryTable = () => {
     "topLevel",
   );
   const [parentFilter, setParentFilter] = useState<string>("all");
+  const debouncedFilterValue = useDebounce(filterValue, 500);
+
+  // Sync URL and page with debounced search query
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    const currentQ = searchParams.get("q") || "";
+    if (debouncedFilterValue !== currentQ) {
+      if (debouncedFilterValue) {
+        params.set("q", debouncedFilterValue);
+      } else {
+        params.delete("q");
+      }
+      setPage(1);
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  }, [debouncedFilterValue, pathname, router, searchParams]);
 
   const tableColumns = useMemo(() => {
     if (activeTab === "topLevel") {
@@ -100,7 +117,7 @@ const CategoryTable = () => {
   } = useCategoriesQuery({
     page,
     limit: 10,
-    q: filterValue,
+    q: debouncedFilterValue,
     parent: parentQueryParam,
   });
 
@@ -130,16 +147,7 @@ const CategoryTable = () => {
   };
 
   const onSearchChange = (value: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (value) {
-      params.set("q", value);
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      params.delete("q");
-      setFilterValue("");
-    }
-    router.replace(`${pathname}?${params.toString()}`);
+    setFilterValue(value);
   };
 
   const onResetFilters = () => {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -59,6 +59,7 @@ import UserDetails from "./UserDetails";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import AppModal from "@/components/AppModal";
+import { useDebounce } from "@/hooks";
 
 const columns = [
   { name: "Customer Name", uid: "name" },
@@ -73,6 +74,11 @@ const UsersTable = () => {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchTerm]);
 
   // Detailed sheet state
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -109,7 +115,7 @@ const UsersTable = () => {
   const { data, isLoading, refetch } = useAllUsersQuery({
     page,
     limit: rowsPerPage,
-    q: searchTerm,
+    q: debouncedSearchTerm,
   });
 
   const customers = data?.users || [];
