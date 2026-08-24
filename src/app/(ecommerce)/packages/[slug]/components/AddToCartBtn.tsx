@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarDays, CheckCircle2, ShoppingCart } from "lucide-react";
+import { CalendarDays, CheckCircle2, ShoppingCart, DollarSign } from "lucide-react";
+import Link from "next/link";
 import { useCreateQuoteMutation } from "@/hooks/mutations/useQuoteMutations";
 import { useForm } from "react-hook-form";
 import useCartStore from "@/lib/stores/cart.store";
@@ -149,6 +150,17 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
         <CalendarDays className="h-4 w-4 text-zinc-550" />
         Book Free Assessment
       </Button>
+
+      {/* Financing Button */}
+      <Link href={`/financing/apply?packageId=${pkg._id}`} className="block w-full">
+        <Button
+          variant="outline"
+          className="w-full border-primary/30 hover:bg-primary/5 text-primary font-extrabold rounded-xl h-11 text-xs cursor-pointer flex items-center justify-center gap-1.5"
+        >
+          <DollarSign className="h-4 w-4" />
+          Apply for Financing
+        </Button>
+      </Link>
 
       {/* Inquiry Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>

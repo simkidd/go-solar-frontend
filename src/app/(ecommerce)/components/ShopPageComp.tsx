@@ -10,12 +10,19 @@ import ViewHistoryComp from "../components/ViewHistory";
 import useProducts from "@/hooks/useProducts";
 import useCategories from "@/hooks/useCategories";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Zap, ShieldCheck, Truck, Headphones, ArrowRight, CreditCard, RotateCcw } from "lucide-react";
+import {
+  Zap,
+  ShieldCheck,
+  Truck,
+  Headphones,
+  ArrowRight,
+  CreditCard,
+  RotateCcw,
+} from "lucide-react";
 import Link from "next/link";
 import ProductCard from "./shop/ProductCard";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCcw } from "lucide-react";
-
 
 const ShopFeaturesBar = () => (
   <section className="w-full py-8 bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-border/80 select-none">
@@ -91,7 +98,7 @@ const ShopPageComp = () => {
 
   const promoCardBanner = useMemo(() => {
     return serverBanners.find(
-      (b: any) => b.placement === "storefront_promo_card"
+      (b: any) => b.placement === "storefront_promo_card",
     );
   }, [serverBanners]);
 
@@ -110,7 +117,7 @@ const ShopPageComp = () => {
 
   const publishedProducts = useMemo(
     () => allProducts.filter((product: Product) => product.isPublished),
-    [allProducts]
+    [allProducts],
   );
 
   const topLevelCategories = useMemo(() => {
@@ -121,9 +128,10 @@ const ShopPageComp = () => {
     return publishedProducts.filter((product: Product) => {
       if (!product.category) return false;
       if (product.category._id === category._id) return true;
-      const parentId = typeof product.category.parent === "object"
-        ? product.category.parent?._id
-        : product.category.parent;
+      const parentId =
+        typeof product.category.parent === "object"
+          ? product.category.parent?._id
+          : product.category.parent;
       return parentId === category._id;
     });
   };
@@ -212,7 +220,7 @@ const ShopPageComp = () => {
                 className="absolute inset-0 z-0 bg-cover bg-center opacity-30 hover:scale-102 transition-transform duration-[10s]"
                 style={{ backgroundImage: `url('${promoCardBanner.image}')` }}
               />
-              <div className="absolute inset-0 z-10 bg-gradient-to-r from-black via-black/80 to-transparent" />
+              <div className="absolute inset-0 z-10 bg-linear-to-r from-black via-black/80 to-transparent" />
               <div className="relative z-20 max-w-xl space-y-2 text-white">
                 {promoCardBanner.badge && (
                   <span className="inline-block text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded-md uppercase tracking-wider">

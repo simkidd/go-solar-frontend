@@ -34,7 +34,6 @@ import {
   Users,
   Package,
   ShoppingCart,
-  DollarSign,
   TrendingUp,
   AlertTriangle,
   ArrowUpRight,
@@ -413,7 +412,6 @@ const OverviewComp = () => {
                       <Skeleton className="h-6 w-24 mt-1" />
                     ) : (
                       <p className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-0.5 flex items-center">
-                        <DollarSign className="h-4.5 w-4.5 -ml-1" />
                         {formatCurrency(
                           dashboardData?.totalRevenue || 0,
                           "NGN",
@@ -502,7 +500,7 @@ const OverviewComp = () => {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <Table className="w-full text-sm">
+                  <Table className="w-full text-xs">
                     <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/10">
                       <TableRow className="border-b border-zinc-100 dark:border-zinc-800">
                         <TableHead className="font-semibold text-zinc-500 h-10 px-4">
@@ -528,10 +526,10 @@ const OverviewComp = () => {
                           key={quote._id}
                           className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0"
                         >
-                          <TableCell className="font-bold text-zinc-900 dark:text-zinc-100 py-3.5 px-4">
+                          <TableCell className="text-xs font-bold text-zinc-900 dark:text-zinc-100 py-3.5 px-4">
                             {quote.fullName}
                           </TableCell>
-                          <TableCell className="font-semibold text-zinc-800 dark:text-zinc-300">
+                          <TableCell className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
                             {(quote.peakWatts / 1000).toFixed(2)} kW
                           </TableCell>
                           <TableCell className="text-zinc-500 text-xs font-semibold">
@@ -587,7 +585,7 @@ const OverviewComp = () => {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <Table className="w-full text-sm">
+                  <Table className="w-full text-xs">
                     <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/10">
                       <TableRow className="border-b border-zinc-100 dark:border-zinc-800">
                         <TableHead className="font-semibold text-zinc-500 h-10 px-4">
@@ -622,7 +620,7 @@ const OverviewComp = () => {
                               .substring(order._id.length - 8)
                               .toUpperCase()}
                           </TableCell>
-                          <TableCell className="font-medium text-zinc-900 dark:text-zinc-100">
+                          <TableCell className="text-xs font-medium text-zinc-900 dark:text-zinc-100">
                             {order.user
                               ? `${order.user.firstname} ${order.user.lastname}`
                               : "Guest Customer"}
@@ -630,7 +628,7 @@ const OverviewComp = () => {
                           <TableCell className="text-zinc-500 text-xs">
                             {formatDate(order.createdAt)}
                           </TableCell>
-                          <TableCell className="text-right font-semibold text-zinc-900 dark:text-zinc-100">
+                          <TableCell className="text-right text-xs font-semibold text-zinc-900 dark:text-zinc-100">
                             {formatCurrency(order.totalPricePaid, "NGN")}
                           </TableCell>
                           <TableCell className="text-center">

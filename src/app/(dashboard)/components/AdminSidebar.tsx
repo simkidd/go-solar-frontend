@@ -45,6 +45,7 @@ import {
   ShieldCheck,
   Sparkles,
   Megaphone,
+  DollarSign,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -95,6 +96,11 @@ const navigationItems = [
         name: "Enquiries",
         href: "/dashboard/quotes",
         icon: MessageSquare,
+      },
+      {
+        name: "Solar Financing",
+        href: "/dashboard/financing",
+        icon: DollarSign,
       },
       {
         name: "Sales Offers",

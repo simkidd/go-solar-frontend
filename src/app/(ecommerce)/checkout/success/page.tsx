@@ -78,7 +78,7 @@ const OrderSuccessContent = () => {
       <div className="flex flex-col items-center justify-center min-h-[75vh] px-4 bg-zinc-50/50 dark:bg-zinc-950/20">
         <div className="relative w-full max-w-md p-8 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800/80 rounded-3xl shadow-xl backdrop-blur-sm text-center space-y-6">
           <div className="absolute inset-x-0 -top-12 flex justify-center">
-            <div className="h-24 w-24 bg-gradient-to-tr from-[#08AA08] to-emerald-400 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <div className="h-24 w-24 bg-linear-to-tr from-[#08AA08] to-emerald-400 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/20">
               <Loader2 className="h-10 w-10 animate-spin text-white" />
             </div>
           </div>
@@ -167,7 +167,7 @@ const OrderSuccessContent = () => {
           <div className="flex justify-center">
             <div className="relative">
               <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md animate-ping opacity-75" />
-              <div className="h-16 w-16 bg-gradient-to-tr from-[#08AA08] to-emerald-400 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 relative z-10">
+              <div className="h-16 w-16 bg-linear-to-tr from-[#08AA08] to-emerald-400 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 relative z-10">
                 <CheckIcon className="h-8 w-8 text-white stroke-[3px]" />
               </div>
             </div>
@@ -180,7 +180,8 @@ const OrderSuccessContent = () => {
             </h2>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed px-4">
               Thank you for your order. Your clean energy transformation is
-              officially underway. We've sent a receipt and invoice details to your email.
+              officially underway. We've sent a receipt and invoice details to
+              your email.
             </p>
           </div>
 

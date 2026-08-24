@@ -2,7 +2,16 @@
 
 import { useAuthStore } from "@/lib/stores/auth.store";
 import React from "react";
-import { User, Phone, Mail, Calendar, ArrowRight, ShieldCheck, ShoppingBag, Sparkles } from "lucide-react";
+import {
+  User,
+  Phone,
+  Mail,
+  Calendar,
+  ArrowRight,
+  ShieldCheck,
+  ShoppingBag,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 import { formatDate } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
@@ -12,9 +21,8 @@ const ProfileDetails = () => {
 
   return (
     <div className="space-y-8 font-inter">
-      
       {/* ── Welcome Greeting Banner ── */}
-      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent p-6 sm:p-8">
+      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-linear-to-r from-emerald-500/10 via-teal-500/5 to-transparent p-6 sm:p-8">
         <div className="relative z-10 space-y-2 max-w-xl">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
             <ShieldCheck className="h-3 w-3" />
@@ -24,7 +32,9 @@ const ProfileDetails = () => {
             Hello, {user?.firstname || "Customer"}!
           </h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Welcome to your GoSolar Account Portal. From here, you can view your purchase history, edit password credentials, and access configuration utilities.
+            Welcome to your GoSolar Account Portal. From here, you can view your
+            purchase history, edit password credentials, and access
+            configuration utilities.
           </p>
         </div>
         {/* Ambient decorative bg pattern */}
@@ -33,7 +43,6 @@ const ProfileDetails = () => {
 
       {/* ── Dashboard Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
         {/* Profile Card */}
         <div className="bg-zinc-50/50 dark:bg-zinc-900/30 border border-border/80 rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-border/60 pb-3">
@@ -41,8 +50,8 @@ const ProfileDetails = () => {
               <User className="h-4.5 w-4.5 text-primary" />
               Personal Profile
             </h3>
-            <Link 
-              href="/account/settings" 
+            <Link
+              href="/account/settings"
               className="text-[10px] font-black uppercase tracking-wider text-primary hover:underline flex items-center gap-1"
             >
               Edit Settings
@@ -52,20 +61,36 @@ const ProfileDetails = () => {
 
           <div className="space-y-3.5 text-xs text-zinc-650 dark:text-zinc-350">
             <div className="flex items-center justify-between py-0.5">
-              <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">Full Name</span>
-              <span className="font-extrabold text-foreground">{user?.firstname} {user?.lastname}</span>
+              <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">
+                Full Name
+              </span>
+              <span className="font-extrabold text-foreground">
+                {user?.firstname} {user?.lastname}
+              </span>
             </div>
             <div className="flex items-center justify-between py-0.5">
-              <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">Email Address</span>
-              <span className="font-extrabold text-foreground select-all">{user?.email}</span>
+              <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">
+                Email Address
+              </span>
+              <span className="font-extrabold text-foreground select-all">
+                {user?.email}
+              </span>
             </div>
             <div className="flex items-center justify-between py-0.5">
-              <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">Phone Number</span>
-              <span className="font-extrabold text-foreground">{user?.phoneNumber || "Not provided"}</span>
+              <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">
+                Phone Number
+              </span>
+              <span className="font-extrabold text-foreground">
+                {user?.phoneNumber || "Not provided"}
+              </span>
             </div>
             <div className="flex items-center justify-between py-0.5">
-              <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">Joined Date</span>
-              <span className="font-extrabold text-foreground">{user?.createdAt ? formatDate(user.createdAt) : "N/A"}</span>
+              <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">
+                Joined Date
+              </span>
+              <span className="font-extrabold text-foreground">
+                {user?.createdAt ? formatDate(user.createdAt) : "N/A"}
+              </span>
             </div>
           </div>
         </div>
@@ -109,9 +134,7 @@ const ProfileDetails = () => {
             </Link>
           </div>
         </div>
-
       </div>
-
     </div>
   );
 };

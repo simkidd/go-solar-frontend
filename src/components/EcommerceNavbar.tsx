@@ -18,6 +18,7 @@ import {
   Settings,
   LogOut,
   ShieldCheck,
+  DollarSign,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -225,7 +226,7 @@ const EcommerceNavbar = () => {
                   className="w-60 p-0 overflow-hidden shadow-xl border border-border/60"
                 >
                   {/* User Info Header */}
-                  <div className="px-4 py-3.5 bg-gradient-to-br from-primary/5 to-transparent border-b border-border/50">
+                  <div className="px-4 py-3.5 bg-linear-to-br from-primary/5 to-transparent border-b border-border/50">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10 shrink-0 border-2 border-primary/20">
                         <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">
@@ -281,6 +282,15 @@ const EcommerceNavbar = () => {
                       >
                         <Package className="h-3.5 w-3.5 text-muted-foreground" />
                         My Orders
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/account/financing"
+                        className="cursor-pointer flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-foreground hover:text-primary"
+                      >
+                        <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
+                        Solar Financing
                       </Link>
                     </DropdownMenuItem>
                   </div>

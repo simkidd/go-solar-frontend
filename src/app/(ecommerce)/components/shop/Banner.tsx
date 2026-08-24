@@ -48,7 +48,12 @@ const DEFAULT_FALLBACK_SLIDES = [
 ];
 
 const highlightKeywords = (title: string) => {
-  const keywords = ["Solar Uptime", "Solar Panels", "Solar Energy", "Clean Energy"];
+  const keywords = [
+    "Solar Uptime",
+    "Solar Panels",
+    "Solar Energy",
+    "Clean Energy",
+  ];
   let rendered = title;
   for (const kw of keywords) {
     if (rendered.includes(kw)) {
@@ -67,14 +72,14 @@ const highlightKeywords = (title: string) => {
 
 const Banner = () => {
   const plugin = React.useRef(
-    Autoplay({ delay: 6000, stopOnInteraction: false })
+    Autoplay({ delay: 6000, stopOnInteraction: false }),
   );
 
   const { data: serverBanners = [], isLoading } = useActiveBannersQuery();
 
   const slides = useMemo(() => {
     const heroBanners = serverBanners.filter(
-      (b: any) => b.placement === "storefront_hero"
+      (b: any) => b.placement === "storefront_hero",
     );
     if (heroBanners.length > 0) {
       return heroBanners;
@@ -102,9 +107,9 @@ const Banner = () => {
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-60 md:opacity-85 transition-transform duration-[10s] hover:scale-105"
                 style={{ backgroundImage: `url('${slide.image}')` }}
               />
-              
+
               {/* Split layout gradient overlay */}
-              <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/95 via-black/85 md:from-black/95 md:via-black/75 md:to-transparent" />
+              <div className="absolute inset-0 z-10 bg-linear-to-r from-black/95 via-black/85 md:from-black/95 md:via-black/75 md:to-transparent" />
 
               {/* Text Container: Align left in split layout */}
               <div className="relative z-20 w-[95%] sm:w-4/5 md:w-[65%] ml-6 sm:ml-12 md:ml-16 py-10 flex flex-col justify-center items-start space-y-4 text-white select-none">
@@ -114,17 +119,17 @@ const Banner = () => {
                     {slide.badge}
                   </span>
                 )}
-                
+
                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight Outfit">
                   {highlightKeywords(slide.title)}
                 </h2>
-                
+
                 {slide.subtitle && (
                   <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-medium max-w-lg line-clamp-3">
                     {slide.subtitle}
                   </p>
                 )}
-                
+
                 {/* Actions row: side by side buttons */}
                 <div className="pt-2 flex flex-wrap gap-3">
                   <Link href={slide.ctaLink || "/shop"}>
@@ -133,9 +138,12 @@ const Banner = () => {
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
                   </Link>
-                  
+
                   <Link href="/energy-calculator">
-                    <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:text-white font-extrabold text-[10px] uppercase tracking-widest rounded-xl px-6 h-11 transition-all hover:scale-[1.02] cursor-pointer">
+                    <Button
+                      variant="outline"
+                      className="border-white/20 text-white hover:bg-white/10 hover:text-white font-extrabold text-[10px] uppercase tracking-widest rounded-xl px-6 h-11 transition-all hover:scale-[1.02] cursor-pointer"
+                    >
                       Explore Solutions
                     </Button>
                   </Link>
