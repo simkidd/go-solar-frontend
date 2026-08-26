@@ -22,25 +22,19 @@ const ProductDetail: React.FC<{
     return price - (price * percentageOff) / 100;
   };
 
-  const hasDirectDiscount =
+  const hasOfferDiscount =
+    Boolean(product?.currentOffer?.isActive && product?.currentOffer?.percentageOff);
+
+  const hasDiscount =
     typeof product?.discountPrice === "number" &&
     product.discountPrice > 0 &&
     product.discountPrice < product.price;
 
-  const hasOfferDiscount =
-    Boolean(product?.currentOffer?.isActive && product?.currentOffer?.percentageOff);
+  const newPrice = hasDiscount ? product.discountPrice! : product?.price;
 
-  const basePrice = hasDirectDiscount ? product.discountPrice! : product?.price;
-
-  const newPrice = hasOfferDiscount
-    ? calculateNewPrice(basePrice, product?.currentOffer!.percentageOff)
-    : basePrice;
-
-  const discountPercentage = hasDirectDiscount
+  const discountPercentage = hasDiscount
     ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
-    : hasOfferDiscount
-      ? product.currentOffer!.percentageOff
-      : 0;
+    : 0;
 
   const inStock = product?.quantityInStock > 0;
 

@@ -124,6 +124,9 @@ export interface Offer {
   priceSlash: number;
   percentageOff: number;
   isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+  products?: (string | Product)[];
   createdAt: string;
   updatedAt: string;
 }
@@ -135,6 +138,9 @@ export interface CreateOfferInput {
   priceSlash?: number;
   percentageOff?: number;
   isActive?: boolean;
+  startDate?: string;
+  endDate?: string;
+  products?: string[];
 }
 
 export enum OfferType {

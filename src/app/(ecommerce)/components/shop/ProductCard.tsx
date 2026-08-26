@@ -25,26 +25,20 @@ const ProductCard: React.FC<{
     return price - (price * percentageOff) / 100;
   };
 
-  const hasDirectDiscount =
-    typeof item?.discountPrice === "number" &&
-    item.discountPrice > 0 &&
-    item.discountPrice < item.price;
-
   const hasOfferDiscount = Boolean(
     item?.currentOffer?.isActive && item?.currentOffer?.percentageOff,
   );
 
-  const newPrice = hasDirectDiscount
-    ? item.discountPrice!
-    : hasOfferDiscount
-      ? calculateNewPrice(item?.price, item?.currentOffer!.percentageOff)
-      : item?.price;
+  const hasDiscount =
+    typeof item?.discountPrice === "number" &&
+    item.discountPrice > 0 &&
+    item.discountPrice < item.price;
 
-  const discountPercentage = hasDirectDiscount
+  const newPrice = hasDiscount ? item.discountPrice! : item?.price;
+
+  const discountPercentage = hasDiscount
     ? Math.round(((item.price - item.discountPrice!) / item.price) * 100)
-    : hasOfferDiscount
-      ? item.currentOffer!.percentageOff
-      : 0;
+    : 0;
 
   const inStock = item?.quantityInStock > 0;
 

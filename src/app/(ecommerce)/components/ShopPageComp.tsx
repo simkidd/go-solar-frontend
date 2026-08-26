@@ -2,10 +2,8 @@
 import React, { useMemo } from "react";
 import Cta from "@/app/(ecommerce)/components/shop/Cta";
 import { Category, Product } from "@/interfaces/product.interface";
-import { useActiveOffersQuery } from "@/hooks/queries/useOffersQuery";
 import { useActiveBannersQuery } from "@/hooks/queries/useBannersQuery";
 import CategoriesSectionGrid, { CategorySection } from "./shop/CategorySection";
-import SpecialOffers from "./shop/SpecialOffers";
 import ViewHistoryComp from "../components/ViewHistory";
 import useProducts from "@/hooks/useProducts";
 import useCategories from "@/hooks/useCategories";
@@ -93,7 +91,6 @@ const ShopFeaturesBar = () => (
 );
 
 const ShopPageComp = () => {
-  const { data: offers = [] } = useActiveOffersQuery();
   const { data: serverBanners = [] } = useActiveBannersQuery();
 
   const promoCardBanner = useMemo(() => {
@@ -151,11 +148,6 @@ const ShopPageComp = () => {
         product.category?.name?.toLowerCase() !== "packages",
     )
     .slice(0, 5);
-
-  const topOffers = offers
-    .filter((offer: any) => offer.isActive)
-    .sort((a: any, b: any) => b.percentageOff - a.percentageOff)
-    .slice(0, 3);
 
   if (productsError || categoriesError) {
     return (
@@ -215,36 +207,73 @@ const ShopPageComp = () => {
         {/* Promo banner placeholder */}
         <div className="mb-6">
           {promoCardBanner ? (
-            <div className="w-full relative rounded-3xl overflow-hidden shadow-xs border border-border/80 bg-zinc-950 min-h-[160px] flex items-center font-inter p-8 md:p-12">
-              <div
-                className="absolute inset-0 z-0 bg-cover bg-center opacity-30 hover:scale-102 transition-transform duration-[10s]"
-                style={{ backgroundImage: `url('${promoCardBanner.image}')` }}
-              />
-              <div className="absolute inset-0 z-10 bg-linear-to-r from-black via-black/80 to-transparent" />
-              <div className="relative z-20 max-w-xl space-y-2 text-white">
-                {promoCardBanner.badge && (
-                  <span className="inline-block text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
-                    {promoCardBanner.badge}
-                  </span>
-                )}
-                <h3 className="text-lg md:text-xl font-black tracking-tight leading-tight">
-                  {promoCardBanner.title}
-                </h3>
-                {promoCardBanner.subtitle && (
-                  <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-semibold">
-                    {promoCardBanner.subtitle}
-                  </p>
-                )}
-                {promoCardBanner.ctaLink && (
-                  <div className="pt-2">
-                    <Link href={promoCardBanner.ctaLink}>
-                      <Button className="bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest h-8 px-4 rounded-xl shadow-xs transition-all hover:scale-[1.02] cursor-pointer">
-                        {promoCardBanner.ctaText || "Explore"}
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
+            <div className="w-full relative rounded-3xl overflow-hidden shadow-xs border border-border/80 bg-zinc-950 min-h-[160px] flex items-center font-inter">
+              {promoCardBanner.ctaLink ? (
+                <Link href={promoCardBanner.ctaLink} className="absolute inset-0 w-full h-full z-20 flex items-center">
+                  <div
+                    className={`absolute inset-0 z-0 bg-cover bg-center transition-transform duration-[10s] ${
+                      promoCardBanner.title ? "opacity-30 hover:scale-102" : "opacity-100 hover:scale-102"
+                    }`}
+                    style={{ backgroundImage: `url('${promoCardBanner.image}')` }}
+                  />
+                  {promoCardBanner.title && (
+                    <>
+                      <div className="absolute inset-0 z-10 bg-linear-to-r from-black via-black/80 to-transparent" />
+                      <div className="relative z-20 max-w-xl space-y-2 text-white p-8 md:p-12">
+                        {promoCardBanner.badge && (
+                          <span className="inline-block text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
+                            {promoCardBanner.badge}
+                          </span>
+                        )}
+                        <h3 className="text-lg md:text-xl font-black tracking-tight leading-tight">
+                          {promoCardBanner.title}
+                        </h3>
+                        {promoCardBanner.subtitle && (
+                          <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-semibold">
+                            {promoCardBanner.subtitle}
+                          </p>
+                        )}
+                        {promoCardBanner.ctaText && (
+                          <div className="pt-2">
+                            <Button className="bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest h-8 px-4 rounded-xl shadow-xs transition-all hover:scale-[1.02] cursor-pointer">
+                              {promoCardBanner.ctaText || "Explore"}
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </Link>
+              ) : (
+                <>
+                  <div
+                    className={`absolute inset-0 z-0 bg-cover bg-center transition-transform duration-[10s] ${
+                      promoCardBanner.title ? "opacity-30 hover:scale-102" : "opacity-100"
+                    }`}
+                    style={{ backgroundImage: `url('${promoCardBanner.image}')` }}
+                  />
+                  {promoCardBanner.title && (
+                    <>
+                      <div className="absolute inset-0 z-10 bg-linear-to-r from-black via-black/80 to-transparent" />
+                      <div className="relative z-20 max-w-xl space-y-2 text-white p-8 md:p-12">
+                        {promoCardBanner.badge && (
+                          <span className="inline-block text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
+                            {promoCardBanner.badge}
+                          </span>
+                        )}
+                        <h3 className="text-lg md:text-xl font-black tracking-tight leading-tight">
+                          {promoCardBanner.title}
+                        </h3>
+                        {promoCardBanner.subtitle && (
+                          <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-semibold">
+                            {promoCardBanner.subtitle}
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           ) : (
             <Cta />
@@ -342,9 +371,6 @@ const ShopPageComp = () => {
                 />
               ))}
         </div>
-
-        {/* Offers and history segments */}
-        <SpecialOffers offers={topOffers} />
 
         <ViewHistoryComp />
       </div>

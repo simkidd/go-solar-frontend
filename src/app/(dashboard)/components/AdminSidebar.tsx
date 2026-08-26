@@ -103,7 +103,7 @@ const navigationItems = [
         icon: DollarSign,
       },
       {
-        name: "Sales Offers",
+        name: "Campaigns & Promos",
         href: "/dashboard/sales-offers",
         icon: Tag,
       },
@@ -112,11 +112,6 @@ const navigationItems = [
   {
     group: "Content & Proof",
     items: [
-      {
-        name: "Store Banners",
-        href: "/dashboard/banners",
-        icon: Sparkles,
-      },
       {
         name: "Announcement Bar",
         href: "/dashboard/announcement",

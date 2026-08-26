@@ -18,6 +18,7 @@ import {
   Edit2,
   Plus,
   ImageOff,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import { Product } from "@/interfaces/product.interface";
@@ -26,7 +27,7 @@ import {
   deleteProduct,
   updateProduct,
 } from "@/lib/api/products.api";
-import { addToOffer, getOffers } from "@/lib/api/offers.api";
+import { addToOffer, getOffers, removeFromOffer } from "@/lib/api/offers.api";
 import { formatCurrency } from "@/utils/helpers";
 import { PRODUCT_KEYS } from "@/hooks/queries/useProductsQuery";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isOfferOpen, setIsOfferOpen] = useState(false);
+  const [isRemoveOfferOpen, setIsRemoveOfferOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState("");
 
   // ── Product query ──
@@ -127,6 +129,20 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
     },
   });
 
+  const removeFromOfferMutation = useMutation({
+    mutationFn: ({ productId, offerId }: { productId: string; offerId: string }) =>
+      removeFromOffer(productId, offerId),
+    onSuccess: (data) => {
+      toast.success(data?.message || "Removed from campaign successfully");
+      queryClient.invalidateQueries({ queryKey: ["getProductById", id] });
+      queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || "Failed to remove from campaign";
+      toast.error(message);
+    },
+  });
+
   if (isLoading) {
     return <SingleProductSkeleton />;
   }
@@ -137,20 +153,12 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
   const typedProduct = product as Product;
 
-  const calculateNewPrice = (price: number, percentageOff: number) => {
-    return price - (price * percentageOff) / 100;
-  };
+  const hasDiscount =
+    typeof typedProduct?.discountPrice === "number" &&
+    typedProduct.discountPrice > 0 &&
+    typedProduct.discountPrice < typedProduct.price;
 
-  const basePrice =
-    typedProduct?.discountPrice && typedProduct.discountPrice > 0
-      ? typedProduct.discountPrice
-      : typedProduct?.price;
-
-  const newPrice =
-    typedProduct?.currentOffer?.isActive &&
-    typedProduct?.currentOffer?.percentageOff !== undefined
-      ? calculateNewPrice(basePrice, typedProduct?.currentOffer?.percentageOff)
-      : basePrice;
+  const newPrice = hasDiscount ? typedProduct.discountPrice! : typedProduct?.price;
 
   const hasOffer =
     typedProduct?.currentOffer?.isActive && typedProduct?.currentOffer?.percentageOff;
@@ -316,6 +324,49 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
         </DialogContent>
       </Dialog>
 
+      {/* 5. Remove from campaign confirmation dialog */}
+      <Dialog open={isRemoveOfferOpen} onOpenChange={setIsRemoveOfferOpen}>
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+          <DialogHeader>
+            <DialogTitle className="text-foreground font-extrabold text-base">
+              Remove from Campaign
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed font-semibold">
+              Are you sure you want to remove <b>{typedProduct?.name}</b> from
+              its active campaign? This will restore the product&apos;s standard
+              pricing immediately.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4 flex gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setIsRemoveOfferOpen(false)}
+              className="text-xs font-semibold rounded-xl h-10 px-5 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={removeFromOfferMutation.isPending}
+              onClick={() => {
+                const offerId =
+                  typeof typedProduct.currentOffer === "object"
+                    ? (typedProduct.currentOffer as any)._id
+                    : typedProduct.currentOffer;
+                removeFromOfferMutation.mutate(
+                  { productId: typedProduct._id, offerId },
+                  { onSuccess: () => setIsRemoveOfferOpen(false) },
+                );
+              }}
+              className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold h-10 px-5 rounded-xl cursor-pointer"
+            >
+              {removeFromOfferMutation.isPending ? "Removing..." : "Yes, Remove"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* ── Navigation Breadcrumb ── */}
       <div className="flex items-center justify-between select-none">
         <Link
@@ -370,13 +421,24 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
             {typedProduct?.isPublished ? "Set as Draft" : "Publish"}
           </Button>
 
-          <Button
-            variant="outline"
-            onClick={() => setIsOfferOpen(true)}
-            className="text-xs font-semibold h-9 px-4 rounded-xl border-border text-muted-foreground hover:text-foreground cursor-pointer hover:bg-muted/30 gap-1.5"
-          >
-            <Plus size={13} /> Add to Campaign
-          </Button>
+          {typedProduct?.currentOffer ? (
+            <Button
+              variant="outline"
+              disabled={removeFromOfferMutation.isPending}
+              onClick={() => setIsRemoveOfferOpen(true)}
+              className="text-xs font-semibold h-9 px-4 rounded-xl border-orange-200 dark:border-orange-950 text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/20 cursor-pointer gap-1.5"
+            >
+              <X size={13} /> Remove from Campaign
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              onClick={() => setIsOfferOpen(true)}
+              className="text-xs font-semibold h-9 px-4 rounded-xl border-border text-muted-foreground hover:text-foreground cursor-pointer hover:bg-muted/30 gap-1.5"
+            >
+              <Plus size={13} /> Add to Campaign
+            </Button>
+          )}
 
           <Button
             variant="outline"
