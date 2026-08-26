@@ -33,6 +33,8 @@ const getPlacementLabel = (placement?: string) => {
       return "Grid Strip";
     case "storefront_promo_card":
       return "Featured Card";
+    case "storefront_leaderboard":
+      return "Leaderboard Strip";
     default:
       return "Hero Slider";
   }

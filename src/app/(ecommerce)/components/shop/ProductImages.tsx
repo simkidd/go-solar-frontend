@@ -48,11 +48,35 @@ const ProductImages: React.FC<{
   const activeImg = images[selectedImage];
 
   return (
-    <div className="w-full space-y-4 font-inter">
+    <div className="flex flex-col-reverse md:flex-row gap-4 w-full font-inter items-start">
+      {/* ── Scrollable Thumbnail Strip (Left on desktop, Bottom on mobile) ── */}
+      {images.length > 1 && (
+        <div className="flex md:flex-col gap-2.5 overflow-x-auto md:overflow-y-auto scrollbar-hide py-1 md:py-0 w-full md:w-20 shrink-0 md:max-h-[450px]">
+          {images.map((img, index) => (
+            <button
+              key={img.public_id}
+              onClick={() => setSelectedImage(index)}
+              className={`relative shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
+                selectedImage === index
+                  ? "border-primary ring-4 ring-primary/10"
+                  : "border-zinc-150 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/10"
+              }`}
+            >
+              <Image
+                src={img?.url}
+                alt={`Thumbnail ${index + 1}`}
+                fill
+                className="object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* ── Main Interactive Image Viewer ── */}
       <div
         onClick={() => setIsLightboxOpen(true)}
-        className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden border border-zinc-150/60 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/10 cursor-zoom-in group select-none"
+        className="relative flex-1 w-full aspect-[4/3] rounded-3xl overflow-hidden border border-zinc-150/60 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/10 cursor-zoom-in group select-none"
       >
         {/* Base Standard Image */}
         <Image
@@ -77,29 +101,6 @@ const ProductImages: React.FC<{
         </div>
       </div>
 
-      {/* ── Scrollable Horizontal Thumbnail Strip ── */}
-      {images.length > 1 && (
-        <div className="flex gap-2.5 overflow-x-auto scrollbar-hide py-1">
-          {images.map((img, index) => (
-            <button
-              key={img.public_id}
-              onClick={() => setSelectedImage(index)}
-              className={`relative shrink-0 w-16 h-16 rounded-2xl overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
-                selectedImage === index
-                  ? "border-primary ring-4 ring-primary/10"
-                  : "border-zinc-150 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/10"
-              }`}
-            >
-              <Image
-                src={img?.url}
-                alt={`Thumbnail ${index + 1}`}
-                fill
-                className="object-cover"
-              />
-            </button>
-          ))}
-        </div>
-      )}
 
       {/* ── Premium Lightbox overlay modal ── */}
       {isLightboxOpen && (

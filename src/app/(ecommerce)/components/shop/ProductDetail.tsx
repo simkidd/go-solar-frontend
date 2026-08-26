@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import SocialShare from "@/components/SocialShare";
 import { Product } from "@/interfaces/product.interface";
 import useCartStore from "@/lib/stores/cart.store";
 import { formatCurrency } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Truck, Heart } from "lucide-react";
+import { Minus, Plus, Truck, Heart, Share2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+
 
 const ProductDetail: React.FC<{
   product: Product;
@@ -37,6 +37,34 @@ const ProductDetail: React.FC<{
     : 0;
 
   const inStock = product?.quantityInStock > 0;
+
+  const handleShare = async () => {
+    if (typeof window !== "undefined") {
+      const shareData = {
+        title: product?.name || "GoSolar Product",
+        text: `Check out ${product?.name || "this product"} on GoSolar Nigeria!`,
+        url: window.location.href,
+      };
+
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+        } catch (err: any) {
+          // Ignore AbortError from user cancelling share sheet
+          if (err.name !== "AbortError") {
+            console.error("Error sharing:", err);
+          }
+        }
+      } else {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          toast.success("Product link copied to clipboard!");
+        } catch (err) {
+          toast.error("Failed to copy link.");
+        }
+      }
+    }
+  };
 
   return (
     <div className="w-full flex flex-col font-inter space-y-6">
@@ -169,10 +197,16 @@ const ProductDetail: React.FC<{
         </div>
       </div>
 
-      {/* ── Social Share links ── */}
-      <div className="flex items-center gap-4 pt-4 border-t border-zinc-150 dark:border-zinc-850">
-        <span className="text-xs font-bold text-zinc-400 dark:text-zinc-600">Share Product:</span>
-        <SocialShare title={product?.name} />
+      {/* ── Social Share ── */}
+      <div className="flex items-center gap-4 pt-4 border-t border-zinc-150 dark:border-zinc-850 select-none">
+        <span className="text-xs font-bold text-zinc-400 dark:text-zinc-650">Share Product:</span>
+        <button
+          onClick={handleShare}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900/60 dark:hover:bg-zinc-900 border border-border text-zinc-700 dark:text-zinc-300 text-xs font-bold transition-all duration-200 cursor-pointer shadow-3xs"
+        >
+          <Share2 className="w-3.5 h-3.5 text-primary" />
+          <span>Share Link</span>
+        </button>
       </div>
     </div>
   );

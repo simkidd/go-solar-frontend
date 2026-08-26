@@ -31,7 +31,7 @@ export const generateMetadata = async ({
   let product = products.find((product) => product?.slug === slug);
 
   return {
-    title: `${product?.name || "Product"} | GoSolar`,
+    title: product?.name || "Product",
     description: product?.description,
     alternates: {
       canonical: `/products/${product?.slug}`,
@@ -85,7 +85,7 @@ const ProductPage = async ({ params }: IProduct) => {
                 <ChevronRight className="w-3 h-3 text-muted-foreground/30" />
                 <Link
                   href={`/${product.category.slug}/products`}
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-foreground transition-colors truncate"
                 >
                   {product.category.name}
                 </Link>

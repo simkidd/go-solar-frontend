@@ -21,10 +21,10 @@ import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
 interface CreateBannerFormValues {
   title: string;
   ctaLink?: string;
-  order?: number;
+  placement: "storefront_hero" | "storefront_promo_strip" | "storefront_promo_card" | "storefront_leaderboard";
   isActive?: boolean;
-  placement: "storefront_hero" | "storefront_promo_strip" | "storefront_promo_card";
 }
+
 
 const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -41,7 +41,6 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     defaultValues: {
       title: "",
       ctaLink: "/products",
-      order: 0,
       isActive: true,
       placement: "storefront_hero",
     },
@@ -81,7 +80,6 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const formData = new FormData();
     formData.append("title", values.title);
     if (values.ctaLink) formData.append("ctaLink", values.ctaLink);
-    formData.append("order", String(values.order || 0));
     formData.append("isActive", String(values.isActive ?? true));
     formData.append("placement", values.placement);
     formData.append("image", selectedFile);
@@ -133,7 +131,7 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <Link2 className="h-4 w-4 text-primary" /> Call-to-Action &amp; Settings
             </h3>
             <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
-              Configure banner sorting order and redirect destination links
+              Configure the redirect destination and storefront placement
             </p>
           </div>
 
@@ -181,24 +179,7 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label
-                htmlFor="order"
-                className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block"
-              >
-                Priority Order <span className="text-[10px] font-normal text-muted-foreground normal-case">(0 = first)</span>
-              </label>
-              <Input
-                id="order"
-                type="number"
-                placeholder="0"
-                {...register("order", { valueAsNumber: true })}
-                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold w-full"
-              />
-            </div>
-
-            <div className="space-y-1.5">
+          <div className="space-y-1.5">
               <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                 Placement Location <span className="text-red-500">*</span>
               </label>
@@ -221,12 +202,14 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       <SelectItem value="storefront_promo_card" className="cursor-pointer text-xs font-semibold">
                         Featured Promo Card (Highlights)
                       </SelectItem>
+                      <SelectItem value="storefront_leaderboard" className="cursor-pointer text-xs font-semibold">
+                        Leaderboard Strip (1264 × 180 — Pure Graphic)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               />
             </div>
-          </div>
 
           <div className="flex items-center justify-between pt-4 border-t border-border/60 select-none">
             <div className="space-y-0.5">

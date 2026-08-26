@@ -1,9 +1,8 @@
 "use client";
 import React, { useMemo } from "react";
-import Cta from "@/app/(ecommerce)/components/shop/Cta";
 import { Category, Product } from "@/interfaces/product.interface";
-import { useActiveBannersQuery } from "@/hooks/queries/useBannersQuery";
 import { useActiveOffersQuery } from "@/hooks/queries/useOffersQuery";
+
 import { usePublishedProductsQuery } from "@/hooks/queries/useProductsQuery";
 import CategoriesSectionGrid, { CategorySection } from "./shop/CategorySection";
 import ViewHistoryComp from "../components/ViewHistory";
@@ -92,14 +91,9 @@ const ShopFeaturesBar = () => (
   </section>
 );
 
-const ShopPageComp = () => {
-  const { data: serverBanners = [] } = useActiveBannersQuery();
+import LeaderboardBanner from "./shop/LeaderboardBanner";
 
-  const promoCardBanner = useMemo(() => {
-    return serverBanners.find(
-      (b: any) => b.placement === "storefront_promo_card",
-    );
-  }, [serverBanners]);
+const ShopPageComp = () => {
 
   const {
     products: allProducts,
@@ -155,9 +149,7 @@ const ShopPageComp = () => {
   const { data: activeOffers = [] } = useActiveOffersQuery();
   const firstOffer = activeOffers[0] ?? null;
   const { data: offerProductsData, isLoading: offerProductsLoading } =
-    usePublishedProductsQuery(
-      { page: 1, limit: 8, offer: firstOffer?._id },
-    );
+    usePublishedProductsQuery({ page: 1, limit: 8, offer: firstOffer?._id });
   const offerProducts: Product[] = offerProductsData?.products || [];
 
   if (productsError || categoriesError) {
@@ -215,111 +207,8 @@ const ShopPageComp = () => {
           loading={categoriesLoading}
         />
 
-        {/* Promo banner placeholder */}
-        <div className="mb-6">
-          {promoCardBanner ? (
-            <div className="w-full relative rounded-3xl overflow-hidden shadow-xs border border-border/80 bg-zinc-950 min-h-[160px] flex items-center font-inter">
-              {promoCardBanner.ctaLink ? (
-                <Link href={promoCardBanner.ctaLink} className="absolute inset-0 w-full h-full z-20 flex items-center">
-                  <div
-                    className={`absolute inset-0 z-0 bg-cover bg-center transition-transform duration-[10s] ${
-                      promoCardBanner.title ? "opacity-30 hover:scale-102" : "opacity-100 hover:scale-102"
-                    }`}
-                    style={{ backgroundImage: `url('${promoCardBanner.image}')` }}
-                  />
-                  {promoCardBanner.title && (
-                    <>
-                      <div className="absolute inset-0 z-10 bg-linear-to-r from-black via-black/80 to-transparent" />
-                      <div className="relative z-20 max-w-xl space-y-2 text-white p-8 md:p-12">
-                        {promoCardBanner.badge && (
-                          <span className="inline-block text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
-                            {promoCardBanner.badge}
-                          </span>
-                        )}
-                        <h3 className="text-lg md:text-xl font-black tracking-tight leading-tight">
-                          {promoCardBanner.title}
-                        </h3>
-                        {promoCardBanner.subtitle && (
-                          <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-semibold">
-                            {promoCardBanner.subtitle}
-                          </p>
-                        )}
-                        {promoCardBanner.ctaText && (
-                          <div className="pt-2">
-                            <Button className="bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest h-8 px-4 rounded-xl shadow-xs transition-all hover:scale-[1.02] cursor-pointer">
-                              {promoCardBanner.ctaText || "Explore"}
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </Link>
-              ) : (
-                <>
-                  <div
-                    className={`absolute inset-0 z-0 bg-cover bg-center transition-transform duration-[10s] ${
-                      promoCardBanner.title ? "opacity-30 hover:scale-102" : "opacity-100"
-                    }`}
-                    style={{ backgroundImage: `url('${promoCardBanner.image}')` }}
-                  />
-                  {promoCardBanner.title && (
-                    <>
-                      <div className="absolute inset-0 z-10 bg-linear-to-r from-black via-black/80 to-transparent" />
-                      <div className="relative z-20 max-w-xl space-y-2 text-white p-8 md:p-12">
-                        {promoCardBanner.badge && (
-                          <span className="inline-block text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
-                            {promoCardBanner.badge}
-                          </span>
-                        )}
-                        <h3 className="text-lg md:text-xl font-black tracking-tight leading-tight">
-                          {promoCardBanner.title}
-                        </h3>
-                        {promoCardBanner.subtitle && (
-                          <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-semibold">
-                            {promoCardBanner.subtitle}
-                          </p>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          ) : (
-            <Cta />
-          )}
-        </div>
-
-        {/* Pre-configured Complete Packages segment */}
-        <div className="space-y-8">
-          <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
-            <div className="space-y-0.5">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                Pre-Configured
-              </span>
-              <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
-                Complete Solar Packages
-              </h2>
-            </div>
-            <Link
-              href="/packages"
-              className="text-xs font-black uppercase tracking-wider text-primary hover:underline transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              View All Packages <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {productsLoading
-              ? Array.from({ length: 3 }).map((_, idx) => (
-                  <Skeleton key={idx} className="h-72 rounded-2xl" />
-                ))
-              : featuredPackages.map((pkg: Product) => (
-                  <ProductCard key={pkg._id} item={pkg} />
-                ))}
-          </div>
-        </div>
+        {/* Leaderboard Banner — pure graphic, random pick from active pool */}
+        <LeaderboardBanner />
 
         {/* Flash Deals strip — only when an active offer exists */}
         {firstOffer && (
@@ -327,7 +216,8 @@ const ShopPageComp = () => {
             <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
               <div className="space-y-0.5">
                 <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary">
-                  <Zap className="h-3.5 w-3.5 fill-primary" /> Flash Deal · {firstOffer.percentageOff}% Off
+                  <Zap className="h-3.5 w-3.5 fill-primary" /> Flash Deal ·{" "}
+                  {firstOffer.percentageOff}% Off
                 </span>
                 <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
                   {firstOffer.name}

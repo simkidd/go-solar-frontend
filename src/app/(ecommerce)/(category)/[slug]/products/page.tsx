@@ -1,4 +1,4 @@
-import Cta from "@/app/(ecommerce)/components/shop/Cta";
+import LeaderboardBanner from "@/app/(ecommerce)/components/shop/LeaderboardBanner";
 import ProductsList from "@/app/(ecommerce)/components/shop/ProductsList";
 import { Category } from "@/interfaces/product.interface";
 import { getCategories } from "@/lib/api/products.api";
@@ -42,7 +42,7 @@ const CategoryProducts = async ({ params }: IProp) => {
       <section className="w-full">
         <div className="container mx-auto px-2 py-8">
           <div className="mb-6">
-            <Cta />
+            <LeaderboardBanner />
           </div>
           <ProductsList categorySlug={categorySlug} />
         </div>

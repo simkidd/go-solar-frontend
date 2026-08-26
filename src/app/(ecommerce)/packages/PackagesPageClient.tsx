@@ -1,6 +1,6 @@
 "use client";
 
-import Cta from "@/app/(ecommerce)/components/shop/Cta";
+import LeaderboardBanner from "@/app/(ecommerce)/components/shop/LeaderboardBanner";
 import { formatCurrency } from "@/utils/helpers";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -67,7 +67,7 @@ const PackagesPageClient = () => {
       <section className="w-full">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           <div className="mb-6">
-            <Cta />
+            <LeaderboardBanner />
           </div>
 
           <div className="text-center max-w-2xl mx-auto space-y-3 mt-12">
