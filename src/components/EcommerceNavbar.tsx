@@ -19,6 +19,7 @@ import {
   LogOut,
   ShieldCheck,
   DollarSign,
+  Zap,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -39,6 +40,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCategoryTreeQuery } from "@/hooks/queries/useCategoriesQuery";
 import { useAnnouncementQuery } from "@/hooks/queries/useAnnouncementQuery";
+import { useActiveOffersQuery } from "@/hooks/queries/useOffersQuery";
 
 const EcommerceNavbar = () => {
   const { isAuthenticated, user, logout } = useSession();
@@ -55,6 +57,10 @@ const EcommerceNavbar = () => {
 
   // Fetch active announcement banner
   const { data: announcementData } = useAnnouncementQuery();
+
+  // Fetch active offers — controls Deals pill visibility
+  const { data: activeOffers = [] } = useActiveOffersQuery();
+  const hasActiveOffers = activeOffers.length > 0;
 
   // Close mobile drawer and reset category explorer on route changes
   useEffect(() => {
@@ -335,6 +341,21 @@ const EcommerceNavbar = () => {
                 All Products
               </Link>
 
+              {/* Deals pill — only shown when active campaigns exist */}
+              {hasActiveOffers && (
+                <Link
+                  href="/offers"
+                  className={`text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors px-3 py-1.5 rounded-full flex items-center gap-1 ${
+                    pathname === "/offers" || pathname.startsWith("/offers")
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                  }`}
+                >
+                  <Zap className="h-3 w-3" />
+                  Deals
+                </Link>
+              )}
+
               {categoryTree.map((category) => {
                 const href = `/${category.slug}/products`;
                 const active = pathname === href || pathname.startsWith(href);
@@ -525,6 +546,22 @@ const EcommerceNavbar = () => {
                           >
                             All Products
                           </Link>
+
+                          {/* Deals link — only when active campaigns exist */}
+                          {hasActiveOffers && (
+                            <Link
+                              href="/offers"
+                              onClick={() => setShowMobileMenu(false)}
+                              className={`py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors flex items-center gap-2 ${
+                                pathname === "/offers" || pathname.startsWith("/offers")
+                                  ? "text-primary border-primary/20"
+                                  : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
+                              }`}
+                            >
+                              <Zap className="h-3.5 w-3.5" />
+                              Deals
+                            </Link>
+                          )}
                           {categoryTree.map((category) => {
                             const href = `/${category.slug}/products`;
                             const active = pathname === href;

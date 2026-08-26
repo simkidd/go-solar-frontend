@@ -3,6 +3,8 @@ import React, { useMemo } from "react";
 import Cta from "@/app/(ecommerce)/components/shop/Cta";
 import { Category, Product } from "@/interfaces/product.interface";
 import { useActiveBannersQuery } from "@/hooks/queries/useBannersQuery";
+import { useActiveOffersQuery } from "@/hooks/queries/useOffersQuery";
+import { usePublishedProductsQuery } from "@/hooks/queries/useProductsQuery";
 import CategoriesSectionGrid, { CategorySection } from "./shop/CategorySection";
 import ViewHistoryComp from "../components/ViewHistory";
 import useProducts from "@/hooks/useProducts";
@@ -148,6 +150,15 @@ const ShopPageComp = () => {
         product.category?.name?.toLowerCase() !== "packages",
     )
     .slice(0, 5);
+
+  // ── Active offers for Flash Deals strip ──
+  const { data: activeOffers = [] } = useActiveOffersQuery();
+  const firstOffer = activeOffers[0] ?? null;
+  const { data: offerProductsData, isLoading: offerProductsLoading } =
+    usePublishedProductsQuery(
+      { page: 1, limit: 8, offer: firstOffer?._id },
+    );
+  const offerProducts: Product[] = offerProductsData?.products || [];
 
   if (productsError || categoriesError) {
     return (
@@ -309,6 +320,37 @@ const ShopPageComp = () => {
                 ))}
           </div>
         </div>
+
+        {/* Flash Deals strip — only when an active offer exists */}
+        {firstOffer && (
+          <div className="space-y-8">
+            <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
+              <div className="space-y-0.5">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary">
+                  <Zap className="h-3.5 w-3.5 fill-primary" /> Flash Deal · {firstOffer.percentageOff}% Off
+                </span>
+                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
+                  {firstOffer.name}
+                </h2>
+              </div>
+              <Link
+                href="/offers"
+                className="text-xs font-black uppercase tracking-wider text-primary hover:underline transition-colors flex items-center gap-1 cursor-pointer shrink-0 ml-4"
+              >
+                See All Deals <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {offerProductsLoading
+                ? Array.from({ length: 4 }).map((_, idx) => (
+                    <Skeleton key={idx} className="h-60 rounded-3xl" />
+                  ))
+                : offerProducts.map((prod: Product) => (
+                    <ProductCard key={prod._id} item={prod} />
+                  ))}
+            </div>
+          </div>
+        )}
 
         {/* Best Selling Hardware section */}
         <div className="space-y-8">

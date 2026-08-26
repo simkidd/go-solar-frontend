@@ -130,15 +130,21 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
   });
 
   const removeFromOfferMutation = useMutation({
-    mutationFn: ({ productId, offerId }: { productId: string; offerId: string }) =>
-      removeFromOffer(productId, offerId),
+    mutationFn: ({
+      productId,
+      offerId,
+    }: {
+      productId: string;
+      offerId: string;
+    }) => removeFromOffer(productId, offerId),
     onSuccess: (data) => {
       toast.success(data?.message || "Removed from campaign successfully");
       queryClient.invalidateQueries({ queryKey: ["getProductById", id] });
       queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to remove from campaign";
+      const message =
+        error.response?.data?.message || "Failed to remove from campaign";
       toast.error(message);
     },
   });
@@ -158,10 +164,13 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
     typedProduct.discountPrice > 0 &&
     typedProduct.discountPrice < typedProduct.price;
 
-  const newPrice = hasDiscount ? typedProduct.discountPrice! : typedProduct?.price;
+  const newPrice = hasDiscount
+    ? typedProduct.discountPrice!
+    : typedProduct?.price;
 
   const hasOffer =
-    typedProduct?.currentOffer?.isActive && typedProduct?.currentOffer?.percentageOff;
+    typedProduct?.currentOffer?.isActive &&
+    typedProduct?.currentOffer?.percentageOff;
 
   return (
     <div className="w-full font-inter space-y-6">
@@ -193,8 +202,8 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
             <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed font-semibold">
               Are you sure you want to change the status of{" "}
               <b>{typedProduct?.name}</b> to{" "}
-              <b>{typedProduct?.isPublished ? "Draft" : "Published"}</b>? This will
-              immediately toggle its storefront visibility.
+              <b>{typedProduct?.isPublished ? "Draft" : "Published"}</b>? This
+              will immediately toggle its storefront visibility.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4 flex gap-2">
@@ -361,7 +370,9 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
               }}
               className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold h-10 px-5 rounded-xl cursor-pointer"
             >
-              {removeFromOfferMutation.isPending ? "Removing..." : "Yes, Remove"}
+              {removeFromOfferMutation.isPending
+                ? "Removing..."
+                : "Yes, Remove"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -406,7 +417,8 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
           <p className="text-xs text-muted-foreground font-semibold">
             Product Code:{" "}
             <span className="font-mono text-[10px] select-all bg-muted/65 px-1.5 py-0.5 rounded text-foreground uppercase">
-              {typedProduct?.productCode || `GSL-${typedProduct?._id.slice(-6).toUpperCase()}`}
+              {typedProduct?.productCode ||
+                `GSL-${typedProduct?._id.slice(-6).toUpperCase()}`}
             </span>
           </p>
         </div>
@@ -513,7 +525,9 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
               ) : (
                 <div className="w-full py-8 rounded-xl bg-muted/10 border border-dashed border-border flex flex-col items-center justify-center gap-2 select-none">
                   <ImageOff className="w-6 h-6 text-muted-foreground/45" />
-                  <p className="text-xs font-semibold text-muted-foreground">No images uploaded</p>
+                  <p className="text-xs font-semibold text-muted-foreground">
+                    No images uploaded
+                  </p>
                 </div>
               )}
             </div>
@@ -638,7 +652,8 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                     {formatCurrency(typedProduct.price, "NGN")}
                   </span>
                 </div>
-                {typedProduct.discountPrice && typedProduct.discountPrice > 0 ? (
+                {typedProduct.discountPrice &&
+                typedProduct.discountPrice > 0 ? (
                   <div className="flex justify-between items-center py-0.5">
                     <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
                       Base Discount Price:
