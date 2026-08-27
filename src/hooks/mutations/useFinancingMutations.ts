@@ -25,50 +25,6 @@ export const useCreateFinancingRequest = (options?: {
   });
 };
 
-export const usePayFinancingStep = (options?: {
-  onSuccess?: (data: any) => void;
-}) => {
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const { data } = await axiosInstance.post(`/financing/${id}/pay`);
-      return data;
-    },
-    onSuccess: (data) => {
-      options?.onSuccess?.(data);
-    },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Failed to initialize payment";
-      toast.error(message);
-    },
-  });
-};
-
-export const useVerifyFinancingPayment = (options?: {
-  onSuccess?: (data: any) => void;
-}) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (reference: string) => {
-      const { data } = await axiosInstance.post("/financing/verify-payment", {
-        reference,
-      });
-      return data;
-    },
-    onSuccess: (data) => {
-      toast.success("Payment verified successfully!");
-      queryClient.invalidateQueries({ queryKey: FINANCING_KEYS.all });
-      options?.onSuccess?.(data);
-    },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Failed to verify payment";
-      toast.error(message);
-    },
-  });
-};
-
 export const useAdminApproveFinancing = (options?: {
   onSuccess?: (data: any) => void;
 }) => {
@@ -78,18 +34,12 @@ export const useAdminApproveFinancing = (options?: {
     mutationFn: async ({
       id,
       adminNotes,
-      monthlyPayment,
-      downPayment,
     }: {
       id: string;
       adminNotes?: string;
-      monthlyPayment?: number;
-      downPayment?: number;
     }) => {
       const { data } = await axiosInstance.put(`/financing/admin/${id}/approve`, {
         adminNotes,
-        monthlyPayment,
-        downPayment,
       });
       return data;
     },
@@ -132,6 +82,29 @@ export const useAdminDeclineFinancing = (options?: {
     onError: (error: any) => {
       const message =
         error.response?.data?.message || "Failed to decline financing request";
+      toast.error(message);
+    },
+  });
+};
+
+export const useAdminDeleteFinancing = (options?: {
+  onSuccess?: (data: any) => void;
+}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await axiosInstance.delete(`/financing/admin/${id}/delete`);
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success("Financing request deleted successfully");
+      queryClient.invalidateQueries({ queryKey: FINANCING_KEYS.all });
+      options?.onSuccess?.(data);
+    },
+    onError: (error: any) => {
+      const message =
+        error.response?.data?.message || "Failed to delete financing request";
       toast.error(message);
     },
   });

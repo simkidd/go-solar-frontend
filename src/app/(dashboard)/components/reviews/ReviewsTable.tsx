@@ -34,11 +34,15 @@ import {
   XCircle,
   ChevronDown,
   RefreshCw,
+  Video,
+  Eye,
+  Play,
 } from "lucide-react";
 import React, { useState, useMemo } from "react";
-import { useForm } from "react-hook-form";
 import AppModal from "@/components/AppModal";
+import CreateReviewForm, { CreateReviewInput } from "./CreateReviewForm";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   useAllReviewsQuery,
   REVIEW_KEYS,
@@ -58,31 +62,19 @@ export const ReviewsTable = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isPublishConfirmOpen, setIsPublishConfirmOpen] = useState(false);
+  const [isViewDetailsOpen, setIsViewDetailsOpen] = useState(false);
   const [activeReview, setActiveReview] = useState<any | null>(null);
 
   // Mutations
   const createMutation = useCreateReviewMutation({
     onSuccess: () => {
       setIsCreateOpen(false);
-      reset();
     },
   });
   const togglePublishMutation = useToggleReviewPublishMutation();
   const deleteMutation = useDeleteReviewMutation();
 
-  // react-hook-form
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: "",
-      role: "Residential Customer",
-      content: "",
-    },
-  });
+  // react-hook-form is now handled internally in CreateReviewForm
 
   const filteredReviews = useMemo(() => {
     return reviews.filter((r: any) => {
@@ -102,22 +94,51 @@ export const ReviewsTable = () => {
     });
   }, [reviews, searchTerm, statusFilter]);
 
+  // Helper to convert YouTube watch link to embed link
+  const getEmbedUrl = (url: string) => {
+    if (!url) return "";
+    try {
+      const parsed = new URL(url);
+      if (parsed.hostname.includes("youtube.com")) {
+        const v = parsed.searchParams.get("v");
+        if (v) return `https://www.youtube.com/embed/${v}?autoplay=1`;
+      }
+      if (parsed.hostname.includes("youtu.be")) {
+        const id = parsed.pathname.slice(1);
+        if (id) return `https://www.youtube.com/embed/${id}?autoplay=1`;
+      }
+    } catch (_) {}
+    return url;
+  };
+
+  const isEmbeddable = (url: string) => {
+    return url.includes("youtube.com") || url.includes("youtu.be");
+  };
+
   const handleTogglePublish = () => {
     if (!activeReview) return;
     togglePublishMutation.mutate(activeReview._id, {
       onSuccess: () => {
         setIsPublishConfirmOpen(false);
+        setIsViewDetailsOpen(false);
         setActiveReview(null);
       },
     });
   };
 
-  const handleSaveCreate = (values: any) => {
-    createMutation.mutate({
-      name: values.name,
-      role: values.role,
-      content: values.content,
-    });
+  const handleSaveCreate = (values: CreateReviewInput) => {
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("role", values.role || "Residential Customer");
+    formData.append("content", values.content);
+
+    if (values.videoUrl) {
+      formData.append("videoUrl", values.videoUrl);
+    } else if (values.videoFile) {
+      formData.append("videoFile", values.videoFile);
+    }
+
+    createMutation.mutate(formData);
   };
 
   const handleDelete = () => {
@@ -125,6 +146,7 @@ export const ReviewsTable = () => {
     deleteMutation.mutate(activeReview._id, {
       onSuccess: () => {
         setIsDeleteOpen(false);
+        setIsViewDetailsOpen(false);
         setActiveReview(null);
       },
     });
@@ -156,7 +178,6 @@ export const ReviewsTable = () => {
           </Button>
           <Button
             onClick={() => {
-              reset();
               setIsCreateOpen(true);
             }}
             className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
@@ -282,9 +303,16 @@ export const ReviewsTable = () => {
                   {/* Customer & Role */}
                   <TableCell className="px-4 py-3.5">
                     <div>
-                      <p className="font-bold text-zinc-900 dark:text-white text-sm">
-                        {rev.name}
-                      </p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-bold text-zinc-900 dark:text-white text-sm">
+                          {rev.name}
+                        </p>
+                        {rev.videoUrl && (
+                          <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-250 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50">
+                            Video
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-zinc-400 mt-0.5">{rev.role}</p>
                     </div>
                   </TableCell>
@@ -325,6 +353,16 @@ export const ReviewsTable = () => {
                         align="end"
                         className="w-36 rounded-xl bg-card border border-border/80"
                       >
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setActiveReview(rev);
+                            setIsViewDetailsOpen(true);
+                          }}
+                          className="cursor-pointer text-xs font-bold flex items-center"
+                        >
+                          <Eye className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                          View Details
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => {
                             setActiveReview(rev);
@@ -369,109 +407,40 @@ export const ReviewsTable = () => {
       <AppModal
         isOpen={isCreateOpen}
         onOpenChange={setIsCreateOpen}
-        title="Add Verified Testimonial"
+        title="Add Customer Testimonial"
         size="lg"
+        scrollBehavior="inside"
       >
-        <form
-          onSubmit={handleSubmit(handleSaveCreate)}
-          className="w-full font-inter flex flex-col gap-6 pt-2"
-        >
-          <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
-              <h3 className="text-sm font-extrabold text-foreground tracking-tight">
-                Testimonial Details
-              </h3>
-              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
-                Configure reviewer name, client role, and testimonial content details
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
-                Customer Name <span className="text-red-500">*</span>
-              </label>
-              <Input
-                placeholder="e.g. Mrs. Blessing Alabi"
-                {...register("name", { required: "Reviewer name is required" })}
-                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
-              />
-              {errors.name && (
-                <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
-                  {errors.name.message}
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
-                Client Role
-              </label>
-              <Input
-                placeholder="e.g. Homeowner in Port Harcourt"
-                {...register("role")}
-                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
-                Testimonial Review <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                rows={4}
-                placeholder="Customer's review on installation quality, solar system performance, and utility savings."
-                {...register("content", {
-                  required: "Testimonial content is required",
-                })}
-                className="w-full p-3 rounded-xl border border-border bg-muted/30 text-xs min-h-[100px] resize-none outline-none focus:ring-1 focus:ring-primary"
-              />
-              {errors.content && (
-                <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
-                  {errors.content.message}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/60">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsCreateOpen(false)}
-              className="text-muted-foreground hover:text-foreground text-xs font-bold h-10 px-4 rounded-xl cursor-pointer"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              size="sm"
-              disabled={createMutation.isPending}
-              className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-6 shadow-sm cursor-pointer"
-            >
-              {createMutation.isPending ? "Saving..." : "Save Review"}
-            </Button>
-          </div>
-        </form>
+        <CreateReviewForm
+          onSubmit={handleSaveCreate}
+          onCancel={() => setIsCreateOpen(false)}
+          isPending={createMutation.isPending}
+        />
       </AppModal>
 
       {/* PUBLISH / UNPUBLISH CONFIRMATION */}
-      <Dialog open={isPublishConfirmOpen} onOpenChange={setIsPublishConfirmOpen}>
+      <Dialog
+        open={isPublishConfirmOpen}
+        onOpenChange={setIsPublishConfirmOpen}
+      >
         <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
-              {activeReview?.isPublished ? "Unpublish Review" : "Publish Review"}
+              {activeReview?.isPublished
+                ? "Unpublish Review"
+                : "Publish Review"}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">
               {activeReview?.isPublished ? (
                 <>
-                  This will hide the testimonial from <b>{activeReview?.name}</b> on the
-                  public storefront. You can re-publish it anytime.
+                  This will hide the testimonial from{" "}
+                  <b>{activeReview?.name}</b> on the public storefront. You can
+                  re-publish it anytime.
                 </>
               ) : (
                 <>
-                  This will make the testimonial from <b>{activeReview?.name}</b> visible
-                  on the public storefront.
+                  This will make the testimonial from{" "}
+                  <b>{activeReview?.name}</b> visible on the public storefront.
                 </>
               )}
             </DialogDescription>
@@ -528,6 +497,137 @@ export const ReviewsTable = () => {
             >
               {deleteMutation.isPending ? "Deleting..." : "Confirm Delete"}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* VIEW DETAILS MODAL */}
+      <Dialog open={isViewDetailsOpen} onOpenChange={setIsViewDetailsOpen}>
+        <DialogContent className="sm:max-w-[620px] bg-card border border-border/80 rounded-2xl select-none flex flex-col py-6">
+          <DialogHeader>
+            <DialogTitle className="text-base font-extrabold text-foreground">
+              Testimonial Details
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-0.5 font-semibold">
+              Read testimonial quote and review active clips
+            </DialogDescription>
+          </DialogHeader>
+
+          {activeReview && (
+            <ScrollArea className="flex-1 max-h-[65vh]">
+              <div className="space-y-4 my-2 text-left text-xs font-semibold">
+                {/* Customer details */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-muted/30 border border-border p-4 rounded-xl">
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider block mb-0.5">
+                      Customer Name
+                    </p>
+                    <p className="font-bold text-foreground text-sm">
+                      {activeReview.name}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider block mb-0.5">
+                      Client Role
+                    </p>
+                    <p className="font-bold text-foreground text-sm">
+                      {activeReview.role || "N/A"}
+                    </p>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider block mb-0.5">
+                      Testimonial Status
+                    </p>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider border ${
+                        activeReview.isPublished
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-250 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50"
+                          : "bg-amber-50 text-amber-700 border-amber-250 dark:bg-amber-955/20 dark:text-amber-400 dark:border-amber-900/50"
+                      }`}
+                    >
+                      {activeReview.isPublished
+                        ? "Published"
+                        : "Pending Review"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Review Testimonial text */}
+                <div className="space-y-1">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider block">
+                    Review Text
+                  </p>
+                  <div className="p-4 bg-muted/20 border border-border/80 rounded-xl leading-relaxed italic text-foreground font-semibold">
+                    "{activeReview.content}"
+                  </div>
+                </div>
+
+                {/* Embedded video player if video exists */}
+                {activeReview.videoUrl && (
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider block">
+                      Video Testimonial
+                    </p>
+                    <div className="aspect-video w-full rounded-xl overflow-hidden bg-black flex items-center justify-center border border-border select-none relative">
+                      {isEmbeddable(activeReview.videoUrl) ? (
+                        <iframe
+                          src={getEmbedUrl(activeReview.videoUrl)}
+                          className="w-full h-full border-none"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <video
+                          src={activeReview.videoUrl}
+                          controls
+                          controlsList="nodownload"
+                          className="w-full h-full object-contain"
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          )}
+
+          <DialogFooter className="mt-4 flex flex-wrap gap-2 justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsViewDetailsOpen(false)}
+              className="text-xs font-semibold border-border hover:bg-muted/30 cursor-pointer h-9 px-4 rounded-xl"
+            >
+              Close
+            </Button>
+            {activeReview && (
+              <>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    setIsDeleteOpen(true);
+                  }}
+                  className="text-xs font-semibold cursor-pointer h-9 px-4 rounded-xl"
+                >
+                  Delete Testimonial
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    handleTogglePublish();
+                  }}
+                  disabled={togglePublishMutation.isPending}
+                  className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-9 px-5 rounded-xl cursor-pointer shadow-sm"
+                >
+                  {togglePublishMutation.isPending
+                    ? "Updating..."
+                    : activeReview.isPublished
+                      ? "Unpublish"
+                      : "Publish"}
+                </Button>
+              </>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

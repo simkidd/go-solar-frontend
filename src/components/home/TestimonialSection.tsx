@@ -2,8 +2,15 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Review from "@/components/Review";
+import { useReviewsQuery } from "@/hooks";
 
 const TestimonialSection = () => {
+  const { data: reviews = [] } = useReviewsQuery();
+
+  if (!reviews || reviews.length === 0) {
+    return null;
+  }
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -22,13 +29,14 @@ const TestimonialSection = () => {
             What Our Customers Say
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed font-semibold max-w-sm">
-            Real feedback from homeowners and enterprise clients relying on our power systems.
+            Real feedback from homeowners and enterprise clients relying on our
+            power systems.
           </p>
         </div>
 
         {/* Reviews Grid */}
         <div className="py-2">
-          <Review />
+          <Review reviews={reviews} />
         </div>
       </div>
     </motion.section>

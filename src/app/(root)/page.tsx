@@ -3,6 +3,7 @@ import HeroSection from "@/components/home/HeroSection";
 import SolutionsSection from "@/components/home/SolutionsSection";
 import AboutSection from "@/components/home/AboutSection";
 import PackagesSection from "@/components/home/PackagesSection";
+import FinancingSection from "@/components/home/FinancingSection";
 import SimulatorSection from "@/components/home/SimulatorSection";
 import VisionSection from "@/components/home/VisionSection";
 import HowItWorks from "@/components/home/HowItWorks";
@@ -26,6 +27,9 @@ const page = async () => {
 
       {/* 4. Pre-Configured Solar Packages */}
       <PackagesSection />
+
+      {/* 4.5. Solar Financing Section */}
+      <FinancingSection />
 
       {/* 5. Standalone Sizing Day/Night Simulator */}
       <SimulatorSection />

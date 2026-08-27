@@ -1,11 +1,5 @@
-import type { Metadata } from "next";
-import FinancingApplyClient from "./FinancingApplyClient";
-
-export const metadata: Metadata = {
-  title: "Apply for Solar Financing | GoSolar",
-  description: "Flexible payment plans to purchase and install solar packages.",
-};
+import { redirect } from "next/navigation";
 
 export default function FinancingApplyPage() {
-  return <FinancingApplyClient />;
+  redirect("/?apply-financing=true");
 }

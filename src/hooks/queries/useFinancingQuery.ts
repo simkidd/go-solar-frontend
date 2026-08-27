@@ -38,7 +38,17 @@ export const useAdminFinancingRequestsQuery = (page = 1, status = "") => {
       const { data } = await axiosInstance.get("/financing/admin/all", {
         params: { page, status },
       });
-      return data || { requests: [], pagination: {} };
+      // Normalize paginate util shape { pages } → { totalPages } for the UI
+      const raw = data || {};
+      const p = raw.pagination || {};
+      return {
+        requests: raw.requests || [],
+        pagination: {
+          totalPages: p.totalPages ?? p.pages ?? 1,
+          currentPage: p.currentPage ?? p.page ?? 1,
+          total: p.total ?? 0,
+        },
+      };
     },
   });
 };

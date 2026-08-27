@@ -152,7 +152,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
       </Button>
 
       {/* Financing Button */}
-      <Link href={`/financing/apply?packageId=${pkg._id}`} className="block w-full">
+      <Link href={`?apply-financing=true&packageId=${pkg._id}`} className="block w-full">
         <Button
           variant="outline"
           className="w-full border-primary/30 hover:bg-primary/5 text-primary font-extrabold rounded-xl h-11 text-xs cursor-pointer flex items-center justify-center gap-1.5"
