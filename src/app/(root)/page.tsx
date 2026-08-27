@@ -5,7 +5,6 @@ import AboutSection from "@/components/home/AboutSection";
 import PackagesSection from "@/components/home/PackagesSection";
 import FinancingSection from "@/components/home/FinancingSection";
 import SimulatorSection from "@/components/home/SimulatorSection";
-import VisionSection from "@/components/home/VisionSection";
 import HowItWorks from "@/components/home/HowItWorks";
 import ShopSection from "@/components/home/ShopSection";
 import TestimonialSection from "@/components/home/TestimonialSection";
@@ -34,8 +33,7 @@ const page = async () => {
       {/* 5. Standalone Sizing Day/Night Simulator */}
       <SimulatorSection />
 
-      {/* 6. Vision / Energy Independence */}
-      <VisionSection />
+
 
       {/* 7. Step-By-Step Process */}
       <HowItWorks />
