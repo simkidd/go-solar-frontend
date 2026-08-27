@@ -28,3 +28,11 @@ export const addToOffer = async (input: AddOfferProductDTO) => {
   );
   return data;
 };
+
+export const removeFromOffer = async (productId: string, offerId: string) => {
+  const { data } = await axiosInstance.post("/offers/remove-product", {
+    productId,
+    offerId,
+  });
+  return data;
+};

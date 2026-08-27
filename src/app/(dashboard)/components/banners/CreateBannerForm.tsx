@@ -4,8 +4,6 @@ import { useForm, Controller } from "react-hook-form";
 import { useCreateBannerMutation } from "@/hooks/mutations/useBannerMutations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -18,33 +16,31 @@ import { useDropzone } from "react-dropzone";
 import { ImageIcon, LayoutTemplate, Link2, UploadCloud, X } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
 
 interface CreateBannerFormValues {
   title: string;
-  subtitle?: string;
-  badge?: string;
-  ctaText?: string;
   ctaLink?: string;
-  order?: number;
+  placement: "storefront_hero" | "storefront_promo_strip" | "storefront_promo_card" | "storefront_leaderboard";
   isActive?: boolean;
-  placement: "storefront_hero" | "storefront_promo_strip" | "storefront_promo_card";
 }
+
 
 const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { data: offers = [] } = useAllOffersQuery();
 
   const {
     register,
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<CreateBannerFormValues>({
     defaultValues: {
-      badge: "Special Highlight",
-      ctaText: "Explore Now",
-      ctaLink: "/shop",
-      order: 0,
+      title: "",
+      ctaLink: "/products",
       isActive: true,
       placement: "storefront_hero",
     },
@@ -83,11 +79,7 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
     const formData = new FormData();
     formData.append("title", values.title);
-    if (values.subtitle) formData.append("subtitle", values.subtitle);
-    if (values.badge) formData.append("badge", values.badge);
-    if (values.ctaText) formData.append("ctaText", values.ctaText);
     if (values.ctaLink) formData.append("ctaLink", values.ctaLink);
-    formData.append("order", String(values.order || 0));
     formData.append("isActive", String(values.isActive ?? true));
     formData.append("placement", values.placement);
     formData.append("image", selectedFile);
@@ -100,15 +92,14 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       className="w-full font-inter flex flex-col gap-4"
     >
       <div className="space-y-6 pt-2">
-        {/* Banner Content Card */}
+        {/* Banner Admin Identifier */}
         <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
           <div className="border-b border-border/60 pb-3 select-none">
             <h3 className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
-              <LayoutTemplate className="h-4 w-4 text-primary" /> Banner Content
+              <LayoutTemplate className="h-4 w-4 text-primary" /> Administrative Label
             </h3>
             <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
-              Core headline and descriptive titles shown in storefront hero
-              carousel
+              Specify a label for this graphic layout banner to manage it easily inside the dashboard.
             </p>
           </div>
 
@@ -117,12 +108,12 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               htmlFor="title"
               className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block"
             >
-              Headline / Title <span className="text-red-500">*</span>
+              Banner Name / Label <span className="text-red-500">*</span>
             </label>
             <Input
               id="title"
-              placeholder="e.g. Empower Your Home With Solar"
-              {...register("title", { required: "Banner title is required" })}
+              placeholder="e.g. Summer Flash Sale Hero Banner"
+              {...register("title", { required: "Banner title/label is required" })}
               className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold"
             />
             {errors.title && (
@@ -131,107 +122,64 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </p>
             )}
           </div>
-
-          <div className="space-y-1.5">
-            <label
-              htmlFor="subtitle"
-              className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block"
-            >
-              Subtitle copy{" "}
-              <span className="text-[10px] font-normal text-muted-foreground normal-case">
-                (Optional)
-              </span>
-            </label>
-            <Textarea
-              id="subtitle"
-              placeholder="Short promotional copy shown below the headline"
-              rows={2}
-              {...register("subtitle")}
-              className="bg-muted/30 border-border rounded-xl text-xs focus-visible:ring-primary min-h-[70px] resize-none"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label
-              htmlFor="badge"
-              className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block"
-            >
-              Pill Badge Text{" "}
-              <span className="text-[10px] font-normal text-muted-foreground normal-case">
-                (Optional)
-              </span>
-            </label>
-            <Input
-              id="badge"
-              placeholder="e.g. Limited Time Offer"
-              {...register("badge")}
-              className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold"
-            />
-          </div>
         </div>
 
         {/* CTA & Settings Card */}
         <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
           <div className="border-b border-border/60 pb-3 select-none">
             <h3 className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
-              <Link2 className="h-4 w-4 text-primary" /> Call-to-Action &amp;
-              Settings
+              <Link2 className="h-4 w-4 text-primary" /> Call-to-Action &amp; Settings
             </h3>
             <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
-              Configure banner priority sorting and checkout links
+              Configure the redirect destination and storefront placement
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label
-                htmlFor="ctaText"
-                className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block"
-              >
-                Button Label
-              </label>
-              <Input
-                id="ctaText"
-                placeholder="e.g. Shop Now"
-                {...register("ctaText")}
-                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label
-                htmlFor="ctaLink"
-                className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block"
-              >
-                Destination URL
-              </label>
-              <Input
-                id="ctaLink"
-                placeholder="/shop"
-                {...register("ctaLink")}
-                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold"
-              />
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              Link to Active Sales Offer (Optional)
+            </label>
+            <Select
+              onValueChange={(val) => {
+                if (val === "none") {
+                  setValue("ctaLink", "/products");
+                } else {
+                  setValue("ctaLink", `/products?offer=${val}`);
+                }
+              }}
+            >
+              <SelectTrigger className="bg-muted/30 border-border rounded-xl text-xs h-10 focus:ring-primary font-semibold">
+                <SelectValue placeholder="Link banner to campaign..." />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl bg-card border border-border/80">
+                <SelectItem value="none" className="cursor-pointer text-xs font-semibold">
+                  None (Use custom link below)
+                </SelectItem>
+                {offers.map((offer: any) => (
+                  <SelectItem key={offer._id} value={offer._id} className="cursor-pointer text-xs font-semibold">
+                    {offer.name} ({offer.percentageOff}% OFF)
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label
-                htmlFor="order"
-                className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block"
-              >
-                Priority Order <span className="text-[10px] font-normal text-muted-foreground normal-case">(0 = first)</span>
-              </label>
-              <Input
-                id="order"
-                type="number"
-                placeholder="0"
-                {...register("order", { valueAsNumber: true })}
-                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold w-full"
-              />
-            </div>
+          <div className="space-y-1.5">
+            <label
+              htmlFor="ctaLink"
+              className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block"
+            >
+              Destination URL
+            </label>
+            <Input
+              id="ctaLink"
+              placeholder="/products"
+              {...register("ctaLink")}
+              className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold"
+            />
+          </div>
 
-            <div className="space-y-1.5">
+          <div className="space-y-1.5">
               <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
                 Placement Location <span className="text-red-500">*</span>
               </label>
@@ -254,12 +202,14 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       <SelectItem value="storefront_promo_card" className="cursor-pointer text-xs font-semibold">
                         Featured Promo Card (Highlights)
                       </SelectItem>
+                      <SelectItem value="storefront_leaderboard" className="cursor-pointer text-xs font-semibold">
+                        Leaderboard Strip (1264 × 180 — Pure Graphic)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               />
             </div>
-          </div>
 
           <div className="flex items-center justify-between pt-4 border-t border-border/60 select-none">
             <div className="space-y-0.5">
@@ -287,8 +237,7 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
           <div className="border-b border-border/60 pb-3 select-none">
             <h3 className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
-              <ImageIcon className="h-4 w-4 text-primary" /> Banner Background
-              Image <span className="text-red-500">*</span>
+              <ImageIcon className="h-4 w-4 text-primary" /> Banner Background Image <span className="text-red-500">*</span>
             </h3>
             <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
               Select a premium cover background image for this promotion
@@ -331,8 +280,8 @@ const CreateBannerForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   ? "Drop the file here..."
                   : "Drag & drop or click to upload banner background"}
               </span>
-              <span className="text-[10px] text-muted-foreground/80 font-medium mt-1">
-                Recommended ratio: 21:9 (1920×800px) PNG, JPG, or WebP
+              <span className="text-[10px] text-[#08aa08] font-semibold mt-1">
+                Recommended: Hero: 1920×600px | Strip: 1200×200px | Card: 800×350px
               </span>
             </div>
           )}

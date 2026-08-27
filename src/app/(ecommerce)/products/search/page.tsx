@@ -1,4 +1,4 @@
-import Cta from "../../components/shop/Cta";
+import LeaderboardBanner from "../../components/shop/LeaderboardBanner";
 import ProductsList from "../../components/shop/ProductsList";
 
 const SearchResults = async ({
@@ -13,7 +13,7 @@ const SearchResults = async ({
       <section className="w-full">
         <div className="container mx-auto px-2 py-8">
           <div className="mb-6">
-            <Cta />
+            <LeaderboardBanner />
           </div>
           <ProductsList query={q} categorySlug={category} />
         </div>

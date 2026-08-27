@@ -45,6 +45,7 @@ import {
   ShieldCheck,
   Sparkles,
   Megaphone,
+  DollarSign,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -97,7 +98,12 @@ const navigationItems = [
         icon: MessageSquare,
       },
       {
-        name: "Sales Offers",
+        name: "Solar Financing",
+        href: "/dashboard/financing",
+        icon: DollarSign,
+      },
+      {
+        name: "Campaigns & Promos",
         href: "/dashboard/sales-offers",
         icon: Tag,
       },
@@ -106,11 +112,6 @@ const navigationItems = [
   {
     group: "Content & Proof",
     items: [
-      {
-        name: "Store Banners",
-        href: "/dashboard/banners",
-        icon: Sparkles,
-      },
       {
         name: "Announcement Bar",
         href: "/dashboard/announcement",

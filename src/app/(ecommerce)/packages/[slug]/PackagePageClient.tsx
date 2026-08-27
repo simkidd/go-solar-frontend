@@ -142,7 +142,7 @@ const PackagePageClient: React.FC<PackagePageClientProps> = ({
       </div>
 
       {/* Main package display grid */}
-      <section className="w-full py-12 bg-white dark:bg-zinc-955">
+      <section className="w-full py-12 bg-white dark:bg-zinc-950">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             {/* Left Column: Graphics & What it powers */}

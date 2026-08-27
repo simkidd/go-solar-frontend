@@ -7,8 +7,12 @@ export const useCreateReviewMutation = (options?: { onSuccess?: () => void }) =>
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (input: any) => {
-      const { data } = await axiosInstance.post("/reviews", input);
+    mutationFn: async (input: FormData) => {
+      const { data } = await axiosInstance.post("/reviews", input, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return data;
     },
     onSuccess: (data) => {

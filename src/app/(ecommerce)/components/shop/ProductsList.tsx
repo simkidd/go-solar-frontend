@@ -90,6 +90,7 @@ const ProductsList = ({
     minPrice: searchParams.get("minPrice") ? activeMinPrice : undefined,
     maxPrice: searchParams.get("maxPrice") ? activeMaxPrice : undefined,
     brands: searchParams.get("brands") || undefined,
+    offer: searchParams.get("offer") || undefined,
   });
 
   const publishedProducts = productsRes?.products || [];

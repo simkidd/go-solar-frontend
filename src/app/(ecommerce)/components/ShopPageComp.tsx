@@ -1,21 +1,27 @@
 "use client";
 import React, { useMemo } from "react";
-import Cta from "@/app/(ecommerce)/components/shop/Cta";
 import { Category, Product } from "@/interfaces/product.interface";
 import { useActiveOffersQuery } from "@/hooks/queries/useOffersQuery";
-import { useActiveBannersQuery } from "@/hooks/queries/useBannersQuery";
+
+import { usePublishedProductsQuery } from "@/hooks/queries/useProductsQuery";
 import CategoriesSectionGrid, { CategorySection } from "./shop/CategorySection";
-import SpecialOffers from "./shop/SpecialOffers";
 import ViewHistoryComp from "../components/ViewHistory";
 import useProducts from "@/hooks/useProducts";
 import useCategories from "@/hooks/useCategories";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Zap, ShieldCheck, Truck, Headphones, ArrowRight, CreditCard, RotateCcw } from "lucide-react";
+import {
+  Zap,
+  ShieldCheck,
+  Truck,
+  Headphones,
+  ArrowRight,
+  CreditCard,
+  RotateCcw,
+} from "lucide-react";
 import Link from "next/link";
 import ProductCard from "./shop/ProductCard";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCcw } from "lucide-react";
-
 
 const ShopFeaturesBar = () => (
   <section className="w-full py-8 bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-border/80 select-none">
@@ -85,15 +91,9 @@ const ShopFeaturesBar = () => (
   </section>
 );
 
-const ShopPageComp = () => {
-  const { data: offers = [] } = useActiveOffersQuery();
-  const { data: serverBanners = [] } = useActiveBannersQuery();
+import LeaderboardBanner from "./shop/LeaderboardBanner";
 
-  const promoCardBanner = useMemo(() => {
-    return serverBanners.find(
-      (b: any) => b.placement === "storefront_promo_card"
-    );
-  }, [serverBanners]);
+const ShopPageComp = () => {
 
   const {
     products: allProducts,
@@ -110,7 +110,7 @@ const ShopPageComp = () => {
 
   const publishedProducts = useMemo(
     () => allProducts.filter((product: Product) => product.isPublished),
-    [allProducts]
+    [allProducts],
   );
 
   const topLevelCategories = useMemo(() => {
@@ -121,9 +121,10 @@ const ShopPageComp = () => {
     return publishedProducts.filter((product: Product) => {
       if (!product.category) return false;
       if (product.category._id === category._id) return true;
-      const parentId = typeof product.category.parent === "object"
-        ? product.category.parent?._id
-        : product.category.parent;
+      const parentId =
+        typeof product.category.parent === "object"
+          ? product.category.parent?._id
+          : product.category.parent;
       return parentId === category._id;
     });
   };
@@ -144,10 +145,12 @@ const ShopPageComp = () => {
     )
     .slice(0, 5);
 
-  const topOffers = offers
-    .filter((offer: any) => offer.isActive)
-    .sort((a: any, b: any) => b.percentageOff - a.percentageOff)
-    .slice(0, 3);
+  // ── Active offers for Flash Deals strip ──
+  const { data: activeOffers = [] } = useActiveOffersQuery();
+  const firstOffer = activeOffers[0] ?? null;
+  const { data: offerProductsData, isLoading: offerProductsLoading } =
+    usePublishedProductsQuery({ page: 1, limit: 8, offer: firstOffer?._id });
+  const offerProducts: Product[] = offerProductsData?.products || [];
 
   if (productsError || categoriesError) {
     return (
@@ -204,74 +207,40 @@ const ShopPageComp = () => {
           loading={categoriesLoading}
         />
 
-        {/* Promo banner placeholder */}
-        <div className="mb-6">
-          {promoCardBanner ? (
-            <div className="w-full relative rounded-3xl overflow-hidden shadow-xs border border-border/80 bg-zinc-950 min-h-[160px] flex items-center font-inter p-8 md:p-12">
-              <div
-                className="absolute inset-0 z-0 bg-cover bg-center opacity-30 hover:scale-102 transition-transform duration-[10s]"
-                style={{ backgroundImage: `url('${promoCardBanner.image}')` }}
-              />
-              <div className="absolute inset-0 z-10 bg-gradient-to-r from-black via-black/80 to-transparent" />
-              <div className="relative z-20 max-w-xl space-y-2 text-white">
-                {promoCardBanner.badge && (
-                  <span className="inline-block text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
-                    {promoCardBanner.badge}
-                  </span>
-                )}
-                <h3 className="text-lg md:text-xl font-black tracking-tight leading-tight">
-                  {promoCardBanner.title}
-                </h3>
-                {promoCardBanner.subtitle && (
-                  <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-semibold">
-                    {promoCardBanner.subtitle}
-                  </p>
-                )}
-                {promoCardBanner.ctaLink && (
-                  <div className="pt-2">
-                    <Link href={promoCardBanner.ctaLink}>
-                      <Button className="bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest h-8 px-4 rounded-xl shadow-xs transition-all hover:scale-[1.02] cursor-pointer">
-                        {promoCardBanner.ctaText || "Explore"}
-                      </Button>
-                    </Link>
-                  </div>
-                )}
+        {/* Leaderboard Banner — pure graphic, random pick from active pool */}
+        <LeaderboardBanner />
+
+        {/* Flash Deals strip — only when an active offer exists */}
+        {firstOffer && (
+          <div className="space-y-8">
+            <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
+              <div className="space-y-0.5">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary">
+                  <Zap className="h-3.5 w-3.5 fill-primary" /> Flash Deal ·{" "}
+                  {firstOffer.percentageOff}% Off
+                </span>
+                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
+                  {firstOffer.name}
+                </h2>
               </div>
+              <Link
+                href="/offers"
+                className="text-xs font-black uppercase tracking-wider text-primary hover:underline transition-colors flex items-center gap-1 cursor-pointer shrink-0 ml-4"
+              >
+                See All Deals <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
-          ) : (
-            <Cta />
-          )}
-        </div>
-
-        {/* Pre-configured Complete Packages segment */}
-        <div className="space-y-8">
-          <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
-            <div className="space-y-0.5">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                Pre-Configured
-              </span>
-              <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
-                Complete Solar Packages
-              </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {offerProductsLoading
+                ? Array.from({ length: 4 }).map((_, idx) => (
+                    <Skeleton key={idx} className="h-60 rounded-3xl" />
+                  ))
+                : offerProducts.map((prod: Product) => (
+                    <ProductCard key={prod._id} item={prod} />
+                  ))}
             </div>
-            <Link
-              href="/packages"
-              className="text-xs font-black uppercase tracking-wider text-primary hover:underline transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              View All Packages <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {productsLoading
-              ? Array.from({ length: 3 }).map((_, idx) => (
-                  <Skeleton key={idx} className="h-72 rounded-2xl" />
-                ))
-              : featuredPackages.map((pkg: Product) => (
-                  <ProductCard key={pkg._id} item={pkg} />
-                ))}
-          </div>
-        </div>
+        )}
 
         {/* Best Selling Hardware section */}
         <div className="space-y-8">
@@ -334,9 +303,6 @@ const ShopPageComp = () => {
                 />
               ))}
         </div>
-
-        {/* Offers and history segments */}
-        <SpecialOffers offers={topOffers} />
 
         <ViewHistoryComp />
       </div>

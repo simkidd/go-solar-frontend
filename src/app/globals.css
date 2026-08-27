@@ -132,7 +132,12 @@
     color: var(--foreground);
     font-family: "Inter", sans-serif;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: "Outfit", sans-serif;
     line-height: 1.15;
   }
@@ -181,8 +186,8 @@
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
@@ -235,9 +240,15 @@
   margin-top: 1.75rem;
   margin-bottom: 0.75rem;
 }
-.blog-content-rich h1 { font-size: 1.5rem; }
-.blog-content-rich h2 { font-size: 1.25rem; }
-.blog-content-rich h3 { font-size: 1.125rem; }
+.blog-content-rich h1 {
+  font-size: 1.5rem;
+}
+.blog-content-rich h2 {
+  font-size: 1.25rem;
+}
+.blog-content-rich h3 {
+  font-size: 1.125rem;
+}
 .blog-content-rich ul {
   list-style-type: disc;
   padding-left: 1.5rem;
@@ -278,9 +289,15 @@
   margin-top: 1.25rem;
   margin-bottom: 0.5rem;
 }
-.ProseMirror h1 { font-size: 1.35rem; }
-.ProseMirror h2 { font-size: 1.2rem; }
-.ProseMirror h3 { font-size: 1.1rem; }
+.ProseMirror h1 {
+  font-size: 1.35rem;
+}
+.ProseMirror h2 {
+  font-size: 1.2rem;
+}
+.ProseMirror h3 {
+  font-size: 1.1rem;
+}
 .ProseMirror ul {
   list-style-type: disc;
   padding-left: 1.25rem;
@@ -307,8 +324,12 @@
 
 /* Announcement Bar Marquee Animation */
 @keyframes marquee {
-  0% { transform: translate3d(0%, 0, 0); }
-  100% { transform: translate3d(-100%, 0, 0); }
+  0% {
+    transform: translate3d(0%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
 }
 
 .animate-marquee {
@@ -321,3 +342,8 @@
   animation-play-state: paused;
 }
 
+.swiper-pagination {
+  .swiper-pagination-bullet {
+    background: var(--color-primary);
+  }
+}

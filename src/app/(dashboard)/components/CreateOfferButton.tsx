@@ -24,7 +24,7 @@ const CreateOfferButton = () => {
 
       <Button
         onClick={() => setIsOpen(true)}
-        className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
+        className="bg-primary hover:bg-primary/95 text-white font-semibold text-xs h-9 rounded-xl gap-1.5 shadow-sm cursor-pointer"
       >
         <Plus className="h-4 w-4" />
         Add Offer

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { LayoutDashboard, ShoppingBag, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Settings, LogOut, DollarSign } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth.store";
 
 interface SidebarMenu {
@@ -15,6 +15,7 @@ interface SidebarMenu {
 const navList: SidebarMenu[] = [
   { label: "Overview", href: "/account/profile", icon: LayoutDashboard },
   { label: "Orders", href: "/account/orders", icon: ShoppingBag },
+  { label: "Financing Plans", href: "/account/financing", icon: DollarSign },
   { label: "Settings", href: "/account/settings", icon: Settings },
 ];
 

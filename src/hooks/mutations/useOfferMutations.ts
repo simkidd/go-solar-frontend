@@ -94,3 +94,28 @@ export const useAddProductsToOfferMutation = (options?: MutationOptions) => {
     },
   });
 };
+
+export const useRemoveProductFromOfferMutation = (options?: MutationOptions) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ productId, offerId }: { productId: string; offerId: string }) => {
+      const { data } = await axiosInstance.post("/offers/remove-product", {
+        productId,
+        offerId,
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message || "Product removed from campaign successfully!");
+      queryClient.invalidateQueries({ queryKey: OFFER_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
+      options?.onSuccess?.(data);
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || "Failed to remove product from campaign";
+      toast.error(message);
+      options?.onError?.(error);
+    },
+  });
+};
