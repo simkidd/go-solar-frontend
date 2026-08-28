@@ -25,26 +25,20 @@ const ProductCard: React.FC<{
     return price - (price * percentageOff) / 100;
   };
 
-  const hasDirectDiscount =
-    typeof item?.discountPrice === "number" &&
-    item.discountPrice > 0 &&
-    item.discountPrice < item.price;
-
   const hasOfferDiscount = Boolean(
     item?.currentOffer?.isActive && item?.currentOffer?.percentageOff,
   );
 
-  const newPrice = hasDirectDiscount
-    ? item.discountPrice!
-    : hasOfferDiscount
-      ? calculateNewPrice(item?.price, item?.currentOffer!.percentageOff)
-      : item?.price;
+  const hasDiscount =
+    typeof item?.discountPrice === "number" &&
+    item.discountPrice > 0 &&
+    item.discountPrice < item.price;
 
-  const discountPercentage = hasDirectDiscount
+  const newPrice = hasDiscount ? item.discountPrice! : item?.price;
+
+  const discountPercentage = hasDiscount
     ? Math.round(((item.price - item.discountPrice!) / item.price) * 100)
-    : hasOfferDiscount
-      ? item.currentOffer!.percentageOff
-      : 0;
+    : 0;
 
   const inStock = item?.quantityInStock > 0;
 
@@ -125,19 +119,19 @@ const ProductCard: React.FC<{
       <div className="p-3.5 sm:p-5 flex flex-col justify-between flex-1 space-y-3 sm:space-y-4">
         <div className="space-y-2">
           {/* Brand & Category Tags */}
-          <div className="flex flex-wrap justify-between items-center gap-1 text-[9px] font-black uppercase tracking-widest text-muted-foreground select-none">
+          {/* <div className="flex flex-wrap justify-between items-center gap-1 text-[9px] font-black uppercase tracking-widest text-muted-foreground select-none">
             <span>{item?.brand || "GoSolar"}</span>
             {item?.category?.name && (
               <span className="text-primary bg-primary/5 dark:bg-primary/10 px-1.5 py-0.5 rounded-md truncate max-w-[80px] sm:max-w-none">
                 {item.category.name}
               </span>
             )}
-          </div>
+          </div> */}
 
           {/* Product Title */}
           <Link
             href={`/products/${item?.slug}`}
-            className="text-xs sm:text-sm font-extrabold text-foreground line-clamp-2 hover:text-primary transition-colors leading-snug block pt-0.5"
+            className="text-xs sm:text-sm font-semibold text-foreground line-clamp-2 hover:text-primary transition-colors leading-snug block pt-0.5 capitalize"
             title={item?.name}
             onClick={handleCardClick}
           >

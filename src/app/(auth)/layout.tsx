@@ -27,7 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-zinc-50 dark:bg-zinc-950 antialiased`}>
+      <body
+        className={`${inter.className} bg-zinc-50 dark:bg-zinc-950 antialiased`}
+      >
         <NextTopLoader
           color="#08AA08"
           initialPosition={0.08}
@@ -41,16 +43,15 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={<LoadingSpinner />}>
             <div className="w-full min-h-dvh grid grid-cols-1 lg:grid-cols-12 overflow-x-hidden font-inter bg-zinc-50 dark:bg-zinc-950">
-              
               {/* Left Pane - Interactive Form Container */}
               <div className="col-span-1 lg:col-span-6 xl:col-span-5 flex flex-col justify-between p-6 sm:p-12 md:p-16 lg:p-10 xl:p-16 relative overflow-y-auto min-h-dvh">
                 {/* Background soft glowing accent */}
-                <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none z-0" />
-                
+                <div className="absolute top-0 left-0 right-0 h-64 bg-linear-to-b from-primary/5 to-transparent pointer-events-none z-0" />
+
                 {/* Header Actions */}
                 <div className="flex items-center justify-between w-full mb-8 relative z-10">
-                  <Link 
-                    href="/" 
+                  <Link
+                    href="/"
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
                   >
                     <ArrowLeft className="h-3.5 w-3.5" />
@@ -59,7 +60,9 @@ export default function RootLayout({
 
                   <Link href="/" className="flex items-center gap-2 lg:hidden">
                     <Image src={LogoIcon} alt="logo" width={28} height={28} />
-                    <span className="font-extrabold text-lg text-zinc-900 dark:text-white tracking-tight">Go<span className="text-primary">Solar</span></span>
+                    <span className="font-extrabold text-lg text-zinc-900 dark:text-white tracking-tight">
+                      Go<span className="text-primary">Solar</span>
+                    </span>
                   </Link>
                 </div>
 
@@ -72,13 +75,13 @@ export default function RootLayout({
 
                 {/* Footer disclaimer */}
                 <div className="text-center text-xs text-zinc-400 dark:text-zinc-600 mt-8 relative z-10">
-                  &copy; {new Date().getFullYear()} GoSolar. All rights reserved.
+                  &copy; {new Date().getFullYear()} GoSolar. All rights
+                  reserved.
                 </div>
               </div>
 
               {/* Right Pane - Environmental Fact / Interactive Sliding Panel */}
               <AuthHeroPanel />
-
             </div>
           </Suspense>
         </Providers>
@@ -86,4 +89,3 @@ export default function RootLayout({
     </html>
   );
 }
-

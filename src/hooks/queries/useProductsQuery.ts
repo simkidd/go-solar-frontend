@@ -44,6 +44,7 @@ export const usePublishedProductsQuery = (params?: {
   minPrice?: number;
   maxPrice?: number;
   brands?: string;
+  offer?: string;
 }) => {
   return useQuery<PaginatedProductsResponse>({
     queryKey: [...PRODUCT_KEYS.published(), params],

@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { OfferType } from "@/interfaces/product.interface";
@@ -6,13 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateOfferMutation } from "@/hooks/mutations/useOfferMutations";
-import { Tag } from "lucide-react";
+import { Tag, Calendar } from "lucide-react";
 
 interface FormValues {
   name: string;
   description: string;
   type: OfferType;
   percentageOff: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 const CreateOfferForm: React.FC<{
@@ -30,6 +33,8 @@ const CreateOfferForm: React.FC<{
       description: "",
       type: OfferType.PercentageOff,
       percentageOff: undefined,
+      startDate: new Date().toISOString().split("T")[0],
+      endDate: "",
     },
   });
 
@@ -40,53 +45,66 @@ const CreateOfferForm: React.FC<{
       type: values.type,
       percentageOff: Number(values.percentageOff),
       isActive: true,
+      startDate: values.startDate || undefined,
+      endDate: values.endDate || undefined,
     });
   };
 
   return (
-    <form className="w-full font-inter flex flex-col gap-4 pt-2" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="w-full font-inter flex flex-col gap-5 pt-2 text-left"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       {/* Offer Info Section */}
-      <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/20 p-4 space-y-4">
-        <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
-          <Tag className="h-3 w-3" /> Offer Information
+      <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none flex items-center gap-1.5 border-b border-border/60 pb-3">
+          <Tag className="h-3.5 w-3.5 text-primary" /> Offer Information
         </p>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
             Title <span className="text-red-500">*</span>
           </label>
           <Input
             placeholder="e.g. Clearance Sale"
             {...register("name", { required: "Offer title is required" })}
-            className="h-9 text-sm bg-white dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 rounded-lg focus-visible:ring-primary/30"
+            className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
           />
-          {errors.name && <p className="text-xs text-red-500 mt-0.5">{errors.name.message}</p>}
+          {errors.name && (
+            <p className="text-xs text-red-500 font-semibold mt-0.5">
+              {errors.name.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
             Description <span className="text-red-500">*</span>
           </label>
           <Textarea
             placeholder="Describe what this offer covers"
             rows={3}
-            {...register("description", { required: "Offer description is required" })}
-            className="text-sm bg-white dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 rounded-lg focus-visible:ring-primary/30 resize-none"
+            {...register("description", {
+              required: "Offer description is required",
+            })}
+            className="text-xs bg-muted/30 border-border rounded-xl focus-visible:ring-primary resize-none p-3"
           />
           {errors.description && (
-            <p className="text-xs text-red-500 mt-0.5">{errors.description.message}</p>
+            <p className="text-xs text-red-500 font-semibold mt-0.5">
+              {errors.description.message}
+            </p>
           )}
         </div>
       </div>
 
-      {/* Discount Section */}
-      <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/20 p-4 space-y-4">
-        <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-          Discount Settings
+      {/* Discount & Campaign Period Section */}
+      <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none flex items-center gap-1.5 border-b border-border/60 pb-3">
+          <Calendar className="h-3.5 w-3.5 text-primary" /> Campaign Settings
         </p>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
             Percentage Off (%) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -99,26 +117,78 @@ const CreateOfferForm: React.FC<{
                 max: { value: 100, message: "Maximum is 100%" },
                 valueAsNumber: true,
               })}
-              className="h-9 text-sm bg-white dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 rounded-lg focus-visible:ring-primary/30 pr-8"
+              className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary pr-8"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs font-semibold">%</span>
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-black">
+              %
+            </span>
           </div>
           {errors.percentageOff && (
-            <p className="text-xs text-red-500 mt-0.5">{errors.percentageOff.message}</p>
+            <p className="text-xs text-red-500 font-semibold mt-0.5">
+              {errors.percentageOff.message}
+            </p>
           )}
+        </div>
+
+        {/* Start and End Dates */}
+        <div className="grid grid-cols-2 gap-4 pt-1">
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              Start Date
+            </label>
+            <Input
+              type="date"
+              {...register("startDate")}
+              className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+            />
+            {errors.startDate && (
+              <p className="text-xs text-red-500 font-semibold mt-0.5">
+                {errors.startDate.message}
+              </p>
+            )}
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              End Date
+            </label>
+            <Input
+              type="date"
+              {...register("endDate", {
+                validate: (value, formValues) => {
+                  if (!value || !formValues.startDate) return true;
+                  return (
+                    new Date(value) >= new Date(formValues.startDate) ||
+                    "End date cannot be before start date"
+                  );
+                },
+              })}
+              className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+            />
+            {errors.endDate && (
+              <p className="text-xs text-red-500 font-semibold mt-0.5">
+                {errors.endDate.message}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-end gap-2 pt-1">
-        <Button type="button" variant="ghost" size="sm" onClick={onClose} className="h-9 text-xs dark:text-zinc-300">
+      {/* Footer Actions */}
+      <div className="flex items-center justify-end gap-2 pt-2 select-none border-t border-border/40">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="h-10 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer rounded-xl px-4"
+        >
           Cancel
         </Button>
         <Button
           type="submit"
           size="sm"
           disabled={createOfferMutation.isPending}
-          className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 rounded-lg gap-1.5 shadow-sm"
+          className="bg-primary hover:bg-primary/95 text-white font-extrabold text-xs h-10 rounded-xl gap-1.5 shadow-sm cursor-pointer px-4 uppercase"
         >
           {createOfferMutation.isPending ? "Creating..." : "Create Offer"}
         </Button>

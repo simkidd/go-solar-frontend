@@ -1,4 +1,4 @@
-import Cta from "@/app/(ecommerce)/components/shop/Cta";
+import LeaderboardBanner from "@/app/(ecommerce)/components/shop/LeaderboardBanner";
 import ProductsList from "@/app/(ecommerce)/components/shop/ProductsList";
 import { Metadata } from "next";
 
@@ -13,7 +13,7 @@ const AllProductsPage = () => {
       <section className="w-full">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-6">
-            <Cta />
+            <LeaderboardBanner />
           </div>
           <ProductsList />
         </div>

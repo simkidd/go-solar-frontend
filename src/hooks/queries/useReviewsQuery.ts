@@ -1,3 +1,4 @@
+import { IReview } from "@/interfaces/review.interface";
 import { axiosInstance } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
@@ -9,7 +10,7 @@ export const REVIEW_KEYS = {
 
 // Fetch published reviews for storefront
 export const useReviewsQuery = () => {
-  return useQuery({
+  return useQuery<IReview[]>({
     queryKey: REVIEW_KEYS.lists(),
     queryFn: async () => {
       const { data } = await axiosInstance.get("/reviews");

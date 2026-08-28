@@ -59,8 +59,8 @@ export default function AuthHeroPanel() {
           className="object-cover object-center filter brightness-[0.45] transition-all duration-700 hover:scale-105"
         />
         {/* Deep overlay gradients for readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-zinc-950/60 z-10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/50 via-transparent to-zinc-950/20 z-10" />
+        <div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/40 to-zinc-950/60 z-10" />
+        <div className="absolute inset-0 bg-linear-to-r from-zinc-950/50 via-transparent to-zinc-950/20 z-10" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.01)_1px,_transparent_1px)] bg-[size:32px_32px] opacity-30 z-10" />
       </div>
 
@@ -103,7 +103,9 @@ export default function AuthHeroPanel() {
               key={idx}
               onClick={() => setCurrentSlide(idx)}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentSlide ? "w-6 bg-primary" : "w-1.5 bg-white/30 hover:bg-white/50"
+                idx === currentSlide
+                  ? "w-6 bg-primary"
+                  : "w-1.5 bg-white/30 hover:bg-white/50"
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />

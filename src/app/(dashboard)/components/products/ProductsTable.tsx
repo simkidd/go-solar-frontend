@@ -53,6 +53,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProduct } from "@/lib/api/products.api";
 import { toast } from "sonner";
 import { PRODUCT_KEYS } from "@/hooks/queries/useProductsQuery";
+import Link from "next/link";
 
 const columns = [
   { name: "Product Info", uid: "name" },
@@ -471,9 +472,11 @@ const ProductsTable = () => {
                           )}
                         </div>
                         <div className="space-y-1">
-                          <span className="font-extrabold text-foreground line-clamp-1 select-all">
-                            {product?.name}
-                          </span>
+                          <Link href={`/dashboard/products/${product?._id}`}>
+                            <span className="font-extrabold text-foreground line-clamp-1 select-all">
+                              {product?.name}
+                            </span>
+                          </Link>
                           <div className="flex items-center gap-2 text-[9px] uppercase tracking-wider font-extrabold text-muted-foreground select-none">
                             <span>{product?.brand || "GoSolar"}</span>
                             {product?.category?.name && (

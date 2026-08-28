@@ -9,7 +9,6 @@ import { motion } from "framer-motion";
 const HeroSection = () => {
   return (
     <section className="relative w-full min-h-[90vh] bg-zinc-950 text-white font-inter flex flex-col justify-center items-center overflow-hidden border-b border-zinc-900 select-none">
-      
       {/* ── Looping Background Video & Fallback Poster ── */}
       <video
         autoPlay
@@ -30,8 +29,6 @@ const HeroSection = () => {
 
       {/* ── Centered Hero Content ── */}
       <div className="relative z-20 max-w-4xl mx-auto px-6 py-20 text-center flex flex-col items-center space-y-8">
-        
-
         {/* Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -40,7 +37,7 @@ const HeroSection = () => {
           className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-black tracking-tight leading-tight"
         >
           Power Your{" "}
-          <span className="bg-gradient-to-r from-emerald-400 to-primary bg-clip-text text-transparent drop-shadow-sm">
+          <span className="bg-linear-to-r from-emerald-400 to-primary bg-clip-text text-transparent drop-shadow-sm">
             Future
           </span>
           <br />
@@ -54,7 +51,9 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-sm sm:text-base md:text-lg text-zinc-300 leading-relaxed max-w-2xl font-medium"
         >
-          Professional solar design, supply, and installation for homes and businesses across Nigeria. Cut your monthly energy bills by up to 90% using clean power.
+          Professional solar design, supply, and installation for homes and
+          businesses across Nigeria. Cut your monthly energy bills by up to 90%
+          using clean power.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -85,9 +84,22 @@ const HeroSection = () => {
           className="pt-10 border-t border-white/10 grid grid-cols-3 gap-8 sm:gap-16 max-w-lg w-full"
         >
           {[
-            { value: "500+", label: "Installations", tooltip: "Active residential & enterprise sites across Nigeria." },
-            { value: "5 MW", label: "Capacity", tooltip: "Total clean solar generation capacity deployed." },
-            { value: "15 Yrs", label: "Experience", tooltip: "Pioneering engineering experience in sustainable power." },
+            {
+              value: "500+",
+              label: "Installations",
+              tooltip: "Active residential & enterprise sites across Nigeria.",
+            },
+            {
+              value: "5 MW",
+              label: "Capacity",
+              tooltip: "Total clean solar generation capacity deployed.",
+            },
+            {
+              value: "15 Yrs",
+              label: "Experience",
+              tooltip:
+                "Pioneering engineering experience in sustainable power.",
+            },
           ].map((stat, idx) => (
             <div key={idx} className="group relative cursor-default">
               <div className="font-heading font-extrabold text-2xl sm:text-3xl text-white group-hover:text-emerald-400 transition-colors">
@@ -103,7 +115,6 @@ const HeroSection = () => {
             </div>
           ))}
         </motion.div>
-
       </div>
     </section>
   );

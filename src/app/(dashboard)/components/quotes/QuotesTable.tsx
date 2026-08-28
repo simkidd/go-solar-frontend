@@ -438,9 +438,9 @@ export const QuotesTable = () => {
                   className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0"
                 >
                   {/* Client Info */}
-                  <TableCell className="px-4 py-3.5">
+                  <TableCell className="px-4 py-3.5 text-xs text-foreground">
                     <div>
-                      <p className="font-bold text-zinc-900 dark:text-white text-sm">
+                      <p className="font-bold text-zinc-900 dark:text-white">
                         {lead.name}
                       </p>
                       <div className="flex flex-col gap-0.5 mt-1 text-xs text-zinc-500 dark:text-zinc-400">
@@ -486,7 +486,7 @@ export const QuotesTable = () => {
                   </TableCell>
 
                   {/* Estimated Price */}
-                  <TableCell className="text-right font-extrabold text-zinc-900 dark:text-white text-sm">
+                  <TableCell className="text-right text-xs font-bold text-zinc-900 dark:text-white">
                     {formatCurrency(lead.estimatedPrice, "NGN")}
                   </TableCell>
 
