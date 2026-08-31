@@ -103,7 +103,8 @@ const mapBackendQuote = (q: any): QuoteLead => {
   const pvMatch = q.recommendedPv?.match(/(\d+(\.\d+)?)\s*(kWp|kW|W)/i);
   if (pvMatch) {
     const value = parseFloat(pvMatch[1]);
-    recommendedSolarWatts = pvMatch[3].toLowerCase() === "w" ? value : Math.round(value * 1000);
+    recommendedSolarWatts =
+      pvMatch[3].toLowerCase() === "w" ? value : Math.round(value * 1000);
   }
 
   let estimatedPrice = 2500000;
@@ -209,8 +210,18 @@ export const QuotesTable = () => {
       recommendedBattery: `${(values.dailyKwh * 0.7).toFixed(1)} kWh Battery`,
       recommendedPv: `${(values.dailyKwh * 250).toFixed(0)} W Solar PV`,
       appliances: [
-        { name: "General Lighting & Fans", quantity: 10, powerWatts: 80, hoursPerDay: 12 },
-        { name: "Refrigeration Unit", quantity: 1, powerWatts: 250, hoursPerDay: 24 },
+        {
+          name: "General Lighting & Fans",
+          quantity: 10,
+          powerWatts: 80,
+          hoursPerDay: 12,
+        },
+        {
+          name: "Refrigeration Unit",
+          quantity: 1,
+          powerWatts: 250,
+          hoursPerDay: 24,
+        },
       ],
       status: "New Lead",
       notes: `[Manual Lead logged from Dashboard] Source: ${values.source}`,
@@ -247,7 +258,7 @@ export const QuotesTable = () => {
   return (
     <div className="w-full space-y-5 font-inter">
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <Calculator className="h-5 w-5 text-primary" />
@@ -358,7 +369,7 @@ export const QuotesTable = () => {
         </div>
 
         {/* Counter and status summary */}
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {filteredQuotes.length} sizing leads listed</span>
         </div>
       </div>
@@ -368,22 +379,22 @@ export const QuotesTable = () => {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  px-4">
                 Client & Contact
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Energy Req
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Recommended System
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-right">
                 Est. Budget
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-center">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-center">
                 Pipeline Status
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-right px-4">
                 Actions
               </TableHead>
             </TableRow>
@@ -722,7 +733,7 @@ export const QuotesTable = () => {
         >
           {/* Details Section Card */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Quote & Load Details
               </h3>
@@ -732,7 +743,7 @@ export const QuotesTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Customer Name <span className="text-red-500">*</span>
               </label>
               <Input
@@ -749,7 +760,7 @@ export const QuotesTable = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Phone <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -766,7 +777,7 @@ export const QuotesTable = () => {
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Location
                 </label>
                 <Input
@@ -779,7 +790,7 @@ export const QuotesTable = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Daily kWh
                 </label>
                 <Input
@@ -790,7 +801,7 @@ export const QuotesTable = () => {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Target System
                 </label>
                 <select
@@ -808,7 +819,7 @@ export const QuotesTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Estimated Budget (₦)
               </label>
               <Input
@@ -844,7 +855,7 @@ export const QuotesTable = () => {
 
       {/* DELETE CONFIRMATION MODAL */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
               Delete Quote Request

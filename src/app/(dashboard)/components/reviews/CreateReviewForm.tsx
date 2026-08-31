@@ -89,18 +89,19 @@ export default function CreateReviewForm({
       className="w-full font-inter flex flex-col gap-6 pt-2"
     >
       <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 text-left">
-        <div className="border-b border-border/60 pb-3 select-none">
+        <div className="border-b border-border/60 pb-3 ">
           <h3 className="text-sm font-extrabold text-foreground tracking-tight">
             Testimonial Details
           </h3>
           <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
-            Configure reviewer name, client role, and testimonial content details
+            Configure reviewer name, client role, and testimonial content
+            details
           </p>
         </div>
 
         {/* Customer Name */}
         <div className="space-y-1">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
             Customer Name <span className="text-red-500">*</span>
           </label>
           <Input
@@ -117,7 +118,7 @@ export default function CreateReviewForm({
 
         {/* Client Role */}
         <div className="space-y-1">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
             Client Role
           </label>
           <Input
@@ -129,8 +130,11 @@ export default function CreateReviewForm({
 
         {/* Review Text */}
         <div className="space-y-1">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
-            Testimonial Review <span className="text-[9px] font-bold text-muted-foreground/60">(Optional if video testimonial provided)</span>
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
+            Testimonial Review{" "}
+            <span className="text-[9px] font-bold text-muted-foreground/60">
+              (Optional if video testimonial provided)
+            </span>
           </label>
           <textarea
             rows={4}
@@ -139,8 +143,10 @@ export default function CreateReviewForm({
               validate: (value) => {
                 if (videoType === "upload" && selectedFile) return true;
                 if (videoType === "link" && watchedVideoUrl) return true;
-                return value.trim() !== "" ? true : "Either written testimonial text or a video testimonial is required";
-              }
+                return value.trim() !== ""
+                  ? true
+                  : "Either written testimonial text or a video testimonial is required";
+              },
             })}
             className="w-full p-3 rounded-xl border border-border bg-muted/30 text-xs min-h-[100px] resize-none outline-none focus:ring-1 focus:ring-primary"
           />
@@ -153,11 +159,11 @@ export default function CreateReviewForm({
 
         {/* Video Testimonial Toggle */}
         <div className="space-y-3">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
             Video Testimonial (Optional)
           </label>
 
-          <div className="flex gap-2 p-1 bg-muted/40 border border-border/80 rounded-xl max-w-xs select-none">
+          <div className="flex gap-2 p-1 bg-muted/40 border border-border/80 rounded-xl max-w-xs ">
             <button
               type="button"
               onClick={() => setVideoType("link")}
@@ -199,7 +205,7 @@ export default function CreateReviewForm({
                 }`}
               >
                 <input {...getInputProps()} />
-                
+
                 {selectedFile ? (
                   <div className="flex items-center justify-between bg-card border border-border/60 p-3 rounded-xl max-w-md mx-auto">
                     <div className="flex items-center gap-2.5 truncate">
@@ -237,7 +243,7 @@ export default function CreateReviewForm({
                   </div>
                 )}
               </div>
-              <p className="text-[9px] text-muted-foreground font-semibold select-none">
+              <p className="text-[9px] text-muted-foreground font-semibold ">
                 Supported formats: MP4, MOV, WEBM, AVI (Max 50MB)
               </p>
             </div>

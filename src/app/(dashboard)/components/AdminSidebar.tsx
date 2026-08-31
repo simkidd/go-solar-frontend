@@ -176,7 +176,7 @@ const SidebarInnerContent = ({
     href === pathname || href === pathname.replace(/\/$/, "");
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#1a1b1e] select-none font-inter">
+    <div className="flex flex-col h-full bg-white dark:bg-[#1a1b1e]  font-inter">
       {/* Brand Header */}
       <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 shrink-0">
         <Link

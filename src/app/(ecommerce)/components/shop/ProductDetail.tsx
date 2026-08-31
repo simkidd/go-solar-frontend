@@ -9,7 +9,6 @@ import { Minus, Plus, Truck, Heart, Share2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-
 const ProductDetail: React.FC<{
   product: Product;
   productCode?: string | null;
@@ -22,8 +21,9 @@ const ProductDetail: React.FC<{
     return price - (price * percentageOff) / 100;
   };
 
-  const hasOfferDiscount =
-    Boolean(product?.currentOffer?.isActive && product?.currentOffer?.percentageOff);
+  const hasOfferDiscount = Boolean(
+    product?.currentOffer?.isActive && product?.currentOffer?.percentageOff,
+  );
 
   const hasDiscount =
     typeof product?.discountPrice === "number" &&
@@ -33,7 +33,9 @@ const ProductDetail: React.FC<{
   const newPrice = hasDiscount ? product.discountPrice! : product?.price;
 
   const discountPercentage = hasDiscount
-    ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
+    ? Math.round(
+        ((product.price - product.discountPrice!) / product.price) * 100,
+      )
     : 0;
 
   const inStock = product?.quantityInStock > 0;
@@ -69,7 +71,7 @@ const ProductDetail: React.FC<{
   return (
     <div className="w-full flex flex-col font-inter space-y-6">
       {/* ── Brand + Category Chips ── */}
-      <div className="flex items-center gap-2 select-none">
+      <div className="flex items-center gap-2 ">
         {product?.brand && (
           <span className="text-[10px] font-black uppercase tracking-widest bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-2.5 py-1 rounded-md">
             {product.brand}
@@ -88,15 +90,20 @@ const ProductDetail: React.FC<{
           {product?.name}
         </h1>
         <p className="text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm leading-relaxed font-semibold">
-          {product?.description || "High efficiency monocrystalline solar hardware component built to deliver reliable power."}
+          {product?.description ||
+            "High efficiency monocrystalline solar hardware component built to deliver reliable power."}
         </p>
       </div>
 
       {/* ── Stock status indicator ── */}
-      <div className="flex items-center gap-3 border-b border-zinc-100 dark:border-zinc-900 pb-4 select-none">
+      <div className="flex items-center gap-3 border-b border-zinc-100 dark:border-zinc-900 pb-4 ">
         <div className="flex items-center gap-1.5">
-          <span className={`w-2 h-2 rounded-full ${inStock ? "bg-emerald-500" : "bg-rose-500"}`} />
-          <span className={`text-xs font-bold ${inStock ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+          <span
+            className={`w-2 h-2 rounded-full ${inStock ? "bg-emerald-500" : "bg-rose-500"}`}
+          />
+          <span
+            className={`text-xs font-bold ${inStock ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}
+          >
             {inStock ? "In Stock" : "Out of Stock"}
           </span>
         </div>
@@ -131,7 +138,9 @@ const ProductDetail: React.FC<{
       <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 text-xs">
         <Truck size={15} className="text-primary" />
         <span className="font-semibold">
-          Delivery fee: {formatCurrency(product?.withinLocationDeliveryFee || 0, "NGN")} (Within location)
+          Delivery fee:{" "}
+          {formatCurrency(product?.withinLocationDeliveryFee || 0, "NGN")}{" "}
+          (Within location)
         </span>
       </div>
 
@@ -149,7 +158,7 @@ const ProductDetail: React.FC<{
             >
               <Minus size={12} />
             </Button>
-            <span className="px-3 text-xs font-bold text-zinc-800 dark:text-zinc-200 select-none">
+            <span className="px-3 text-xs font-bold text-zinc-800 dark:text-zinc-200 ">
               {quantity}
             </span>
             <Button
@@ -157,7 +166,8 @@ const ProductDetail: React.FC<{
               size="icon"
               disabled={quantity >= product.quantityInStock || !inStock}
               onClick={() => {
-                if (quantity < product.quantityInStock) setQuantity(quantity + 1);
+                if (quantity < product.quantityInStock)
+                  setQuantity(quantity + 1);
               }}
               className="h-8 w-8 rounded-lg cursor-pointer"
             >
@@ -192,14 +202,18 @@ const ProductDetail: React.FC<{
             onClick={() => setLiked(!liked)}
             className="border-zinc-200 dark:border-zinc-850 rounded-xl h-10 w-10 shrink-0 text-zinc-400 hover:text-rose-500 cursor-pointer"
           >
-            <Heart className={`w-4 h-4 ${liked ? "fill-rose-500 text-rose-500" : ""}`} />
+            <Heart
+              className={`w-4 h-4 ${liked ? "fill-rose-500 text-rose-500" : ""}`}
+            />
           </Button>
         </div>
       </div>
 
       {/* ── Social Share ── */}
-      <div className="flex items-center gap-4 pt-4 border-t border-zinc-150 dark:border-zinc-850 select-none">
-        <span className="text-xs font-bold text-zinc-400 dark:text-zinc-650">Share Product:</span>
+      <div className="flex items-center gap-4 pt-4 border-t border-zinc-150 dark:border-zinc-850 ">
+        <span className="text-xs font-bold text-zinc-400 dark:text-zinc-650">
+          Share Product:
+        </span>
         <button
           onClick={handleShare}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900/60 dark:hover:bg-zinc-900 border border-border text-zinc-700 dark:text-zinc-300 text-xs font-bold transition-all duration-200 cursor-pointer shadow-3xs"

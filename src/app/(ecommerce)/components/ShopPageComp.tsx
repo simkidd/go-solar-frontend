@@ -24,9 +24,9 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCcw } from "lucide-react";
 
 const ShopFeaturesBar = () => (
-  <section className="w-full py-8 bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-border/80 select-none">
+  <section className="w-full py-8 bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-border/80 ">
     <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {/* Secure Payments Card */}
         <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
           <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -38,21 +38,6 @@ const ShopFeaturesBar = () => (
             </h4>
             <p className="text-[10px] text-muted-foreground font-semibold leading-tight">
               Safe and verified transactions
-            </p>
-          </div>
-        </div>
-
-        {/* Free Shipping Card */}
-        <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
-          <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <Truck className="h-5 w-5" />
-          </div>
-          <div>
-            <h4 className="font-extrabold text-[10px] text-foreground uppercase tracking-widest mb-0.5">
-              Free Shipping
-            </h4>
-            <p className="text-[10px] text-muted-foreground font-semibold leading-tight">
-              On orders over ₦2,500,000
             </p>
           </div>
         </div>
@@ -94,7 +79,6 @@ const ShopFeaturesBar = () => (
 import LeaderboardBanner from "./shop/LeaderboardBanner";
 
 const ShopPageComp = () => {
-
   const {
     products: allProducts,
     isError: productsError,
@@ -213,7 +197,7 @@ const ShopPageComp = () => {
         {/* Flash Deals strip — only when an active offer exists */}
         {firstOffer && (
           <div className="space-y-8">
-            <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
+            <div className="flex items-end justify-between border-b border-border/60 pb-4 ">
               <div className="space-y-0.5">
                 <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary">
                   <Zap className="h-3.5 w-3.5 fill-primary" /> Flash Deal ·{" "}
@@ -244,7 +228,7 @@ const ShopPageComp = () => {
 
         {/* Best Selling Hardware section */}
         <div className="space-y-8">
-          <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
+          <div className="flex items-end justify-between border-b border-border/60 pb-4 ">
             <div className="space-y-0.5">
               <span className="text-[10px] font-black uppercase tracking-widest text-primary">
                 Best Sellers
@@ -277,7 +261,7 @@ const ShopPageComp = () => {
           {productsLoading || categoriesLoading
             ? Array.from({ length: 2 }).map((_, index) => (
                 <div key={index} className="mb-16">
-                  <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
+                  <div className="flex items-end justify-between border-b border-border/60 pb-4 ">
                     <Skeleton className="h-8 w-1/3 rounded-xl bg-muted" />
                   </div>
                   <div className="grid lg:grid-cols-4 md:grid-cols-4 grid-cols-2 gap-6 my-8">

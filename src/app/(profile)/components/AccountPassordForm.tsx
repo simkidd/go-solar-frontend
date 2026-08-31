@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { KeyRound, UserCog } from "lucide-react";
-import { useUpdateProfileMutation, useChangePasswordMutation } from "@/hooks/mutations/useAuthMutations";
+import {
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
+} from "@/hooks/mutations/useAuthMutations";
 import Cookies from "js-cookie";
 import { USER_DETAILS } from "@/utils/constants";
 
@@ -31,7 +34,9 @@ const AccountSettingsManager = () => {
     onSuccess: (data) => {
       if (data?.data?.user) {
         setUser(data.data.user);
-        Cookies.set(USER_DETAILS, JSON.stringify(data.data.user), { expires: 30 });
+        Cookies.set(USER_DETAILS, JSON.stringify(data.data.user), {
+          expires: 30,
+        });
       }
     },
   });
@@ -90,7 +95,6 @@ const AccountSettingsManager = () => {
 
   return (
     <div className="space-y-6 font-inter">
-      
       {/* ── Settings Tabs ── */}
       <div className="flex border-b border-border/60 pb-px gap-1.5 overflow-x-auto no-scrollbar">
         <button
@@ -121,11 +125,18 @@ const AccountSettingsManager = () => {
       {activeTab === "profile" && (
         <div className="border border-border/80 bg-zinc-50/50 dark:bg-zinc-900/10 rounded-2xl p-6 space-y-6 max-w-xl transition-all duration-300">
           <div>
-            <h2 className="text-xs font-black uppercase tracking-wider text-zinc-900 dark:text-white">Profile Information</h2>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Update your personal contact details and phone information.</p>
+            <h2 className="text-xs font-black uppercase tracking-wider text-zinc-900 dark:text-white">
+              Profile Information
+            </h2>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              Update your personal contact details and phone information.
+            </p>
           </div>
 
-          <form onSubmit={handleProfileSubmit(onProfileUpdate)} className="space-y-4">
+          <form
+            onSubmit={handleProfileSubmit(onProfileUpdate)}
+            className="space-y-4"
+          >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="block text-[10px] uppercase tracking-wider font-extrabold text-muted-foreground">
@@ -134,7 +145,9 @@ const AccountSettingsManager = () => {
                 <Input
                   type="text"
                   placeholder="John"
-                  {...registerProfile("firstname", { required: "First name is required" })}
+                  {...registerProfile("firstname", {
+                    required: "First name is required",
+                  })}
                   className="border-border rounded-xl bg-card text-xs font-bold focus-visible:ring-1"
                 />
                 {profileErrors.firstname && (
@@ -151,7 +164,9 @@ const AccountSettingsManager = () => {
                 <Input
                   type="text"
                   placeholder="Doe"
-                  {...registerProfile("lastname", { required: "Last name is required" })}
+                  {...registerProfile("lastname", {
+                    required: "Last name is required",
+                  })}
                   className="border-border rounded-xl bg-card text-xs font-bold focus-visible:ring-1"
                 />
                 {profileErrors.lastname && (
@@ -170,10 +185,11 @@ const AccountSettingsManager = () => {
                 type="email"
                 value={user?.email || ""}
                 disabled
-                className="border-border rounded-xl bg-muted/50 text-xs font-bold cursor-not-allowed text-muted-foreground select-none"
+                className="border-border rounded-xl bg-muted/50 text-xs font-bold cursor-not-allowed text-muted-foreground "
               />
               <p className="text-[9px] text-muted-foreground pl-1">
-                Login email addresses cannot be modified directly from this settings screen.
+                Login email addresses cannot be modified directly from this
+                settings screen.
               </p>
             </div>
 
@@ -206,11 +222,18 @@ const AccountSettingsManager = () => {
       {activeTab === "password" && (
         <div className="border border-border/80 bg-zinc-50/50 dark:bg-zinc-900/10 rounded-2xl p-6 space-y-6 max-w-xl transition-all duration-300">
           <div>
-            <h2 className="text-xs font-black uppercase tracking-wider text-zinc-900 dark:text-white">Security & Password</h2>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Edit your dashboard authentication password details.</p>
+            <h2 className="text-xs font-black uppercase tracking-wider text-zinc-900 dark:text-white">
+              Security & Password
+            </h2>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              Edit your dashboard authentication password details.
+            </p>
           </div>
 
-          <form onSubmit={handlePasswordSubmit(onPasswordUpdate)} className="space-y-4">
+          <form
+            onSubmit={handlePasswordSubmit(onPasswordUpdate)}
+            className="space-y-4"
+          >
             <div className="space-y-1">
               <label className="block text-[10px] uppercase tracking-wider font-extrabold text-muted-foreground">
                 Current Password <span className="text-rose-500">*</span>
@@ -218,7 +241,9 @@ const AccountSettingsManager = () => {
               <Input
                 type="password"
                 placeholder="Enter current password"
-                {...registerPassword("currentPassword", { required: "Current password is required" })}
+                {...registerPassword("currentPassword", {
+                  required: "Current password is required",
+                })}
                 className="border-border rounded-xl bg-card text-xs font-bold focus-visible:ring-1"
               />
               {passwordErrors.currentPassword && (
@@ -237,7 +262,10 @@ const AccountSettingsManager = () => {
                 placeholder="Enter new password"
                 {...registerPassword("newPassword", {
                   required: "New password is required",
-                  minLength: { value: 6, message: "Password must be at least 6 characters" },
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
                 })}
                 className="border-border rounded-xl bg-card text-xs font-bold focus-visible:ring-1"
               />
@@ -257,7 +285,8 @@ const AccountSettingsManager = () => {
                 placeholder="Confirm new password"
                 {...registerPassword("confirmPassword", {
                   required: "Please confirm new password",
-                  validate: (val) => val === newPassword || "Passwords do not match",
+                  validate: (val) =>
+                    val === newPassword || "Passwords do not match",
                 })}
                 className="border-border rounded-xl bg-card text-xs font-bold focus-visible:ring-1"
               />
@@ -274,13 +303,14 @@ const AccountSettingsManager = () => {
                 className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-6 cursor-pointer"
                 disabled={changePasswordMutation.isPending}
               >
-                {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
+                {changePasswordMutation.isPending
+                  ? "Updating..."
+                  : "Update Password"}
               </Button>
             </div>
           </form>
         </div>
       )}
-
     </div>
   );
 };

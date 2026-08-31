@@ -16,10 +16,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand Info */}
           <div className="space-y-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 select-none group"
-            >
+            <Link href="/" className="flex items-center gap-2  group">
               <Image
                 src={LogoIcon}
                 alt="logo"
@@ -170,7 +167,7 @@ const Footer = () => {
         {/* Bottom Copyright & Switcher Bar */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
           {/* Left section: Copyright */}
-          <div className="text-center md:text-left select-none">
+          <div className="text-center md:text-left ">
             <p>&copy; {today.getFullYear()} GoSolar. All rights reserved.</p>
           </div>
 
@@ -180,7 +177,7 @@ const Footer = () => {
           </div>
 
           {/* Right Credits */}
-          <p className="text-center md:text-right select-none">
+          <p className="text-center md:text-right ">
             Designed & Built by{" "}
             <a
               href="https://www.linkedin.com/company/24-karats/"

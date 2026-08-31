@@ -45,7 +45,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       {/* Background Image */}
       {image && (
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-35 select-none pointer-events-none"
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-35  pointer-events-none"
           style={{ backgroundImage: `url(${image})` }}
         />
       )}
@@ -61,12 +61,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         )}
       >
         {badge && (
-          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block select-none">
+          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block ">
             {badge}
           </span>
         )}
 
-        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-white tracking-tight select-none">
+        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-white tracking-tight ">
           {heading}
         </h1>
 

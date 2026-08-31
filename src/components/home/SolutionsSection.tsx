@@ -14,7 +14,7 @@ const SolutionsSection = () => {
     <section className="py-20 lg:py-28 bg-background font-inter">
       <div className="container mx-auto px-4">
         {/* Header Block */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 select-none">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 ">
           <div className="space-y-3">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               What We Do
@@ -48,7 +48,7 @@ const SolutionsSection = () => {
               >
                 <div className="space-y-4">
                   {/* Icon */}
-                  <div className="text-4xl select-none">{sol.icon}</div>
+                  <div className="text-4xl ">{sol.icon}</div>
 
                   {/* Title */}
                   <h3 className="font-heading font-extrabold text-lg sm:text-xl text-foreground group-hover:text-primary transition-colors leading-tight">

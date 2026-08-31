@@ -211,7 +211,7 @@ const CategoryTable = () => {
       </AppModal>
 
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <FolderOpen className="h-5 w-5 text-primary" />
@@ -324,7 +324,7 @@ const CategoryTable = () => {
         </div>
 
         {/* Counter and row switcher */}
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {categories.length} categories listed</span>
         </div>
       </div>
@@ -337,7 +337,7 @@ const CategoryTable = () => {
               {tableColumns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none ${
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  ${
                     col.uid === "actions" ? "text-right" : ""
                   }`}
                 >
@@ -384,7 +384,7 @@ const CategoryTable = () => {
                           </span>
                         )}
                         {columnKey === "parent" && (
-                          <div className="select-none">
+                          <div className="">
                             {cat?.parent ? (
                               <span className="bg-primary/10 text-primary border border-primary/20 rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">
                                 {cat.parent.name}
@@ -402,7 +402,7 @@ const CategoryTable = () => {
                           </span>
                         )}
                         {columnKey === "dateAdded" && (
-                          <span className="font-semibold text-muted-foreground select-none">
+                          <span className="font-semibold text-muted-foreground ">
                             {formatDate(cat?.createdAt)}
                           </span>
                         )}
@@ -483,7 +483,7 @@ const CategoryTable = () => {
 
       {/* Pagination Controls */}
       {pages > 1 && (
-        <div className="flex items-center justify-between py-3 border-t border-border/60 select-none">
+        <div className="flex items-center justify-between py-3 border-t border-border/60 ">
           <div className="text-xs text-muted-foreground font-bold">
             Page {page} of {pages}
           </div>

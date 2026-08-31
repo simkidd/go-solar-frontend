@@ -1,7 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Shield, HeartHandshake, Zap, Cpu, Sun, BatteryCharging } from "lucide-react";
+import {
+  Sparkles,
+  Shield,
+  HeartHandshake,
+  Zap,
+  Cpu,
+  Sun,
+  BatteryCharging,
+} from "lucide-react";
 
 const VisionSection = () => {
   const [activeComponent, setActiveComponent] = useState<string | null>(null);
@@ -65,7 +73,7 @@ const VisionSection = () => {
     <section className="w-full py-24 bg-zinc-50 dark:bg-zinc-900/10 font-inter">
       <div className="container mx-auto px-4 space-y-16">
         {/* Centered Heading */}
-        <div className="text-center max-w-2xl mx-auto space-y-3 select-none">
+        <div className="text-center max-w-2xl mx-auto space-y-3 ">
           <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
             Energy Independence
           </span>
@@ -125,7 +133,7 @@ const VisionSection = () => {
               }`}
             >
               <Sun className="h-6 w-6 sm:h-7 sm:w-7" />
-              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider mt-1 sm:mt-1.5 select-none">
+              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider mt-1 sm:mt-1.5 ">
                 Solar Array
               </span>
             </div>
@@ -141,7 +149,7 @@ const VisionSection = () => {
               }`}
             >
               <Cpu className="h-6 w-6 sm:h-7 sm:w-7" />
-              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider mt-1 sm:mt-1.5 select-none">
+              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider mt-1 sm:mt-1.5 ">
                 Inverter
               </span>
             </div>
@@ -157,7 +165,7 @@ const VisionSection = () => {
               }`}
             >
               <BatteryCharging className="h-6 w-6 sm:h-7 sm:w-7" />
-              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider mt-1 sm:mt-1.5 select-none">
+              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider mt-1 sm:mt-1.5 ">
                 Battery Wall
               </span>
             </div>
@@ -173,13 +181,13 @@ const VisionSection = () => {
               }`}
             >
               <Zap className="h-6 w-6 sm:h-7 sm:w-7" />
-              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider mt-1 sm:mt-1.5 select-none">
+              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider mt-1 sm:mt-1.5 ">
                 Your Home
               </span>
             </div>
 
             {/* Description Text Bar */}
-            <div className="absolute bottom-4 left-4 right-4 h-14 bg-white/5 dark:bg-zinc-900/50 backdrop-blur-md border border-zinc-850 rounded-2xl px-4 py-2 flex items-center gap-3 z-10 select-none">
+            <div className="absolute bottom-4 left-4 right-4 h-14 bg-white/5 dark:bg-zinc-900/50 backdrop-blur-md border border-zinc-850 rounded-2xl px-4 py-2 flex items-center gap-3 z-10 ">
               <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
                 <Sparkles className="h-4 w-4" />
               </div>

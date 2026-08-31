@@ -22,7 +22,11 @@ interface UpdateBannerFormValues {
   title: string;
   ctaLink?: string;
   isActive?: boolean;
-  placement: "storefront_hero" | "storefront_promo_strip" | "storefront_promo_card" | "storefront_leaderboard";
+  placement:
+    | "storefront_hero"
+    | "storefront_promo_strip"
+    | "storefront_promo_card"
+    | "storefront_leaderboard";
 }
 
 const UpdateBannerForm: React.FC<{
@@ -30,7 +34,9 @@ const UpdateBannerForm: React.FC<{
   onClose: () => void;
 }> = ({ banner, onClose }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(banner.image || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    banner.image || null,
+  );
   const { data: offers = [] } = useAllOffersQuery();
 
   const {
@@ -89,27 +95,37 @@ const UpdateBannerForm: React.FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full font-inter flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full font-inter flex flex-col gap-4"
+    >
       <div className="space-y-6 pt-2">
         {/* Banner Admin Identifier */}
         <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-          <div className="border-b border-border/60 pb-3 select-none">
+          <div className="border-b border-border/60 pb-3 ">
             <h3 className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
-              <LayoutTemplate className="h-4 w-4 text-primary" /> Administrative Label
+              <LayoutTemplate className="h-4 w-4 text-primary" /> Administrative
+              Label
             </h3>
             <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
-              Specify a label for this graphic layout banner to manage it easily inside the dashboard.
+              Specify a label for this graphic layout banner to manage it easily
+              inside the dashboard.
             </p>
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="title" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+            <label
+              htmlFor="title"
+              className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block"
+            >
               Banner Name / Label <span className="text-red-500">*</span>
             </label>
             <Input
               id="title"
               placeholder="e.g. Summer Flash Sale Hero Banner"
-              {...register("title", { required: "Banner title/label is required" })}
+              {...register("title", {
+                required: "Banner title/label is required",
+              })}
               className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold"
             />
             {errors.title && (
@@ -122,9 +138,10 @@ const UpdateBannerForm: React.FC<{
 
         {/* CTA & Settings Card */}
         <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-          <div className="border-b border-border/60 pb-3 select-none">
+          <div className="border-b border-border/60 pb-3 ">
             <h3 className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
-              <Link2 className="h-4 w-4 text-primary" /> Call-to-Action &amp; Settings
+              <Link2 className="h-4 w-4 text-primary" /> Call-to-Action &amp;
+              Settings
             </h3>
             <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
               Configure the redirect destination and storefront placement
@@ -132,7 +149,7 @@ const UpdateBannerForm: React.FC<{
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
               Link to Active Sales Offer (Optional)
             </label>
             <Select
@@ -148,11 +165,18 @@ const UpdateBannerForm: React.FC<{
                 <SelectValue placeholder="Link banner to campaign..." />
               </SelectTrigger>
               <SelectContent className="rounded-xl bg-card border border-border/80">
-                <SelectItem value="none" className="cursor-pointer text-xs font-semibold">
+                <SelectItem
+                  value="none"
+                  className="cursor-pointer text-xs font-semibold"
+                >
                   None (Use custom link below)
                 </SelectItem>
                 {offers.map((offer: any) => (
-                  <SelectItem key={offer._id} value={offer._id} className="cursor-pointer text-xs font-semibold">
+                  <SelectItem
+                    key={offer._id}
+                    value={offer._id}
+                    className="cursor-pointer text-xs font-semibold"
+                  >
                     {offer.name} ({offer.percentageOff}% OFF)
                   </SelectItem>
                 ))}
@@ -161,7 +185,10 @@ const UpdateBannerForm: React.FC<{
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="ctaLink" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+            <label
+              htmlFor="ctaLink"
+              className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block"
+            >
               Destination URL
             </label>
             <Input
@@ -173,40 +200,52 @@ const UpdateBannerForm: React.FC<{
           </div>
 
           <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
-                Placement Location <span className="text-red-500">*</span>
-              </label>
-              <Controller
-                control={control}
-                name="placement"
-                rules={{ required: "Placement location is required" }}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="bg-muted/30 border-border rounded-xl text-xs h-10 focus:ring-primary font-semibold">
-                      <SelectValue placeholder="Select placement location" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl bg-card border border-border/80">
-                      <SelectItem value="storefront_hero" className="cursor-pointer text-xs font-semibold">
-                        Storefront Hero Slider (Top Carousel)
-                      </SelectItem>
-                      <SelectItem value="storefront_promo_strip" className="cursor-pointer text-xs font-semibold">
-                        Promotional Grid Strip (Middle)
-                      </SelectItem>
-                      <SelectItem value="storefront_promo_card" className="cursor-pointer text-xs font-semibold">
-                        Featured Promo Card (Highlights)
-                      </SelectItem>
-                      <SelectItem value="storefront_leaderboard" className="cursor-pointer text-xs font-semibold">
-                        Leaderboard Strip (1264 × 180 — Pure Graphic)
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
+              Placement Location <span className="text-red-500">*</span>
+            </label>
+            <Controller
+              control={control}
+              name="placement"
+              rules={{ required: "Placement location is required" }}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="bg-muted/30 border-border rounded-xl text-xs h-10 focus:ring-primary font-semibold">
+                    <SelectValue placeholder="Select placement location" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl bg-card border border-border/80">
+                    <SelectItem
+                      value="storefront_hero"
+                      className="cursor-pointer text-xs font-semibold"
+                    >
+                      Storefront Hero Slider (Top Carousel)
+                    </SelectItem>
+                    <SelectItem
+                      value="storefront_promo_strip"
+                      className="cursor-pointer text-xs font-semibold"
+                    >
+                      Promotional Grid Strip (Middle)
+                    </SelectItem>
+                    <SelectItem
+                      value="storefront_promo_card"
+                      className="cursor-pointer text-xs font-semibold"
+                    >
+                      Featured Promo Card (Highlights)
+                    </SelectItem>
+                    <SelectItem
+                      value="storefront_leaderboard"
+                      className="cursor-pointer text-xs font-semibold"
+                    >
+                      Leaderboard Strip (1264 × 180 — Pure Graphic)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-border/60 select-none">
+          <div className="flex items-center justify-between pt-4 border-t border-border/60 ">
             <div className="space-y-0.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                 Active Status
               </label>
               <p className="text-[10px] text-muted-foreground font-semibold">
@@ -217,7 +256,10 @@ const UpdateBannerForm: React.FC<{
               control={control}
               name="isActive"
               render={({ field }) => (
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
               )}
             />
           </div>
@@ -225,9 +267,10 @@ const UpdateBannerForm: React.FC<{
 
         {/* Banner Image Card */}
         <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-          <div className="border-b border-border/60 pb-3 select-none">
+          <div className="border-b border-border/60 pb-3 ">
             <h3 className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
-              <ImageIcon className="h-4 w-4 text-primary" /> Banner Background Image
+              <ImageIcon className="h-4 w-4 text-primary" /> Banner Background
+              Image
             </h3>
             <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
               Upload a new promotion cover image or retain the existing one
@@ -236,7 +279,12 @@ const UpdateBannerForm: React.FC<{
 
           {previewUrl ? (
             <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden border border-border bg-zinc-950">
-              <Image src={previewUrl} alt="Banner preview" fill className="object-cover" />
+              <Image
+                src={previewUrl}
+                alt="Banner preview"
+                fill
+                className="object-cover"
+              />
               <button
                 type="button"
                 onClick={removeSelectedFile}
@@ -248,19 +296,24 @@ const UpdateBannerForm: React.FC<{
           ) : (
             <div
               {...getRootProps()}
-              className={`flex flex-col items-center justify-center w-full aspect-[21/9] rounded-2xl border-2 border-dashed transition-all p-6 text-center select-none cursor-pointer ${
+              className={`flex flex-col items-center justify-center w-full aspect-[21/9] rounded-2xl border-2 border-dashed transition-all p-6 text-center  cursor-pointer ${
                 isDragActive
                   ? "border-primary bg-primary/5"
                   : "border-border hover:border-primary/60 bg-muted/20 hover:bg-muted/30"
               }`}
             >
               <input {...getInputProps()} />
-              <UploadCloud className={`h-8 w-8 mb-2 transition-colors ${isDragActive ? "text-primary" : "text-muted-foreground/60"}`} />
+              <UploadCloud
+                className={`h-8 w-8 mb-2 transition-colors ${isDragActive ? "text-primary" : "text-muted-foreground/60"}`}
+              />
               <span className="text-xs font-bold text-foreground">
-                {isDragActive ? "Drop the file here..." : "Drag & drop or click to upload banner background"}
+                {isDragActive
+                  ? "Drop the file here..."
+                  : "Drag & drop or click to upload banner background"}
               </span>
               <span className="text-[10px] text-[#08aa08] font-semibold mt-1">
-                Recommended: Hero: 1920×600px | Strip: 1200×200px | Card: 800×350px
+                Recommended: Hero: 1920×600px | Strip: 1200×200px | Card:
+                800×350px
               </span>
             </div>
           )}
@@ -268,7 +321,7 @@ const UpdateBannerForm: React.FC<{
       </div>
 
       {/* Form Action Buttons */}
-      <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border/60 select-none">
+      <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border/60 ">
         <Button
           type="button"
           variant="ghost"

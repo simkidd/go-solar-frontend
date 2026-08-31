@@ -52,7 +52,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const { data: productsRes } = usePublishedProductsQuery({ page: 1, limit: 1000 });
+  const { data: productsRes } = usePublishedProductsQuery({
+    page: 1,
+    limit: 1000,
+  });
   const products = productsRes?.products || [];
   const { data: categoryTree = [] } = useCategoryTreeQuery();
 
@@ -133,7 +136,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     if (!searchTerm.trim()) return;
     saveRecentSearch(searchTerm);
     setQuery("");
-    handleNavigate(`/products/search?q=${encodeURIComponent(searchTerm.trim())}`);
+    handleNavigate(
+      `/products/search?q=${encodeURIComponent(searchTerm.trim())}`,
+    );
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -266,7 +271,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           {/* If there is a search query but NO results */}
           {query.trim() && matchingProducts.length === 0 && (
             <div className="py-12 text-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground select-none">
+              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground ">
                 <Search className="h-5 w-5" />
               </div>
               <p className="text-xs font-black uppercase tracking-wider text-foreground">
@@ -294,7 +299,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               {/* Recent Searches */}
               {recentSearches.length > 0 && (
                 <div className="space-y-2.5">
-                  <div className="flex items-center justify-between select-none">
+                  <div className="flex items-center justify-between ">
                     <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5" /> Recent Searches
                     </span>
@@ -330,7 +335,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
               {/* Popular Searches */}
               <div className="space-y-2.5">
-                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 select-none">
+                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 ">
                   <TrendingUp className="h-3.5 w-3.5 text-primary" /> Popular
                   Searches
                 </span>
@@ -351,7 +356,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
               {/* Explore Categories */}
               <div className="space-y-2.5">
-                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 select-none">
+                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 ">
                   <ShoppingBag className="h-3.5 w-3.5" /> Explore Categories
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -376,7 +381,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3.5 bg-muted/40 border-t border-border/85 flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-muted-foreground select-none">
+        <div className="px-5 py-3.5 bg-muted/40 border-t border-border/85 flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-muted-foreground ">
           <span>Quick Shop Search</span>
           <span>GoSolar Clean Energy</span>
         </div>

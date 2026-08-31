@@ -95,7 +95,7 @@ const EcommerceNavbar = () => {
       <header className="w-full bg-white dark:bg-zinc-950 border-b border-border/80 sticky top-0 z-50 font-inter">
         {/* ── Top Announcement Bar ── */}
         {announcementData?.announcement?.isActive && (
-          <div className="w-full bg-primary/10 dark:bg-primary/20 border-b border-primary/10 py-2.5 text-[10.5px] font-black uppercase tracking-wider text-primary select-none overflow-hidden">
+          <div className="w-full bg-primary/10 dark:bg-primary/20 border-b border-primary/10 py-2.5 text-[10.5px] font-black uppercase tracking-wider text-primary  overflow-hidden">
             <div className="w-full overflow-hidden whitespace-nowrap">
               <div className="animate-marquee">
                 {announcementData.announcement.link ? (
@@ -150,10 +150,7 @@ const EcommerceNavbar = () => {
 
           {/* Col 2 (Mobile Center / Desktop Left): Brand Logo */}
           <div className="flex items-center justify-center lg:justify-start lg:flex-none">
-            <Link
-              href="/"
-              className="flex items-center gap-2 shrink-0 select-none group"
-            >
+            <Link href="/" className="flex items-center gap-2 shrink-0  group">
               <Image
                 src={LogoIcon}
                 alt="logo"
@@ -177,7 +174,7 @@ const EcommerceNavbar = () => {
           <div className="hidden lg:flex items-center justify-center flex-1 max-w-xl mx-auto">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center bg-zinc-50 dark:bg-zinc-900/40 border border-border/80 hover:border-primary/30 rounded-full text-xs text-muted-foreground w-full cursor-pointer transition-all duration-200 select-none outline-none h-10 p-0 overflow-hidden shadow-xs"
+              className="flex items-center bg-zinc-50 dark:bg-zinc-900/40 border border-border/80 hover:border-primary/30 rounded-full text-xs text-muted-foreground w-full cursor-pointer transition-all duration-200  outline-none h-10 p-0 overflow-hidden shadow-xs"
             >
               <div className="px-4 py-2 border-r border-border/60 font-bold text-foreground/80 flex items-center gap-1 hover:text-primary transition-colors shrink-0 text-[10px] uppercase tracking-wider">
                 <span>All Categories</span>
@@ -196,7 +193,7 @@ const EcommerceNavbar = () => {
           </div>
 
           {/* Desktop Right: Utility Actions (Wishlist, Cart, Profile) */}
-          <div className="hidden lg:flex items-center justify-end gap-3 select-none">
+          <div className="hidden lg:flex items-center justify-end gap-3 ">
             {/* Wishlist */}
             <Button
               variant="ghost"
@@ -290,15 +287,6 @@ const EcommerceNavbar = () => {
                         My Orders
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/account/financing"
-                        className="cursor-pointer flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-foreground hover:text-primary"
-                      >
-                        <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                        Solar Financing
-                      </Link>
-                    </DropdownMenuItem>
                   </div>
 
                   <DropdownMenuSeparator className="my-0" />
@@ -331,14 +319,25 @@ const EcommerceNavbar = () => {
             {/* Dynamic Categories Link Pills */}
             <div className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth mr-6">
               <Link
-                href="/shop"
+                href="/shop/browse"
                 className={`text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors px-3 py-1.5 rounded-full ${
-                  pathname === "/shop"
+                  pathname === "/shop/browse"
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                 }`}
               >
                 All Products
+              </Link>
+
+              <Link
+                href="/packages"
+                className={`text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors px-3 py-1.5 rounded-full ${
+                  pathname === "/packages" || pathname.startsWith("/packages")
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                }`}
+              >
+                Solar Packages
               </Link>
 
               {/* Deals pill — only shown when active campaigns exist */}
@@ -418,32 +417,6 @@ const EcommerceNavbar = () => {
                 );
               })}
             </div>
-
-            {/* Quick Toggle Switcher (Packages / Products) */}
-            <div className="hidden sm:flex items-center gap-1 bg-muted/65 p-1 rounded-full border border-border/60 font-inter">
-              <Link href="/packages">
-                <span
-                  className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-200 select-none cursor-pointer block ${
-                    pathname === "/packages" || pathname.startsWith("/packages")
-                      ? "bg-primary text-white shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Packages
-                </span>
-              </Link>
-              <Link href="/products">
-                <span
-                  className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-200 select-none cursor-pointer block ${
-                    pathname === "/products" || pathname.startsWith("/products")
-                      ? "bg-primary text-white shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Products
-                </span>
-              </Link>
-            </div>
           </div>
         </div>
 
@@ -469,7 +442,7 @@ const EcommerceNavbar = () => {
                 className="relative w-4/5 max-w-sm bg-white dark:bg-zinc-950 border-r border-border/80 h-full py-6 flex flex-col justify-between shadow-2xl overflow-hidden"
               >
                 {/* Fixed Drawer Header */}
-                <div className="flex items-center mb-6 select-none pl-16 pr-6">
+                <div className="flex items-center mb-6  pl-16 pr-6">
                   <Link
                     href="/"
                     className="flex items-center gap-2"
@@ -486,7 +459,7 @@ const EcommerceNavbar = () => {
                 <ScrollArea className="flex-1 my-4">
                   {/* User Profile Info on Mobile */}
                   {isAuthenticated && (
-                    <div className="p-4 bg-zinc-50 dark:bg-zinc-900/45 border border-border rounded-2xl mb-6 flex items-center gap-3 mx-6 select-none">
+                    <div className="p-4 bg-zinc-50 dark:bg-zinc-900/45 border border-border rounded-2xl mb-6 flex items-center gap-3 mx-6 ">
                       <div className="h-9 w-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-sm">
                         {user?.firstname
                           ? user.firstname[0].toUpperCase()
@@ -536,15 +509,27 @@ const EcommerceNavbar = () => {
                             Shop Categories
                           </p>
                           <Link
-                            href="/shop"
+                            href="/shop/browse"
                             onClick={() => setShowMobileMenu(false)}
                             className={`block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors ${
-                              pathname === "/shop"
+                              pathname === "/shop/browse"
                                 ? "text-primary border-primary/20"
                                 : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
                             }`}
                           >
                             All Products
+                          </Link>
+
+                          <Link
+                            href="/packages"
+                            onClick={() => setShowMobileMenu(false)}
+                            className={`block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors ${
+                              pathname === "/packages" || pathname.startsWith("/packages")
+                                ? "text-primary border-primary/20"
+                                : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
+                            }`}
+                          >
+                            Solar Packages
                           </Link>
 
                           {/* Deals link — only when active campaigns exist */}
@@ -553,7 +538,8 @@ const EcommerceNavbar = () => {
                               href="/offers"
                               onClick={() => setShowMobileMenu(false)}
                               className={`py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors flex items-center gap-2 ${
-                                pathname === "/offers" || pathname.startsWith("/offers")
+                                pathname === "/offers" ||
+                                pathname.startsWith("/offers")
                                   ? "text-primary border-primary/20"
                                   : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
                               }`}
@@ -667,7 +653,7 @@ const EcommerceNavbar = () => {
                             <span>Go Back</span>
                           </button>
 
-                          <div className="pb-1 select-none">
+                          <div className="pb-1 ">
                             <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
                               Category
                             </span>

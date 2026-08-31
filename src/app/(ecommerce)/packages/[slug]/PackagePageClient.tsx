@@ -122,19 +122,15 @@ const PackagePageClient: React.FC<PackagePageClientProps> = ({
             >
               Store
             </Link>
-            <span className="text-zinc-300 dark:text-zinc-700 select-none">
-              /
-            </span>
+            <span className="text-zinc-300 dark:text-zinc-700 ">/</span>
             <Link
               href="/packages"
               className="hover:text-zinc-955 dark:hover:text-white transition-colors"
             >
               Packages
             </Link>
-            <span className="text-zinc-300 dark:text-zinc-700 select-none">
-              /
-            </span>
-            <span className="text-zinc-900 dark:text-white font-bold select-none truncate max-w-[280px]">
+            <span className="text-zinc-300 dark:text-zinc-700 ">/</span>
+            <span className="text-zinc-900 dark:text-white font-bold  truncate max-w-[280px]">
               {pkg.name}
             </span>
           </nav>

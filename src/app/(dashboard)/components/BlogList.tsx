@@ -90,11 +90,11 @@ const BlogList = () => {
       {/* Top Action Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2 select-none">
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2 ">
             <FileText className="h-5 w-5 text-primary" />
             Blog Editorial Manager
           </h2>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 select-none">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 ">
             Create, moderate, and publish verified client educational articles
             and announcements.
           </p>
@@ -132,7 +132,7 @@ const BlogList = () => {
       <Card className="bg-card text-card-foreground border border-border/85 shadow-xs rounded-2xl overflow-hidden">
         <div className="w-full overflow-x-auto">
           <Table>
-            <TableHeader className="bg-muted/30 select-none">
+            <TableHeader className="bg-muted/30 ">
               <TableRow className="border-b border-border/60">
                 <TableHead className="w-[100px] text-xs font-black uppercase tracking-wider text-muted-foreground/80 py-4 pl-6">
                   Cover
@@ -222,7 +222,7 @@ const BlogList = () => {
                     {/* Category Tags */}
                     <TableCell className="py-3">
                       {post?.tags?.[0] ? (
-                        <span className="bg-primary/10 text-primary border border-primary/20 rounded-md px-2 py-0.5 text-[9px] font-black uppercase tracking-wider select-none">
+                        <span className="bg-primary/10 text-primary border border-primary/20 rounded-md px-2 py-0.5 text-[9px] font-black uppercase tracking-wider ">
                           {post.tags[0]}
                         </span>
                       ) : (
@@ -233,18 +233,18 @@ const BlogList = () => {
                     {/* Publish status */}
                     <TableCell className="py-3">
                       {post?.isPublished ? (
-                        <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-md px-2 py-0.5 text-[9px] font-black uppercase tracking-wider select-none">
+                        <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-md px-2 py-0.5 text-[9px] font-black uppercase tracking-wider ">
                           Published
                         </span>
                       ) : (
-                        <span className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-md px-2 py-0.5 text-[9px] font-black uppercase tracking-wider select-none">
+                        <span className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-md px-2 py-0.5 text-[9px] font-black uppercase tracking-wider ">
                           Draft
                         </span>
                       )}
                     </TableCell>
 
                     {/* Creation Date */}
-                    <TableCell className="py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 select-none">
+                    <TableCell className="py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 ">
                       {formatDate(post?.createdAt)}
                     </TableCell>
 
@@ -310,7 +310,7 @@ const BlogList = () => {
       {/* Pagination control footer row */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between py-2 border-t border-zinc-150 dark:border-zinc-800 pt-4">
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 select-none font-semibold">
+          <div className="text-xs text-zinc-500 dark:text-zinc-400  font-semibold">
             Showing Page {page} of {totalPages}
           </div>
           <div className="flex items-center gap-2">

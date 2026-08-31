@@ -89,7 +89,7 @@ const BusinessNavbar = () => {
             </span>
           </div>
 
-          <div className="text-[10px] font-semibold text-muted-foreground select-none">
+          <div className="text-[10px] font-semibold text-muted-foreground ">
             Clean energy solutions for Nigeria
           </div>
         </div>
@@ -136,7 +136,7 @@ const BusinessNavbar = () => {
           {/* Logo brand */}
           <Link
             href="/"
-            className="flex items-center gap-2 select-none group mx-auto lg:mx-0 z-10"
+            className="flex items-center gap-2  group mx-auto lg:mx-0 z-10"
           >
             <Image
               src={LogoIcon}
@@ -152,7 +152,7 @@ const BusinessNavbar = () => {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-2 select-none">
+          <nav className="hidden lg:flex items-center gap-2 ">
             {navLinks.map((link) => {
               const active = isActive(link.href);
               return (
@@ -195,15 +195,13 @@ const BusinessNavbar = () => {
             </Link>
 
             {/* Desktop Auth Section */}
-            <span className="hidden sm:inline-block text-border select-none">
-              |
-            </span>
+            <span className="hidden sm:inline-block text-border ">|</span>
 
             <div className="hidden lg:block">
               {isAuthenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted text-foreground transition-colors cursor-pointer select-none focus:outline-none">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted text-foreground transition-colors cursor-pointer  focus:outline-none">
                       <div className="h-7 w-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-extrabold text-xs">
                         {user?.firstname
                           ? user.firstname[0].toUpperCase()
@@ -217,7 +215,7 @@ const BusinessNavbar = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-44 p-2 rounded-2xl bg-card border border-border shadow-xl font-inter tracking-wider font-semibold text-muted-foreground select-none"
+                    className="w-44 p-2 rounded-2xl bg-card border border-border shadow-xl font-inter tracking-wider font-semibold text-muted-foreground "
                   >
                     {(user?.isAdmin || user?.isSuperAdmin) && (
                       <DropdownMenuItem asChild>
@@ -248,7 +246,7 @@ const BusinessNavbar = () => {
               ) : (
                 <Link
                   href="/auth/login"
-                  className="inline-flex items-center justify-center text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground bg-transparent hover:bg-muted px-4.5 py-2.5 rounded-full transition-all duration-200 cursor-pointer select-none"
+                  className="inline-flex items-center justify-center text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground bg-transparent hover:bg-muted px-4.5 py-2.5 rounded-full transition-all duration-200 cursor-pointer "
                 >
                   Login
                 </Link>
@@ -280,7 +278,7 @@ const BusinessNavbar = () => {
               className="relative w-4/5 max-w-sm bg-card text-card-foreground border-r border-border h-full py-6 flex flex-col justify-between shadow-2xl overflow-hidden"
             >
               {/* Drawer Header (Fixed) */}
-              <div className="flex items-center mb-6 select-none pl-16 pr-6">
+              <div className="flex items-center mb-6  pl-16 pr-6">
                 <Link
                   href="/"
                   className="flex items-center gap-2"

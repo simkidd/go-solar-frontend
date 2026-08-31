@@ -338,35 +338,23 @@ const ProductsList = ({
               </div>
 
               {secondRow.length > 0 && promoBanner && (
-                <div className="w-full relative rounded-3xl overflow-hidden shadow-xs border border-zinc-150 dark:border-zinc-800 bg-zinc-950 p-6 md:p-8 min-h-[140px] flex items-center">
-                  <div
-                    className="absolute inset-0 z-0 bg-cover bg-center opacity-30 hover:scale-102 transition-transform duration-[10s]"
-                    style={{ backgroundImage: `url('${promoBanner.image}')` }}
-                  />
-                  <div className="absolute inset-0 z-10 bg-linear-to-r from-black via-black/80 to-transparent" />
-                  <div className="relative z-20 space-y-2 text-white max-w-xl">
-                    {promoBanner.badge && (
-                      <span className="inline-block text-[8px] font-bold text-[#08AA08] bg-[#08AA08]/10 px-2 py-0.5 rounded-md uppercase tracking-widest">
-                        {promoBanner.badge}
-                      </span>
-                    )}
-                    <h4 className="text-sm md:text-base font-extrabold tracking-tight leading-snug">
-                      {promoBanner.title}
-                    </h4>
-                    {promoBanner.subtitle && (
-                      <p className="text-[11px] text-zinc-350 leading-relaxed line-clamp-1 font-semibold">
-                        {promoBanner.subtitle}
-                      </p>
-                    )}
-                    {promoBanner.ctaLink && (
-                      <Link
-                        href={promoBanner.ctaLink}
-                        className="inline-block text-[10px] font-bold text-[#08AA08] hover:underline"
-                      >
-                        {promoBanner.ctaText || "Configure Setup"} →
-                      </Link>
-                    )}
-                  </div>
+                <div className="w-full relative rounded-3xl overflow-hidden shadow-xs border border-zinc-150 dark:border-zinc-800 bg-zinc-950 aspect-[1200/200]">
+                  {promoBanner.ctaLink ? (
+                    <Link
+                      href={promoBanner.ctaLink}
+                      className="absolute inset-0 w-full h-full block z-20"
+                    >
+                      <div
+                        className="absolute inset-0 bg-cover bg-center hover:scale-102 transition-transform duration-[10s] opacity-100"
+                        style={{ backgroundImage: `url('${promoBanner.image}')` }}
+                      />
+                    </Link>
+                  ) : (
+                    <div
+                      className="absolute inset-0 bg-cover bg-center opacity-100"
+                      style={{ backgroundImage: `url('${promoBanner.image}')` }}
+                    />
+                  )}
                 </div>
               )}
 

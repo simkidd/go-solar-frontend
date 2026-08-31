@@ -75,11 +75,11 @@ export const BlogCardAdmin: React.FC<{
         <div className="space-y-2">
           {/* Metadata (Date & Author) */}
           <div className="flex items-center gap-3 text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
-            <span className="flex items-center gap-1 select-none">
+            <span className="flex items-center gap-1 ">
               <CalendarCheck className="h-3.5 w-3.5" />
               {formatDate(post?.createdAt)}
             </span>
-            <span className="flex items-center gap-1 select-none">
+            <span className="flex items-center gap-1 ">
               <User className="h-3.5 w-3.5" />
               {post?.author || "Staff Admin"}
             </span>

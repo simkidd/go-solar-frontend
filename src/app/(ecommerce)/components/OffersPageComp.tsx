@@ -22,7 +22,7 @@ const CampaignSection: React.FC<{ offer: Offer }> = ({ offer }) => {
   return (
     <section className="space-y-6">
       {/* Campaign header */}
-      <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
+      <div className="flex items-end justify-between border-b border-border/60 pb-4 ">
         <div className="space-y-1">
           <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary">
             <Zap className="h-3 w-3 fill-primary" />
@@ -103,7 +103,9 @@ const OffersPageComp: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-24 flex flex-col items-center justify-center gap-4 text-center font-inter">
         <AlertCircle className="h-8 w-8 text-muted-foreground/40" />
-        <h2 className="text-sm font-bold text-foreground">Failed to load deals</h2>
+        <h2 className="text-sm font-bold text-foreground">
+          Failed to load deals
+        </h2>
         <p className="text-xs text-muted-foreground font-semibold">
           Please check your connection and try again.
         </p>
@@ -114,7 +116,7 @@ const OffersPageComp: React.FC = () => {
   return (
     <div className="w-full font-inter bg-background">
       {/* ── Page Header ── */}
-      <div className="w-full bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-border/80 py-10 select-none">
+      <div className="w-full bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-border/80 py-10 ">
         <div className="container mx-auto px-4">
           <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary mb-2">
             <Zap className="h-3.5 w-3.5 fill-primary" /> Live Campaigns
@@ -124,7 +126,8 @@ const OffersPageComp: React.FC = () => {
           </h1>
           <p className="text-sm text-muted-foreground font-semibold mt-2 max-w-lg leading-relaxed">
             Limited-time price slashes on solar panels, inverters, batteries and
-            complete off-grid packages. Stock is limited — order before prices revert.
+            complete off-grid packages. Stock is limited — order before prices
+            revert.
           </p>
         </div>
       </div>
@@ -134,7 +137,9 @@ const OffersPageComp: React.FC = () => {
         {offers.length === 0 ? (
           <div className="py-24 flex flex-col items-center justify-center gap-4 text-center">
             <Zap className="h-10 w-10 text-muted-foreground/20" />
-            <h2 className="text-sm font-bold text-foreground">No active deals right now</h2>
+            <h2 className="text-sm font-bold text-foreground">
+              No active deals right now
+            </h2>
             <p className="text-xs text-muted-foreground font-semibold max-w-xs leading-relaxed">
               Check back soon — new campaigns are added regularly. Browse our{" "}
               <Link href="/shop" className="text-primary hover:underline">

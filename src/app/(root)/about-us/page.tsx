@@ -3,7 +3,14 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
-import { ArrowUpRight, ShieldCheck, Zap, Target, Handshake, Leaf } from "lucide-react";
+import {
+  ArrowUpRight,
+  ShieldCheck,
+  Zap,
+  Target,
+  Handshake,
+  Leaf,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import HomeContactCta from "@/components/home/HomeContactCta";
 import PageHeader from "@/components/PageHeader";
@@ -19,31 +26,36 @@ const TEAM_MEMBERS = [
     name: "Adebayo Oladele",
     role: "Managing Director",
     bio: "15 years in renewable energy. Electrical engineer with an MSc in Renewable Energy Systems from the University of Lagos. Founded GoSolar in 2009.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&auto=format",
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&auto=format",
   },
   {
     name: "Emeka Okafor",
     role: "Lead Solar Engineer",
     bio: "BSc Electrical Engineering, 12 years experience. Specialises in large-scale hybrid and off-grid system design. Responsible for all technical commissioning.",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&auto=format",
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&auto=format",
   },
   {
     name: "Fatima Bello",
     role: "Energy Storage Specialist",
     bio: "Joined GoSolar in 2018 with a background in electrochemistry. Nigeria's leading expert in lithium battery storage systems and BMS configuration.",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&auto=format",
+    image:
+      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&auto=format",
   },
   {
     name: "Chukwudi Eze",
     role: "Commercial Solutions Manager",
     bio: "MBA + BEng. Manages GoSolar's commercial and industrial client portfolio. Has delivered over 2MW of commercial solar across Nigeria and West Africa.",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&auto=format",
+    image:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&auto=format",
   },
   {
     name: "Ngozi Adeyemi",
     role: "Customer Experience Manager",
     bio: "Ensures every GoSolar client receives outstanding service from initial enquiry through to post-installation support. 8 years in renewable energy customer service.",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&auto=format",
+    image:
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&auto=format",
   },
 ];
 
@@ -61,7 +73,7 @@ const AboutUsPage = () => {
       />
 
       {/* ── Stats Row ────────────────────────────────────────────────── */}
-      <section className="bg-card text-card-foreground border-b border-border/80 py-10 select-none font-inter">
+      <section className="bg-card text-card-foreground border-b border-border/80 py-10  font-inter">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:divide-x divide-border/60">
             {[
@@ -93,10 +105,10 @@ const AboutUsPage = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div className="space-y-6">
-              <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block select-none">
+              <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block ">
                 Our Story
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight select-none">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight ">
                 Built by Engineers, Driven by Purpose
               </h2>
               <div className="space-y-4 text-muted-foreground text-sm leading-relaxed max-w-xl font-semibold">
@@ -118,9 +130,9 @@ const AboutUsPage = () => {
                   Today, GoSolar employs over 40 engineers, technicians, and
                   support staff. We have completed more than 500 installations
                   ranging from small residential backup systems to large
-                  commercial solar farms. Our technical team holds certifications
-                  from Victron Energy, SMA, and the Council for the Regulation of
-                  Engineering in Nigeria (COREN).
+                  commercial solar farms. Our technical team holds
+                  certifications from Victron Energy, SMA, and the Council for
+                  the Regulation of Engineering in Nigeria (COREN).
                 </p>
                 <p>
                   Our mission has not changed since 2009: to provide every
@@ -129,7 +141,7 @@ const AboutUsPage = () => {
               </div>
             </div>
             <div className="space-y-8">
-              <div className="relative aspect-[16/10] w-full rounded-3xl overflow-hidden shadow-xs bg-muted select-none">
+              <div className="relative aspect-[16/10] w-full rounded-3xl overflow-hidden shadow-xs bg-muted ">
                 <Image
                   src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=700&h=450&fit=crop&auto=format"
                   alt="GoSolar installation team"
@@ -146,7 +158,7 @@ const AboutUsPage = () => {
                 ].map((milestone) => (
                   <div
                     key={milestone.year}
-                    className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 shadow-2xs select-none"
+                    className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 shadow-2xs "
                   >
                     <div className="font-heading font-black text-2xl text-primary mb-0.5">
                       {milestone.year}
@@ -167,10 +179,10 @@ const AboutUsPage = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 space-y-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="bg-card text-card-foreground border border-border/80 rounded-3xl p-8 space-y-4 shadow-3xs">
-              <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block select-none">
+              <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block ">
                 Our Mission
               </span>
-              <h3 className="text-xl font-bold tracking-tight text-foreground select-none">
+              <h3 className="text-xl font-bold tracking-tight text-foreground ">
                 Power Nigeria with Clean Energy
               </h3>
               <p className="text-muted-foreground text-xs leading-relaxed font-semibold">
@@ -179,7 +191,7 @@ const AboutUsPage = () => {
                 and delivering genuine energy independence.
               </p>
             </div>
-            <div className="bg-primary text-white rounded-3xl p-8 space-y-4 shadow-xs relative overflow-hidden select-none">
+            <div className="bg-primary text-white rounded-3xl p-8 space-y-4 shadow-xs relative overflow-hidden ">
               <span className="font-mono text-xs font-bold uppercase tracking-widest text-zinc-950 block">
                 Our Vision
               </span>
@@ -193,10 +205,10 @@ const AboutUsPage = () => {
               </p>
             </div>
             <div className="bg-card text-card-foreground border border-border/80 rounded-3xl p-8 space-y-4 shadow-3xs">
-              <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block select-none">
+              <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block ">
                 Our Promise
               </span>
-              <h3 className="text-xl font-bold tracking-tight text-foreground select-none">
+              <h3 className="text-xl font-bold tracking-tight text-foreground ">
                 Quality, Transparency, Results
               </h3>
               <p className="text-muted-foreground text-xs leading-relaxed font-semibold">
@@ -213,25 +225,29 @@ const AboutUsPage = () => {
                 icon: Target,
                 title: "Engineering Excellence",
                 desc: "Every system is designed by certified engineers, not just salespeople.",
-                color: "text-amber-500 bg-amber-50 dark:bg-amber-950/20 border-amber-100/40 dark:border-amber-900/30",
+                color:
+                  "text-amber-500 bg-amber-50 dark:bg-amber-950/20 border-amber-100/40 dark:border-amber-900/30",
               },
               {
                 icon: ShieldCheck,
                 title: "Uncompromising Quality",
                 desc: "We only source equipment from tier-1 global manufacturers.",
-                color: "text-blue-500 bg-blue-50 dark:bg-blue-950/20 border-blue-100/40 dark:border-blue-900/30",
+                color:
+                  "text-blue-500 bg-blue-50 dark:bg-blue-950/20 border-blue-100/40 dark:border-blue-900/30",
               },
               {
                 icon: Handshake,
                 title: "Honest Advice",
                 desc: "We recommend what works, not what maximises our margin.",
-                color: "text-primary bg-primary/5 dark:bg-primary/10 border-primary/10",
+                color:
+                  "text-primary bg-primary/5 dark:bg-primary/10 border-primary/10",
               },
               {
                 icon: Leaf,
                 title: "Environmental Commitment",
                 desc: "Every installation contributes to Nigeria's clean energy transition.",
-                color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100/40 dark:border-emerald-900/30",
+                color:
+                  "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100/40 dark:border-emerald-900/30",
               },
             ].map((v) => {
               const IconComponent = v.icon;
@@ -240,7 +256,9 @@ const AboutUsPage = () => {
                   key={v.title}
                   className="bg-card text-card-foreground border border-border/80 rounded-2xl p-6 space-y-4 shadow-3xs hover:border-primary/20 transition-colors"
                 >
-                  <div className={`h-10 w-10 rounded-xl flex items-center justify-center border ${v.color}`}>
+                  <div
+                    className={`h-10 w-10 rounded-xl flex items-center justify-center border ${v.color}`}
+                  >
                     <IconComponent className="h-5 w-5" />
                   </div>
                   <div className="space-y-1.5">
@@ -261,7 +279,7 @@ const AboutUsPage = () => {
       {/* ── Team Section ─────────────────────────────────────────────── */}
       <section className="py-20 lg:py-28 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-3 select-none">
+          <div className="text-center space-y-3 ">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               Our Team
             </span>
@@ -275,7 +293,7 @@ const AboutUsPage = () => {
                 key={member.name}
                 className="bg-card text-card-foreground border border-border/80 rounded-3xl p-6 text-center space-y-4 shadow-3xs hover:border-primary/25 transition-colors"
               >
-                <div className="relative w-20 h-20 rounded-full overflow-hidden mx-auto bg-zinc-200 border border-border/80 select-none">
+                <div className="relative w-20 h-20 rounded-full overflow-hidden mx-auto bg-zinc-200 border border-border/80 ">
                   <Image
                     src={member.image}
                     alt={member.name}
@@ -284,10 +302,10 @@ const AboutUsPage = () => {
                   />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-extrabold text-sm text-foreground select-none">
+                  <h4 className="font-extrabold text-sm text-foreground ">
                     {member.name}
                   </h4>
-                  <p className="font-mono text-[9px] font-bold uppercase tracking-wider text-primary select-none">
+                  <p className="font-mono text-[9px] font-bold uppercase tracking-wider text-primary ">
                     {member.role}
                   </p>
                 </div>
@@ -303,7 +321,7 @@ const AboutUsPage = () => {
       {/* ── Certifications & Partners ────────────────────────────────── */}
       <section className="py-14 bg-zinc-50/50 dark:bg-zinc-900/10 border-t border-b border-border/80">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center space-y-8">
-          <span className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground block select-none">
+          <span className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground block ">
             Certifications & Partners
           </span>
           <div className="flex flex-wrap justify-center gap-4">
@@ -318,7 +336,7 @@ const AboutUsPage = () => {
             ].map((c) => (
               <div
                 key={c}
-                className="bg-card text-card-foreground border border-border/80 px-5 py-2.5 rounded-xl font-mono text-[10px] font-bold uppercase tracking-widest hover:border-primary/25 transition-colors select-none shadow-3xs"
+                className="bg-card text-card-foreground border border-border/80 px-5 py-2.5 rounded-xl font-mono text-[10px] font-bold uppercase tracking-widest hover:border-primary/25 transition-colors  shadow-3xs"
               >
                 {c}
               </div>

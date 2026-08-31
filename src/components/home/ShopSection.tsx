@@ -28,7 +28,7 @@ const ShopSection = () => {
       className="w-full py-16"
     >
       <div className="container mx-auto px-2">
-        <div className="mb-8 grid lg:grid-cols-2 grid-cols-1 select-none">
+        <div className="mb-8 grid lg:grid-cols-2 grid-cols-1 ">
           <div className="relative space-y-3">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               Our Shop

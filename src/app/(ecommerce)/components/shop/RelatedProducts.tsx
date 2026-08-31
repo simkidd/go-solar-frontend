@@ -22,7 +22,7 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
 
   if (isLoading) {
     return (
-      <div className="w-full space-y-6 mt-10 select-none">
+      <div className="w-full space-y-6 mt-10 ">
         <div className="flex items-center gap-2.5 border-b border-zinc-200/80 dark:border-zinc-800/60 pb-3">
           <div className="p-2 rounded-xl bg-primary/10 text-primary dark:bg-primary/20">
             <ShoppingBag className="w-5 h-5 animate-pulse" />
@@ -38,7 +38,10 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="h-72 bg-zinc-50 dark:bg-zinc-900 border border-border rounded-3xl animate-pulse" />
+            <div
+              key={idx}
+              className="h-72 bg-zinc-50 dark:bg-zinc-900 border border-border rounded-3xl animate-pulse"
+            />
           ))}
         </div>
       </div>
@@ -49,7 +52,7 @@ const RelatedProducts: React.FC<{ product: Product }> = ({ product }) => {
 
   return (
     <section className="w-full mt-10 space-y-6">
-      <div className="flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/60 pb-3 select-none">
+      <div className="flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/60 pb-3 ">
         <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-xl bg-primary/10 text-primary dark:bg-primary/20 transition-colors duration-300">
             <ShoppingBag className="w-5 h-5" />

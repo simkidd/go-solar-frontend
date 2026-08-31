@@ -13,9 +13,7 @@ const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
   const queryPosts = data?.blogs || [];
 
   const activePosts =
-    initialPosts && initialPosts.length > 0
-      ? initialPosts
-      : queryPosts;
+    initialPosts && initialPosts.length > 0 ? initialPosts : queryPosts;
 
   if (!activePosts || activePosts.length === 0) {
     return null;
@@ -25,7 +23,7 @@ const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
     <section className="py-20 lg:py-28 bg-background font-inter">
       <div className="container mx-auto px-4">
         {/* Header Block */}
-        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-12 select-none">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-12 ">
           <div className="space-y-3">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               Knowledge Centre
@@ -61,7 +59,10 @@ const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
                 viewport={{ once: true }}
                 className="bg-card text-card-foreground hover:bg-secondary/40 transition-colors flex flex-col justify-between h-[420px] group cursor-pointer"
               >
-                <Link href={`/blog/${post.slug}`} className="flex flex-col justify-between h-full">
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="flex flex-col justify-between h-full"
+                >
                   <div>
                     {/* Cover Image */}
                     <div className="relative block h-48 bg-muted overflow-hidden">

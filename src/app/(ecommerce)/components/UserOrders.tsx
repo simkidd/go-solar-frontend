@@ -164,7 +164,7 @@ const UserOrders = () => {
                           <p className="text-xs font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
                             {item?.product?.name}
                           </p>
-                          <div className="flex items-center gap-2 mt-0.5 select-none">
+                          <div className="flex items-center gap-2 mt-0.5 ">
                             <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
                               Qty:{" "}
                               <span className="font-extrabold text-foreground">
@@ -201,7 +201,7 @@ const UserOrders = () => {
             ))
           ) : (
             <div className="text-center py-16 border border-dashed border-border rounded-2xl flex flex-col justify-center items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground select-none">
+              <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground ">
                 <Package className="h-6 w-6" />
               </div>
               <div className="space-y-1">

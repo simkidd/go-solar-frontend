@@ -62,7 +62,7 @@ const Review = ({ reviews }: { reviews: IReview[] }) => {
 
   return (
     <>
-      <div className="w-full relative py-8 px-2 font-inter select-none">
+      <div className="w-full relative py-8 px-2 font-inter ">
         <Swiper
           spaceBetween={30}
           slidesPerView={1}
@@ -108,7 +108,7 @@ const Review = ({ reviews }: { reviews: IReview[] }) => {
                   >
                     {/* Background Preview Thumbnail for Video Reviews */}
                     {isVideo && (
-                      <div className="absolute inset-0 w-full h-full z-0 select-none pointer-events-none">
+                      <div className="absolute inset-0 w-full h-full z-0  pointer-events-none">
                         <img
                           src={getVideoThumbnail(rev.videoUrl)}
                           alt="Video Preview"

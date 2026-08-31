@@ -29,7 +29,8 @@ const CategoriesSectionGrid: React.FC<{
   const getCategoryByIndexOrSlug = (slug: string, index: number) => {
     const found = categories.find(
       (c) =>
-        c.slug === slug || c.name.toLowerCase().includes(slug.replace("-", " "))
+        c.slug === slug ||
+        c.name.toLowerCase().includes(slug.replace("-", " ")),
     );
     if (found) return found;
     return categories[index] || null;
@@ -45,13 +46,16 @@ const CategoriesSectionGrid: React.FC<{
   if (loading) {
     return (
       <section className="w-full py-8 font-inter">
-        <div className="flex flex-col mb-8 select-none">
+        <div className="flex flex-col mb-8 ">
           <Skeleton className="h-4 w-28 rounded-md mb-2 bg-muted/65" />
           <Skeleton className="h-8 w-60 rounded-lg bg-muted/65" />
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="min-h-[220px] rounded-3xl bg-muted/65" />
+            <Skeleton
+              key={i}
+              className="min-h-[220px] rounded-3xl bg-muted/65"
+            />
           ))}
         </div>
       </section>
@@ -60,7 +64,7 @@ const CategoriesSectionGrid: React.FC<{
 
   return (
     <section className="w-full py-8 font-inter">
-      <div className="flex flex-col mb-8 select-none">
+      <div className="flex flex-col mb-8 ">
         <span className="text-[10px] font-black uppercase tracking-widest text-primary">
           Explore Categories
         </span>
@@ -74,7 +78,7 @@ const CategoriesSectionGrid: React.FC<{
           <Link
             key={cat._id}
             href={`/${cat.slug}/products`}
-            className="group bg-card text-card-foreground border border-border/80 rounded-3xl p-6 flex flex-col items-center text-center justify-between min-h-[230px] transition-all duration-300 hover:border-primary/20 hover:shadow-xs hover:-translate-y-1 cursor-pointer select-none"
+            className="group bg-card text-card-foreground border border-border/80 rounded-3xl p-6 flex flex-col items-center text-center justify-between min-h-[230px] transition-all duration-300 hover:border-primary/20 hover:shadow-xs hover:-translate-y-1 cursor-pointer "
           >
             {/* Centered Large Icon in Circular Wrapper */}
             <div className="h-16 w-16 rounded-full bg-primary/5 dark:bg-primary/10 text-primary flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white mb-4 shadow-xs">
@@ -82,15 +86,16 @@ const CategoriesSectionGrid: React.FC<{
                 {React.createElement(getCategoryIcon(cat.name))}
               </span>
             </div>
-            
+
             <div className="space-y-1.5 w-full flex-1 flex flex-col justify-center">
               <h3 className="text-xs font-black text-foreground tracking-wider group-hover:text-primary transition-colors Outfit uppercase">
                 {cat.name}
               </h3>
               <p className="text-[10px] text-muted-foreground font-semibold line-clamp-2 max-w-[160px] mx-auto leading-relaxed">
-                {cat.slug === "packages" 
+                {cat.slug === "packages"
                   ? "Pre-engineered, complete solar setups"
-                  : cat.description || `High quality ${cat.name.toLowerCase()} hardware.`}
+                  : cat.description ||
+                    `High quality ${cat.name.toLowerCase()} hardware.`}
               </p>
             </div>
 
@@ -120,7 +125,7 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
   // Render the actual section with products
   return (
     <div className="mb-16 font-inter space-y-8">
-      <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none">
+      <div className="flex items-end justify-between border-b border-border/60 pb-4 ">
         <div className="space-y-0.5">
           <span className="text-[10px] font-black uppercase tracking-widest text-primary">
             Department

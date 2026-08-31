@@ -160,8 +160,10 @@ export default function AdminFinancingClient() {
   const filteredRequests = useMemo(() => {
     return requests.filter((r: any) => {
       const applicantName =
-        `${r.user?.firstname || ""} ${r.user?.lastname || ""}`.toLowerCase();
-      const applicantEmail = (r.user?.email || "").toLowerCase();
+        r.requestType === "individual" && r.firstName
+          ? `${r.firstName} ${r.lastName}`.toLowerCase()
+          : "corporate client";
+      const applicantEmail = (r.email || "").toLowerCase();
       const applicantPhone = (r.phoneNumber || "").toLowerCase();
       const search = searchTerm.toLowerCase();
 
@@ -175,9 +177,9 @@ export default function AdminFinancingClient() {
   }, [requests, searchTerm]);
 
   return (
-    <div className="space-y-5 font-inter text-left select-none">
+    <div className="space-y-5 font-inter text-left ">
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <Coins className="h-5 w-5 text-primary" />
@@ -260,7 +262,7 @@ export default function AdminFinancingClient() {
         </div>
 
         {/* Total counts */}
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {filteredRequests.length} financing plans listed</span>
         </div>
       </div>
@@ -270,22 +272,22 @@ export default function AdminFinancingClient() {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  px-4">
                 Applicant & Info
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Profile Type
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Selected Package
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-right">
                 Total Price
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-center">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-center">
                 Status
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-right px-4">
                 Actions
               </TableHead>
             </TableRow>
@@ -336,7 +338,7 @@ export default function AdminFinancingClient() {
                     <p className="font-bold text-zinc-900 dark:text-white">
                       {plan.requestType === "individual" && plan.firstName
                         ? `${plan.firstName} ${plan.lastName}`
-                        : `${plan.user?.firstname || ""} ${plan.user?.lastname || ""}`}
+                        : "Corporate Client"}
                     </p>
                   </TableCell>
 
@@ -381,7 +383,9 @@ export default function AdminFinancingClient() {
                           className="cursor-pointer text-xs font-semibold flex items-center gap-2"
                         >
                           <Eye className="h-3.5 w-3.5" />
-                          {plan.status === "pending" ? "Review App" : "View Details"}
+                          {plan.status === "pending"
+                            ? "Review App"
+                            : "View Details"}
                         </DropdownMenuItem>
                         {user?.isSuperAdmin && (
                           <DropdownMenuItem
@@ -404,7 +408,7 @@ export default function AdminFinancingClient() {
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-end gap-2 pt-2 select-none">
+        <div className="flex items-center justify-end gap-2 pt-2 ">
           <Button
             variant="outline"
             disabled={page === 1}
@@ -431,13 +435,15 @@ export default function AdminFinancingClient() {
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent
           side="right"
-          className="sm:max-w-[550px] w-full bg-card text-card-foreground border-l border-border p-0 overflow-hidden font-inter select-none flex flex-col justify-between h-full"
+          className="sm:max-w-[550px] w-full bg-card text-card-foreground border-l border-border p-0 overflow-hidden font-inter  flex flex-col justify-between h-full"
         >
           {selectedPlan && (
             <div className="flex flex-col h-full justify-between text-left">
               <SheetHeader className="p-6 bg-linear-to-br from-primary/5 to-transparent border-b border-border/50 text-left">
                 <SheetTitle className="text-sm font-extrabold text-foreground uppercase tracking-tight">
-                  {selectedPlan.status === "pending" ? "Review Financing Request" : "Financing Plan Details"}
+                  {selectedPlan.status === "pending"
+                    ? "Review Financing Request"
+                    : "Financing Plan Details"}
                 </SheetTitle>
                 <SheetDescription className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
                   Request ID: {selectedPlan._id}
@@ -455,23 +461,28 @@ export default function AdminFinancingClient() {
                       <div className="flex items-center gap-2">
                         <User className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
                         <span className="capitalize">
-                          Type: <b>{selectedPlan.requestType || "Individual"}</b>
+                          Type:{" "}
+                          <b>{selectedPlan.requestType || "Individual"}</b>
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <User className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
                         <span>
-                          Name: <b>
-                            {selectedPlan.requestType === "individual" && selectedPlan.firstName
+                          Name:{" "}
+                          <b>
+                            {selectedPlan.requestType === "individual" &&
+                            selectedPlan.firstName
                               ? `${selectedPlan.firstName} ${selectedPlan.lastName}`
-                              : `${selectedPlan.user?.firstname || ""} ${selectedPlan.user?.lastname || ""}`}
+                              : "Corporate Client"}
                           </b>
                         </span>
                       </div>
-                      {selectedPlan.user?.email && (
+                      {selectedPlan.email && (
                         <div className="flex items-center gap-2 sm:col-span-2">
                           <Mail className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                          <span>Email: <b>{selectedPlan.user.email}</b></span>
+                          <span>
+                            Email: <b>{selectedPlan.email}</b>
+                          </span>
                         </div>
                       )}
                       <div className="flex items-center gap-2">
@@ -479,14 +490,30 @@ export default function AdminFinancingClient() {
                         <span>{selectedPlan.phoneNumber}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span>NIN: <b>{selectedPlan.nin || "N/A"}</b></span>
+                        <span>
+                          NIN: <b>{selectedPlan.nin || "N/A"}</b>
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span>Cheque Provision: <b>{selectedPlan.provisionOfCheque ? "Agreed" : "Not Agreed"}</b></span>
+                        <span>
+                          Cheque Provision:{" "}
+                          <b>
+                            {selectedPlan.provisionOfCheque
+                              ? "Agreed"
+                              : "Not Agreed"}
+                          </b>
+                        </span>
                       </div>
                       {selectedPlan.requestType === "corporate" && (
                         <div className="flex items-center gap-2">
-                          <span>Direct Debit: <b>{selectedPlan.directDebitSetup ? "Agreed" : "Not Agreed"}</b></span>
+                          <span>
+                            Direct Debit:{" "}
+                            <b>
+                              {selectedPlan.directDebitSetup
+                                ? "Agreed"
+                                : "Not Agreed"}
+                            </b>
+                          </span>
                         </div>
                       )}
                     </div>
@@ -495,30 +522,46 @@ export default function AdminFinancingClient() {
                   {/* Section: Dynamic details based on requestType */}
                   <div className="space-y-2.5">
                     <h4 className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
-                      {selectedPlan.requestType === "corporate" ? "Corporate Business Details" : "Employment & Residence Details"}
+                      {selectedPlan.requestType === "corporate"
+                        ? "Corporate Business Details"
+                        : "Employment & Residence Details"}
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-zinc-50 dark:bg-zinc-800/20 p-4 rounded-xl text-xs font-semibold">
                       {selectedPlan.requestType === "corporate" ? (
                         <>
                           <div className="flex items-center gap-2 sm:col-span-2">
-                            <span>Business Address: <b>{selectedPlan.businessAddress || "N/A"}</b></span>
+                            <span>
+                              Business Address:{" "}
+                              <b>{selectedPlan.businessAddress || "N/A"}</b>
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span>Nature: <b>{selectedPlan.natureOfBusiness || "N/A"}</b></span>
+                            <span>
+                              Nature:{" "}
+                              <b>{selectedPlan.natureOfBusiness || "N/A"}</b>
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span>Years in Biz: <b>{selectedPlan.yearsInBusiness || "0"} Years</b></span>
+                            <span>
+                              Years in Biz:{" "}
+                              <b>{selectedPlan.yearsInBusiness || "0"} Years</b>
+                            </span>
                           </div>
                         </>
                       ) : (
                         <>
                           <div className="flex items-center gap-2 sm:col-span-2">
                             <MapPin className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                            <span>Office Address: <b>{selectedPlan.officeAddress || "N/A"}</b></span>
+                            <span>
+                              Office Address:{" "}
+                              <b>{selectedPlan.officeAddress || "N/A"}</b>
+                            </span>
                           </div>
                           <div className="flex items-center gap-2 sm:col-span-2">
                             <Briefcase className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                            <span>Role: <b>{selectedPlan.jobRole || "N/A"}</b></span>
+                            <span>
+                              Role: <b>{selectedPlan.jobRole || "N/A"}</b>
+                            </span>
                           </div>
                         </>
                       )}
@@ -540,20 +583,25 @@ export default function AdminFinancingClient() {
                             className="p-3 bg-zinc-50 dark:bg-zinc-800/10 border border-border/80 hover:border-primary/40 rounded-xl flex items-center gap-2.5 transition"
                           >
                             <FileText className="h-4.5 w-4.5 text-[#08AA08]" />
-                            <span className="font-extrabold truncate">Passport Photo</span>
+                            <span className="font-extrabold truncate">
+                              Passport Photo
+                            </span>
                           </a>
                         )}
-                        {selectedPlan.requestType === "corporate" && selectedPlan.documents.cacDocument && (
-                          <a
-                            href={selectedPlan.documents.cacDocument}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-3 bg-zinc-50 dark:bg-zinc-800/10 border border-border/80 hover:border-primary/40 rounded-xl flex items-center gap-2.5 transition"
-                          >
-                            <FileText className="h-4.5 w-4.5 text-[#08AA08]" />
-                            <span className="font-extrabold truncate">CAC Certificate</span>
-                          </a>
-                        )}
+                        {selectedPlan.requestType === "corporate" &&
+                          selectedPlan.documents.cacDocument && (
+                            <a
+                              href={selectedPlan.documents.cacDocument}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-3 bg-zinc-50 dark:bg-zinc-800/10 border border-border/80 hover:border-primary/40 rounded-xl flex items-center gap-2.5 transition"
+                            >
+                              <FileText className="h-4.5 w-4.5 text-[#08AA08]" />
+                              <span className="font-extrabold truncate">
+                                CAC Certificate
+                              </span>
+                            </a>
+                          )}
                       </div>
                     </div>
                   )}
@@ -569,9 +617,7 @@ export default function AdminFinancingClient() {
                           <span className="text-[9px] text-zinc-455 uppercase block">
                             Selected Package
                           </span>
-                          <span>
-                            {selectedPlan.systemSize}
-                          </span>
+                          <span>{selectedPlan.systemSize}</span>
                         </div>
                         <div>
                           <span className="text-[9px] text-zinc-455 uppercase block">
@@ -635,7 +681,7 @@ export default function AdminFinancingClient() {
                   </Button>
                 </SheetFooter>
               ) : (
-                <div className="p-6 border-t border-border/60 bg-zinc-50/50 dark:bg-zinc-800/10 text-center select-none text-[10px] text-zinc-400 font-bold uppercase">
+                <div className="p-6 border-t border-border/60 bg-zinc-50/50 dark:bg-zinc-800/10 text-center  text-[10px] text-zinc-400 font-bold uppercase">
                   Plan Current Status: {selectedPlan.status}
                 </div>
               )}
@@ -646,13 +692,14 @@ export default function AdminFinancingClient() {
 
       {/* Superadmin Delete Confirmation Modal */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
               Delete Financing Request
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">
-              Are you sure you want to permanently delete this solar financing request? This action cannot be undone.
+              Are you sure you want to permanently delete this solar financing
+              request? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4 flex gap-2">

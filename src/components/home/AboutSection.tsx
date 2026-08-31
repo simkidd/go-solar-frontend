@@ -35,7 +35,7 @@ const AboutSection = () => {
   return (
     <section className="w-full relative py-28 bg-white dark:bg-zinc-950 overflow-hidden font-inter border-y border-zinc-100 dark:border-zinc-900">
       {/* Decorative text stroke background */}
-      <div className="absolute top-10 left-10 pointer-events-none select-none z-0">
+      <div className="absolute top-10 left-10 pointer-events-none  z-0">
         <span className="text-[120px] font-extrabold text-transparent text-stroke leading-none tracking-tight opacity-40 uppercase">
           Solar
         </span>
@@ -51,10 +51,10 @@ const AboutSection = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block select-none">
+            <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block ">
               About GoSolar
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white leading-tight tracking-tight select-none">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white leading-tight tracking-tight ">
               We Are Specialists in Sustainable Energy Sizing
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xl font-semibold">

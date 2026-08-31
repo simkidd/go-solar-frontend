@@ -53,7 +53,7 @@ const FulfillmentForm: React.FC<{ order: Order }> = ({ order }) => {
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-3 pt-4 border-t border-border/60"
     >
-      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">
+      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider ">
         Update Status
       </p>
       <Controller
@@ -64,7 +64,7 @@ const FulfillmentForm: React.FC<{ order: Order }> = ({ order }) => {
             value={String(field.value)}
             onValueChange={(val) => field.onChange(Number(val))}
           >
-            <SelectTrigger className="bg-background border-border rounded-xl font-bold text-xs select-none">
+            <SelectTrigger className="bg-background border-border rounded-xl font-bold text-xs ">
               <SelectValue placeholder="Select tracking status" />
             </SelectTrigger>
             <SelectContent className="font-semibold text-xs">
@@ -126,7 +126,10 @@ const OrderDetails: React.FC<{
             <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-5">
               <Skeleton className="h-4 w-40 rounded-md" />
               {[...Array(2)].map((_, i) => (
-                <div key={i} className="flex gap-4 py-4 border-t border-border/40">
+                <div
+                  key={i}
+                  className="flex gap-4 py-4 border-t border-border/40"
+                >
                   <Skeleton className="h-16 w-16 min-w-16 rounded-xl" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-4 w-48 rounded-md" />
@@ -144,7 +147,10 @@ const OrderDetails: React.FC<{
           {/* Right — sidebar cards */}
           <div className="space-y-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
+              <div
+                key={i}
+                className="bg-card border border-border/80 p-6 rounded-2xl space-y-4"
+              >
                 <Skeleton className="h-4 w-32 rounded-md" />
                 <Skeleton className="h-3 w-full rounded-md" />
                 <Skeleton className="h-3 w-4/5 rounded-md" />
@@ -164,7 +170,7 @@ const OrderDetails: React.FC<{
   return (
     <div className="space-y-6 font-inter">
       {/* ── Page Hero Title & Control Actions ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 select-none pb-4 border-b border-border/60">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4  pb-4 border-b border-border/60">
         <div className="space-y-1">
           <h2 className="text-xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
             Order ID:{" "}
@@ -191,7 +197,7 @@ const OrderDetails: React.FC<{
         <div className="lg:col-span-2 space-y-6">
           {/* Card: Ordered Items */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-2 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-2 ">
               <PackageOpen className="h-4.5 w-4.5 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Ordered Items ({order?.products.length})
@@ -220,7 +226,7 @@ const OrderDetails: React.FC<{
                       <h4 className="font-extrabold text-sm text-foreground line-clamp-1">
                         {item?.product?.name}
                       </h4>
-                      <div className="flex items-center gap-2 select-none">
+                      <div className="flex items-center gap-2 ">
                         <p className="text-xs text-muted-foreground font-semibold">
                           Quantity:{" "}
                           <span className="font-bold text-foreground">
@@ -286,7 +292,7 @@ const OrderDetails: React.FC<{
         <div className="space-y-6">
           {/* Card: Customer Details */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-1.5 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-1.5 ">
               <MapPin className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Customer Details
@@ -310,7 +316,7 @@ const OrderDetails: React.FC<{
               </div>
 
               <div className="pt-3.5 border-t border-border/60">
-                <h5 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 select-none">
+                <h5 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 ">
                   Delivery Address
                 </h5>
                 <div className="text-xs text-foreground space-y-0.5 font-semibold">
@@ -331,7 +337,7 @@ const OrderDetails: React.FC<{
 
           {/* Card: Payment Summary */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-1.5 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-1.5 ">
               <CreditCard className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Payment Details
@@ -362,13 +368,13 @@ const OrderDetails: React.FC<{
                 </div>
                 <div className="flex justify-between items-center text-xs font-semibold text-muted-foreground">
                   <span>Status</span>
-                  <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-md px-2 py-0.5 font-bold uppercase select-none">
+                  <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-md px-2 py-0.5 font-bold uppercase ">
                     Paid
                   </span>
                 </div>
               </div>
 
-              <div className="pt-3.5 border-t border-border/60 flex justify-between items-center select-none text-xs font-bold text-foreground">
+              <div className="pt-3.5 border-t border-border/60 flex justify-between items-center  text-xs font-bold text-foreground">
                 <span>Total Amount</span>
                 <span className="text-base font-black text-primary">
                   {formatCurrency(order?.totalPricePaid || 0, "NGN")}
@@ -379,7 +385,7 @@ const OrderDetails: React.FC<{
 
           {/* Card: Fulfillment status */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-5 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-1.5 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-1.5 ">
               <PackageCheck className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Fulfillment Activity
@@ -387,16 +393,39 @@ const OrderDetails: React.FC<{
             </div>
 
             {/* Step timeline */}
-            <div className="relative flex items-start justify-between gap-1 select-none">
-              {([
-                { level: 1, label: "Processing", color: "bg-amber-500", ring: "ring-amber-400/40", text: "text-amber-600 dark:text-amber-400" },
-                { level: 2, label: "Delivered",  color: "bg-emerald-500", ring: "ring-emerald-400/40", text: "text-emerald-600 dark:text-emerald-400" },
-                { level: 3, label: "Received",   color: "bg-blue-500", ring: "ring-blue-400/40", text: "text-blue-600 dark:text-blue-400" },
-              ] as const).map((step, idx, arr) => {
-                const isDone   = (order.trackingLevel ?? 1) >= step.level;
+            <div className="relative flex items-start justify-between gap-1 ">
+              {(
+                [
+                  {
+                    level: 1,
+                    label: "Processing",
+                    color: "bg-amber-500",
+                    ring: "ring-amber-400/40",
+                    text: "text-amber-600 dark:text-amber-400",
+                  },
+                  {
+                    level: 2,
+                    label: "Delivered",
+                    color: "bg-emerald-500",
+                    ring: "ring-emerald-400/40",
+                    text: "text-emerald-600 dark:text-emerald-400",
+                  },
+                  {
+                    level: 3,
+                    label: "Received",
+                    color: "bg-blue-500",
+                    ring: "ring-blue-400/40",
+                    text: "text-blue-600 dark:text-blue-400",
+                  },
+                ] as const
+              ).map((step, idx, arr) => {
+                const isDone = (order.trackingLevel ?? 1) >= step.level;
                 const isActive = (order.trackingLevel ?? 1) === step.level;
                 return (
-                  <div key={step.level} className="flex-1 flex flex-col items-center gap-1.5 relative">
+                  <div
+                    key={step.level}
+                    className="flex-1 flex flex-col items-center gap-1.5 relative"
+                  >
                     {/* connector line before (skip first) */}
                     {idx > 0 && (
                       <span
@@ -415,8 +444,18 @@ const OrderDetails: React.FC<{
                       }`}
                     >
                       {isDone && !isActive && (
-                        <svg className="h-2.5 w-2.5 text-white" viewBox="0 0 12 12" fill="none">
-                          <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <svg
+                          className="h-2.5 w-2.5 text-white"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                        >
+                          <path
+                            d="M2 6l3 3 5-5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
                         </svg>
                       )}
                     </span>

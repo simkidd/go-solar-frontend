@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 const HeroSection = () => {
   return (
-    <section className="relative w-full min-h-[90vh] bg-zinc-950 text-white font-inter flex flex-col justify-center items-center overflow-hidden border-b border-zinc-900 select-none">
+    <section className="relative w-full min-h-[90vh] bg-zinc-950 text-white font-inter flex flex-col justify-center items-center overflow-hidden border-b border-zinc-900 ">
       {/* ── Looping Background Video & Fallback Poster ── */}
       <video
         autoPlay
@@ -16,7 +16,7 @@ const HeroSection = () => {
         muted
         playsInline
         poster="/images/beautiful-alternative-energy-plant-with-solar-panels.jpg"
-        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none select-none opacity-45"
+        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none  opacity-45"
       >
         <source
           src="https://assets.mixkit.co/videos/preview/mixkit-solar-panels-on-a-roof-40348-large.mp4"
@@ -69,9 +69,9 @@ const HeroSection = () => {
               <ArrowUpRight className="h-4 w-4" />
             </Button>
           </Link>
-          <Link href="/solutions" className="w-full sm:w-auto">
+          <Link href="/#financing" className="w-full sm:w-auto">
             <Button className="w-full sm:w-auto border border-white/20 bg-white/5 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-widest h-12 px-8 rounded-full transition-all">
-              View Solutions
+              Explore Financing
             </Button>
           </Link>
         </motion.div>

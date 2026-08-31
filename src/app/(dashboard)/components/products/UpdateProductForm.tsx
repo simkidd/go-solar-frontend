@@ -143,7 +143,7 @@ const UpdateProductForm: React.FC<{
         <div className="lg:col-span-2 space-y-6">
           {/* Card 1: Core Details */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 General Details
               </h3>
@@ -153,7 +153,7 @@ const UpdateProductForm: React.FC<{
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                 Product Title / Name <span className="text-red-500">*</span>
               </label>
               <Input
@@ -169,7 +169,7 @@ const UpdateProductForm: React.FC<{
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                 Description Details <span className="text-red-500">*</span>
               </label>
               <Textarea
@@ -190,7 +190,7 @@ const UpdateProductForm: React.FC<{
 
           {/* Card 2: Pricing & Stock */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Pricing &amp; Inventory
               </h3>
@@ -201,13 +201,16 @@ const UpdateProductForm: React.FC<{
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Regular Price (₦) <span className="text-red-500">*</span>
                 </label>
                 <Controller
                   control={control}
                   name="price"
-                  rules={{ required: "Price is required", validate: (v) => v > 0 || "Price must be greater than 0" }}
+                  rules={{
+                    required: "Price is required",
+                    validate: (v) => v > 0 || "Price must be greater than 0",
+                  }}
                   render={({ field }) => (
                     <PriceInput
                       value={field.value || ""}
@@ -225,7 +228,7 @@ const UpdateProductForm: React.FC<{
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Discount Price (₦)
                 </label>
                 <Controller
@@ -242,7 +245,7 @@ const UpdateProductForm: React.FC<{
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Quantity in Stock <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -268,14 +271,14 @@ const UpdateProductForm: React.FC<{
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 flex items-center justify-between">
               <div>
-                <p className="text-sm font-extrabold text-foreground tracking-tight select-none">
+                <p className="text-sm font-extrabold text-foreground tracking-tight ">
                   Technical Specifications
                 </p>
-                <p className="text-[10px] text-muted-foreground/80 font-semibold select-none mt-0.5">
+                <p className="text-[10px] text-muted-foreground/80 font-semibold  mt-0.5">
                   Parameters shown on the product detail page
                 </p>
               </div>
-              <div className="flex items-center gap-2 select-none">
+              <div className="flex items-center gap-2 ">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                   {showDatasheet ? "Visible" : "Hidden"}
                 </span>
@@ -334,7 +337,7 @@ const UpdateProductForm: React.FC<{
         {/* ── Narrower Sidebar Column (1/3) ── */}
         <div className="space-y-6">
           {/* Card 4: Product Visibility */}
-          <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 select-none">
+          <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 ">
             <div className="border-b border-border/60 pb-3">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Product Status
@@ -364,7 +367,7 @@ const UpdateProductForm: React.FC<{
 
           {/* Card 5: Product Organization */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Organization
               </h3>
@@ -375,7 +378,7 @@ const UpdateProductForm: React.FC<{
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Parent Category <span className="text-red-500">*</span>
                 </label>
                 <Select
@@ -404,7 +407,7 @@ const UpdateProductForm: React.FC<{
 
               {selectedParentId && subcategories.length > 0 && (
                 <div className="space-y-1.5 animate-fadeIn">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                     Subcategory <span className="text-red-500">*</span>
                   </label>
                   <Controller
@@ -442,7 +445,7 @@ const UpdateProductForm: React.FC<{
               )}
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Brand
                 </label>
                 <Input
@@ -456,7 +459,7 @@ const UpdateProductForm: React.FC<{
 
           {/* Card 6: Marketing offers */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Marketing Offers
               </h3>
@@ -466,7 +469,7 @@ const UpdateProductForm: React.FC<{
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                 Promo Campaign
               </label>
               <Controller
@@ -507,7 +510,7 @@ const UpdateProductForm: React.FC<{
 
           {/* Card 7: Logistics & Shipping */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Logistics &amp; Delivery
               </h3>
@@ -518,7 +521,7 @@ const UpdateProductForm: React.FC<{
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Shipping Class
                 </label>
                 <Controller
@@ -555,7 +558,7 @@ const UpdateProductForm: React.FC<{
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Local City Delivery (₦)
                 </label>
                 <Controller
@@ -572,7 +575,7 @@ const UpdateProductForm: React.FC<{
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Interstate Delivery (₦)
                 </label>
                 <Controller
@@ -589,7 +592,7 @@ const UpdateProductForm: React.FC<{
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Additional Details
                 </label>
                 <Input
@@ -603,7 +606,7 @@ const UpdateProductForm: React.FC<{
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mt-8 justify-end select-none">
+      <div className="flex items-center gap-2 mt-8 justify-end ">
         <Button
           type="button"
           variant="ghost"

@@ -82,7 +82,7 @@ const SimulatorSection = () => {
 
       <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         {/* ── LEFT COLUMN: Standalone Interactive Sizing Diagram ── */}
-        <div className="lg:col-span-6 w-full flex flex-col items-center justify-center min-h-[460px] rounded-[36px] border border-border bg-card text-card-foreground p-6 md:p-8 shadow-xs relative overflow-hidden select-none">
+        <div className="lg:col-span-6 w-full flex flex-col items-center justify-center min-h-[460px] rounded-[36px] border border-border bg-card text-card-foreground p-6 md:p-8 shadow-xs relative overflow-hidden ">
           {/* Day & Night Interactive Simulator Toggle Switch */}
           <div className="absolute top-6 right-6 z-30 flex items-center bg-muted dark:bg-zinc-950 border border-border rounded-full p-1.5 shadow-xs gap-1.5">
             <button
@@ -374,7 +374,7 @@ const SimulatorSection = () => {
             </div>
 
             {/* Certified Hardware highlights */}
-            <div className="flex gap-4 p-5 bg-card border border-border rounded-[20px] shadow-xs select-none">
+            <div className="flex gap-4 p-5 bg-card border border-border rounded-[20px] shadow-xs ">
               <div className="h-9 w-9 bg-muted dark:bg-zinc-950 border border-border rounded-xl flex items-center justify-center shrink-0 text-primary">
                 <Cpu className="h-4.5 w-4.5" />
               </div>

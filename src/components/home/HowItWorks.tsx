@@ -33,7 +33,7 @@ const HowItWorks = () => {
     <section className="py-20 lg:py-28 bg-background font-inter">
       <div className="container mx-auto px-4">
         {/* Header Block */}
-        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-14 select-none">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-14 ">
           <div className="space-y-3">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               The Process
@@ -61,15 +61,15 @@ const HowItWorks = () => {
               className="bg-card text-card-foreground p-8 flex flex-col justify-start h-72 hover:bg-secondary/40 transition-colors"
             >
               {/* Step Number */}
-              <div className="font-heading font-black text-6xl text-zinc-200 dark:text-zinc-800 mb-4 leading-none select-none">
+              <div className="font-heading font-black text-6xl text-zinc-200 dark:text-zinc-800 mb-4 leading-none ">
                 {step.n}
               </div>
-              
+
               {/* Step Title */}
               <div className="font-heading font-extrabold text-xl text-foreground mb-3">
                 {step.title}
               </div>
-              
+
               {/* Step Desc */}
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-semibold">
                 {step.desc}

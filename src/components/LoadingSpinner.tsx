@@ -5,7 +5,7 @@ import LogoIcon from "@/assets/gosolar-logo-icon.svg";
 
 const LoadingSpinner = () => {
   return (
-    <div className="w-full min-h-dvh flex flex-col items-center justify-center bg-linear-to-br from-zinc-50 via-white to-zinc-100 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 select-none transition-colors duration-300">
+    <div className="w-full min-h-dvh flex flex-col items-center justify-center bg-linear-to-br from-zinc-50 via-white to-zinc-100 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950  transition-colors duration-300">
       <div className="flex flex-col items-center">
         {/* Glow container for Logo */}
         <div className="relative flex items-center justify-center w-28 h-28 rounded-full bg-white dark:bg-zinc-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-zinc-200/50 dark:border-zinc-800/50">

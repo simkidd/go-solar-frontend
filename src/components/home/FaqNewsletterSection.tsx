@@ -37,7 +37,7 @@ const FaqNewsletterSection = () => {
         {/* FAQ Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* FAQ Left Block */}
-          <div className="lg:col-span-5 space-y-6 select-none">
+          <div className="lg:col-span-5 space-y-6 ">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               FAQ Support
             </span>

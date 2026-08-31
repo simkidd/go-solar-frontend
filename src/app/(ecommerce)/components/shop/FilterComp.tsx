@@ -116,7 +116,7 @@ const FilterComp: React.FC<FilterCompProps> = ({
         {/* Min/Max Inputs */}
         <div className="flex items-center gap-2">
           <div className="flex-1 relative">
-            <span className="absolute left-2.5 top-2 text-zinc-450 dark:text-zinc-500 text-xs font-bold select-none">
+            <span className="absolute left-2.5 top-2 text-zinc-450 dark:text-zinc-500 text-xs font-bold ">
               ₦
             </span>
             <input
@@ -137,11 +137,11 @@ const FilterComp: React.FC<FilterCompProps> = ({
               className="w-full pl-6 pr-2 py-1.5 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-800 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </div>
-          <span className="text-zinc-350 dark:text-zinc-700 text-xs font-black select-none">
+          <span className="text-zinc-350 dark:text-zinc-700 text-xs font-black ">
             —
           </span>
           <div className="flex-1 relative">
-            <span className="absolute left-2.5 top-2 text-zinc-450 dark:text-zinc-500 text-xs font-bold select-none">
+            <span className="absolute left-2.5 top-2 text-zinc-450 dark:text-zinc-500 text-xs font-bold ">
               ₦
             </span>
             <input
@@ -171,7 +171,7 @@ const FilterComp: React.FC<FilterCompProps> = ({
           value={tempPriceRange}
           onValueChange={(val) => setTempPriceRange(val)}
         />
-        <div className="flex justify-between text-[10px] text-zinc-400 font-bold select-none px-0.5">
+        <div className="flex justify-between text-[10px] text-zinc-400 font-bold  px-0.5">
           <span>₦50k</span>
           <span>₦10M</span>
         </div>
@@ -189,7 +189,7 @@ const FilterComp: React.FC<FilterCompProps> = ({
             <ul className="space-y-2 text-xs font-semibold pr-1">
               {brands.map((brand) => (
                 <li key={brand}>
-                  <label className="flex items-center cursor-pointer select-none">
+                  <label className="flex items-center cursor-pointer ">
                     <input
                       type="checkbox"
                       className="accent-primary h-3.5 w-3.5 rounded border-zinc-300 text-primary focus:ring-primary"
