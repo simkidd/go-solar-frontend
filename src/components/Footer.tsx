@@ -152,7 +152,7 @@ const Footer = () => {
                   gosolardotng@gmail.com
                 </a>
               </li>
-              <li className="flex items-start gap-2.5 text-zinc-400 dark:text-zinc-500 font-semibold">
+              <li className="flex items-start gap-2.5">
                 <CalendarDays className="h-4.5 w-4.5 text-primary shrink-0 mt-0.5" />
                 <span>
                   Mon - Friday

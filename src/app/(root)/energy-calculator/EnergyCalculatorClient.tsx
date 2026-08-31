@@ -34,7 +34,11 @@ const mapDbPackageToCalculatorPackage = (pkg: any): PackageData => {
   const solarPanelWatts = (pkg.pvKwp || 0) * 1000;
 
   let batteryType: "AGM" | "Lithium" = "Lithium";
-  if (pkg.batteryType === "AGM" || pkg.batteryType === "Tubular" || pkg.batteryType === "Gel") {
+  if (
+    pkg.batteryType === "AGM" ||
+    pkg.batteryType === "Tubular" ||
+    pkg.batteryType === "Gel"
+  ) {
     batteryType = "AGM";
   }
 
@@ -45,7 +49,10 @@ const mapDbPackageToCalculatorPackage = (pkg: any): PackageData => {
       categorySlug = prod.category.slug;
     } else if (prod.name?.toLowerCase().includes("battery")) {
       categorySlug = "batteries";
-    } else if (prod.name?.toLowerCase().includes("panel") || prod.name?.toLowerCase().includes("solar")) {
+    } else if (
+      prod.name?.toLowerCase().includes("panel") ||
+      prod.name?.toLowerCase().includes("solar")
+    ) {
       categorySlug = "solar-panels";
     } else if (prod.name?.toLowerCase().includes("inverter")) {
       categorySlug = "inverters";
@@ -71,7 +78,8 @@ const mapDbPackageToCalculatorPackage = (pkg: any): PackageData => {
     spec: pkg.tagline || `${pkg.capacityKva}kVA Setup`,
     price: pkg.price,
     slug: pkg.slug,
-    badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/20 dark:text-indigo-400 dark:border-indigo-900/50",
+    badgeColor:
+      "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/20 dark:text-indigo-400 dark:border-indigo-900/50",
     constituents: constituents,
     batteryCapacityWh,
     solarPanelWatts,
@@ -328,7 +336,7 @@ const EnergyCalculatorClient = () => {
                     },
                     { id: "shop", label: "Retail Shop", icon: StoreIcon },
                     { id: "business", label: "Industrial", icon: Building2 },
-                    { id: "other", label: "Specialist Site", icon: Sparkles },
+                    { id: "other", label: "Other", icon: Sparkles },
                   ] as const
                 ).map((type) => {
                   const IconComponent = type.icon;
@@ -337,7 +345,7 @@ const EnergyCalculatorClient = () => {
                     <button
                       key={type.id}
                       onClick={() => setPropertyType(type.id)}
-                      className={`flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all text-center ${
+                      className={`flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all text-center cursor-pointer ${
                         isSelected
                           ? "border-[#08AA08] bg-[#08AA08]/5 dark:bg-[#08AA08]/10 shadow-xs"
                           : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-400 dark:hover:border-zinc-700"
@@ -398,76 +406,40 @@ const EnergyCalculatorClient = () => {
                 </div>
               </div>
 
-              {/* Custom Appliance Form */}
-              <form
-                onSubmit={handleAddCustomItem}
-                className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-2xl p-5 space-y-4"
-              >
-                <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-                  Add Custom Appliance
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3.5 items-end">
-                  <div className="sm:col-span-6 space-y-1">
-                    <label className="text-xs font-semibold text-zinc-650 dark:text-zinc-355">
-                      Appliance Name
-                    </label>
-                    <Input
-                      type="text"
-                      placeholder="e.g. Server Rack"
-                      value={newItemName}
-                      onChange={(e) => setNewItemName(e.target.value)}
-                      className="h-10 text-xs font-medium"
-                    />
-                  </div>
-                  <div className="sm:col-span-2 space-y-1">
-                    <label className="text-xs font-semibold text-zinc-650 dark:text-zinc-355">
-                      Watts
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="e.g. 500"
-                      value={newItemWatts}
-                      onChange={(e) => setNewItemWatts(e.target.value)}
-                      className="h-10 text-xs font-mono font-medium"
-                    />
-                  </div>
-                  <div className="sm:col-span-2 space-y-1">
-                    <label className="text-xs font-semibold text-zinc-650 dark:text-zinc-355">
-                      Hours/Day
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="e.g. 12"
-                      value={newItemHours}
-                      onChange={(e) => setNewItemHours(e.target.value)}
-                      className="h-10 text-xs font-mono font-medium"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <Button
-                      type="submit"
-                      className="w-full bg-[#08AA08] hover:bg-[#079907] text-white font-semibold text-xs h-10 rounded-xl px-4 flex items-center justify-center gap-1.5"
-                    >
-                      <Plus className="h-4 w-4" /> Add
-                    </Button>
-                  </div>
-                </div>
-              </form>
-
-              {/* Connected Appliances list */}
+              {/* Connected Appliances list with Integrated Inline Custom Item Form */}
               <div className="space-y-3">
-                <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-                  Active Connected Load
-                </p>
-                {items.length > 0 ? (
-                  <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
-                    <div className="hidden sm:grid grid-cols-12 gap-2 px-5 py-3 bg-zinc-50 dark:bg-zinc-800/35 border-b border-zinc-150 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                      <div className="col-span-4">Appliance Name</div>
-                      <div className="col-span-2 text-center">Watts (W)</div>
-                      <div className="col-span-2 text-center">Qty</div>
-                      <div className="col-span-2 text-center">Hours/Day</div>
-                      <div className="col-span-2 text-right">Energy (kWh)</div>
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
+                    Active Connected Load
+                  </p>
+                  {items.length > 0 && (
+                    <span className="text-xs font-mono font-semibold text-zinc-500">
+                      {items.length} {items.length === 1 ? "appliance" : "appliances"}
+                    </span>
+                  )}
+                </div>
+
+                <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
+                  {/* Table Header (Desktop) */}
+                  <div className="hidden sm:grid grid-cols-12 gap-2 px-5 py-3 bg-zinc-50 dark:bg-zinc-800/35 border-b border-zinc-150 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                    <div className="col-span-4">Appliance Name</div>
+                    <div className="col-span-2 text-center">Watts (W)</div>
+                    <div className="col-span-2 text-center">Qty</div>
+                    <div className="col-span-2 text-center">Hours/Day</div>
+                    <div className="col-span-2 text-right">Energy (kWh)</div>
+                  </div>
+
+                  {/* Empty state if no items */}
+                  {items.length === 0 && (
+                    <div className="py-10 px-5 text-center border-b border-dashed border-zinc-200 dark:border-zinc-800">
+                      <p className="text-zinc-500 text-xs">
+                        No connected loads added yet. Click standard presets above or use the row below to add custom appliances.
+                      </p>
                     </div>
+                  )}
+
+                  {/* Existing Items Rows */}
+                  {items.length > 0 && (
                     <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
                       {items.map((item) => {
                         const itemEnergyKwh =
@@ -497,7 +469,7 @@ const EnergyCalculatorClient = () => {
                                           Math.max(1, item.qty - 1),
                                         )
                                       }
-                                      className="h-6 w-6 rounded-md bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center hover:bg-zinc-205 dark:hover:bg-zinc-700 transition-colors"
+                                      className="h-6 w-6 rounded-md bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
                                     >
                                       <Minus className="h-3 w-3" />
                                     </button>
@@ -513,7 +485,7 @@ const EnergyCalculatorClient = () => {
                                           item.qty + 1,
                                         )
                                       }
-                                      className="h-6 w-6 rounded-md bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center hover:bg-zinc-205 dark:hover:bg-zinc-700 transition-colors"
+                                      className="h-6 w-6 rounded-md bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
                                     >
                                       <Plus className="h-3 w-3" />
                                     </button>
@@ -569,7 +541,7 @@ const EnergyCalculatorClient = () => {
                               <button
                                 type="button"
                                 onClick={() => handleRemoveItem(item.id)}
-                                className="p-1 text-zinc-400 hover:text-red-500 transition-colors flex-shrink-0"
+                                className="p-1 text-zinc-400 hover:text-red-500 transition-colors flex-shrink-0 cursor-pointer"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </button>
@@ -581,7 +553,7 @@ const EnergyCalculatorClient = () => {
                                 <button
                                   type="button"
                                   onClick={() => handleRemoveItem(item.id)}
-                                  className="text-zinc-400 hover:text-red-500 transition-colors"
+                                  className="text-zinc-400 hover:text-red-500 transition-colors cursor-pointer"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </button>
@@ -613,7 +585,7 @@ const EnergyCalculatorClient = () => {
                                       Math.max(1, item.qty - 1),
                                     )
                                   }
-                                  className="w-6 h-6 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                                  className="w-6 h-6 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors cursor-pointer"
                                 >
                                   <Minus className="h-3 w-3" />
                                 </button>
@@ -629,7 +601,7 @@ const EnergyCalculatorClient = () => {
                                       item.qty + 1,
                                     )
                                   }
-                                  className="w-6 h-6 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                                  className="w-6 h-6 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors cursor-pointer"
                                 >
                                   <Plus className="h-3 w-3" />
                                 </button>
@@ -662,47 +634,157 @@ const EnergyCalculatorClient = () => {
                         );
                       })}
                     </div>
-                    {/* Totals panel (Desktop) */}
-                    <div className="hidden sm:grid grid-cols-12 gap-2 px-5 py-3.5 bg-[#08AA08]/5 dark:bg-[#08AA08]/10 text-xs font-bold text-zinc-800 dark:text-zinc-200 border-t border-zinc-150 dark:border-zinc-800">
-                      <div className="col-span-4 text-[#08AA08] font-bold">
-                        Accumulated Totals
+                  )}
+
+                  {/* ── Inline Custom Appliance Add Form (integrated in list) ── */}
+                  <form
+                    onSubmit={handleAddCustomItem}
+                    className="border-t border-zinc-150 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 p-3.5 sm:px-5 sm:py-3"
+                  >
+                    {/* Desktop Inline Add Row */}
+                    <div className="hidden sm:grid grid-cols-12 gap-2 items-center">
+                      <div className="col-span-4 flex items-center gap-2">
+                        <Plus className="h-4 w-4 text-[#08AA08] shrink-0" />
+                        <Input
+                          type="text"
+                          placeholder="Custom appliance name..."
+                          value={newItemName}
+                          onChange={(e) => setNewItemName(e.target.value)}
+                          className="h-8 text-xs font-medium bg-white dark:bg-zinc-800"
+                        />
                       </div>
-                      <div className="col-span-2 text-center font-mono text-[#08AA08]">
-                        {(calculations.totalLoad / 1000).toFixed(2)} kW
+                      <div className="col-span-2 flex justify-center">
+                        <div className="relative w-20">
+                          <Input
+                            type="number"
+                            placeholder="Watts"
+                            value={newItemWatts}
+                            onChange={(e) => setNewItemWatts(e.target.value)}
+                            className="h-8 text-center font-mono text-xs pr-4 pl-1 bg-white dark:bg-zinc-800"
+                          />
+                          <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-zinc-400 font-bold">
+                            W
+                          </span>
+                        </div>
                       </div>
-                      <div className="col-span-4" />
-                      <div className="col-span-2 text-right font-mono text-[#08AA08]">
-                        {(calculations.dailyEnergy / 1000).toFixed(2)} kWh
+                      <div className="col-span-2 flex justify-center items-center text-[10px] font-bold text-zinc-400 font-mono uppercase">
+                        Qty 1
+                      </div>
+                      <div className="col-span-2 flex justify-center">
+                        <div className="relative w-16">
+                          <Input
+                            type="number"
+                            placeholder="Hours"
+                            value={newItemHours}
+                            onChange={(e) => setNewItemHours(e.target.value)}
+                            className="h-8 text-center font-mono text-xs pr-4 pl-1 bg-white dark:bg-zinc-800"
+                          />
+                          <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-zinc-400 font-bold">
+                            h
+                          </span>
+                        </div>
+                      </div>
+                      <div className="col-span-2 flex justify-end">
+                        <Button
+                          type="submit"
+                          disabled={!newItemName.trim()}
+                          className="h-8 px-3 bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-[11px] rounded-lg cursor-pointer transition-all flex items-center gap-1 shadow-xs disabled:opacity-50"
+                        >
+                          <Plus className="h-3 w-3" /> Add
+                        </Button>
                       </div>
                     </div>
-                    {/* Totals panel (Mobile) */}
-                    <div className="flex sm:hidden flex-col gap-2 px-5 py-3.5 bg-[#08AA08]/5 dark:bg-[#08AA08]/10 text-xs font-bold text-zinc-800 dark:text-zinc-200 border-t border-zinc-150 dark:border-zinc-800">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[#08AA08]">
-                          Accumulated Peak Load
+
+                    {/* Mobile Inline Add Row */}
+                    <div className="flex sm:hidden flex-col gap-2.5">
+                      <div className="flex items-center gap-1.5">
+                        <Plus className="h-3.5 w-3.5 text-[#08AA08]" />
+                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                          Add Custom Appliance
                         </span>
-                        <span className="font-mono text-[#08AA08]">
+                      </div>
+                      <Input
+                        type="text"
+                        placeholder="Appliance name (e.g. Server Rack)"
+                        value={newItemName}
+                        onChange={(e) => setNewItemName(e.target.value)}
+                        className="h-9 text-xs bg-white dark:bg-zinc-800"
+                      />
+                      <div className="grid grid-cols-12 gap-2 items-center">
+                        <div className="col-span-4 relative">
+                          <Input
+                            type="number"
+                            placeholder="Watts"
+                            value={newItemWatts}
+                            onChange={(e) => setNewItemWatts(e.target.value)}
+                            className="h-9 text-xs font-mono pr-4 bg-white dark:bg-zinc-800"
+                          />
+                          <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-zinc-400 font-bold">
+                            W
+                          </span>
+                        </div>
+                        <div className="col-span-4 relative">
+                          <Input
+                            type="number"
+                            placeholder="Hours"
+                            value={newItemHours}
+                            onChange={(e) => setNewItemHours(e.target.value)}
+                            className="h-9 text-xs font-mono pr-4 bg-white dark:bg-zinc-800"
+                          />
+                          <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-zinc-400 font-bold">
+                            h
+                          </span>
+                        </div>
+                        <div className="col-span-4">
+                          <Button
+                            type="submit"
+                            disabled={!newItemName.trim()}
+                            className="w-full h-9 bg-[#08AA08] hover:bg-[#079907] text-white font-bold text-xs rounded-lg cursor-pointer transition-all flex items-center justify-center gap-1 disabled:opacity-50"
+                          >
+                            <Plus className="h-3.5 w-3.5" /> Add
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+
+                  {/* Totals panel (Desktop) */}
+                  {items.length > 0 && (
+                    <>
+                      <div className="hidden sm:grid grid-cols-12 gap-2 px-5 py-3.5 bg-[#08AA08]/5 dark:bg-[#08AA08]/10 text-xs font-bold text-zinc-800 dark:text-zinc-200 border-t border-zinc-150 dark:border-zinc-800">
+                        <div className="col-span-4 text-[#08AA08] font-bold">
+                          Accumulated Totals
+                        </div>
+                        <div className="col-span-2 text-center font-mono text-[#08AA08]">
                           {(calculations.totalLoad / 1000).toFixed(2)} kW
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-[#08AA08]">
-                          Accumulated Daily Energy
-                        </span>
-                        <span className="font-mono text-[#08AA08]">
+                        </div>
+                        <div className="col-span-4" />
+                        <div className="col-span-2 text-right font-mono text-[#08AA08]">
                           {(calculations.dailyEnergy / 1000).toFixed(2)} kWh
-                        </span>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="py-16 text-center border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900/60">
-                    <p className="text-zinc-505 text-xs">
-                      No connected loads added yet. Select one of the presets
-                      above to start sizing.
-                    </p>
-                  </div>
-                )}
+                      {/* Totals panel (Mobile) */}
+                      <div className="flex sm:hidden flex-col gap-2 px-5 py-3.5 bg-[#08AA08]/5 dark:bg-[#08AA08]/10 text-xs font-bold text-zinc-800 dark:text-zinc-200 border-t border-zinc-150 dark:border-zinc-800">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[#08AA08]">
+                            Accumulated Peak Load
+                          </span>
+                          <span className="font-mono text-[#08AA08]">
+                            {(calculations.totalLoad / 1000).toFixed(2)} kW
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-[#08AA08]">
+                            Accumulated Daily Energy
+                          </span>
+                          <span className="font-mono text-[#08AA08]">
+                            {(calculations.dailyEnergy / 1000).toFixed(2)} kWh
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -1038,7 +1120,10 @@ const EnergyCalculatorClient = () => {
                     </p>
                   </div>
 
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="space-y-4 pt-2"
+                  >
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="space-y-1">
                         <label className="text-xs font-semibold text-zinc-650 dark:text-zinc-300">
@@ -1047,11 +1132,15 @@ const EnergyCalculatorClient = () => {
                         <Input
                           type="text"
                           placeholder="John Doe"
-                          {...register("fullName", { required: "Name is required" })}
+                          {...register("fullName", {
+                            required: "Name is required",
+                          })}
                           className="h-10 text-xs font-medium"
                         />
                         {errors.fullName && (
-                          <p className="text-[10px] text-red-500 font-semibold">{errors.fullName.message}</p>
+                          <p className="text-[10px] text-red-500 font-semibold">
+                            {errors.fullName.message}
+                          </p>
                         )}
                       </div>
                       <div className="space-y-1">
@@ -1061,11 +1150,15 @@ const EnergyCalculatorClient = () => {
                         <Input
                           type="tel"
                           placeholder="080 1234 5678"
-                          {...register("phoneNumber", { required: "Phone number is required" })}
+                          {...register("phoneNumber", {
+                            required: "Phone number is required",
+                          })}
                           className="h-10 text-xs font-medium"
                         />
                         {errors.phoneNumber && (
-                          <p className="text-[10px] text-red-500 font-semibold">{errors.phoneNumber.message}</p>
+                          <p className="text-[10px] text-red-500 font-semibold">
+                            {errors.phoneNumber.message}
+                          </p>
                         )}
                       </div>
                       <div className="space-y-1">
@@ -1075,14 +1168,19 @@ const EnergyCalculatorClient = () => {
                         <Input
                           type="email"
                           placeholder="johndoe@email.com"
-                          {...register("email", { 
+                          {...register("email", {
                             required: "Email is required",
-                            pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" }
+                            pattern: {
+                              value: /^\S+@\S+$/i,
+                              message: "Invalid email format",
+                            },
                           })}
                           className="h-10 text-xs font-medium"
                         />
                         {errors.email && (
-                          <p className="text-[10px] text-red-500 font-semibold">{errors.email.message}</p>
+                          <p className="text-[10px] text-red-500 font-semibold">
+                            {errors.email.message}
+                          </p>
                         )}
                       </div>
                     </div>

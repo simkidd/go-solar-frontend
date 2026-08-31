@@ -7,8 +7,9 @@ import { Calendar, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Post } from "@/interfaces/post.interface";
 
-const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
+const BlogSection = ({ posts: initialPosts }: { posts?: Post[] }) => {
   const { data } = useBlogPostsQuery();
   const queryPosts = data?.blogs || [];
 
@@ -18,6 +19,13 @@ const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
   if (!activePosts || activePosts.length === 0) {
     return null;
   }
+
+  const getExcerpt = (post: Post) => {
+    if (post.excerpt) return post.excerpt;
+    if (!post.content) return "";
+    const plainText = post.content.replace(/<[^>]*>/g, "");
+    return plainText.length > 150 ? plainText.slice(0, 150) + "..." : plainText;
+  };
 
   return (
     <section className="py-20 lg:py-28 bg-background font-inter">
@@ -89,7 +97,7 @@ const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
 
                       {/* Excerpt */}
                       <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 font-semibold">
-                        {post.content}
+                        {getExcerpt(post)}
                       </p>
                     </div>
                   </div>
