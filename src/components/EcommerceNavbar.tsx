@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   DollarSign,
   Zap,
+  Store,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,6 +36,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import CartSheet from "@/app/(ecommerce)/components/shop/CartSheet";
+import ShopNavigationSwitch from "@/app/(ecommerce)/components/shop/ShopNavigationSwitch";
 import SearchModal from "./SearchModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -316,38 +318,28 @@ const EcommerceNavbar = () => {
         {/* ── Bottom Sub-navigation list ── */}
         <div className="w-full bg-zinc-50/50 dark:bg-zinc-900/10 border-t border-border/60 py-2 hidden lg:block">
           <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
-            {/* Dynamic Categories Link Pills */}
-            <div className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth mr-6">
+            {/* Dynamic Categories Links */}
+            <div className="flex-1 min-w-0 flex items-center gap-6 overflow-x-auto no-scrollbar scroll-smooth mr-6 text-xs">
+              {/* Store Home Link */}
               <Link
-                href="/shop/browse"
-                className={`text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors px-3 py-1.5 rounded-full ${
-                  pathname === "/shop/browse"
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                href="/shop"
+                className={`text-[11px] font-black uppercase tracking-wider whitespace-nowrap transition-colors shrink-0 ${
+                  pathname === "/shop"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                All Products
+                Store Home
               </Link>
 
-              <Link
-                href="/packages"
-                className={`text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors px-3 py-1.5 rounded-full ${
-                  pathname === "/packages" || pathname.startsWith("/packages")
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                }`}
-              >
-                Solar Packages
-              </Link>
-
-              {/* Deals pill — only shown when active campaigns exist */}
+              {/* Deals link — only shown when active campaigns exist */}
               {hasActiveOffers && (
                 <Link
                   href="/offers"
-                  className={`text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors px-3 py-1.5 rounded-full flex items-center gap-1 ${
+                  className={`text-[11px] font-black uppercase tracking-wider whitespace-nowrap transition-colors flex items-center gap-1 shrink-0 ${
                     pathname === "/offers" || pathname.startsWith("/offers")
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <Zap className="h-3 w-3" />
@@ -368,10 +360,10 @@ const EcommerceNavbar = () => {
                     <DropdownMenu key={category._id}>
                       <DropdownMenuTrigger asChild>
                         <button
-                          className={`text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors px-3 py-1.5 rounded-full flex items-center gap-1 cursor-pointer outline-none ${
+                          className={`text-[11px] font-black uppercase tracking-wider whitespace-nowrap transition-colors flex items-center gap-1 cursor-pointer outline-none shrink-0 ${
                             active
-                              ? "bg-primary/10 text-primary"
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                              ? "text-primary"
+                              : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           {category.name}
@@ -406,16 +398,21 @@ const EcommerceNavbar = () => {
                   <Link
                     key={category._id}
                     href={href}
-                    className={`text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors px-3 py-1.5 rounded-full ${
+                    className={`text-[11px] font-black uppercase tracking-wider whitespace-nowrap transition-colors shrink-0 ${
                       active
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {category.name}
                   </Link>
                 );
               })}
+            </div>
+
+            {/* Switcher on the Right Side of the Bottom Nav */}
+            <div className="shrink-0 pl-4">
+              <ShopNavigationSwitch />
             </div>
           </div>
         </div>
@@ -509,22 +506,37 @@ const EcommerceNavbar = () => {
                             Shop Categories
                           </p>
                           <Link
-                            href="/shop/browse"
+                            href="/shop"
                             onClick={() => setShowMobileMenu(false)}
-                            className={`block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors ${
-                              pathname === "/shop/browse"
+                            className={`block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors flex items-center gap-2 ${
+                              pathname === "/shop"
                                 ? "text-primary border-primary/20"
                                 : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
                             }`}
                           >
-                            All Products
+                            <Store className="h-3.5 w-3.5" />
+                            Store Home
+                          </Link>
+
+                          <Link
+                            href="/products"
+                            onClick={() => setShowMobileMenu(false)}
+                            className={`block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors ${
+                              pathname === "/products" ||
+                              pathname.startsWith("/products")
+                                ? "text-primary border-primary/20"
+                                : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
+                            }`}
+                          >
+                            Products
                           </Link>
 
                           <Link
                             href="/packages"
                             onClick={() => setShowMobileMenu(false)}
                             className={`block py-3 text-sm font-black uppercase tracking-wider border-b border-border/60 transition-colors ${
-                              pathname === "/packages" || pathname.startsWith("/packages")
+                              pathname === "/packages" ||
+                              pathname.startsWith("/packages")
                                 ? "text-primary border-primary/20"
                                 : "text-zinc-650 hover:text-zinc-900 dark:text-zinc-350"
                             }`}

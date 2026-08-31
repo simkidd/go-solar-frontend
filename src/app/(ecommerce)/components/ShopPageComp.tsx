@@ -98,12 +98,7 @@ const ShopPageComp = () => {
   );
 
   const topLevelCategories = useMemo(() => {
-    return allCategories.filter(
-      (cat: Category) =>
-        !cat.parent &&
-        cat.slug !== "packages" &&
-        !cat.name.toLowerCase().includes("package"),
-    );
+    return allCategories.filter((cat: Category) => !cat.parent);
   }, [allCategories]);
 
   const productsInCategory = (category: Category) => {
@@ -118,13 +113,7 @@ const ShopPageComp = () => {
     });
   };
 
-  const bestSellers = publishedProducts
-    .filter(
-      (product: Product) =>
-        product.category?.slug !== "packages" &&
-        product.category?.name?.toLowerCase() !== "packages",
-    )
-    .slice(0, 5);
+  const bestSellers = publishedProducts.slice(0, 5);
 
   // ── Active offers for Flash Deals strip ──
   const { data: activeOffers = [] } = useActiveOffersQuery();
@@ -235,7 +224,7 @@ const ShopPageComp = () => {
               </h2>
             </div>
             <Link
-              href="/shop/browse"
+              href="/products"
               className="text-xs font-black uppercase tracking-wider text-primary hover:underline transition-colors flex items-center gap-1 cursor-pointer"
             >
               View All Products <ArrowRight className="h-3.5 w-3.5" />
