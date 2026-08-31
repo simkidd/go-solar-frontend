@@ -4,7 +4,7 @@ import { Shield, Scale, FileText, CheckCircle } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | GoSolar",
+  title: "Terms & Conditions",
   description:
     "Review the terms and conditions governing the use of GoSolar Nigeria solar sizing calculators, custom quotation submissions, and installation agreements.",
 };

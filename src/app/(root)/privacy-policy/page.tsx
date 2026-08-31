@@ -4,7 +4,7 @@ import { Shield, Eye, Lock, RefreshCw } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | GoSolar",
+  title: "Privacy Policy",
   description:
     "Learn how GoSolar Nigeria handles, protects, and utilizes the data collected through our solar sizing tools and quote request submissions.",
 };

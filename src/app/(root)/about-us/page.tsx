@@ -16,7 +16,7 @@ import HomeContactCta from "@/components/home/HomeContactCta";
 import PageHeader from "@/components/PageHeader";
 
 export const metadata: Metadata = {
-  title: "About Us | GoSolar",
+  title: "About Us",
   description:
     "Learn more about GoSolar, our mission, vision, and our specialist leadership team dedicating to clean energy sizing across Nigeria.",
 };

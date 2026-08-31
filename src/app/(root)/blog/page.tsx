@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import BlogPageClient from "./BlogPageClient";
 
 export const metadata: Metadata = {
-  title: "Blog | GoSolar",
+  title: "Blog",
   description:
     "Stay informed with the latest solar energy guides, industry insights, calculation tips, and clean energy news from Nigeria's top engineers.",
 };
