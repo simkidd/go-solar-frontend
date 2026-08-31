@@ -3,9 +3,30 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  Home,
+  Building2,
+  Zap,
+  Battery,
+  Wrench,
+  BarChart3,
+  ShieldCheck,
+  Cpu,
+} from "lucide-react";
 import { SOLUTIONS } from "@/data/solutions";
 import { Button } from "@/components/ui/button";
+
+const iconMap: Record<string, React.ComponentType<any>> = {
+  Home,
+  Building2,
+  Zap,
+  Battery,
+  Wrench,
+  BarChart3,
+  ShieldCheck,
+  Cpu,
+};
 
 const SolutionsSection = () => {
   const featuredSolutions = SOLUTIONS.filter((s) => s.featured).slice(0, 4);
@@ -48,7 +69,12 @@ const SolutionsSection = () => {
               >
                 <div className="space-y-4">
                   {/* Icon */}
-                  <div className="text-4xl ">{sol.icon}</div>
+                  <div className="text-primary ">
+                    {(() => {
+                      const IconComponent = iconMap[sol.icon] || Zap;
+                      return <IconComponent className="h-9 w-9 stroke-[1.5]" />;
+                    })()}
+                  </div>
 
                   {/* Title */}
                   <h3 className="font-heading font-extrabold text-lg sm:text-xl text-foreground group-hover:text-primary transition-colors leading-tight">
