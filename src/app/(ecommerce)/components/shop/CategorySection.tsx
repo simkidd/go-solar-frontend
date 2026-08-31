@@ -36,10 +36,14 @@ const CategoriesSectionGrid: React.FC<{
     return categories[index] || null;
   };
 
-  const cat1 = getCategoryByIndexOrSlug("packages", 0);
-  const cat2 = getCategoryByIndexOrSlug("inverters", 1);
-  const cat3 = getCategoryByIndexOrSlug("solar-panels", 2);
-  const cat4 = getCategoryByIndexOrSlug("batteries", 3);
+  const cat1 = getCategoryByIndexOrSlug("inverters", 0);
+  const cat2 = getCategoryByIndexOrSlug("solar-panels", 1);
+  const cat3 = getCategoryByIndexOrSlug("batteries", 2);
+  const cat4 =
+    getCategoryByIndexOrSlug("accessories", 3) ||
+    getCategoryByIndexOrSlug("charge-controllers", 3) ||
+    categories[3] ||
+    null;
 
   const activeCats = [cat1, cat2, cat3, cat4].filter(Boolean) as Category[];
 
@@ -92,10 +96,8 @@ const CategoriesSectionGrid: React.FC<{
                 {cat.name}
               </h3>
               <p className="text-[10px] text-muted-foreground font-semibold line-clamp-2 max-w-[160px] mx-auto leading-relaxed">
-                {cat.slug === "packages"
-                  ? "Pre-engineered, complete solar setups"
-                  : cat.description ||
-                    `High quality ${cat.name.toLowerCase()} hardware.`}
+                {cat.description ||
+                  `High quality ${cat.name.toLowerCase()} hardware.`}
               </p>
             </div>
 

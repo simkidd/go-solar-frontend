@@ -28,11 +28,11 @@ const ShopFeaturesBar = () => (
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {/* Secure Payments Card */}
-        <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
+        <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-3.5">
           <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <CreditCard className="h-5 w-5" />
           </div>
-          <div>
+          <div className="flex flex-col justify-center">
             <h4 className="font-extrabold text-[10px] text-foreground uppercase tracking-widest mb-0.5">
               Secure Payments
             </h4>
@@ -43,11 +43,11 @@ const ShopFeaturesBar = () => (
         </div>
 
         {/* Money-Back Guarantee Card */}
-        <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
+        <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-3.5">
           <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <RotateCcw className="h-5 w-5" />
           </div>
-          <div>
+          <div className="flex flex-col justify-center">
             <h4 className="font-extrabold text-[10px] text-foreground uppercase tracking-widest mb-0.5">
               Money-Back Guarantee
             </h4>
@@ -58,11 +58,11 @@ const ShopFeaturesBar = () => (
         </div>
 
         {/* 24/7 Support Card */}
-        <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5">
+        <div className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 hover:border-primary/20 hover:shadow-xs transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-3.5">
           <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <Headphones className="h-5 w-5" />
           </div>
-          <div>
+          <div className="flex flex-col justify-center">
             <h4 className="font-extrabold text-[10px] text-foreground uppercase tracking-widest mb-0.5">
               24/7 Support
             </h4>
@@ -98,7 +98,12 @@ const ShopPageComp = () => {
   );
 
   const topLevelCategories = useMemo(() => {
-    return allCategories.filter((cat: Category) => !cat.parent);
+    return allCategories.filter(
+      (cat: Category) =>
+        !cat.parent &&
+        cat.slug !== "packages" &&
+        !cat.name.toLowerCase().includes("package"),
+    );
   }, [allCategories]);
 
   const productsInCategory = (category: Category) => {
@@ -112,14 +117,6 @@ const ShopPageComp = () => {
       return parentId === category._id;
     });
   };
-
-  const featuredPackages = publishedProducts
-    .filter(
-      (product: Product) =>
-        product.category?.slug === "packages" ||
-        product.category?.name?.toLowerCase() === "packages",
-    )
-    .slice(0, 3);
 
   const bestSellers = publishedProducts
     .filter(
@@ -238,7 +235,7 @@ const ShopPageComp = () => {
               </h2>
             </div>
             <Link
-              href="/shop"
+              href="/shop/browse"
               className="text-xs font-black uppercase tracking-wider text-primary hover:underline transition-colors flex items-center gap-1 cursor-pointer"
             >
               View All Products <ArrowRight className="h-3.5 w-3.5" />
