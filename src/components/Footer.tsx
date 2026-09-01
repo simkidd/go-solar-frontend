@@ -2,8 +2,7 @@ import React from "react";
 import { MapPin, Phone, Mail, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
-import LogoIcon from "@/assets/gosolar-logo-icon.svg";
-import Image from "next/image";
+import Logo from "@/components/Logo";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const Footer = () => {
@@ -16,19 +15,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand Info */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2  group">
-              <Image
-                src={LogoIcon}
-                alt="logo"
-                width={36}
-                height={36}
-                className="object-contain group-hover:rotate-12 transition-transform duration-300"
-                style={{ height: "auto" }}
-              />
-              <span className="font-extrabold text-lg text-zinc-900 dark:text-white tracking-tight mt-2">
-                Go<span className="text-primary">Solar</span>
-              </span>
-            </Link>
+            <Logo />
             <p className="text-xs leading-relaxed font-semibold">
               Leading provider of sustainable structural solar energy solutions
               in Port Harcourt, Nigeria.

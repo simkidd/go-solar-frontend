@@ -31,16 +31,20 @@ const BlogSection = ({ posts: initialPosts }: { posts?: Post[] }) => {
     <section className="py-20 lg:py-28 bg-background font-inter">
       <div className="container mx-auto px-4">
         {/* Header Block */}
-        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-12 ">
-          <div className="space-y-3">
+        <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
+          <div className="relative space-y-3">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               Knowledge Centre
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
               Solar Energy Insights
             </h2>
+            <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold pointer-events-none select-none">
+              Blog
+            </div>
           </div>
-          <Link href="/blog" className="shrink-0">
+
+          <Link href="/blog" className="ml-auto mt-auto shrink-0">
             <Button className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-11 px-8 rounded-full">
               Read Blog
             </Button>

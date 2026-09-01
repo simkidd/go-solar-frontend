@@ -1,5 +1,5 @@
 "use client";
-import LogoIcon from "@/assets/gosolar-logo-icon.svg";
+import Logo from "@/components/Logo";
 import { useSession } from "@/context/SessionContext";
 import { useSidebar } from "@/components/ui/sidebar";
 import {
@@ -179,25 +179,12 @@ const SidebarInnerContent = ({
     <div className="flex flex-col h-full bg-white dark:bg-[#1a1b1e]  font-inter">
       {/* Brand Header */}
       <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 shrink-0">
-        <Link
+        <Logo
           href="/"
           onClick={onItemClick}
-          className="flex items-center gap-2 overflow-hidden"
-        >
-          <Image
-            src={LogoIcon}
-            alt="GoSolar Logo"
-            width={34}
-            height={34}
-            className="w-10 h-8 shrink-0"
-            priority
-          />
-          {!isCollapsed && (
-            <span className="font-extrabold text-xl tracking-tight text-foreground mt-2">
-              Go<span className="text-primary">Solar</span>
-            </span>
-          )}
-        </Link>
+          showText={!isCollapsed}
+          priority
+        />
       </div>
 
       {/* Main Navigation Links with ScrollArea */}

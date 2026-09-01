@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import LogoIcon from "@/assets/gosolar-logo-icon.svg";
+import Logo from "@/components/Logo";
 import { useSession } from "@/context/SessionContext";
 import {
   Search,
@@ -152,19 +152,7 @@ const EcommerceNavbar = () => {
 
           {/* Col 2 (Mobile Center / Desktop Left): Brand Logo */}
           <div className="flex items-center justify-center lg:justify-start lg:flex-none">
-            <Link href="/" className="flex items-center gap-2 shrink-0  group">
-              <Image
-                src={LogoIcon}
-                alt="logo"
-                width={34}
-                height={34}
-                className="object-contain group-hover:rotate-12 transition-transform duration-300"
-                style={{ height: "auto" }}
-              />
-              <span className="font-extrabold text-lg tracking-tight text-zinc-900 dark:text-white mt-2">
-                Go<span className="text-primary">Solar</span>
-              </span>
-            </Link>
+            <Logo priority />
           </div>
 
           {/* Col 3 (Mobile Right): Cart Icon Shortcut */}
@@ -439,17 +427,8 @@ const EcommerceNavbar = () => {
                 className="relative w-4/5 max-w-sm bg-white dark:bg-zinc-950 border-r border-border/80 h-full py-6 flex flex-col justify-between shadow-2xl overflow-hidden"
               >
                 {/* Fixed Drawer Header */}
-                <div className="flex items-center mb-6  pl-16 pr-6">
-                  <Link
-                    href="/"
-                    className="flex items-center gap-2"
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    <Image src={LogoIcon} alt="logo" width={32} height={32} />
-                    <span className="font-extrabold text-lg tracking-tight text-zinc-900 dark:text-white">
-                      Go<span className="text-primary">Solar</span>
-                    </span>
-                  </Link>
+                <div className="flex items-center mb-6 pl-16 pr-6">
+                  <Logo size="sm" onClick={() => setShowMobileMenu(false)} />
                 </div>
 
                 {/* Scrollable links list */}

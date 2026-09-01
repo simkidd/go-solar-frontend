@@ -3,10 +3,9 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import HeaderShop from "@/app/(ecommerce)/components/shop/HeaderShop";
 import Footer from "@/components/Footer";
-import Link from "next/link";
-import Image from "next/image";
-import LogoIcon from "@/assets/gosolar-logo-icon.svg";
+import Logo from "@/components/Logo";
 import { ShieldCheck, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 
 export default function LayoutWrapper({
   children,
@@ -24,22 +23,11 @@ export default function LayoutWrapper({
           <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
             {/* Brand Logo */}
             <div className="flex items-center gap-2 shrink-0">
-              <Link
+              <Logo
                 href="/cart"
-                className="flex items-center gap-2 shrink-0 group"
-              >
-                <Image
-                  src={LogoIcon}
-                  alt="logo"
-                  width={30}
-                  height={30}
-                  className="object-contain transition-transform duration-300"
-                  style={{ height: "auto" }}
-                />
-                <span className="font-extrabold text-base tracking-tight text-zinc-900 dark:text-white mt-1">
-                  Go<span className="text-primary">Solar</span>
-                </span>
-              </Link>
+                size="sm"
+                iconClassName="group-hover:rotate-0"
+              />
             </div>
 
             {/* Middle Title */}

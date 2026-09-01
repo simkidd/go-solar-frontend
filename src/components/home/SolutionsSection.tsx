@@ -35,19 +35,22 @@ const SolutionsSection = () => {
     <section className="py-20 lg:py-28 bg-background font-inter">
       <div className="container mx-auto px-4">
         {/* Header Block */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 ">
-          <div className="space-y-3">
+        <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
+          <div className="relative space-y-3">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               What We Do
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
               Complete Solar Solutions
             </h2>
+            <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold pointer-events-none select-none">
+              Solutions
+            </div>
           </div>
 
-          <Link href="/solutions" className="">
+          <Link href="/solutions" className="ml-auto mt-auto shrink-0">
             <Button className="bg-primary hover:bg-primary/90 text-white px-8 rounded-full font-bold text-xs uppercase tracking-wider h-11">
-              View all solutions
+              View All Solutions
             </Button>
           </Link>
         </div>

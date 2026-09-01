@@ -37,18 +37,25 @@ const PackagesSection = () => {
   return (
     <section className="w-full py-24 bg-white dark:bg-zinc-950 font-inter">
       <div className="container mx-auto px-4 space-y-16">
-        {/* Header Title */}
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3 ">
-          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
-            Pre-Configured Setups
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight leading-tight">
-            Explore Our Solar Packages
-          </h2>
-          <p className="text-sm text-muted-foreground leading-relaxed font-semibold">
-            Standard pre-designed configurations sized to support common
-            residential and commercial loads with long-term hardware durability.
-          </p>
+        {/* Header Block */}
+        <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
+          <div className="relative space-y-3">
+            <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
+              Pre-Configured Setups
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight leading-tight">
+              Explore Our Solar Packages
+            </h2>
+            <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold pointer-events-none select-none">
+              Packages
+            </div>
+          </div>
+
+          <Link href="/packages" className="ml-auto mt-auto shrink-0">
+            <Button className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-11 px-8 rounded-full">
+              View All Packages
+            </Button>
+          </Link>
         </div>
 
         {/* Packages Cards list */}
@@ -142,13 +149,6 @@ const PackagesSection = () => {
           </div>
         )}
 
-        <div className="flex justify-center pt-4">
-          <Link href="/packages">
-            <Button className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-11 px-8 rounded-full">
-              View All Packages
-            </Button>
-          </Link>
-        </div>
       </div>
     </section>
   );

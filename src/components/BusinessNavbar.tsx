@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import LogoIcon from "@/assets/gosolar-logo-icon.svg";
+import Logo from "@/components/Logo";
 import { useSession } from "@/context/SessionContext";
 import { Mail, Phone, X, User, ChevronDown } from "lucide-react";
 import Image from "next/image";
@@ -134,22 +134,9 @@ const BusinessNavbar = () => {
           </button>
 
           {/* Logo brand */}
-          <Link
-            href="/"
-            className="flex items-center gap-2  group mx-auto lg:mx-0 z-10"
-          >
-            <Image
-              src={LogoIcon}
-              alt="logo"
-              width={36}
-              height={36}
-              className="object-contain group-hover:rotate-12 transition-transform duration-300"
-              style={{ height: "auto" }}
-            />
-            <span className="font-extrabold text-xl tracking-tight text-foreground mt-2">
-              Go<span className="text-primary">Solar</span>
-            </span>
-          </Link>
+          <div className="mx-auto lg:mx-0 z-10">
+            <Logo priority />
+          </div>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-2 ">
@@ -278,17 +265,8 @@ const BusinessNavbar = () => {
               className="relative w-4/5 max-w-sm bg-card text-card-foreground border-r border-border h-full py-6 flex flex-col justify-between shadow-2xl overflow-hidden"
             >
               {/* Drawer Header (Fixed) */}
-              <div className="flex items-center mb-6  pl-16 pr-6">
-                <Link
-                  href="/"
-                  className="flex items-center gap-2"
-                  onClick={toggleShowMenu}
-                >
-                  <Image src={LogoIcon} alt="logo" width={32} height={32} />
-                  <span className="font-extrabold text-lg tracking-tight text-foreground">
-                    Go<span className="text-primary">Solar</span>
-                  </span>
-                </Link>
+              <div className="flex items-center mb-6 pl-16 pr-6">
+                <Logo size="sm" onClick={toggleShowMenu} />
               </div>
 
               {/* Scrollable links list */}

@@ -63,6 +63,7 @@ export default function FinancingApplyModal(props?: {
   open?: boolean;
   onClose?: () => void;
   initialProfileType?: "individual" | "corporate" | "";
+  initialPackageId?: string;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -77,7 +78,8 @@ export default function FinancingApplyModal(props?: {
 
   const { data: packages = [], isLoading: packagesLoading } =
     usePackagesQuery();
-  const packageIdParam = searchParams.get("packageId") || "";
+  const packageIdParam =
+    props?.initialPackageId || searchParams.get("packageId") || "";
 
   const {
     register,

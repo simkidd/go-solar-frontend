@@ -33,7 +33,12 @@ interface InquiryFormValues {
   message: string;
 }
 
-const AddToCartBtn = ({ pkg }: { pkg: any }) => {
+interface AddToCartBtnProps {
+  pkg: any;
+  onOpenFinancing?: (type: "individual" | "corporate") => void;
+}
+
+const AddToCartBtn = ({ pkg, onOpenFinancing }: AddToCartBtnProps) => {
   const { addItem, cartItems } = useCartStore();
   const isInCart = cartItems.some((item) => item.product._id === pkg._id);
   const [isOpen, setIsOpen] = useState(false);
@@ -160,19 +165,36 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
         Book Free Assessment
       </Button>
 
-      {/* Financing Button */}
-      <Link
-        href={`?apply-financing=true&packageId=${pkg._id}`}
-        className="block w-full"
-      >
-        <Button
-          variant="outline"
-          className="w-full border-primary/30 hover:bg-primary/5 text-primary font-extrabold rounded-xl h-11 text-xs cursor-pointer flex items-center justify-center gap-1.5"
-        >
-          <DollarSign className="h-4 w-4" />
-          Apply for Financing
-        </Button>
-      </Link>
+      {/* Financing Quick Triggers */}
+      <div className="p-3 bg-zinc-50/70 dark:bg-zinc-850/40 rounded-2xl border border-zinc-150 dark:border-zinc-800 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+            <DollarSign className="h-3.5 w-3.5 text-primary" />
+            Solar Financing
+          </span>
+          <span className="text-[9px] font-extrabold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+            Installments
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenFinancing?.("individual")}
+            className="w-full border-primary/30 hover:bg-primary/5 text-primary font-bold rounded-xl h-9 text-[11px] cursor-pointer flex items-center justify-center gap-1 transition-all"
+          >
+            Individual
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenFinancing?.("corporate")}
+            className="w-full border-primary/30 hover:bg-primary/5 text-primary font-bold rounded-xl h-9 text-[11px] cursor-pointer flex items-center justify-center gap-1 transition-all"
+          >
+            Corporate
+          </Button>
+        </div>
+      </div>
 
       {/* Inquiry Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
