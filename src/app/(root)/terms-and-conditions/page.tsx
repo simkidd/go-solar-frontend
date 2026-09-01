@@ -4,7 +4,7 @@ import { Shield, Scale, FileText, CheckCircle } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | GoSolar",
+  title: "Terms & Conditions",
   description:
     "Review the terms and conditions governing the use of GoSolar Nigeria solar sizing calculators, custom quotation submissions, and installation agreements.",
 };
@@ -204,7 +204,7 @@ const TermsPage = () => {
                   >
                     gosolardotng@gmail.com
                   </a>{" "}
-                  | Tel: +234 706 276 2879
+                  | Tel: +234 706 276 2879, +234 802 708 2120
                 </p>
               </div>
             </div>

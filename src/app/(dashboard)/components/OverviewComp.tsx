@@ -253,7 +253,7 @@ const OverviewComp = () => {
       {/* Clean Dashboard Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2 select-none">
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2 ">
             <LayoutDashboard className="h-5 w-5 text-primary" />
             Dashboard Overview
           </h2>
@@ -538,7 +538,7 @@ const OverviewComp = () => {
                           <TableCell className="text-center">
                             <Badge
                               variant="outline"
-                              className={`font-semibold text-[10px] px-2.5 py-0.5 rounded-full select-none ${getQuoteStatusBadgeClass(quote.status)}`}
+                              className={`font-semibold text-[10px] px-2.5 py-0.5 rounded-full  ${getQuoteStatusBadgeClass(quote.status)}`}
                             >
                               {quote.status}
                             </Badge>
@@ -634,7 +634,7 @@ const OverviewComp = () => {
                           <TableCell className="text-center">
                             <Badge
                               variant="outline"
-                              className={`font-semibold text-[10px] px-2.5 py-0.5 rounded-full select-none ${getStatusBadgeClass(order.trackingStatus)}`}
+                              className={`font-semibold text-[10px] px-2.5 py-0.5 rounded-full  ${getStatusBadgeClass(order.trackingStatus)}`}
                             >
                               {order.trackingStatus}
                             </Badge>

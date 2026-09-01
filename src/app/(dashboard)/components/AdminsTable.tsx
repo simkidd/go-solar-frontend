@@ -79,7 +79,9 @@ export const AdminsTable = () => {
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [targetRevokeAdmin, setTargetRevokeAdmin] = useState<any | null>(null);
   const [isPromoteOpen, setIsPromoteOpen] = useState(false);
-  const [targetPromoteAdmin, setTargetPromoteAdmin] = useState<any | null>(null);
+  const [targetPromoteAdmin, setTargetPromoteAdmin] = useState<any | null>(
+    null,
+  );
 
   // react-hook-form for invite admin form
   const {
@@ -187,7 +189,7 @@ export const AdminsTable = () => {
   return (
     <div className="w-full space-y-5 font-inter">
       {/* Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <ShieldCheck className="h-5 w-5 text-primary" />
@@ -288,7 +290,7 @@ export const AdminsTable = () => {
           </div>
         </div>
 
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {filteredAdmins.length} administrators listed</span>
         </div>
       </div>
@@ -298,25 +300,25 @@ export const AdminsTable = () => {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  px-4">
                 Administrator
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Contact
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Assigned Privilege
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Status
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Date Appointed
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Last Login
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-right px-4">
                 Actions
               </TableHead>
             </TableRow>
@@ -520,7 +522,7 @@ export const AdminsTable = () => {
         >
           {/* Details Card */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Administrator Profile
               </h3>
@@ -532,7 +534,7 @@ export const AdminsTable = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   First Name <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -549,7 +551,7 @@ export const AdminsTable = () => {
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Last Name <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -568,7 +570,7 @@ export const AdminsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Email Address <span className="text-red-500">*</span>
               </label>
               <Input
@@ -585,7 +587,7 @@ export const AdminsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Phone Number <span className="text-red-500">*</span>
               </label>
               <Input
@@ -604,7 +606,7 @@ export const AdminsTable = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Privilege
                 </label>
                 <select
@@ -616,7 +618,7 @@ export const AdminsTable = () => {
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Role Title <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -635,7 +637,7 @@ export const AdminsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 System Password <span className="text-red-500">*</span>
               </label>
               <Input
@@ -680,25 +682,31 @@ export const AdminsTable = () => {
 
       {/* CONFIRM PROMOTE / DEMOTE */}
       <Dialog open={isPromoteOpen} onOpenChange={setIsPromoteOpen}>
-        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
-              {targetPromoteAdmin?.isSuperAdmin ? "Demote to Store Admin" : "Promote to Super Admin"}
+              {targetPromoteAdmin?.isSuperAdmin
+                ? "Demote to Store Admin"
+                : "Promote to Super Admin"}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">
               {targetPromoteAdmin?.isSuperAdmin ? (
                 <>
                   This will remove Super Admin privileges from{" "}
                   <strong className="text-foreground">
-                    {targetPromoteAdmin?.firstname} {targetPromoteAdmin?.lastname}
-                  </strong>. They will retain Store Admin access.
+                    {targetPromoteAdmin?.firstname}{" "}
+                    {targetPromoteAdmin?.lastname}
+                  </strong>
+                  . They will retain Store Admin access.
                 </>
               ) : (
                 <>
                   This will grant full Super Admin privileges to{" "}
                   <strong className="text-foreground">
-                    {targetPromoteAdmin?.firstname} {targetPromoteAdmin?.lastname}
-                  </strong>. Proceed with caution.
+                    {targetPromoteAdmin?.firstname}{" "}
+                    {targetPromoteAdmin?.lastname}
+                  </strong>
+                  . Proceed with caution.
                 </>
               )}
             </DialogDescription>
@@ -720,8 +728,8 @@ export const AdminsTable = () => {
               {updateRoleMutation.isPending
                 ? "Updating..."
                 : targetPromoteAdmin?.isSuperAdmin
-                ? "Yes, Demote"
-                : "Yes, Promote"}
+                  ? "Yes, Demote"
+                  : "Yes, Promote"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -729,7 +737,7 @@ export const AdminsTable = () => {
 
       {/* CONFIRM ACCESS REVOCATION */}
       <Dialog open={isRevokeOpen} onOpenChange={setIsRevokeOpen}>
-        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
               Confirm Revocation

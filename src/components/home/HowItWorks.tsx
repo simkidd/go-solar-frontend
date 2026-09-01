@@ -33,16 +33,20 @@ const HowItWorks = () => {
     <section className="py-20 lg:py-28 bg-background font-inter">
       <div className="container mx-auto px-4">
         {/* Header Block */}
-        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-14 select-none">
-          <div className="space-y-3">
+        <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
+          <div className="relative space-y-3">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               The Process
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
-              How GoSolar Works
+              How GoSolar Ng Works
             </h2>
+            <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold pointer-events-none select-none">
+              Process
+            </div>
           </div>
-          <Link href="/energy-calculator" className="shrink-0">
+
+          <Link href="/energy-calculator" className="ml-auto mt-auto shrink-0">
             <Button className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-11 px-8 rounded-full">
               Get Sized
             </Button>
@@ -61,15 +65,15 @@ const HowItWorks = () => {
               className="bg-card text-card-foreground p-8 flex flex-col justify-start h-72 hover:bg-secondary/40 transition-colors"
             >
               {/* Step Number */}
-              <div className="font-heading font-black text-6xl text-zinc-200 dark:text-zinc-800 mb-4 leading-none select-none">
+              <div className="font-heading font-black text-6xl text-zinc-200 dark:text-zinc-800 mb-4 leading-none ">
                 {step.n}
               </div>
-              
+
               {/* Step Title */}
               <div className="font-heading font-extrabold text-xl text-foreground mb-3">
                 {step.title}
               </div>
-              
+
               {/* Step Desc */}
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-semibold">
                 {step.desc}

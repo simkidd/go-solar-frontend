@@ -115,7 +115,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const thumbs = files.map((file) => (
     <div
       key={file.name}
-      className="relative w-20 h-20 rounded-xl overflow-hidden border border-border bg-muted select-none"
+      className="relative w-20 h-20 rounded-xl overflow-hidden border border-border bg-muted "
     >
       <Image
         src={file.preview}
@@ -200,7 +200,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div className="lg:col-span-2 space-y-6">
           {/* Card 1: Core Details */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 General Details
               </h3>
@@ -210,7 +210,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                 Product Title / Name <span className="text-red-500">*</span>
               </label>
               <Input
@@ -226,7 +226,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                 Description Details <span className="text-red-500">*</span>
               </label>
               <Textarea
@@ -247,7 +247,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
           {/* Card 2: Storefront Media */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Product Media
               </h3>
@@ -268,7 +268,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   Drop files here...
                 </p>
               ) : (
-                <div className="flex flex-col items-center justify-center text-center space-y-1.5 select-none">
+                <div className="flex flex-col items-center justify-center text-center space-y-1.5 ">
                   <Upload className="h-5 w-5 text-muted-foreground/60" />
                   <p className="text-xs text-muted-foreground font-semibold">
                     Drag &amp; drop files here, or{" "}
@@ -285,7 +285,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
           {/* Card 3: Pricing & Stock */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Pricing &amp; Inventory
               </h3>
@@ -296,13 +296,16 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Regular Price (₦) <span className="text-red-500">*</span>
                 </label>
                 <Controller
                   control={control}
                   name="price"
-                  rules={{ required: "Price is required", validate: (v) => v > 0 || "Price must be greater than 0" }}
+                  rules={{
+                    required: "Price is required",
+                    validate: (v) => v > 0 || "Price must be greater than 0",
+                  }}
                   render={({ field }) => (
                     <PriceInput
                       value={field.value || ""}
@@ -320,7 +323,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Discount Price (₦)
                 </label>
                 <Controller
@@ -337,7 +340,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Quantity in Stock <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -363,14 +366,14 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-extrabold text-foreground tracking-tight select-none">
+                <h3 className="text-sm font-extrabold text-foreground tracking-tight ">
                   Technical Specifications
                 </h3>
                 <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
                   Parameters shown on the product detail page
                 </p>
               </div>
-              <div className="flex items-center gap-2 select-none">
+              <div className="flex items-center gap-2 ">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                   {showDatasheet ? "Visible" : "Hidden"}
                 </span>
@@ -430,7 +433,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div className="space-y-6">
           {/* Card 5: Product Organization */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Organization
               </h3>
@@ -441,7 +444,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Parent Category <span className="text-red-500">*</span>
                 </label>
                 <Select
@@ -470,7 +473,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
               {selectedParentId && subcategories.length > 0 && (
                 <div className="space-y-1.5 animate-fadeIn">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                     Subcategory <span className="text-red-500">*</span>
                   </label>
                   <Controller
@@ -478,7 +481,10 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     name="category"
                     rules={{ required: "Subcategory is required" }}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger className="bg-muted/30 border-border rounded-xl text-xs h-10 focus:ring-primary">
                           <SelectValue placeholder="Select Subcategory" />
                         </SelectTrigger>
@@ -505,7 +511,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               )}
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Brand Name
                 </label>
                 <Input
@@ -519,7 +525,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
           {/* Card 6: Promo & Marketing campaigns */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Marketing Offers
               </h3>
@@ -529,7 +535,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                 Promo Campaign
               </label>
               <Controller
@@ -570,7 +576,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
           {/* Card 7: Logistics & Shipping details */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Logistics &amp; Delivery
               </h3>
@@ -581,7 +587,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Shipping Class
                 </label>
                 <Controller
@@ -618,7 +624,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Local City Delivery (₦)
                 </label>
                 <Controller
@@ -635,7 +641,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Interstate Delivery (₦)
                 </label>
                 <Controller
@@ -652,7 +658,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                   Additional Details
                 </label>
                 <Input
@@ -667,7 +673,7 @@ const CreateProductForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Footer buttons (Non-uppercase) */}
-      <div className="flex items-center gap-2 pt-4 mt-2 border-t border-border justify-end select-none">
+      <div className="flex items-center gap-2 pt-4 mt-2 border-t border-border justify-end ">
         <Button
           type="button"
           variant="ghost"

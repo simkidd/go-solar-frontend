@@ -10,7 +10,7 @@ const ProductDesc: React.FC<{
       <p className="whitespace-pre-line">{product?.description}</p>
       {product?.additionalInfo && (
         <div className="pt-6 border-t border-border/45">
-          <h4 className="font-extrabold text-foreground text-xs uppercase tracking-wider mb-2.5 select-none">
+          <h4 className="font-extrabold text-foreground text-xs uppercase tracking-wider mb-2.5 ">
             Additional Information
           </h4>
           <p className="whitespace-pre-line">{product.additionalInfo}</p>

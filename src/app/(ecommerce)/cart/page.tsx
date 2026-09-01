@@ -21,15 +21,13 @@ const CartPage = () => {
   const router = useRouter();
 
   const calculateTotals = (items: CartItem[]) => {
-    const subtotal = items.reduce(
-      (acc, item) => {
-        const activePrice = item.product.discountPrice && item.product.discountPrice > 0
+    const subtotal = items.reduce((acc, item) => {
+      const activePrice =
+        item.product.discountPrice && item.product.discountPrice > 0
           ? item.product.discountPrice
           : item.product.price;
-        return acc + activePrice * item.qty;
-      },
-      0,
-    );
+      return acc + activePrice * item.qty;
+    }, 0);
     const deliveryFee = items.reduce(
       (acc, item) => acc + item.deliveryFee * item.qty,
       0,
@@ -129,11 +127,11 @@ const CartPage = () => {
 
                             {/* Quantity buttons */}
                             {!cartItem.product.category ? (
-                              <span className="inline-flex items-center mt-2 px-2.5 py-1 text-xs font-black uppercase tracking-wider text-muted-foreground bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-150 dark:border-zinc-800 rounded-xl select-none">
+                              <span className="inline-flex items-center mt-2 px-2.5 py-1 text-xs font-black uppercase tracking-wider text-muted-foreground bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-150 dark:border-zinc-800 rounded-xl ">
                                 Qty: 1
                               </span>
                             ) : (
-                              <div className="flex items-center gap-1 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-150 dark:border-zinc-800 rounded-xl w-fit p-1 select-none mt-1.5">
+                              <div className="flex items-center gap-1 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-150 dark:border-zinc-800 rounded-xl w-fit p-1  mt-1.5">
                                 <button
                                   onClick={() => {
                                     if (cartItem.qty > 1) {
@@ -170,7 +168,8 @@ const CartPage = () => {
                         <div className="flex items-center gap-4 shrink-0">
                           <p className="font-extrabold text-sm sm:text-base text-zinc-900 dark:text-white">
                             {formatCurrency(
-                              (cartItem.product.discountPrice && cartItem.product.discountPrice > 0
+                              (cartItem.product.discountPrice &&
+                              cartItem.product.discountPrice > 0
                                 ? cartItem.product.discountPrice
                                 : cartItem.product.price) * cartItem.qty,
                               "NGN",
@@ -228,8 +227,6 @@ const CartPage = () => {
                           )}
                         </span>
                       </div>
-
-
 
                       <div className="flex justify-between items-center pt-4 border-t dark:border-zinc-800 text-sm font-extrabold text-zinc-900 dark:text-white">
                         <span>Total</span>

@@ -3,11 +3,12 @@ import ProductsList from "@/app/(ecommerce)/components/shop/ProductsList";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "All Products | GoSolar",
-  description: "Browse all premium solar panels, hybrid inverters, batteries, and accessories available at GoSolar.",
+  title: "Products Catalog | GoSolar",
+  description:
+    "Browse, filter, and compare premium solar panels, hybrid inverters, batteries, and accessories available at GoSolar.",
 };
 
-const AllProductsPage = () => {
+export default function ProductsPage() {
   return (
     <div className="w-full font-dmsans">
       <section className="w-full">
@@ -20,6 +21,4 @@ const AllProductsPage = () => {
       </section>
     </div>
   );
-};
-
-export default AllProductsPage;
+}

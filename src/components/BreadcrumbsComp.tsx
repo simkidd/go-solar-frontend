@@ -26,11 +26,14 @@ const BreadcrumbsComp = () => {
         const isLast = index === paths.length - 1;
         return (
           <React.Fragment key={path}>
-            <span className="text-zinc-500 select-none">/</span>
+            <span className="text-zinc-500 ">/</span>
             {isLast ? (
-              <span className="text-white font-bold select-none">{formatLabel(path)}</span>
+              <span className="text-white font-bold ">{formatLabel(path)}</span>
             ) : (
-              <Link href={currentPath} className="hover:text-white transition-colors">
+              <Link
+                href={currentPath}
+                className="hover:text-white transition-colors"
+              >
                 {formatLabel(path)}
               </Link>
             )}

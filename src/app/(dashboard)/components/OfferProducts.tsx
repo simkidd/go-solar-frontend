@@ -27,7 +27,10 @@ import { Card, CardContent } from "@/components/ui/card";
 const OfferProducts: React.FC<{
   offer: Offer;
 }> = ({ offer }) => {
-  const { data, isLoading: loading } = useAllProductsQuery({ page: 1, limit: 1000 });
+  const { data, isLoading: loading } = useAllProductsQuery({
+    page: 1,
+    limit: 1000,
+  });
   const products = data?.products || [];
 
   const filteredProducts = useMemo(() => {
@@ -50,12 +53,12 @@ const OfferProducts: React.FC<{
   };
 
   return (
-    <div className="w-full space-y-8 font-inter select-none animate-fadeIn">
+    <div className="w-full space-y-8 font-inter  animate-fadeIn">
       {/* Premium Campaign Header Card */}
       <div className="relative bg-card border border-border/80 p-6 md:p-8 rounded-3xl overflow-hidden shadow-xs">
         {/* Decorative background ambient light */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-        
+
         <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6 z-10">
           <div className="space-y-2 max-w-2xl">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-primary/10 border border-primary/20 text-primary">
@@ -130,7 +133,9 @@ const OfferProducts: React.FC<{
                 Campaign Ends
               </span>
               <span className="text-xs font-extrabold text-foreground leading-none">
-                {offer?.endDate ? formattedDate(offer?.endDate) : "Never Expires"}
+                {offer?.endDate
+                  ? formattedDate(offer?.endDate)
+                  : "Never Expires"}
               </span>
             </div>
           </CardContent>
@@ -141,10 +146,12 @@ const OfferProducts: React.FC<{
       <div className="space-y-4">
         <div>
           <h2 className="text-sm font-extrabold text-foreground uppercase tracking-widest flex items-center gap-1.5">
-            <ShieldCheck className="h-4 w-4 text-primary" /> Pricing Slashes &amp; Audit Log
+            <ShieldCheck className="h-4 w-4 text-primary" /> Pricing Slashes
+            &amp; Audit Log
           </h2>
           <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
-            Cross-reference catalog pricing changes applied by this promotional offer campaign
+            Cross-reference catalog pricing changes applied by this promotional
+            offer campaign
           </p>
         </div>
 
@@ -175,7 +182,7 @@ const OfferProducts: React.FC<{
               <TableBody>
                 {filteredProducts.map((product: Product) => {
                   const discountAmount = Math.round(
-                    product.price * (offer.percentageOff / 100)
+                    product.price * (offer.percentageOff / 100),
                   );
                   const campaignPrice = product.price - discountAmount;
 
@@ -188,7 +195,10 @@ const OfferProducts: React.FC<{
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 min-w-10 rounded-xl overflow-hidden border border-border bg-muted/20 relative">
                             <Image
-                              src={product?.images?.[0]?.url || "/placeholder-product.jpg"}
+                              src={
+                                product?.images?.[0]?.url ||
+                                "/placeholder-product.jpg"
+                              }
                               alt={product?.name}
                               fill
                               className="object-cover"
@@ -228,7 +238,8 @@ const OfferProducts: React.FC<{
               No products active in this campaign
             </h3>
             <p className="text-[10px] text-muted-foreground max-w-xs mx-auto mt-1">
-              To discount items, edit products from the catalog panel and assign them to the <b>{offer.name}</b> marketing offer.
+              To discount items, edit products from the catalog panel and assign
+              them to the <b>{offer.name}</b> marketing offer.
             </p>
           </div>
         )}

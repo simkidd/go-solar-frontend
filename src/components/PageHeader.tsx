@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Image, { StaticImageData } from "next/image";
 import { ArrowUpRight } from "lucide-react";
 
 interface CtaButton {
@@ -14,11 +15,12 @@ interface PageHeaderProps {
   badge?: string;
   heading: string;
   subtitle?: string;
-  image?: string;
+  image?: string | StaticImageData;
   cta?: CtaButton[];
   className?: string;
   minHeight?: string;
   align?: "center" | "left";
+  priority?: boolean;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -30,6 +32,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   className,
   minHeight = "min-h-[480px] md:min-h-[540px]",
   align = "center",
+  priority = true,
 }) => {
   const isLeft = align === "left";
 
@@ -42,11 +45,16 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         className,
       )}
     >
-      {/* Background Image */}
+      {/* ── Optimized Next.js Background Image ── */}
       {image && (
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-35 select-none pointer-events-none"
-          style={{ backgroundImage: `url(${image})` }}
+        <Image
+          src={image}
+          alt={heading || "Page Header Background"}
+          fill
+          priority={priority}
+          quality={85}
+          sizes="100vw"
+          className="object-cover object-center z-0 pointer-events-none opacity-35"
         />
       )}
 
@@ -61,12 +69,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         )}
       >
         {badge && (
-          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block select-none">
+          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block ">
             {badge}
           </span>
         )}
 
-        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-white tracking-tight select-none">
+        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-white tracking-tight ">
           {heading}
         </h1>
 

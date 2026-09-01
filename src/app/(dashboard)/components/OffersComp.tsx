@@ -85,7 +85,7 @@ const OffersComp = () => {
   }, [offers]);
 
   return (
-    <div className="w-full space-y-6 font-inter text-left select-none">
+    <div className="w-full space-y-6 font-inter text-left ">
       {/* Delete Offer Modal */}
       <AppModal
         isOpen={isDeleteOpen}
@@ -138,7 +138,7 @@ const OffersComp = () => {
       </AppModal>
 
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <Tag className="h-5 w-5 text-primary" />

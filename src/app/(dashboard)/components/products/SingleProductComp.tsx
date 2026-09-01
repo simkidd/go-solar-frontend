@@ -194,7 +194,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
       {/* 2. Publish toggle confirmation dialog */}
       <Dialog open={isPublishOpen} onOpenChange={setIsPublishOpen}>
-        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-foreground font-extrabold text-base">
               {typedProduct?.isPublished ? "Draft Product" : "Publish Product"}
@@ -236,7 +236,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
       {/* 3. Delete confirmation dialog */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-foreground font-extrabold text-base">
               Delete Product
@@ -272,15 +272,15 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
       {/* 4. Add to campaign offer dialog */}
       <Dialog open={isOfferOpen} onOpenChange={setIsOfferOpen}>
-        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-foreground font-extrabold text-base">
               Link Campaign Offer
             </DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col space-y-5 font-inter text-xs pt-1 select-none">
+          <div className="flex flex-col space-y-5 font-inter text-xs pt-1 ">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                 Select Discount Offer Campaign
               </label>
               <Select value={selectedOffer} onValueChange={setSelectedOffer}>
@@ -335,7 +335,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
       {/* 5. Remove from campaign confirmation dialog */}
       <Dialog open={isRemoveOfferOpen} onOpenChange={setIsRemoveOfferOpen}>
-        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-foreground font-extrabold text-base">
               Remove from Campaign
@@ -379,7 +379,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
       </Dialog>
 
       {/* ── Navigation Breadcrumb ── */}
-      <div className="flex items-center justify-between select-none">
+      <div className="flex items-center justify-between ">
         <Link
           href="/dashboard/products"
           className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -398,7 +398,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
       </div>
 
       {/* ── Page Hero Title & Control Actions ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 select-none pb-4 border-b border-border/60">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4  pb-4 border-b border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
             <h2 className="text-xl font-extrabold text-foreground tracking-tight">
@@ -475,7 +475,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
         <div className="lg:col-span-2 space-y-6">
           {/* Card 1: Description details */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Description
               </h3>
@@ -492,7 +492,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
           {/* Card 2: Image Showcase */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center justify-between select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center justify-between ">
               <div>
                 <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                   Product Images
@@ -523,7 +523,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                   ))}
                 </div>
               ) : (
-                <div className="w-full py-8 rounded-xl bg-muted/10 border border-dashed border-border flex flex-col items-center justify-center gap-2 select-none">
+                <div className="w-full py-8 rounded-xl bg-muted/10 border border-dashed border-border flex flex-col items-center justify-center gap-2 ">
                   <ImageOff className="w-6 h-6 text-muted-foreground/45" />
                   <p className="text-xs font-semibold text-muted-foreground">
                     No images uploaded
@@ -538,7 +538,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
             typedProduct?.datasheet &&
             typedProduct.datasheet.length > 0 && (
               <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-                <div className="border-b border-border/60 pb-3 select-none">
+                <div className="border-b border-border/60 pb-3 ">
                   <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                     Technical datasheet
                   </h3>
@@ -570,7 +570,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
         <div className="space-y-6">
           {/* Card 4: Inventory & Stock */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-2 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-2 ">
               <Package className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Stock Level
@@ -580,7 +580,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
             <div className="pt-1">
               {typedProduct?.quantityInStock > 0 ? (
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center text-xs font-semibold select-none">
+                  <div className="flex justify-between items-center text-xs font-semibold ">
                     <span
                       className={
                         typedProduct.quantityInStock < 10
@@ -596,7 +596,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                       {typedProduct.quantityInStock} units available
                     </span>
                   </div>
-                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden select-none">
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden ">
                     <div
                       className={`h-full rounded-full transition-all duration-300 ${
                         typedProduct.quantityInStock < 10
@@ -610,7 +610,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
                   </div>
                 </div>
               ) : (
-                <div className="bg-red-500/10 text-red-500 p-3.5 rounded-xl border border-red-500/20 text-xs font-bold text-center select-none">
+                <div className="bg-red-500/10 text-red-500 p-3.5 rounded-xl border border-red-500/20 text-xs font-bold text-center ">
                   Sold Out / Out of Stock
                 </div>
               )}
@@ -619,14 +619,14 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
           {/* Card 5: Pricing details */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-2 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-2 ">
               <Tag className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Pricing
               </h3>
             </div>
 
-            <div className="space-y-3 pt-1 select-none">
+            <div className="space-y-3 pt-1 ">
               <div>
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">
                   Current Selling Price
@@ -684,7 +684,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
           {/* Card 6: Delivery & Logistics */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-2 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-2 ">
               <Truck className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Delivery &amp; Logistics
@@ -736,7 +736,7 @@ const SingleProductComp: React.FC<{ id: string }> = ({ id }) => {
 
           {/* Card 7: Classification */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-2 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-2 ">
               <Layers className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Classification

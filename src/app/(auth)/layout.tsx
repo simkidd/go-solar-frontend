@@ -1,7 +1,6 @@
-import LogoIcon from "@/assets/gosolar-logo-icon.svg";
+import Logo from "@/components/Logo";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Image from "next/image";
 import Link from "next/link";
 import NextTopLoader from "nextjs-toploader";
 import "../globals.css";
@@ -58,12 +57,9 @@ export default function RootLayout({
                     Back to Home
                   </Link>
 
-                  <Link href="/" className="flex items-center gap-2 lg:hidden">
-                    <Image src={LogoIcon} alt="logo" width={28} height={28} />
-                    <span className="font-extrabold text-lg text-zinc-900 dark:text-white tracking-tight">
-                      Go<span className="text-primary">Solar</span>
-                    </span>
-                  </Link>
+                  <div className="lg:hidden">
+                    <Logo size="sm" />
+                  </div>
                 </div>
 
                 {/* Form wrapper with premium card container */}

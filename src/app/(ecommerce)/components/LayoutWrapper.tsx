@@ -3,10 +3,9 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import HeaderShop from "@/app/(ecommerce)/components/shop/HeaderShop";
 import Footer from "@/components/Footer";
-import Link from "next/link";
-import Image from "next/image";
-import LogoIcon from "@/assets/gosolar-logo-icon.svg";
+import Logo from "@/components/Logo";
 import { ShieldCheck, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 
 export default function LayoutWrapper({
   children,
@@ -20,26 +19,15 @@ export default function LayoutWrapper({
     return (
       <>
         {/* Minimal Header */}
-        <header className="w-full bg-white dark:bg-zinc-950 border-b border-border/80 sticky top-0 z-50 font-inter py-4 select-none">
+        <header className="w-full bg-white dark:bg-zinc-950 border-b border-border/80 sticky top-0 z-50 font-inter py-4 ">
           <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
             {/* Brand Logo */}
             <div className="flex items-center gap-2 shrink-0">
-              <Link
+              <Logo
                 href="/cart"
-                className="flex items-center gap-2 shrink-0 group"
-              >
-                <Image
-                  src={LogoIcon}
-                  alt="logo"
-                  width={30}
-                  height={30}
-                  className="object-contain transition-transform duration-300"
-                  style={{ height: "auto" }}
-                />
-                <span className="font-extrabold text-base tracking-tight text-zinc-900 dark:text-white mt-1">
-                  Go<span className="text-primary">Solar</span>
-                </span>
-              </Link>
+                size="sm"
+                iconClassName="group-hover:rotate-0"
+              />
             </div>
 
             {/* Middle Title */}
@@ -69,7 +57,7 @@ export default function LayoutWrapper({
         </main>
 
         {/* Minimal Footer */}
-        <footer className="w-full py-6 border-t border-border/85 bg-white dark:bg-zinc-950 text-center select-none text-[11px] text-zinc-400 dark:text-zinc-500 font-semibold font-inter">
+        <footer className="w-full py-6 border-t border-border/85 bg-white dark:bg-zinc-950 text-center  text-[11px] text-zinc-400 dark:text-zinc-500 font-semibold font-inter">
           <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p>© {new Date().getFullYear()} GoSolar. All rights reserved.</p>
             <div className="flex items-center gap-4 text-zinc-450 dark:text-zinc-600">

@@ -197,7 +197,7 @@ const ProductsTable = () => {
     <div className="w-full space-y-5 font-inter">
       {/* Delete confirmation dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-foreground font-extrabold text-base">
               Delete Product
@@ -275,7 +275,7 @@ const ProductsTable = () => {
       </Dialog>
 
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <Package className="h-5 w-5 text-primary" />
@@ -398,7 +398,7 @@ const ProductsTable = () => {
         </div>
 
         {/* Counter and row switcher */}
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {products.length} products listed</span>
         </div>
       </div>
@@ -411,7 +411,7 @@ const ProductsTable = () => {
               {columns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none ${
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  ${
                     col.uid === "actions" ? "text-right" : ""
                   }`}
                 >
@@ -457,7 +457,7 @@ const ProductsTable = () => {
                     {/* 1. Name & Image Details Info */}
                     <TableCell className="py-3.5 text-xs text-foreground max-w-sm">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 min-w-[40px] rounded-xl overflow-hidden border border-border/80 relative bg-muted select-none">
+                        <div className="h-10 w-10 min-w-[40px] rounded-xl overflow-hidden border border-border/80 relative bg-muted ">
                           {product?.images?.[0]?.url ? (
                             <Image
                               src={product.images[0].url}
@@ -477,7 +477,7 @@ const ProductsTable = () => {
                               {product?.name}
                             </span>
                           </Link>
-                          <div className="flex items-center gap-2 text-[9px] uppercase tracking-wider font-extrabold text-muted-foreground select-none">
+                          <div className="flex items-center gap-2 text-[9px] uppercase tracking-wider font-extrabold text-muted-foreground ">
                             <span>{product?.brand || "GoSolar"}</span>
                             {product?.category?.name && (
                               <>
@@ -498,7 +498,7 @@ const ProductsTable = () => {
                     </TableCell>
 
                     {/* 3. Quantity Stock Alerts */}
-                    <TableCell className="py-3.5 text-xs select-none">
+                    <TableCell className="py-3.5 text-xs ">
                       {isOutOfStock ? (
                         <span className="text-rose-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-1">
                           <AlertTriangle className="h-3.5 w-3.5 fill-rose-500/10" />
@@ -516,7 +516,7 @@ const ProductsTable = () => {
                     </TableCell>
 
                     {/* 4. Discount */}
-                    <TableCell className="py-3.5 text-xs select-none">
+                    <TableCell className="py-3.5 text-xs ">
                       {product?.currentOffer?.isActive &&
                       product?.currentOffer?.percentageOff ? (
                         <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">
@@ -528,12 +528,12 @@ const ProductsTable = () => {
                     </TableCell>
 
                     {/* 5. Category */}
-                    <TableCell className="py-3.5 text-xs text-muted-foreground font-semibold select-none">
+                    <TableCell className="py-3.5 text-xs text-muted-foreground font-semibold ">
                       {product?.category?.name || "-"}
                     </TableCell>
 
                     {/* 6. Publishing Status */}
-                    <TableCell className="py-3.5 text-xs select-none">
+                    <TableCell className="py-3.5 text-xs ">
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest border ${
                           product.isPublished
@@ -546,12 +546,12 @@ const ProductsTable = () => {
                     </TableCell>
 
                     {/* 7. Date Added */}
-                    <TableCell className="py-3.5 text-xs text-muted-foreground font-semibold select-none">
+                    <TableCell className="py-3.5 text-xs text-muted-foreground font-semibold ">
                       {formatDate(product?.createdAt)}
                     </TableCell>
 
                     {/* 8. Actions Dropdown */}
-                    <TableCell className="py-3.5 text-xs select-none">
+                    <TableCell className="py-3.5 text-xs ">
                       <div className="flex justify-end">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -621,7 +621,7 @@ const ProductsTable = () => {
 
       {/* Pagination Controls */}
       {pages > 1 && (
-        <div className="flex items-center justify-between py-2 border-t border-border/80 select-none">
+        <div className="flex items-center justify-between py-2 border-t border-border/80 ">
           <div className="text-xs text-muted-foreground font-semibold">
             Page {page} of {pages}
           </div>

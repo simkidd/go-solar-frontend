@@ -445,7 +445,7 @@ const CheckoutPageContent = () => {
 
               <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-5 space-y-4">
                 {/* Same Address */}
-                <label className="flex items-center gap-3 cursor-pointer select-none">
+                <label className="flex items-center gap-3 cursor-pointer ">
                   <input
                     type="radio"
                     name="billing-same"
@@ -460,7 +460,7 @@ const CheckoutPageContent = () => {
 
                 {/* Different Address */}
                 <div className="space-y-3">
-                  <label className="flex items-center justify-between cursor-pointer select-none">
+                  <label className="flex items-center justify-between cursor-pointer ">
                     <div className="flex items-center gap-3">
                       <input
                         type="radio"
@@ -508,7 +508,7 @@ const CheckoutPageContent = () => {
                 Payment Method
               </h2>
               <div className="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded-3xl p-5 space-y-4">
-                <label className="flex items-center gap-3 cursor-pointer select-none">
+                <label className="flex items-center gap-3 cursor-pointer ">
                   <input
                     type="radio"
                     name="payment-method"
@@ -570,7 +570,10 @@ const CheckoutPageContent = () => {
                           {item.product?.name}
                         </p>
                         <p className="text-[10px] text-muted-foreground font-semibold">
-                          Qty: <span className="font-extrabold text-foreground">{item.qty}</span>
+                          Qty:{" "}
+                          <span className="font-extrabold text-foreground">
+                            {item.qty}
+                          </span>
                         </p>
                       </div>
                     </div>
@@ -596,8 +599,6 @@ const CheckoutPageContent = () => {
                     {formatCurrency(shippingFee, "NGN")}
                   </span>
                 </div>
-
-
 
                 <div className="flex justify-between items-center pt-3 border-t dark:border-zinc-800 text-sm font-extrabold text-zinc-900 dark:text-white">
                   <span>Total</span>

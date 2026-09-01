@@ -29,7 +29,7 @@ const ProductImages: React.FC<{
 
   if (!hasImages) {
     return (
-      <div className="w-full aspect-[4/3] rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-dashed border-zinc-200 dark:border-zinc-800 flex flex-col items-center justify-center gap-3 select-none">
+      <div className="w-full aspect-[4/3] rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-dashed border-zinc-200 dark:border-zinc-800 flex flex-col items-center justify-center gap-3 ">
         <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
           <ImageOff className="w-5 h-5 text-zinc-400 dark:text-zinc-650" />
         </div>
@@ -76,7 +76,7 @@ const ProductImages: React.FC<{
       {/* ── Main Interactive Image Viewer ── */}
       <div
         onClick={() => setIsLightboxOpen(true)}
-        className="relative flex-1 w-full aspect-[4/3] rounded-3xl overflow-hidden border border-zinc-150/60 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/10 cursor-zoom-in group select-none"
+        className="relative flex-1 w-full aspect-[4/3] rounded-3xl overflow-hidden border border-zinc-150/60 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/10 cursor-zoom-in group "
       >
         {/* Base Standard Image */}
         <Image
@@ -101,11 +101,10 @@ const ProductImages: React.FC<{
         </div>
       </div>
 
-
       {/* ── Premium Lightbox overlay modal ── */}
       {isLightboxOpen && (
         <div
-          className="fixed inset-0 bg-black/95 z-55 flex flex-col items-center justify-center select-none"
+          className="fixed inset-0 bg-black/95 z-55 flex flex-col items-center justify-center "
           onClick={() => setIsLightboxOpen(false)}
         >
           {/* Close trigger */}

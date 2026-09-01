@@ -92,7 +92,7 @@ const ProductPage = async ({ params }: IProduct) => {
               </>
             )}
             <ChevronRight className="w-3 h-3 text-muted-foreground/30" />
-            <span className="text-foreground font-bold truncate max-w-[260px] select-none">
+            <span className="text-foreground font-bold truncate max-w-[260px] ">
               {product.name}
             </span>
           </nav>
@@ -120,7 +120,7 @@ const ProductPage = async ({ params }: IProduct) => {
       <section className="w-full bg-muted/15 py-12 lg:py-16">
         <div className="container mx-auto px-4 max-w-5xl">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b border-border/80 bg-transparent h-auto p-0 flex gap-8 mb-6 select-none overflow-x-auto scrollbar-none">
+            <TabsList className="w-full justify-start rounded-none border-b border-border/80 bg-transparent h-auto p-0 flex gap-8 mb-6  overflow-x-auto scrollbar-none">
               <TabsTrigger
                 value="overview"
                 className="rounded-none border-b-2 border-transparent px-1 pb-4 pt-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-all duration-300 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
@@ -146,7 +146,7 @@ const ProductPage = async ({ params }: IProduct) => {
               value="overview"
               className="focus-visible:ring-0 focus-visible:ring-offset-0 text-left select-text space-y-4 pt-2"
             >
-              <h3 className="text-xs font-black uppercase tracking-wider text-foreground/80 select-none mb-1">
+              <h3 className="text-xs font-black uppercase tracking-wider text-foreground/80  mb-1">
                 Product Overview
               </h3>
               <ProductDesc product={product} />
@@ -166,7 +166,7 @@ const ProductPage = async ({ params }: IProduct) => {
                           key={idx}
                           className="border-b border-border/40 last:border-b-0 hover:bg-muted/30 dark:hover:bg-muted/10 transition-colors"
                         >
-                          <td className="py-3.5 px-5 font-bold text-muted-foreground w-1/3 border-r border-border/40 select-none bg-muted/10 dark:bg-muted/5">
+                          <td className="py-3.5 px-5 font-bold text-muted-foreground w-1/3 border-r border-border/40  bg-muted/10 dark:bg-muted/5">
                             {row.key}
                           </td>
                           <td className="py-3.5 px-5 font-semibold text-foreground bg-card">
@@ -178,7 +178,7 @@ const ProductPage = async ({ params }: IProduct) => {
                   </table>
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground font-semibold italic select-none">
+                <p className="text-xs text-muted-foreground font-semibold italic ">
                   No technical specifications sheet available for this product.
                 </p>
               )}
@@ -198,7 +198,7 @@ const ProductPage = async ({ params }: IProduct) => {
                         <Truck className="h-5 w-5" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
+                        <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider ">
                           Express Delivery
                         </h4>
                         <p className="text-[11px] text-muted-foreground leading-relaxed font-semibold">
@@ -213,7 +213,7 @@ const ProductPage = async ({ params }: IProduct) => {
                         <RefreshCcw className="h-5 w-5" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
+                        <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider ">
                           7-Day Returns
                         </h4>
                         <p className="text-[11px] text-muted-foreground leading-relaxed font-semibold">
@@ -230,7 +230,7 @@ const ProductPage = async ({ params }: IProduct) => {
                       <ShieldCheck className="h-5 w-5" />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider select-none">
+                      <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider ">
                         Manufacturer Warranty
                       </h4>
                       <p className="text-[11px] text-muted-foreground leading-relaxed font-semibold">
@@ -244,7 +244,7 @@ const ProductPage = async ({ params }: IProduct) => {
 
                 {/* Switch Expert Advisor Callout */}
                 <div className="lg:col-span-4 bg-emerald-50/40 dark:bg-emerald-950/10 border border-emerald-100/60 dark:border-emerald-900/30 p-6 rounded-3xl space-y-4 text-emerald-800 dark:text-emerald-300 backdrop-blur-xs">
-                  <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[10px] text-emerald-700 dark:text-emerald-400 select-none">
+                  <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[10px] text-emerald-700 dark:text-emerald-400 ">
                     <ShieldCheck className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400" />
                     Ready to Switch?
                   </div>

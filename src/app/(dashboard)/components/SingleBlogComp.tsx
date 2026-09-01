@@ -4,7 +4,14 @@ import React from "react";
 import { useBlogPostByIdQuery } from "@/hooks/queries/useBlogQuery";
 import DeletePost from "@/app/(dashboard)/components/DeletePost";
 import UpdatePostButton from "@/app/(dashboard)/components/UpdatePostButton";
-import { ArrowLeft, CalendarCheck, User, Clock, ExternalLink, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarCheck,
+  User,
+  Clock,
+  ExternalLink,
+  Loader2,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -61,7 +68,7 @@ const SingleBlogComp: React.FC<{ id: string }> = ({ id }) => {
   return (
     <div className="w-full font-inter space-y-6 max-w-6xl mx-auto py-4">
       {/* Top Navbar Actions */}
-      <div className="flex items-center justify-between select-none">
+      <div className="flex items-center justify-between ">
         <Link
           href="/dashboard/blogs"
           className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -102,7 +109,7 @@ const SingleBlogComp: React.FC<{ id: string }> = ({ id }) => {
               </h1>
 
               {/* Sub header stats */}
-              <div className="flex items-center gap-4 text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider select-none border-b border-border/40 pb-4">
+              <div className="flex items-center gap-4 text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider  border-b border-border/40 pb-4">
                 <span className="flex items-center gap-1">
                   <CalendarCheck className="h-4 w-4 text-primary" />
                   {formatDate(post?.createdAt)}
@@ -140,7 +147,7 @@ const SingleBlogComp: React.FC<{ id: string }> = ({ id }) => {
         <div className="space-y-6">
           {/* Metadata Card */}
           <Card className="bg-card text-card-foreground border border-border/80 shadow-xs rounded-2xl p-6 space-y-6">
-            <div className="border-b border-border/40 pb-3 select-none">
+            <div className="border-b border-border/40 pb-3 ">
               <h3 className="text-xs font-black uppercase tracking-widest text-zinc-400">
                 Editorial Control Panel
               </h3>
@@ -154,11 +161,11 @@ const SingleBlogComp: React.FC<{ id: string }> = ({ id }) => {
                   Publish Status
                 </span>
                 {post?.isPublished ? (
-                  <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-md px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider select-none">
+                  <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-md px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ">
                     Published
                   </span>
                 ) : (
-                  <span className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-md px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider select-none">
+                  <span className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-md px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ">
                     Draft
                   </span>
                 )}
@@ -170,7 +177,7 @@ const SingleBlogComp: React.FC<{ id: string }> = ({ id }) => {
                   Category Tag
                 </span>
                 {post?.tags?.[0] ? (
-                  <span className="bg-primary/10 text-primary border border-primary/20 rounded-md px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider select-none">
+                  <span className="bg-primary/10 text-primary border border-primary/20 rounded-md px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ">
                     {post.tags[0]}
                   </span>
                 ) : (
@@ -205,7 +212,7 @@ const SingleBlogComp: React.FC<{ id: string }> = ({ id }) => {
                 <span className="font-bold text-muted-foreground uppercase tracking-wider">
                   Read Duration
                 </span>
-                <span className="font-semibold text-foreground flex items-center gap-1 select-none">
+                <span className="font-semibold text-foreground flex items-center gap-1 ">
                   <Clock className="h-3.5 w-3.5 text-zinc-400" />
                   {post?.readTime ? `${post.readTime} mins` : "5 mins"}
                 </span>
@@ -216,7 +223,7 @@ const SingleBlogComp: React.FC<{ id: string }> = ({ id }) => {
                 <span className="font-bold text-muted-foreground uppercase tracking-wider">
                   Date Created
                 </span>
-                <span className="font-semibold text-zinc-500 dark:text-zinc-400 select-none">
+                <span className="font-semibold text-zinc-500 dark:text-zinc-400 ">
                   {formatDate(post?.createdAt)}
                 </span>
               </div>
@@ -226,14 +233,14 @@ const SingleBlogComp: React.FC<{ id: string }> = ({ id }) => {
                 <span className="font-bold text-muted-foreground uppercase tracking-wider">
                   Last Modified
                 </span>
-                <span className="font-semibold text-zinc-500 dark:text-zinc-400 select-none">
+                <span className="font-semibold text-zinc-500 dark:text-zinc-400 ">
                   {formatDate(post?.updatedAt)}
                 </span>
               </div>
             </div>
 
             {/* Bottom Form Edit/Delete Action Row */}
-            <div className="pt-2 border-t border-border/40 flex flex-col gap-2.5 select-none">
+            <div className="pt-2 border-t border-border/40 flex flex-col gap-2.5 ">
               <UpdatePostButton post={post} />
               <DeletePost post={post} />
             </div>

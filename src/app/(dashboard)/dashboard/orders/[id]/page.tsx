@@ -26,7 +26,7 @@ const SingleOrderPage = async ({ params }: IOrder) => {
 
   return (
     <div className="w-full container mx-auto py-4 font-inter">
-      <div className="flex items-center justify-between mb-4 select-none">
+      <div className="flex items-center justify-between mb-4 ">
         <Link
           href="/dashboard/orders"
           className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"

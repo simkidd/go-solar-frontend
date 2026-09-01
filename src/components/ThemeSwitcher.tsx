@@ -36,7 +36,7 @@ export function ThemeSwitcher() {
 
   return (
     <div
-      className="flex items-center bg-zinc-150 dark:bg-zinc-800 p-0.5 rounded-full relative w-[76px] h-[28px] select-none shadow-inner transition-colors duration-300"
+      className="flex items-center bg-zinc-150 dark:bg-zinc-800 p-0.5 rounded-full relative w-[76px] h-[28px]  shadow-inner transition-colors duration-300"
       role="radiogroup"
       aria-label="Theme Selection"
     >

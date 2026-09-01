@@ -155,7 +155,7 @@ export const ReviewsTable = () => {
   return (
     <div className="w-full space-y-5 font-inter">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <MessageSquare className="h-5 w-5 text-primary" />
@@ -250,7 +250,7 @@ export const ReviewsTable = () => {
           </div>
         </div>
 
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {filteredReviews.length} reviews moderated</span>
         </div>
       </div>
@@ -260,16 +260,16 @@ export const ReviewsTable = () => {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  px-4">
                 Customer
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Review Testimonial
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-center">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-center">
                 Status
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-right px-4">
                 Actions
               </TableHead>
             </TableRow>
@@ -423,7 +423,7 @@ export const ReviewsTable = () => {
         open={isPublishConfirmOpen}
         onOpenChange={setIsPublishConfirmOpen}
       >
-        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
               {activeReview?.isPublished
@@ -471,7 +471,7 @@ export const ReviewsTable = () => {
 
       {/* DELETE MODAL */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
               Delete Testimonial
@@ -503,7 +503,7 @@ export const ReviewsTable = () => {
 
       {/* VIEW DETAILS MODAL */}
       <Dialog open={isViewDetailsOpen} onOpenChange={setIsViewDetailsOpen}>
-        <DialogContent className="sm:max-w-[620px] bg-card border border-border/80 rounded-2xl select-none flex flex-col py-6">
+        <DialogContent className="sm:max-w-[620px] bg-card border border-border/80 rounded-2xl  flex flex-col py-6">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
               Testimonial Details
@@ -568,7 +568,7 @@ export const ReviewsTable = () => {
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider block">
                       Video Testimonial
                     </p>
-                    <div className="aspect-video w-full rounded-xl overflow-hidden bg-black flex items-center justify-center border border-border select-none relative">
+                    <div className="aspect-video w-full rounded-xl overflow-hidden bg-black flex items-center justify-center border border-border  relative">
                       {isEmbeddable(activeReview.videoUrl) ? (
                         <iframe
                           src={getEmbedUrl(activeReview.videoUrl)}

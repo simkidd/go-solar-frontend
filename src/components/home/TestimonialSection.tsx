@@ -21,7 +21,7 @@ const TestimonialSection = () => {
     >
       <div className="container mx-auto px-4 space-y-16">
         {/* Header Title */}
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3 select-none">
+        <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3 ">
           <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
             Customer Feedback
           </span>

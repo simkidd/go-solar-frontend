@@ -58,11 +58,13 @@ const AdminHeader = () => {
         {/* Left Section: Sidebar Toggle & Real-time Clock */}
         <div className="flex items-center gap-4">
           <SidebarTrigger className="h-9 w-9 text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/60 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none transition-colors" />
-          
+
           {time && (
-            <div className="hidden md:flex items-center gap-2 text-xs font-bold text-zinc-400 dark:text-zinc-500 select-none bg-zinc-50 dark:bg-zinc-900 border border-zinc-150/40 dark:border-zinc-800/50 rounded-xl px-3 py-1.5 shadow-2xs">
+            <div className="hidden md:flex items-center gap-2 text-xs font-bold text-zinc-400 dark:text-zinc-500  bg-zinc-50 dark:bg-zinc-900 border border-zinc-150/40 dark:border-zinc-800/50 rounded-xl px-3 py-1.5 shadow-2xs">
               <Clock className="h-3.5 w-3.5 text-primary animate-pulse" />
-              <span className="text-zinc-800 dark:text-zinc-200 tabular-nums">{formatTime(time)}</span>
+              <span className="text-zinc-800 dark:text-zinc-200 tabular-nums">
+                {formatTime(time)}
+              </span>
               <span className="text-zinc-300 dark:text-zinc-800">•</span>
               <span>{formatDateLabel(time)}</span>
             </div>
@@ -108,13 +110,19 @@ const AdminHeader = () => {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/dashboard/profile" className="flex items-center">
+                    <Link
+                      href="/dashboard/profile"
+                      className="flex items-center"
+                    >
                       <User className="mr-2 h-4 w-4" />
                       <span>My Profile</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/dashboard/settings" className="flex items-center">
+                    <Link
+                      href="/dashboard/settings"
+                      className="flex items-center"
+                    >
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Store Settings</span>
                     </Link>

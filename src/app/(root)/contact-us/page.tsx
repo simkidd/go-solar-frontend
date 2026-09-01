@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Contact Us | GoSolar",
+  title: "Contact Us",
   description:
     "Have questions about our solar products, packages, or installations? Our support and sales team are always ready to help you make the switch to clean, reliable energy.",
 };
@@ -17,7 +17,7 @@ const ContactUsPage = () => {
       {/* ── Page Hero ────────────────────────────────────────────────── */}
       <PageHeader
         badge="Get in Touch"
-        heading="Contact GoSolar"
+        heading="Contact GoSolar Ng"
         subtitle="Whether you need a quote, have technical questions, or want to discuss a project, our team is ready to help."
         image="/images/bg/about-us.jpg"
         minHeight="min-h-[360px]"
@@ -37,9 +37,11 @@ const ContactUsPage = () => {
                 {[
                   {
                     icon: <Phone className="h-5 w-5 text-[#08AA08]" />,
-                    label: "Phone Number",
-                    value: "+234 706 276 2879",
-                    href: "tel:+2347062762879",
+                    label: "Phone Numbers",
+                    phones: [
+                      { label: "+234 706 276 2879", href: "tel:+2347062762879" },
+                      { label: "+234 802 708 2120", href: "tel:+2348027082120" },
+                    ],
                   },
                   {
                     icon: <Mail className="h-5 w-5 text-[#08AA08]" />,
@@ -63,7 +65,19 @@ const ContactUsPage = () => {
                       <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-405 dark:text-zinc-500">
                         {item.label}
                       </div>
-                      {item.href ? (
+                      {"phones" in item && item.phones ? (
+                        <div className="flex flex-col gap-0.5">
+                          {item.phones.map((phone) => (
+                            <a
+                              key={phone.href}
+                              href={phone.href}
+                              className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:text-[#08AA08] transition-colors leading-relaxed block"
+                            >
+                              {phone.label}
+                            </a>
+                          ))}
+                        </div>
+                      ) : item.href ? (
                         <a
                           href={item.href}
                           target={
@@ -160,7 +174,7 @@ const ContactUsPage = () => {
                   Send Us a Message
                 </h2>
                 <p className="text-zinc-500 dark:text-zinc-400 text-xs leading-relaxed">
-                  Fill in the form below and a GoSolar engineering support
+                  Fill in the form below and a GoSolar Ng engineering support
                   representative will respond within one business day.
                 </p>
               </div>

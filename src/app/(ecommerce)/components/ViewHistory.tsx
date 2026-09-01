@@ -36,7 +36,7 @@ const ViewHistoryComp = () => {
                 <h3 className="text-lg lg:text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
                   Your Recently Viewed
                 </h3>
-                <p className="text-xs text-muted-foreground select-none">
+                <p className="text-xs text-muted-foreground ">
                   Items you have browsed recently
                 </p>
               </div>
