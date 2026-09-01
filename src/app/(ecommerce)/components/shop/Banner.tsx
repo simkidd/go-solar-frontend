@@ -43,7 +43,7 @@ const Banner = () => {
   }
 
   return (
-    <div className="w-full relative rounded-[32px] overflow-hidden shadow-lg border border-zinc-150 dark:border-zinc-800/80 bg-zinc-950 font-inter">
+    <div className="w-full relative overflow-hidden bg-zinc-950 font-inter">
       <Carousel
         setApi={setApi}
         plugins={slides.length > 1 ? [plugin.current] : []}
@@ -70,7 +70,7 @@ const Banner = () => {
             return (
               <CarouselItem
                 key={slide._id || idx}
-                className="relative w-full min-h-[380px] sm:min-h-[420px] md:min-h-[480px] flex items-center overflow-hidden"
+                className="relative w-full min-h-[280px] sm:min-h-[380px] md:min-h-[480px] lg:min-h-[540px] xl:min-h-[580px] flex items-center overflow-hidden"
               >
                 {slide.ctaLink ? (
                   <Link
