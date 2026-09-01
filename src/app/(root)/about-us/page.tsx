@@ -77,9 +77,9 @@ const AboutUsPage = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:divide-x divide-border/60">
             {[
-              { value: "500+", label: "Installations Completed" },
+              { value: "200+", label: "Installations Completed" },
               { value: "5 MW", label: "Total Capacity Installed" },
-              { value: "15", label: "Years in Business" },
+              { value: "15+", label: "Years in Business" },
               { value: "98%", label: "Customer Satisfaction" },
             ].map((s, idx) => (
               <div
