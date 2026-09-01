@@ -204,7 +204,7 @@ const TermsPage = () => {
                   >
                     gosolardotng@gmail.com
                   </a>{" "}
-                  | Tel: +234 706 276 2879
+                  | Tel: +234 706 276 2879, +234 802 708 2120
                 </p>
               </div>
             </div>

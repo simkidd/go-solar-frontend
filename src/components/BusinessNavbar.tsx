@@ -86,6 +86,13 @@ const BusinessNavbar = () => {
               >
                 0706 276 2879
               </a>
+              <span className="text-zinc-300 dark:text-zinc-700">/</span>
+              <a
+                href="tel:+2348027082120"
+                className="hover:text-primary transition-colors"
+              >
+                0802 708 2120
+              </a>
             </span>
           </div>
 

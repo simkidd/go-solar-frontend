@@ -55,7 +55,7 @@ const SocialShare = ({ title }: { title?: string }) => {
         {/* Social Buttons */}
         <div className="flex items-center gap-4 py-4 justify-center">
           <a
-            href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}${title ? `&text=${encodeURIComponent(`Check out ${title} on GoSolar!`)}` : ""}`}
+            href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}${title ? `&text=${encodeURIComponent(`Check out ${title} on GoSolar Ng!`)}` : ""}`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-12 h-12 rounded-full border border-border bg-card hover:bg-[#1DA1F2]/10 hover:border-[#1DA1F2]/30 hover:text-[#1DA1F2] text-foreground flex items-center justify-center transition-all duration-300 shadow-2xs group cursor-pointer"

@@ -121,14 +121,22 @@ const Footer = () => {
                   4 Eneka, Igwuruta Road, Airport road, Port Harcourt
                 </a>
               </li>
-              <li className="flex items-center gap-2.5">
-                <Phone className="h-4.5 w-4.5 text-primary shrink-0" />
-                <a
-                  href="tel:+2347062762879"
-                  className="hover:text-primary transition-colors"
-                >
-                  0706 276 2879
-                </a>
+              <li className="flex items-start gap-2.5">
+                <Phone className="h-4.5 w-4.5 text-primary shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-1">
+                  <a
+                    href="tel:+2347062762879"
+                    className="hover:text-primary transition-colors"
+                  >
+                    0706 276 2879
+                  </a>
+                  <a
+                    href="tel:+2348027082120"
+                    className="hover:text-primary transition-colors"
+                  >
+                    0802 708 2120
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="h-4.5 w-4.5 text-primary shrink-0" />
@@ -155,7 +163,7 @@ const Footer = () => {
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
           {/* Left section: Copyright */}
           <div className="text-center md:text-left ">
-            <p>&copy; {today.getFullYear()} GoSolar. All rights reserved.</p>
+            <p>&copy; {today.getFullYear()} GoSolar Ng. All rights reserved.</p>
           </div>
 
           {/* Centered Theme Switcher */}

@@ -383,7 +383,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         {/* Footer */}
         <div className="px-5 py-3.5 bg-muted/40 border-t border-border/85 flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-muted-foreground ">
           <span>Quick Shop Search</span>
-          <span>GoSolar Clean Energy</span>
+          <span>GoSolar Ng Clean Energy</span>
         </div>
       </DialogContent>
     </Dialog>

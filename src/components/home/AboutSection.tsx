@@ -52,13 +52,13 @@ const AboutSection = () => {
             viewport={{ once: true }}
           >
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block ">
-              About GoSolar
+              About GoSolar Ng
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white leading-tight tracking-tight ">
               We Are Specialists in Sustainable Energy Sizing
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xl font-semibold">
-              GoSolar specializes in designing premium, customized solar energy
+              GoSolar Ng specializes in designing premium, customized solar energy
               systems for residential homes, corporate workspaces, and
               industrial settings. By combining clean tier-1 hardware components
               with advanced sizing analytics, we secure stable power grids that

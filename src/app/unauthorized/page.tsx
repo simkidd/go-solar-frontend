@@ -63,7 +63,7 @@ export default function UnauthorizedPage() {
 
         {/* Footer note */}
         <p className="mt-10 text-[11px] text-zinc-400 dark:text-zinc-600">
-          &copy; {new Date().getFullYear()} GoSolar &mdash; All rights reserved.
+          &copy; {new Date().getFullYear()} GoSolar Ng &mdash; All rights reserved.
         </p>
       </div>
     </div>

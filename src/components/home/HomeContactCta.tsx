@@ -19,7 +19,7 @@ interface HomeContactCtaProps {
 const HomeContactCta: React.FC<HomeContactCtaProps> = ({
   tagline = "Get Started Today",
   title = "Ready to Go Solar?",
-  subtitle = "Join over 500 homes and businesses that trust GoSolar for professional, reliable solar energy solutions.",
+  subtitle = "Join over 500 homes and businesses that trust GoSolar Ng for professional, reliable solar energy solutions.",
   primaryText = "Calculate Your System",
   primaryLink = "/energy-calculator",
   secondaryText = "Contact Our Team",

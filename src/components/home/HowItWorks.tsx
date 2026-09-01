@@ -39,7 +39,7 @@ const HowItWorks = () => {
               The Process
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
-              How GoSolar Works
+              How GoSolar Ng Works
             </h2>
             <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold pointer-events-none select-none">
               Process
