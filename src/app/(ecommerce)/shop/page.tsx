@@ -11,9 +11,7 @@ export const metadata: Metadata = {
 const ShopPage = () => {
   return (
     <div className="w-full font-inter">
-      <div className="container mx-auto px-2 my-8">
-        <Banner />
-      </div>
+      <Banner />
 
       <ShopPageComp />
     </div>
