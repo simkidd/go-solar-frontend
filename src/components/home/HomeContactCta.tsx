@@ -19,7 +19,7 @@ interface HomeContactCtaProps {
 const HomeContactCta: React.FC<HomeContactCtaProps> = ({
   tagline = "Get Started Today",
   title = "Ready to Go Solar?",
-  subtitle = "Join over 500 homes and businesses that trust GoSolar for professional, reliable solar energy solutions.",
+  subtitle = "Join over 500 homes and businesses that trust GoSolar Ng for professional, reliable solar energy solutions.",
   primaryText = "Calculate Your System",
   primaryLink = "/energy-calculator",
   secondaryText = "Contact Our Team",
@@ -31,23 +31,23 @@ const HomeContactCta: React.FC<HomeContactCtaProps> = ({
       {/* Background Image overlay */}
       {bgImage && (
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-15 select-none pointer-events-none"
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-15  pointer-events-none"
           style={{ backgroundImage: `url('${bgImage}')` }}
         />
       )}
-      
+
       {/* Decorative Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[300px] rounded-full bg-primary/10 blur-[120px] pointer-events-none z-0" />
 
       <div className="container mx-auto px-6 relative z-10 text-center max-w-3xl space-y-6">
-        <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block select-none">
+        <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block ">
           {tagline}
         </span>
-        
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight select-none">
+
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight ">
           {title}
         </h2>
-        
+
         <p className="text-sm sm:text-base text-zinc-300 dark:text-zinc-400 max-w-xl mx-auto leading-relaxed font-semibold">
           {subtitle}
         </p>

@@ -140,7 +140,7 @@ const PackagesPageClient = () => {
                       </div>
                       <Link href={`/packages/${pkg.slug}`}>
                         <Button className="bg-[#08AA08] hover:bg-[#079907] text-white text-xs font-bold rounded-xl px-5 py-2">
-                          Configure →
+                          View Package →
                         </Button>
                       </Link>
                     </div>

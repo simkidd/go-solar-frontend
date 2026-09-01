@@ -12,6 +12,17 @@ const SimulatorSection = () => {
   const [batteryCharge, setBatteryCharge] = useState(85);
   const [tallySavings, setTallySavings] = useState(4201940);
 
+  const handleModeChange = (newMode: "day" | "night") => {
+    setMode(newMode);
+    if (newMode === "day") {
+      setSolarKw(3.5);
+      setBatteryCharge(85);
+    } else {
+      setSolarKw(0.0);
+      setBatteryCharge(74);
+    }
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (mode === "day") {
@@ -29,16 +40,6 @@ const SimulatorSection = () => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [mode]);
-
-  useEffect(() => {
-    if (mode === "day") {
-      setSolarKw(3.5);
-      setBatteryCharge(85);
-    } else {
-      setSolarKw(0.0);
-      setBatteryCharge(74);
-    }
   }, [mode]);
 
   return (
@@ -82,11 +83,11 @@ const SimulatorSection = () => {
 
       <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         {/* ── LEFT COLUMN: Standalone Interactive Sizing Diagram ── */}
-        <div className="lg:col-span-6 w-full flex flex-col items-center justify-center min-h-[460px] rounded-[36px] border border-border bg-card text-card-foreground p-6 md:p-8 shadow-xs relative overflow-hidden select-none">
+        <div className="lg:col-span-6 w-full flex flex-col items-center justify-center min-h-[460px] rounded-[36px] border border-border bg-card text-card-foreground p-6 md:p-8 shadow-xs relative overflow-hidden ">
           {/* Day & Night Interactive Simulator Toggle Switch */}
           <div className="absolute top-6 right-6 z-30 flex items-center bg-muted dark:bg-zinc-950 border border-border rounded-full p-1.5 shadow-xs gap-1.5">
             <button
-              onClick={() => setMode("day")}
+              onClick={() => handleModeChange("day")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
                 mode === "day"
                   ? "bg-amber-500 text-black shadow-xs"
@@ -97,7 +98,7 @@ const SimulatorSection = () => {
               Day
             </button>
             <button
-              onClick={() => setMode("night")}
+              onClick={() => handleModeChange("night")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
                 mode === "night"
                   ? "bg-primary text-white shadow-xs"
@@ -319,7 +320,7 @@ const SimulatorSection = () => {
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed font-semibold">
               Select Day or Night Mode in the simulation window to see how
-              GoSolar's hybrid configurations dynamically direct electric
+              GoSolar&apos;s hybrid configurations dynamically direct electric
               current flow.
             </p>
           </div>
@@ -374,7 +375,7 @@ const SimulatorSection = () => {
             </div>
 
             {/* Certified Hardware highlights */}
-            <div className="flex gap-4 p-5 bg-card border border-border rounded-[20px] shadow-xs select-none">
+            <div className="flex gap-4 p-5 bg-card border border-border rounded-[20px] shadow-xs ">
               <div className="h-9 w-9 bg-muted dark:bg-zinc-950 border border-border rounded-xl flex items-center justify-center shrink-0 text-primary">
                 <Cpu className="h-4.5 w-4.5" />
               </div>

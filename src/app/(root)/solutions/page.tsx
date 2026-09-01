@@ -6,7 +6,7 @@ import { SOLUTIONS } from "@/data/solutions";
 import { ArrowUpRight, CheckCircle2 } from "lucide-react";
 
 export const metadata = {
-  title: "Solutions | GoSolar",
+  title: "Solutions",
   description:
     "From simple residential backup to large commercial installations, GoSolar provides end-to-end solar energy solutions backed by 15 years of engineering expertise.",
 };
@@ -48,20 +48,23 @@ const SolutionsPage = () => {
                   <p className="text-zinc-550 dark:text-zinc-400 text-xs sm:text-sm leading-relaxed">
                     {sol.description}
                   </p>
-                    <div className="space-y-2 pt-2">
-                      <div className="font-mono text-[9px] uppercase tracking-widest text-zinc-400 font-bold">
-                        Key Benefits
-                      </div>
-                      <ul className="space-y-1.5">
-                        {sol.benefits.slice(0, 3).map((b) => (
-                          <li key={b} className="flex items-start gap-2.5 text-xs text-zinc-500 dark:text-zinc-450">
-                            <span className="text-[#08AA08] font-bold">—</span>
-                            <span>{b}</span>
-                          </li>
-                        ))}
-                      </ul>
+                  <div className="space-y-2 pt-2">
+                    <div className="font-mono text-[9px] uppercase tracking-widest text-zinc-400 font-bold">
+                      Key Benefits
                     </div>
+                    <ul className="space-y-1.5">
+                      {sol.benefits.slice(0, 3).map((b) => (
+                        <li
+                          key={b}
+                          className="flex items-start gap-2.5 text-xs text-zinc-500 dark:text-zinc-450"
+                        >
+                          <span className="text-[#08AA08] font-bold">—</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
+                </div>
                 <div className="px-8 pb-8 pt-2">
                   <span className="font-mono text-xs uppercase tracking-widest text-[#08AA08] font-bold inline-flex items-center gap-1 group-hover:gap-2 transition-all">
                     Learn More <ArrowUpRight className="h-4 w-4" />
@@ -134,7 +137,9 @@ const SolutionsPage = () => {
             Not sure which solution is right for you?
           </h2>
           <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto">
-            Use our interactive energy calculator to specify your appliance load, or request a technical callback to speak directly with an electrical engineer.
+            Use our interactive energy calculator to specify your appliance
+            load, or request a technical callback to speak directly with an
+            electrical engineer.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
             <Link

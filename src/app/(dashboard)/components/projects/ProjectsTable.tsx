@@ -244,7 +244,7 @@ export const ProjectsTable = () => {
   return (
     <div className="w-full space-y-5 font-inter">
       {/* Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <Briefcase className="h-5 w-5 text-primary" />
@@ -299,7 +299,7 @@ export const ProjectsTable = () => {
           )}
         </div>
 
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Showing {filteredProjects.length} completed installations</span>
         </div>
       </div>
@@ -309,19 +309,19 @@ export const ProjectsTable = () => {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/80">
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  px-4">
                 Project & Location
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 System Sizing Specs
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Completion Date
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Highlights & Proof
               </TableHead>
-              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none text-right px-4">
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  text-right px-4">
                 Actions
               </TableHead>
             </TableRow>
@@ -587,7 +587,7 @@ export const ProjectsTable = () => {
         >
           {/* Details Card */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Project Information
               </h3>
@@ -600,7 +600,7 @@ export const ProjectsTable = () => {
             {/* Multi-Image Upload */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Project Photos{" "}
                   <span className="text-muted-foreground/60 font-semibold normal-case tracking-normal">
                     ({imagePreviews.length}/{MAX_IMAGES})
@@ -630,7 +630,7 @@ export const ProjectsTable = () => {
                 {imagePreviews.length === 0 ? (
                   <div
                     onClick={openCreateDropzone}
-                    className="flex flex-col items-center justify-center py-6 cursor-pointer select-none"
+                    className="flex flex-col items-center justify-center py-6 cursor-pointer "
                   >
                     <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
                     <span className="text-xs font-semibold text-foreground">
@@ -665,7 +665,7 @@ export const ProjectsTable = () => {
                           <X className="h-3 w-3" />
                         </button>
                         {i === 0 && (
-                          <span className="absolute bottom-1 left-1 bg-primary/80 text-white text-[8px] font-bold px-1 rounded select-none">
+                          <span className="absolute bottom-1 left-1 bg-primary/80 text-white text-[8px] font-bold px-1 rounded ">
                             Cover
                           </span>
                         )}
@@ -691,7 +691,7 @@ export const ProjectsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Project Title <span className="text-red-500">*</span>
               </label>
               <Input
@@ -710,7 +710,7 @@ export const ProjectsTable = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Location <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -727,7 +727,7 @@ export const ProjectsTable = () => {
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Date Completed
                 </label>
                 <Input
@@ -740,7 +740,7 @@ export const ProjectsTable = () => {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Inverter
                 </label>
                 <Input
@@ -750,7 +750,7 @@ export const ProjectsTable = () => {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Solar PV
                 </label>
                 <Input
@@ -760,7 +760,7 @@ export const ProjectsTable = () => {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Battery
                 </label>
                 <Input
@@ -772,7 +772,7 @@ export const ProjectsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Description
               </label>
               <textarea
@@ -818,7 +818,7 @@ export const ProjectsTable = () => {
           className="w-full font-inter flex flex-col gap-6 pt-2"
         >
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Project Information
               </h3>
@@ -831,7 +831,7 @@ export const ProjectsTable = () => {
             {/* Multi-Image Upload (Edit) */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Project Photos{" "}
                   <span className="text-muted-foreground/60 font-semibold normal-case tracking-normal">
                     ({imagePreviews.length}/{MAX_IMAGES})
@@ -863,7 +863,7 @@ export const ProjectsTable = () => {
                   activeProject.images.length === 0) ? (
                   <div
                     onClick={openEditDropzone}
-                    className="flex flex-col items-center justify-center py-6 cursor-pointer select-none"
+                    className="flex flex-col items-center justify-center py-6 cursor-pointer "
                   >
                     <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
                     <span className="text-xs font-semibold text-foreground">
@@ -880,7 +880,7 @@ export const ProjectsTable = () => {
                     {imagePreviews.length === 0 &&
                       activeProject?.images?.length > 0 && (
                         <div>
-                          <p className="text-[10px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wider select-none">
+                          <p className="text-[10px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wider ">
                             Current Photos
                           </p>
                           <div className="grid grid-cols-5 gap-2">
@@ -897,7 +897,7 @@ export const ProjectsTable = () => {
                                     className="object-cover"
                                   />
                                   {i === 0 && (
-                                    <span className="absolute bottom-1 left-1 bg-primary/80 text-white text-[8px] font-bold px-1 rounded select-none">
+                                    <span className="absolute bottom-1 left-1 bg-primary/80 text-white text-[8px] font-bold px-1 rounded ">
                                       Cover
                                     </span>
                                   )}
@@ -923,7 +923,7 @@ export const ProjectsTable = () => {
                       activeProject.images.length === 0) && (
                       <div>
                         {activeProject?.images?.length > 0 && (
-                          <p className="text-[10px] font-bold text-emerald-600 mb-1.5 uppercase tracking-wider select-none">
+                          <p className="text-[10px] font-bold text-emerald-600 mb-1.5 uppercase tracking-wider ">
                             New Photos (Will Replace Current)
                           </p>
                         )}
@@ -950,7 +950,7 @@ export const ProjectsTable = () => {
                                 <X className="h-3 w-3" />
                               </button>
                               {i === 0 && (
-                                <span className="absolute bottom-1 left-1 bg-emerald-500/85 text-white text-[8px] font-bold px-1 rounded select-none">
+                                <span className="absolute bottom-1 left-1 bg-emerald-500/85 text-white text-[8px] font-bold px-1 rounded ">
                                   New Cover
                                 </span>
                               )}
@@ -980,7 +980,7 @@ export const ProjectsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Project Title <span className="text-red-500">*</span>
               </label>
               <Input
@@ -999,7 +999,7 @@ export const ProjectsTable = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Location <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -1016,7 +1016,7 @@ export const ProjectsTable = () => {
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Date Completed
                 </label>
                 <Input
@@ -1029,7 +1029,7 @@ export const ProjectsTable = () => {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Inverter
                 </label>
                 <Input
@@ -1039,7 +1039,7 @@ export const ProjectsTable = () => {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Solar PV
                 </label>
                 <Input
@@ -1049,7 +1049,7 @@ export const ProjectsTable = () => {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Battery
                 </label>
                 <Input
@@ -1061,7 +1061,7 @@ export const ProjectsTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Description
               </label>
               <textarea
@@ -1097,7 +1097,7 @@ export const ProjectsTable = () => {
 
       {/* DELETE MODAL */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
               Delete Project

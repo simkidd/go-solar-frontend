@@ -7,34 +7,44 @@ import { Calendar, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Post } from "@/interfaces/post.interface";
 
-const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
+const BlogSection = ({ posts: initialPosts }: { posts?: Post[] }) => {
   const { data } = useBlogPostsQuery();
   const queryPosts = data?.blogs || [];
 
   const activePosts =
-    initialPosts && initialPosts.length > 0
-      ? initialPosts
-      : queryPosts;
+    initialPosts && initialPosts.length > 0 ? initialPosts : queryPosts;
 
   if (!activePosts || activePosts.length === 0) {
     return null;
   }
 
+  const getExcerpt = (post: Post) => {
+    if (post.excerpt) return post.excerpt;
+    if (!post.content) return "";
+    const plainText = post.content.replace(/<[^>]*>/g, "");
+    return plainText.length > 150 ? plainText.slice(0, 150) + "..." : plainText;
+  };
+
   return (
     <section className="py-20 lg:py-28 bg-background font-inter">
       <div className="container mx-auto px-4">
         {/* Header Block */}
-        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mb-12 select-none">
-          <div className="space-y-3">
+        <div className="mb-8 grid lg:grid-cols-2 grid-cols-1">
+          <div className="relative space-y-3">
             <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
               Knowledge Centre
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
               Solar Energy Insights
             </h2>
+            <div className="font-roboto text-transparent uppercase text-stroke lg:text-[140px] text-8xl absolute lg:-top-20 -top-8 left-0 -z-[1] font-bold pointer-events-none select-none">
+              Blog
+            </div>
           </div>
-          <Link href="/blog" className="shrink-0">
+
+          <Link href="/blog" className="ml-auto mt-auto shrink-0">
             <Button className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-11 px-8 rounded-full">
               Read Blog
             </Button>
@@ -61,7 +71,10 @@ const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
                 viewport={{ once: true }}
                 className="bg-card text-card-foreground hover:bg-secondary/40 transition-colors flex flex-col justify-between h-[420px] group cursor-pointer"
               >
-                <Link href={`/blog/${post.slug}`} className="flex flex-col justify-between h-full">
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="flex flex-col justify-between h-full"
+                >
                   <div>
                     {/* Cover Image */}
                     <div className="relative block h-48 bg-muted overflow-hidden">
@@ -88,7 +101,7 @@ const BlogSection = ({ posts: initialPosts }: { posts?: any[] }) => {
 
                       {/* Excerpt */}
                       <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 font-semibold">
-                        {post.content}
+                        {getExcerpt(post)}
                       </p>
                     </div>
                   </div>

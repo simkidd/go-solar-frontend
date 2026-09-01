@@ -123,7 +123,7 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
             />
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap select-none">
+          <div className="flex items-center gap-2 flex-wrap ">
             {(hasSearchFilter || publishFilter !== "All") && (
               <Button
                 variant="ghost"
@@ -174,7 +174,7 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
         </div>
 
         {/* Counter and row switcher */}
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {products.length} products listed</span>
         </div>
       </div>
@@ -187,7 +187,7 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
               {columns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none ${
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  ${
                     col.uid === "actions" ? "text-right" : ""
                   }`}
                 >
@@ -236,7 +236,7 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
                         >
                           {columnKey === "name" && (
                             <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 min-w-[40px] rounded-xl overflow-hidden border border-border/80 relative bg-muted select-none">
+                              <div className="h-10 w-10 min-w-[40px] rounded-xl overflow-hidden border border-border/80 relative bg-muted ">
                                 <Image
                                   src={
                                     product?.images?.[0]?.url ||
@@ -258,7 +258,7 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
                             </span>
                           )}
                           {columnKey === "discount" && (
-                            <div className="select-none">
+                            <div className="">
                               {product?.currentOffer?.isActive &&
                               product?.currentOffer?.percentageOff ? (
                                 <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">
@@ -272,7 +272,7 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
                             </div>
                           )}
                           {columnKey === "quantity" && (
-                            <div className="select-none">
+                            <div className="">
                               {isOutOfStock ? (
                                 <span className="text-rose-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-1">
                                   <AlertTriangle className="h-3.5 w-3.5 fill-rose-500/10" />
@@ -290,17 +290,17 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
                             </div>
                           )}
                           {columnKey === "offer" && (
-                            <span className="text-xs text-muted-foreground font-semibold select-none">
+                            <span className="text-xs text-muted-foreground font-semibold ">
                               {product?.currentOffer?.name || "-"}
                             </span>
                           )}
                           {columnKey === "brand" && (
-                            <span className="font-semibold select-none">
+                            <span className="font-semibold ">
                               {product?.brand || "-"}
                             </span>
                           )}
                           {columnKey === "status" && (
-                            <div className="select-none">
+                            <div className="">
                               <span
                                 className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest border ${
                                   product.isPublished
@@ -313,12 +313,12 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
                             </div>
                           )}
                           {columnKey === "dateAdded" && (
-                            <span className="font-semibold text-muted-foreground select-none">
+                            <span className="font-semibold text-muted-foreground ">
                               {formatDate(product?.createdAt)}
                             </span>
                           )}
                           {columnKey === "actions" && (
-                            <div className="flex justify-end select-none">
+                            <div className="flex justify-end ">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button
@@ -361,7 +361,7 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
 
       {/* Pagination Controls */}
       {pages > 1 && (
-        <div className="flex items-center justify-between py-3 border-t border-border/60 select-none">
+        <div className="flex items-center justify-between py-3 border-t border-border/60 ">
           <div className="text-xs text-muted-foreground font-bold">
             Page {page} of {pages}
           </div>

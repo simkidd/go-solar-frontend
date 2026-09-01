@@ -83,7 +83,7 @@ export const TiptapEditorInner: React.FC<InnerEditorProps> = ({
   return (
     <div className="border border-border/80 rounded-xl overflow-hidden bg-white dark:bg-zinc-900/10 flex flex-col font-inter">
       {/* Toolbar */}
-      <div className="bg-muted/40 dark:bg-zinc-900/40 border-b border-border/80 p-2 flex flex-wrap gap-1.5 items-center select-none">
+      <div className="bg-muted/40 dark:bg-zinc-900/40 border-b border-border/80 p-2 flex flex-wrap gap-1.5 items-center ">
         {/* Undo / Redo */}
         <Button
           type="button"
@@ -115,7 +115,9 @@ export const TiptapEditorInner: React.FC<InnerEditorProps> = ({
           size="icon"
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("bold") ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("bold")
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <Bold className="h-4 w-4" />
@@ -126,7 +128,9 @@ export const TiptapEditorInner: React.FC<InnerEditorProps> = ({
           size="icon"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("italic") ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("italic")
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <Italic className="h-4 w-4" />
@@ -137,7 +141,9 @@ export const TiptapEditorInner: React.FC<InnerEditorProps> = ({
           size="icon"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("underline") ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("underline")
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <UnderlineIcon className="h-4 w-4" />
@@ -148,33 +154,51 @@ export const TiptapEditorInner: React.FC<InnerEditorProps> = ({
         {/* Headings */}
         <Button
           type="button"
-          variant={editor.isActive("heading", { level: 1 }) ? "secondary" : "ghost"}
+          variant={
+            editor.isActive("heading", { level: 1 }) ? "secondary" : "ghost"
+          }
           size="icon"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("heading", { level: 1 }) ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("heading", { level: 1 })
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <Heading1 className="h-4 w-4" />
         </Button>
         <Button
           type="button"
-          variant={editor.isActive("heading", { level: 2 }) ? "secondary" : "ghost"}
+          variant={
+            editor.isActive("heading", { level: 2 }) ? "secondary" : "ghost"
+          }
           size="icon"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("heading", { level: 2 }) ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("heading", { level: 2 })
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <Heading2 className="h-4 w-4" />
         </Button>
         <Button
           type="button"
-          variant={editor.isActive("heading", { level: 3 }) ? "secondary" : "ghost"}
+          variant={
+            editor.isActive("heading", { level: 3 }) ? "secondary" : "ghost"
+          }
           size="icon"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("heading", { level: 3 }) ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("heading", { level: 3 })
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <Heading3 className="h-4 w-4" />
@@ -189,7 +213,9 @@ export const TiptapEditorInner: React.FC<InnerEditorProps> = ({
           size="icon"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("bulletList") ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("bulletList")
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <List className="h-4 w-4" />
@@ -200,7 +226,9 @@ export const TiptapEditorInner: React.FC<InnerEditorProps> = ({
           size="icon"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("orderedList") ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("orderedList")
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <ListOrdered className="h-4 w-4" />
@@ -215,7 +243,9 @@ export const TiptapEditorInner: React.FC<InnerEditorProps> = ({
           size="icon"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("blockquote") ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("blockquote")
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <Quote className="h-4 w-4" />
@@ -226,7 +256,9 @@ export const TiptapEditorInner: React.FC<InnerEditorProps> = ({
           size="icon"
           onClick={setLink}
           className={`h-8 w-8 rounded-lg cursor-pointer transition-colors ${
-            editor.isActive("link") ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground"
+            editor.isActive("link")
+              ? "text-primary bg-primary/10 hover:bg-primary/20"
+              : "text-muted-foreground"
           }`}
         >
           <LinkIcon className="h-4 w-4" />

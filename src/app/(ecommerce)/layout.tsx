@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: {
     default: `Shop | ${config.SITE_NAME}`,
-    template: "%s | Go Solar",
+    template: "%s | GoSolar Ng",
   },
   metadataBase: new URL(config.SITE_URL),
   description: config.SITE_DESCRIPTION,

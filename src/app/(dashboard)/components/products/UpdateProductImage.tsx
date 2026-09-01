@@ -38,12 +38,16 @@ const UpdateProductImage: React.FC<{
               Manage Product Images
             </DialogTitle>
             <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
-              Select an image slot to replace it, or select "Add New" to upload another image (up to 5 total).
+              Select an image slot to replace it, or select "Add New" to upload
+              another image (up to 5 total).
             </p>
           </DialogHeader>
 
           <div className="px-6 py-5">
-            <ProductImagesForm onClose={() => setIsOpen(false)} product={product} />
+            <ProductImagesForm
+              onClose={() => setIsOpen(false)}
+              product={product}
+            />
           </div>
         </DialogContent>
       </Dialog>
@@ -57,10 +61,12 @@ export const ProductImagesForm: React.FC<{
   product: Product;
   onClose: () => void;
 }> = ({ onClose, product }) => {
-  const updateImagesMutation = useUpdateProductImageMutation({ onSuccess: onClose });
+  const updateImagesMutation = useUpdateProductImageMutation({
+    onSuccess: onClose,
+  });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedImgId, setSelectedImgId] = useState<string | null>(
-    product.images && product.images.length > 0 ? null : "new"
+    product.images && product.images.length > 0 ? null : "new",
   );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -77,7 +83,7 @@ export const ProductImagesForm: React.FC<{
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
     },
-    [product.images.length, selectedImgId]
+    [product.images.length, selectedImgId],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -94,7 +100,9 @@ export const ProductImagesForm: React.FC<{
     e.preventDefault();
 
     if (!selectedImage || !selectedImgId) {
-      toast.warning("Please select a slot (replace or add new) and upload an image.");
+      toast.warning(
+        "Please select a slot (replace or add new) and upload an image.",
+      );
       return;
     }
 
@@ -108,10 +116,9 @@ export const ProductImagesForm: React.FC<{
 
   return (
     <form onSubmit={handleSubmit} className="w-full font-inter space-y-5">
-
       {/* Step 1: Choose slot to replace or Add New */}
       <div className="space-y-2">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ">
           Step 1 — Select slot (replace existing or add new)
         </p>
 
@@ -155,7 +162,9 @@ export const ProductImagesForm: React.FC<{
               }`}
             >
               <Plus className="w-5 h-5 text-muted-foreground" />
-              <span className="text-[9px] font-bold text-muted-foreground mt-1">Add New</span>
+              <span className="text-[9px] font-bold text-muted-foreground mt-1">
+                Add New
+              </span>
             </button>
           )}
         </div>
@@ -163,7 +172,7 @@ export const ProductImagesForm: React.FC<{
 
       {/* Step 2: Upload replacement/new image */}
       <div className="space-y-2">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ">
           Step 2 — Upload image file
         </p>
         <div
@@ -181,7 +190,9 @@ export const ProductImagesForm: React.FC<{
             </div>
             <div>
               <p className="text-xs font-semibold text-foreground">
-                {isDragActive ? "Drop image here" : "Drag & drop or click to browse"}
+                {isDragActive
+                  ? "Drop image here"
+                  : "Drag & drop or click to browse"}
               </p>
               <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
                 JPG, PNG, WEBP supported
@@ -202,14 +213,19 @@ export const ProductImagesForm: React.FC<{
               />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-foreground truncate">{selectedImage.name}</p>
+              <p className="text-xs font-bold text-foreground truncate">
+                {selectedImage.name}
+              </p>
               <p className="text-[10px] text-muted-foreground font-semibold">
                 {(selectedImage.size / 1024).toFixed(0)} KB
               </p>
             </div>
             <button
               type="button"
-              onClick={() => { setSelectedImage(null); setPreviewUrl(null); }}
+              onClick={() => {
+                setSelectedImage(null);
+                setPreviewUrl(null);
+              }}
               className="text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
             >
               <Trash2 size={14} />
@@ -230,14 +246,16 @@ export const ProductImagesForm: React.FC<{
         </Button>
         <Button
           type="submit"
-          disabled={updateImagesMutation.isPending || !selectedImgId || !selectedImage}
+          disabled={
+            updateImagesMutation.isPending || !selectedImgId || !selectedImage
+          }
           className="bg-primary hover:bg-primary/90 text-white text-xs font-semibold h-9 px-5 rounded-xl cursor-pointer"
         >
           {updateImagesMutation.isPending
             ? "Uploading..."
             : selectedImgId === "new"
-            ? "Add Image"
-            : "Replace Image"}
+              ? "Add Image"
+              : "Replace Image"}
         </Button>
       </div>
     </form>

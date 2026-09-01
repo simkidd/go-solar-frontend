@@ -42,13 +42,14 @@ export default function AnnouncementForm() {
   return (
     <div className="w-full space-y-6 max-w-2xl font-inter">
       {/* Action Header */}
-      <div className="flex flex-col gap-1 select-none">
+      <div className="flex flex-col gap-1 ">
         <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
           <Megaphone className="h-5 w-5 text-primary" />
           Announcement Bar
         </h2>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-          Manage the global announcement banner notice shown at the very top of the storefront.
+          Manage the global announcement banner notice shown at the very top of
+          the storefront.
         </p>
       </div>
 
@@ -56,21 +57,18 @@ export default function AnnouncementForm() {
         <Card className="bg-card text-card-foreground border border-border/80 shadow-xs rounded-2xl p-6 space-y-5">
           <div className="flex items-center justify-between p-4 bg-muted/40 rounded-2xl border border-border/40">
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-50 select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-50 ">
                 Enable Announcement Bar
               </label>
-              <p className="text-[10px] text-muted-foreground select-none">
+              <p className="text-[10px] text-muted-foreground ">
                 Toggle visibility on the homepage and storefront.
               </p>
             </div>
-            <Switch
-              checked={isActive}
-              onCheckedChange={setIsActive}
-            />
+            <Switch checked={isActive} onCheckedChange={setIsActive} />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 select-none">
+            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 ">
               Announcement Message
             </label>
             <Textarea
@@ -83,7 +81,7 @@ export default function AnnouncementForm() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 select-none">
+            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 ">
               Redirect URL (Optional Link)
             </label>
             <Input
@@ -93,7 +91,8 @@ export default function AnnouncementForm() {
               className="bg-muted/20 border-border/60 rounded-xl text-sm"
             />
             <p className="text-[9px] text-muted-foreground">
-              Optional page url path to redirect users to when they click the announcement.
+              Optional page url path to redirect users to when they click the
+              announcement.
             </p>
           </div>
 

@@ -57,7 +57,15 @@ const columns = [
   { name: "Actions", uid: "actions" },
 ];
 
-const inverterOptions = ["All", "1.5 kVA", "2.5 kVA", "3.5 kVA", "5 kVA", "7.5 kVA", "10 kVA"];
+const inverterOptions = [
+  "All",
+  "1.5 kVA",
+  "2.5 kVA",
+  "3.5 kVA",
+  "5 kVA",
+  "7.5 kVA",
+  "10 kVA",
+];
 const batteryOptions = ["All", "Lithium", "Tubular", "AGM", "Gel"];
 
 export const PackagesTable = () => {
@@ -84,7 +92,8 @@ export const PackagesTable = () => {
         selectedInverter === "All" ||
         `${pkg.capacityKva} kVA` === selectedInverter;
       const matchesBattery =
-        selectedBatteryType === "All" || pkg.batteryType === selectedBatteryType;
+        selectedBatteryType === "All" ||
+        pkg.batteryType === selectedBatteryType;
       return matchesSearch && matchesInverter && matchesBattery;
     });
   }, [packages, searchTerm, selectedInverter, selectedBatteryType]);
@@ -115,10 +124,9 @@ export const PackagesTable = () => {
 
   return (
     <div className="w-full space-y-5 font-inter">
-
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-foreground font-extrabold text-base">
               Delete Package
@@ -170,12 +178,15 @@ export const PackagesTable = () => {
                   <span>
                     Battery:{" "}
                     <b className="text-foreground">
-                      {activePackage.batteryKwh} kWh ({activePackage.batteryType})
+                      {activePackage.batteryKwh} kWh (
+                      {activePackage.batteryType})
                     </b>
                   </span>
                   <span>
                     Solar:{" "}
-                    <b className="text-foreground">{activePackage.pvKwp * 1000} W</b>
+                    <b className="text-foreground">
+                      {activePackage.pvKwp * 1000} W
+                    </b>
                   </span>
                 </div>
               </div>
@@ -194,7 +205,9 @@ export const PackagesTable = () => {
                         className="p-3 flex items-center justify-between bg-card hover:bg-muted/15 transition-colors"
                       >
                         <div>
-                          <p className="font-extrabold text-foreground text-xs">{prod.name}</p>
+                          <p className="font-extrabold text-foreground text-xs">
+                            {prod.name}
+                          </p>
                           <p className="text-[10px] text-muted-foreground font-semibold">
                             {prod.brand} • Qty: {comp.qty}
                           </p>
@@ -267,7 +280,7 @@ export const PackagesTable = () => {
       </AppModal>
 
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <Layers className="h-5 w-5 text-primary" />
@@ -331,8 +344,18 @@ export const PackagesTable = () => {
                   variant="outline"
                   className="border-border text-xs font-semibold rounded-xl h-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
                 >
-                  {selectedInverter === "All" ? "All Capacities" : selectedInverter}
-                  <svg className="ml-2 h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6" /></svg>
+                  {selectedInverter === "All"
+                    ? "All Capacities"
+                    : selectedInverter}
+                  <svg
+                    className="ml-2 h-4 w-4 text-muted-foreground"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="max-h-60 overflow-y-auto w-44 rounded-xl bg-card border border-border/80">
@@ -355,8 +378,18 @@ export const PackagesTable = () => {
                   variant="outline"
                   className="border-border text-xs font-semibold rounded-xl h-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted/30"
                 >
-                  {selectedBatteryType === "All" ? "All Battery Types" : selectedBatteryType}
-                  <svg className="ml-2 h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6" /></svg>
+                  {selectedBatteryType === "All"
+                    ? "All Battery Types"
+                    : selectedBatteryType}
+                  <svg
+                    className="ml-2 h-4 w-4 text-muted-foreground"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-44 rounded-xl bg-card border border-border/80">
@@ -375,7 +408,7 @@ export const PackagesTable = () => {
         </div>
 
         {/* Counter */}
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {filteredPackages.length} packages listed</span>
         </div>
       </div>
@@ -388,8 +421,10 @@ export const PackagesTable = () => {
               {columns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none ${
-                    col.uid === "actions" || col.uid === "price" ? "text-right" : ""
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  ${
+                    col.uid === "actions" || col.uid === "price"
+                      ? "text-right"
+                      : ""
                   }`}
                 >
                   {col.name}
@@ -400,7 +435,10 @@ export const PackagesTable = () => {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-32 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-32 text-center"
+                >
                   <div className="space-y-3 flex flex-col justify-center items-center py-8">
                     <Skeleton className="h-5 w-4/5 rounded-md" />
                     <Skeleton className="h-5 w-3/5 rounded-md" />
@@ -426,7 +464,9 @@ export const PackagesTable = () => {
                   {/* Package Name */}
                   <TableCell className="py-3.5 text-xs text-foreground max-w-xs">
                     <div className="space-y-1">
-                      <span className="font-extrabold text-foreground block">{pkg.name}</span>
+                      <span className="font-extrabold text-foreground block">
+                        {pkg.name}
+                      </span>
                       <div className="flex items-center gap-2 text-[9px] uppercase tracking-wider font-extrabold text-muted-foreground">
                         <span className="bg-primary/10 text-primary border border-primary/20 rounded-full px-2 py-0.5">
                           {pkg.capacityKva} kVA
@@ -453,14 +493,14 @@ export const PackagesTable = () => {
                   </TableCell>
 
                   {/* 3. Battery Chemistry */}
-                  <TableCell className="py-3.5 text-xs select-none">
+                  <TableCell className="py-3.5 text-xs ">
                     <span
                       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest border ${
                         pkg.batteryType === "Lithium"
                           ? "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20"
                           : pkg.batteryType === "Tubular"
-                          ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
-                          : "bg-muted text-muted-foreground border-border/80"
+                            ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
+                            : "bg-muted text-muted-foreground border-border/80"
                       }`}
                     >
                       <Battery className="h-3 w-3" />
@@ -469,7 +509,7 @@ export const PackagesTable = () => {
                   </TableCell>
 
                   {/* 4. Components */}
-                  <TableCell className="py-3.5 text-xs select-none">
+                  <TableCell className="py-3.5 text-xs ">
                     <button
                       onClick={() => {
                         setActivePackage(pkg);
@@ -488,7 +528,7 @@ export const PackagesTable = () => {
                   </TableCell>
 
                   {/* Actions */}
-                  <TableCell className="py-3.5 text-xs select-none">
+                  <TableCell className="py-3.5 text-xs ">
                     <div className="flex justify-end">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -500,8 +540,14 @@ export const PackagesTable = () => {
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40 rounded-xl bg-card border border-border/80">
-                          <DropdownMenuItem asChild className="cursor-pointer text-xs font-bold">
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-40 rounded-xl bg-card border border-border/80"
+                        >
+                          <DropdownMenuItem
+                            asChild
+                            className="cursor-pointer text-xs font-bold"
+                          >
                             <Link
                               href={`/packages/${pkg.slug}`}
                               target="_blank"

@@ -106,7 +106,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
 
   if (isLoading) {
     return (
-      <div className="w-full space-y-6 select-none animate-pulse">
+      <div className="w-full space-y-6  animate-pulse">
         <Skeleton className="h-6 w-32 rounded-lg" />
         <Skeleton className="h-20 w-full rounded-2xl" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -142,7 +142,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
     typedOffer.isActive && (!start || start <= now) && (!end || end >= now);
 
   return (
-    <div className="w-full font-inter space-y-6 select-none">
+    <div className="w-full font-inter space-y-6 ">
       {/* ── Modals & Dialog Cockpit ── */}
 
       {/* 1. Edit details modal */}
@@ -166,7 +166,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
 
       {/* 2. Status toggle confirmation dialog */}
       <Dialog open={isStatusOpen} onOpenChange={setIsStatusOpen}>
-        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-foreground font-extrabold text-base">
               {typedOffer.isActive
@@ -218,7 +218,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
 
       {/* 3. Delete confirmation dialog */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl select-none">
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-foreground font-extrabold text-base">
               Delete Campaign Offer
@@ -253,7 +253,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
       </Dialog>
 
       {/* ── Navigation Breadcrumb ── */}
-      <div className="flex items-center justify-between select-none">
+      <div className="flex items-center justify-between ">
         <Link
           href="/dashboard/sales-offers"
           className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -272,7 +272,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
       </div>
 
       {/* ── Page Hero Title & Control Actions Bar ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 select-none pb-4 border-b border-border/60">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4  pb-4 border-b border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
             <h2 className="text-xl font-extrabold text-foreground tracking-tight">
@@ -337,7 +337,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
         <div className="lg:col-span-2 space-y-6">
           {/* Card 1: Description copy */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Campaign Description
               </h3>
@@ -355,7 +355,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
 
           {/* Card 2: Linked Products & Slashed Prices Table */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
                 <ShieldCheck className="h-4 w-4 text-primary" /> Pricing Audit
                 Log
@@ -447,7 +447,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
                 </Table>
               </div>
             ) : (
-              <div className="py-8 rounded-xl bg-muted/10 border border-dashed border-border flex flex-col items-center justify-center gap-2 select-none text-center p-6">
+              <div className="py-8 rounded-xl bg-muted/10 border border-dashed border-border flex flex-col items-center justify-center gap-2  text-center p-6">
                 <Package className="w-6 h-6 text-muted-foreground/45" />
                 <p className="text-xs font-bold text-foreground">
                   No items active in campaign
@@ -465,14 +465,14 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
         <div className="space-y-6 col-span-1">
           {/* Card 3: Campaign Configuration Specs */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-2 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-2 ">
               <Percent className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Discount Rules
               </h3>
             </div>
 
-            <div className="space-y-3.5 pt-1 select-none text-xs">
+            <div className="space-y-3.5 pt-1  text-xs">
               <div className="flex justify-between items-center py-0.5">
                 <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
                   Discount type:
@@ -502,14 +502,14 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
 
           {/* Card 4: Campaign Scheduling / Period */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4 shadow-xs">
-            <div className="border-b border-border/60 pb-3 flex items-center gap-2 select-none">
+            <div className="border-b border-border/60 pb-3 flex items-center gap-2 ">
               <Calendar className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Campaign Timeline
               </h3>
             </div>
 
-            <div className="space-y-3.5 pt-1 select-none text-xs">
+            <div className="space-y-3.5 pt-1  text-xs">
               <div className="flex justify-between items-center py-0.5">
                 <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
                   Start Date:

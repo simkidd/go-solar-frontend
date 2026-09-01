@@ -83,7 +83,7 @@ const ProductCard: React.FC<{
               )}
             </div>
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-2 select-none">
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 ">
               <ImageOff className="w-8 h-8 text-muted-foreground/30" />
               <p className="text-[9px] text-muted-foreground/50 font-bold uppercase tracking-wider">
                 No image
@@ -94,7 +94,7 @@ const ProductCard: React.FC<{
 
         {/* Discount Badge — only when on sale */}
         {discountPercentage > 0 && (
-          <div className="absolute top-3 left-3 z-[2] select-none">
+          <div className="absolute top-3 left-3 z-[2] ">
             <span className="text-[9px] font-black uppercase px-2.5 py-1 rounded-full bg-primary text-white shadow-xs tracking-wider">
               {discountPercentage}% Off
             </span>
@@ -119,7 +119,7 @@ const ProductCard: React.FC<{
       <div className="p-3.5 sm:p-5 flex flex-col justify-between flex-1 space-y-3 sm:space-y-4">
         <div className="space-y-2">
           {/* Brand & Category Tags */}
-          {/* <div className="flex flex-wrap justify-between items-center gap-1 text-[9px] font-black uppercase tracking-widest text-muted-foreground select-none">
+          {/* <div className="flex flex-wrap justify-between items-center gap-1 text-[9px] font-black uppercase tracking-widest text-muted-foreground ">
             <span>{item?.brand || "GoSolar"}</span>
             {item?.category?.name && (
               <span className="text-primary bg-primary/5 dark:bg-primary/10 px-1.5 py-0.5 rounded-md truncate max-w-[80px] sm:max-w-none">
@@ -141,7 +141,7 @@ const ProductCard: React.FC<{
 
         <div className="space-y-2.5 sm:space-y-3 pt-2.5 sm:pt-3 border-t border-border/60">
           {/* Price line */}
-          <div className="flex flex-wrap items-baseline gap-1 sm:gap-1.5 select-none">
+          <div className="flex flex-wrap items-baseline gap-1 sm:gap-1.5 ">
             <span className="text-xs sm:text-base font-black text-primary">
               {formatCurrency(newPrice, "NGN")}
             </span>

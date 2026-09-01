@@ -57,12 +57,12 @@ const CreateOfferForm: React.FC<{
     >
       {/* Offer Info Section */}
       <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none flex items-center gap-1.5 border-b border-border/60 pb-3">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  flex items-center gap-1.5 border-b border-border/60 pb-3">
           <Tag className="h-3.5 w-3.5 text-primary" /> Offer Information
         </p>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Title <span className="text-red-500">*</span>
           </label>
           <Input
@@ -78,7 +78,7 @@ const CreateOfferForm: React.FC<{
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Description <span className="text-red-500">*</span>
           </label>
           <Textarea
@@ -99,12 +99,12 @@ const CreateOfferForm: React.FC<{
 
       {/* Discount & Campaign Period Section */}
       <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none flex items-center gap-1.5 border-b border-border/60 pb-3">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  flex items-center gap-1.5 border-b border-border/60 pb-3">
           <Calendar className="h-3.5 w-3.5 text-primary" /> Campaign Settings
         </p>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Percentage Off (%) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -133,7 +133,7 @@ const CreateOfferForm: React.FC<{
         {/* Start and End Dates */}
         <div className="grid grid-cols-2 gap-4 pt-1">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
               Start Date
             </label>
             <Input
@@ -148,7 +148,7 @@ const CreateOfferForm: React.FC<{
             )}
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
               End Date
             </label>
             <Input
@@ -174,7 +174,7 @@ const CreateOfferForm: React.FC<{
       </div>
 
       {/* Footer Actions */}
-      <div className="flex items-center justify-end gap-2 pt-2 select-none border-t border-border/40">
+      <div className="flex items-center justify-end gap-2 pt-2  border-t border-border/40">
         <Button
           type="button"
           variant="ghost"

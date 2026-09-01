@@ -39,7 +39,9 @@ export default function SettingsForm() {
   const [accountName, setAccountName] = useState("");
 
   // Appliance Wattages (Energy Calculator Constants)
-  const [applianceWattages, setApplianceWattages] = useState<Record<string, number>>({});
+  const [applianceWattages, setApplianceWattages] = useState<
+    Record<string, number>
+  >({});
 
   useEffect(() => {
     if (data?.settings) {
@@ -105,24 +107,31 @@ export default function SettingsForm() {
   return (
     <div className="w-full space-y-6 max-w-4xl font-inter">
       {/* Title Header */}
-      <div className="flex flex-col gap-1 select-none">
+      <div className="flex flex-col gap-1 ">
         <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
           <Settings className="h-5 w-5 text-primary" />
           Global Store Settings
         </h2>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-          Configure business variables, shipping rules, payment accounts, and calculator sizing constants.
+          Configure business variables, shipping rules, payment accounts, and
+          calculator sizing constants.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Tabs defaultValue="general" className="w-full space-y-5">
           <TabsList className="bg-zinc-100 dark:bg-zinc-900/60 p-1 rounded-xl w-full grid grid-cols-2 gap-1 border border-zinc-200/40 dark:border-zinc-800/40 max-w-md">
-            <TabsTrigger value="general" className="gap-2 text-[11px] font-bold uppercase tracking-wider py-2">
+            <TabsTrigger
+              value="general"
+              className="gap-2 text-[11px] font-bold uppercase tracking-wider py-2"
+            >
               <Building className="w-3.5 h-3.5" />
               Store & Payments
             </TabsTrigger>
-            <TabsTrigger value="calculator" className="gap-2 text-[11px] font-bold uppercase tracking-wider py-2">
+            <TabsTrigger
+              value="calculator"
+              className="gap-2 text-[11px] font-bold uppercase tracking-wider py-2"
+            >
               <Zap className="w-3.5 h-3.5" />
               Sizing Watts
             </TabsTrigger>
@@ -130,20 +139,24 @@ export default function SettingsForm() {
 
           {/* TAB 1: General Business Config */}
           <TabsContent value="general" className="space-y-6 outline-none">
-            
             {/* Delivery Section */}
             <Card className="bg-card text-card-foreground border border-border/80 shadow-xs rounded-2xl p-6 space-y-5">
               <div className="border-b border-border/40 pb-3 flex items-center gap-2">
                 <Truck className="w-4 h-4 text-primary" />
                 <div>
-                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Shipping & Delivery Fees</h3>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Define base order delivery fees and thresholds (bulky item surcharges are set directly on the products).</p>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
+                    Shipping & Delivery Fees
+                  </h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    Define base order delivery fees and thresholds (bulky item
+                    surcharges are set directly on the products).
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     Base Shipping Fee (₦)
                   </label>
                   <Input
@@ -156,13 +169,15 @@ export default function SettingsForm() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     Free Shipping Threshold (₦)
                   </label>
                   <Input
                     type="number"
                     value={freeShippingThreshold}
-                    onChange={(e) => setFreeShippingThreshold(Number(e.target.value))}
+                    onChange={(e) =>
+                      setFreeShippingThreshold(Number(e.target.value))
+                    }
                     className="bg-muted/20 border-border/60 rounded-xl text-sm"
                     required
                   />
@@ -175,14 +190,19 @@ export default function SettingsForm() {
               <div className="border-b border-border/40 pb-3 flex items-center gap-2">
                 <Landmark className="w-4 h-4 text-primary" />
                 <div>
-                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Bank Account details</h3>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Account details displayed to users at checkout for manual Bank Transfer orders.</p>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
+                    Bank Account details
+                  </h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    Account details displayed to users at checkout for manual
+                    Bank Transfer orders.
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     Bank Name
                   </label>
                   <Input
@@ -195,7 +215,7 @@ export default function SettingsForm() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     Account Number
                   </label>
                   <Input
@@ -208,7 +228,7 @@ export default function SettingsForm() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     Account Name
                   </label>
                   <Input
@@ -227,14 +247,19 @@ export default function SettingsForm() {
               <div className="border-b border-border/40 pb-3 flex items-center gap-2">
                 <Phone className="w-4 h-4 text-primary" />
                 <div>
-                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Customer Support & Contacts</h3>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Configure dynamically loaded phone lines, emails, and WhatsApp greetings.</p>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
+                    Customer Support & Contacts
+                  </h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    Configure dynamically loaded phone lines, emails, and
+                    WhatsApp greetings.
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     Support Phone Line
                   </label>
                   <Input
@@ -246,7 +271,7 @@ export default function SettingsForm() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     Support Email
                   </label>
                   <Input
@@ -259,7 +284,7 @@ export default function SettingsForm() {
                 </div>
 
                 <div className="space-y-1.5 md:col-span-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     Physical Office Address
                   </label>
                   <Input
@@ -271,7 +296,7 @@ export default function SettingsForm() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     WhatsApp Support Number (with country code)
                   </label>
                   <Input
@@ -283,7 +308,7 @@ export default function SettingsForm() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                     WhatsApp Preset Welcome Message
                   </label>
                   <Input
@@ -295,7 +320,6 @@ export default function SettingsForm() {
                 </div>
               </div>
             </Card>
-
           </TabsContent>
 
           {/* TAB 2: Calculator constants */}
@@ -304,21 +328,31 @@ export default function SettingsForm() {
               <div className="border-b border-border/40 pb-3 flex items-center gap-2">
                 <Zap className="w-4 h-4 text-primary" />
                 <div>
-                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Energy Calculator Watts Constants</h3>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Define power consumption (in Watts) for appliance sizing calculations.</p>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
+                    Energy Calculator Watts Constants
+                  </h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    Define power consumption (in Watts) for appliance sizing
+                    calculations.
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
                 {Object.keys(applianceWattages).map((applianceKey) => (
                   <div key={applianceKey} className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 select-none">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-650 dark:text-zinc-400 ">
                       {formatApplianceLabel(applianceKey)}
                     </label>
                     <Input
                       type="number"
                       value={applianceWattages[applianceKey] ?? 0}
-                      onChange={(e) => handleWattageChange(applianceKey, Number(e.target.value))}
+                      onChange={(e) =>
+                        handleWattageChange(
+                          applianceKey,
+                          Number(e.target.value),
+                        )
+                      }
                       className="bg-muted/20 border-border/60 rounded-xl text-sm"
                       required
                     />

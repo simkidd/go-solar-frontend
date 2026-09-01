@@ -47,7 +47,7 @@ export default function AuthHeroPanel() {
   }, []);
 
   return (
-    <div className="hidden lg:flex col-span-6 xl:col-span-7 relative flex-col justify-between p-12 xl:p-16 text-white overflow-hidden select-none min-h-full">
+    <div className="hidden lg:flex col-span-6 xl:col-span-7 relative flex-col justify-between p-12 xl:p-16 text-white overflow-hidden  min-h-full">
       {/* Background Image with Dark Gradient Overlay */}
       <div className="absolute inset-0 z-0">
         <Image

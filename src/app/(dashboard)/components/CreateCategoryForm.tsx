@@ -57,7 +57,7 @@ const CreateCategoryForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     >
       {/* Details Section */}
       <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-        <div className="border-b border-border/60 pb-3 select-none">
+        <div className="border-b border-border/60 pb-3 ">
           <h3 className="text-sm font-extrabold text-foreground tracking-tight">
             Category Details
           </h3>
@@ -67,7 +67,7 @@ const CreateCategoryForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Category Name <span className="text-red-500">*</span>
           </label>
           <Input
@@ -83,7 +83,7 @@ const CreateCategoryForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Parent Category{" "}
             <span className="text-[10px] font-normal text-muted-foreground/60">
               (Leave empty for top-level)
@@ -120,7 +120,7 @@ const CreateCategoryForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Description{" "}
             <span className="text-[10px] font-normal text-muted-foreground/60">
               (Optional)
@@ -136,7 +136,7 @@ const CreateCategoryForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/60 select-none">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/60 ">
         <Button
           type="button"
           variant="ghost"

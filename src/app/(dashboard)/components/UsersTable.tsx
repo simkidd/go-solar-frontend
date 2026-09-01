@@ -140,7 +140,7 @@ const UsersTable = () => {
   return (
     <div className="w-full space-y-5 font-inter">
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <UserCheck className="h-5 w-5 text-primary" />
@@ -209,7 +209,7 @@ const UsersTable = () => {
         </div>
 
         {/* Counter */}
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {pagination.total} registered customers</span>
         </div>
       </div>
@@ -222,7 +222,7 @@ const UsersTable = () => {
               {columns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none ${
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  ${
                     col.uid === "actions" ? "text-right px-4" : ""
                   }`}
                 >
@@ -418,7 +418,7 @@ const UsersTable = () => {
         >
           {/* Details Card */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-            <div className="border-b border-border/60 pb-3 select-none">
+            <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                 Customer Profile
               </h3>
@@ -430,7 +430,7 @@ const UsersTable = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   First Name <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -447,7 +447,7 @@ const UsersTable = () => {
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                   Last Name <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -466,7 +466,7 @@ const UsersTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Email Address <span className="text-red-500">*</span>
               </label>
               <Input
@@ -483,7 +483,7 @@ const UsersTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Phone Number <span className="text-red-500">*</span>
               </label>
               <Input
@@ -501,7 +501,7 @@ const UsersTable = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block select-none">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
                 Password <span className="text-red-500">*</span>
               </label>
               <Input

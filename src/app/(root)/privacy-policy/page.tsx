@@ -4,7 +4,7 @@ import { Shield, Eye, Lock, RefreshCw } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | GoSolar",
+  title: "Privacy Policy",
   description:
     "Learn how GoSolar Nigeria handles, protects, and utilizes the data collected through our solar sizing tools and quote request submissions.",
 };
@@ -199,7 +199,7 @@ const PrivacyPage = () => {
                   >
                     gosolardotng@gmail.com
                   </a>{" "}
-                  | Tel: +234 706 276 2879
+                  | Tel: +234 706 276 2879, +234 802 708 2120
                 </p>
               </div>
             </div>

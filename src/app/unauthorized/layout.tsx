@@ -6,7 +6,7 @@ import "@/app/globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Access Denied | GoSolar",
+  title: "Access Denied | GoSolar Ng",
   description: "You do not have permission to access this page.",
   robots: { index: false, follow: false },
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { formatCurrency } from "@/utils/helpers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -11,12 +11,15 @@ import {
   Sparkles,
   AlertCircle,
   RefreshCcw,
+  ArrowRight,
+  DollarSign,
 } from "lucide-react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import AddToCartBtn from "./components/AddToCartBtn";
 import ProductImages from "@/app/(ecommerce)/components/shop/ProductImages";
 import { usePackageByIdQuery } from "@/hooks/queries/usePackagesQuery";
 import { SolarPackage } from "@/interfaces/package.interface";
+import FinancingApplyModal from "@/components/custom/FinancingApplyModal";
 
 interface PackagePageClientProps {
   package: SolarPackage;
@@ -25,6 +28,11 @@ interface PackagePageClientProps {
 const PackagePageClient: React.FC<PackagePageClientProps> = ({
   package: pkg,
 }) => {
+  const [financingModalOpen, setFinancingModalOpen] = useState(false);
+  const [financingProfileType, setFinancingProfileType] = useState<
+    "individual" | "corporate" | ""
+  >("individual");
+
   if (!pkg) {
     notFound();
   }
@@ -122,19 +130,15 @@ const PackagePageClient: React.FC<PackagePageClientProps> = ({
             >
               Store
             </Link>
-            <span className="text-zinc-300 dark:text-zinc-700 select-none">
-              /
-            </span>
+            <span className="text-zinc-300 dark:text-zinc-700 ">/</span>
             <Link
               href="/packages"
               className="hover:text-zinc-955 dark:hover:text-white transition-colors"
             >
               Packages
             </Link>
-            <span className="text-zinc-300 dark:text-zinc-700 select-none">
-              /
-            </span>
-            <span className="text-zinc-900 dark:text-white font-bold select-none truncate max-w-[280px]">
+            <span className="text-zinc-300 dark:text-zinc-700 ">/</span>
+            <span className="text-zinc-900 dark:text-white font-bold  truncate max-w-[280px]">
               {pkg.name}
             </span>
           </nav>
@@ -250,7 +254,13 @@ const PackagePageClient: React.FC<PackagePageClientProps> = ({
                 </div>
 
                 {/* Action button handlers client-side */}
-                <AddToCartBtn pkg={pkg} />
+                <AddToCartBtn
+                  pkg={pkg}
+                  onOpenFinancing={(type) => {
+                    setFinancingProfileType(type);
+                    setFinancingModalOpen(true);
+                  }}
+                />
 
                 {/* Good to know block */}
                 <div className="space-y-2 pt-4 border-t border-zinc-100 dark:border-zinc-800 font-semibold">
@@ -307,6 +317,14 @@ const PackagePageClient: React.FC<PackagePageClientProps> = ({
           </div>
         </div>
       </section>
+
+      {/* Financing Application Modal */}
+      <FinancingApplyModal
+        open={financingModalOpen}
+        onClose={() => setFinancingModalOpen(false)}
+        initialProfileType={financingProfileType}
+        initialPackageId={pkg._id}
+      />
     </div>
   );
 };

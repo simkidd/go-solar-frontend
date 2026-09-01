@@ -1,9 +1,13 @@
 import React from "react";
 import { MapPin, Phone, Mail, CalendarDays } from "lucide-react";
 import Link from "next/link";
-import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
-import LogoIcon from "@/assets/gosolar-logo-icon.svg";
-import Image from "next/image";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaXTwitter,
+  FaTiktok,
+} from "react-icons/fa6";
+import Logo from "@/components/Logo";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const Footer = () => {
@@ -16,35 +20,34 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand Info */}
           <div className="space-y-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 select-none group"
-            >
-              <Image
-                src={LogoIcon}
-                alt="logo"
-                width={36}
-                height={36}
-                className="object-contain group-hover:rotate-12 transition-transform duration-300"
-                style={{ height: "auto" }}
-              />
-              <span className="font-extrabold text-lg text-zinc-900 dark:text-white tracking-tight mt-2">
-                Go<span className="text-primary">Solar</span>
-              </span>
-            </Link>
+            <Logo />
             <p className="text-xs leading-relaxed font-semibold">
               Leading provider of sustainable structural solar energy solutions
               in Port Harcourt, Nigeria.
             </p>
             {/* Social Badges with hover fill animations */}
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-2.5 pt-2">
               {[
                 {
-                  href: "https://www.facebook.com/Gosolar.ng",
+                  name: "Facebook",
+                  href: "https://www.facebook.com/gosolar.ng",
                   icon: FaFacebookF,
                 },
-                { href: "https://twitter.com/Gosolarng", icon: FaXTwitter },
-                { href: "#", icon: FaInstagram },
+                {
+                  name: "Instagram",
+                  href: "https://instagram.com/gosolardotng",
+                  icon: FaInstagram,
+                },
+                {
+                  name: "X (Twitter)",
+                  href: "https://x.com/gosolarng",
+                  icon: FaXTwitter,
+                },
+                {
+                  name: "TikTok",
+                  href: "https://www.tiktok.com/@gosolarng",
+                  icon: FaTiktok,
+                },
               ].map((social, idx) => {
                 const Icon = social.icon;
                 return (
@@ -52,6 +55,8 @@ const Footer = () => {
                     key={idx}
                     href={social.href}
                     target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
                     className="h-8 w-8 rounded-full bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:text-white hover:bg-primary dark:hover:bg-primary transition-all duration-300 flex items-center justify-center border border-border shadow-xs"
                   >
                     <Icon className="h-3.5 w-3.5" />
@@ -137,14 +142,22 @@ const Footer = () => {
                   4 Eneka, Igwuruta Road, Airport road, Port Harcourt
                 </a>
               </li>
-              <li className="flex items-center gap-2.5">
-                <Phone className="h-4.5 w-4.5 text-primary shrink-0" />
-                <a
-                  href="tel:+2347062762879"
-                  className="hover:text-primary transition-colors"
-                >
-                  0706 276 2879
-                </a>
+              <li className="flex items-start gap-2.5">
+                <Phone className="h-4.5 w-4.5 text-primary shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-1">
+                  <a
+                    href="tel:+2347062762879"
+                    className="hover:text-primary transition-colors"
+                  >
+                    0706 276 2879
+                  </a>
+                  <a
+                    href="tel:+2348027082120"
+                    className="hover:text-primary transition-colors"
+                  >
+                    0802 708 2120
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="h-4.5 w-4.5 text-primary shrink-0" />
@@ -155,7 +168,7 @@ const Footer = () => {
                   gosolardotng@gmail.com
                 </a>
               </li>
-              <li className="flex items-start gap-2.5 text-zinc-400 dark:text-zinc-500 font-semibold">
+              <li className="flex items-start gap-2.5">
                 <CalendarDays className="h-4.5 w-4.5 text-primary shrink-0 mt-0.5" />
                 <span>
                   Mon - Friday
@@ -170,8 +183,8 @@ const Footer = () => {
         {/* Bottom Copyright & Switcher Bar */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
           {/* Left section: Copyright */}
-          <div className="text-center md:text-left select-none">
-            <p>&copy; {today.getFullYear()} GoSolar. All rights reserved.</p>
+          <div className="text-center md:text-left ">
+            <p>&copy; {today.getFullYear()} GoSolar Ng. All rights reserved.</p>
           </div>
 
           {/* Centered Theme Switcher */}
@@ -180,7 +193,7 @@ const Footer = () => {
           </div>
 
           {/* Right Credits */}
-          <p className="text-center md:text-right select-none">
+          <p className="text-center md:text-right ">
             Designed & Built by{" "}
             <a
               href="https://www.linkedin.com/company/24-karats/"

@@ -224,7 +224,7 @@ const BannersTable = () => {
                       <Sparkles className="h-2.5 w-2.5" />
                       {banner.badge || "Highlight"}
                     </span>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-white/20 text-white backdrop-blur-md border border-white/10 select-none">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-white/20 text-white backdrop-blur-md border border-white/10 ">
                       {getPlacementLabel(banner.placement)}
                     </span>
                   </div>

@@ -12,7 +12,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarDays, CheckCircle2, ShoppingCart, DollarSign } from "lucide-react";
+import {
+  CalendarDays,
+  CheckCircle2,
+  ShoppingCart,
+  DollarSign,
+} from "lucide-react";
 import Link from "next/link";
 import { useCreateQuoteMutation } from "@/hooks/mutations/useQuoteMutations";
 import { useForm } from "react-hook-form";
@@ -28,16 +33,22 @@ interface InquiryFormValues {
   message: string;
 }
 
-const AddToCartBtn = ({ pkg }: { pkg: any }) => {
+interface AddToCartBtnProps {
+  pkg: any;
+  onOpenFinancing?: (type: "individual" | "corporate") => void;
+}
+
+const AddToCartBtn = ({ pkg, onOpenFinancing }: AddToCartBtnProps) => {
   const { addItem, cartItems } = useCartStore();
   const isInCart = cartItems.some((item) => item.product._id === pkg._id);
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleAddToCart = () => {
-    const images = pkg.constituents
-      ?.map((c: any) => c.product?.images?.[0])
-      .filter(Boolean) || [];
+    const images =
+      pkg.constituents
+        ?.map((c: any) => c.product?.images?.[0])
+        .filter(Boolean) || [];
 
     addItem({
       product: {
@@ -47,7 +58,10 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
         price: pkg.price,
         discountPrice: pkg.discountPrice,
         description: pkg.description,
-        images: images.length > 0 ? images : [{ url: "/images/bg/hero-bg.jpg", public_id: "hero" }],
+        images:
+          images.length > 0
+            ? images
+            : [{ url: "/images/bg/hero-bg.jpg", public_id: "hero" }],
         quantityInStock: pkg.inStock ? 100 : 0,
         additionalInfo: pkg.highlights?.join(", ") || "",
         brand: "GoSolar System",
@@ -151,22 +165,42 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
         Book Free Assessment
       </Button>
 
-      {/* Financing Button */}
-      <Link href={`?apply-financing=true&packageId=${pkg._id}`} className="block w-full">
-        <Button
-          variant="outline"
-          className="w-full border-primary/30 hover:bg-primary/5 text-primary font-extrabold rounded-xl h-11 text-xs cursor-pointer flex items-center justify-center gap-1.5"
-        >
-          <DollarSign className="h-4 w-4" />
-          Apply for Financing
-        </Button>
-      </Link>
+      {/* Financing Quick Triggers */}
+      <div className="p-3 bg-zinc-50/70 dark:bg-zinc-850/40 rounded-2xl border border-zinc-150 dark:border-zinc-800 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+            <DollarSign className="h-3.5 w-3.5 text-primary" />
+            Solar Financing
+          </span>
+          <span className="text-[9px] font-extrabold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+            Installments
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenFinancing?.("individual")}
+            className="w-full border-primary/30 hover:bg-primary/5 text-primary font-bold rounded-xl h-9 text-[11px] cursor-pointer flex items-center justify-center gap-1 transition-all"
+          >
+            Individual
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenFinancing?.("corporate")}
+            className="w-full border-primary/30 hover:bg-primary/5 text-primary font-bold rounded-xl h-9 text-[11px] cursor-pointer flex items-center justify-center gap-1 transition-all"
+          >
+            Corporate
+          </Button>
+        </div>
+      </div>
 
       {/* Inquiry Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[480px] bg-card text-card-foreground border-border rounded-2xl">
           {submitted ? (
-            <div className="text-center py-6 space-y-4 select-none">
+            <div className="text-center py-6 space-y-4 ">
               <div className="h-14 w-14 bg-[#08AA08]/10 text-[#08AA08] rounded-full flex items-center justify-center mx-auto">
                 <CheckCircle2 className="h-7 w-7" />
               </div>
@@ -175,7 +209,9 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
                   Request Submitted!
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
-                  Thank you for your interest in the <b>{pkg.name}</b> setup. Our clean energy support team has recorded your details and will call you back shortly.
+                  Thank you for your interest in the <b>{pkg.name}</b> setup.
+                  Our clean energy support team has recorded your details and
+                  will call you back shortly.
                 </p>
               </div>
               <Button
@@ -186,8 +222,11 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 font-inter text-left">
-              <DialogHeader className="space-y-1.5 pb-2 border-b border-border/60 select-none">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4 font-inter text-left"
+            >
+              <DialogHeader className="space-y-1.5 pb-2 border-b border-border/60 ">
                 <DialogTitle className="text-sm font-extrabold text-foreground tracking-tight uppercase">
                   Book Free Assessment
                 </DialogTitle>
@@ -198,7 +237,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
 
               <div className="space-y-3.5 pt-2">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                     Full Name <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -207,27 +246,33 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
                     className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold"
                   />
                   {errors.fullName && (
-                    <p className="text-[10px] text-red-500 font-semibold">{errors.fullName.message}</p>
+                    <p className="text-[10px] text-red-500 font-semibold">
+                      {errors.fullName.message}
+                    </p>
                   )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                       Phone Number <span className="text-red-500">*</span>
                     </label>
                     <Input
                       placeholder="e.g. +234 803 111 2222"
-                      {...register("phoneNumber", { required: "Phone number is required" })}
+                      {...register("phoneNumber", {
+                        required: "Phone number is required",
+                      })}
                       className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold"
                     />
                     {errors.phoneNumber && (
-                      <p className="text-[10px] text-red-500 font-semibold">{errors.phoneNumber.message}</p>
+                      <p className="text-[10px] text-red-500 font-semibold">
+                        {errors.phoneNumber.message}
+                      </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                       Email Address <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -237,14 +282,16 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
                       className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary font-semibold"
                     />
                     {errors.email && (
-                      <p className="text-[10px] text-red-500 font-semibold">{errors.email.message}</p>
+                      <p className="text-[10px] text-red-500 font-semibold">
+                        {errors.email.message}
+                      </p>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                       State
                     </label>
                     <Input
@@ -254,7 +301,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                       City
                     </label>
                     <Input
@@ -265,7 +312,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                     Installation Address
                   </label>
                   <Input
@@ -276,7 +323,7 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                     Special Requests / Message
                   </label>
                   <Textarea
@@ -302,7 +349,9 @@ const AddToCartBtn = ({ pkg }: { pkg: any }) => {
                   disabled={createQuoteMutation.isPending}
                   className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-10 px-6 rounded-xl shadow-xs cursor-pointer"
                 >
-                  {createQuoteMutation.isPending ? "Submitting..." : "Submit Request"}
+                  {createQuoteMutation.isPending
+                    ? "Submitting..."
+                    : "Submit Request"}
                 </Button>
               </DialogFooter>
             </form>

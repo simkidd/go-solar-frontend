@@ -130,7 +130,7 @@ export default function FinancingApplyClient() {
 
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 max-w-lg py-16 text-center select-none font-inter">
+      <div className="container mx-auto px-4 max-w-lg py-16 text-center  font-inter">
         <Card className="border-border rounded-2xl p-6 shadow-sm bg-white dark:bg-zinc-900">
           <CardContent className="space-y-4 pt-4">
             <div className="h-14 w-14 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto">
@@ -207,7 +207,7 @@ export default function FinancingApplyClient() {
                   </h3>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                       Select Package
                     </label>
                     <Select
@@ -247,7 +247,7 @@ export default function FinancingApplyClient() {
                   {watchPackageId === "custom" && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                           System Size / Title{" "}
                           <span className="text-red-500">*</span>
                         </label>
@@ -269,7 +269,7 @@ export default function FinancingApplyClient() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                           Total Quote Amount (NGN){" "}
                           <span className="text-red-500">*</span>
                         </label>
@@ -301,7 +301,7 @@ export default function FinancingApplyClient() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                         Down Payment Percentage
                       </label>
                       <Select
@@ -343,7 +343,7 @@ export default function FinancingApplyClient() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                         Repayment Duration
                       </label>
                       <Select
@@ -393,7 +393,7 @@ export default function FinancingApplyClient() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                         Employment Status
                       </label>
                       <Select
@@ -435,7 +435,7 @@ export default function FinancingApplyClient() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                         Monthly Income (NGN){" "}
                         <span className="text-red-500">*</span>
                       </label>
@@ -457,7 +457,7 @@ export default function FinancingApplyClient() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                         Employer / Company Name
                       </label>
                       <Input
@@ -468,7 +468,7 @@ export default function FinancingApplyClient() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                         Contact Phone Number{" "}
                         <span className="text-red-500">*</span>
                       </label>
@@ -488,7 +488,7 @@ export default function FinancingApplyClient() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
                       Residential or Office Address{" "}
                       <span className="text-red-500">*</span>
                     </label>
@@ -602,7 +602,7 @@ export default function FinancingApplyClient() {
 
       {/* Success Dialog */}
       <Dialog open={isSuccessOpen} onOpenChange={setIsSuccessOpen}>
-        <DialogContent className="sm:max-w-[480px] bg-card text-card-foreground border-border rounded-2xl select-none text-center py-6 space-y-4">
+        <DialogContent className="sm:max-w-[480px] bg-card text-card-foreground border-border rounded-2xl  text-center py-6 space-y-4">
           <div className="h-14 w-14 bg-[#08AA08]/10 text-[#08AA08] rounded-full flex items-center justify-center mx-auto">
             <CheckCircle2 className="h-7 w-7" />
           </div>

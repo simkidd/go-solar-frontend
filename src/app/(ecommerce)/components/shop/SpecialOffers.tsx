@@ -6,9 +6,8 @@ const SpecialOffers: React.FC<{ offers: Offer[] }> = ({ offers }) => {
     <>
       {offers && offers.length > 0 && (
         <section className="w-full py-6 font-inter">
-          
           {/* Section Header */}
-          <div className="flex items-end justify-between border-b border-border/60 pb-4 select-none mb-8">
+          <div className="flex items-end justify-between border-b border-border/60 pb-4  mb-8">
             <div className="space-y-0.5">
               <span className="text-[10px] font-black uppercase tracking-widest text-primary">
                 Limited Campaigns
@@ -27,8 +26,8 @@ const SpecialOffers: React.FC<{ offers: Offer[] }> = ({ offers }) => {
               >
                 {/* Accent Background Pattern */}
                 <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors duration-300" />
-                
-                <div className="absolute top-4 right-4 bg-primary/10 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full select-none">
+
+                <div className="absolute top-4 right-4 bg-primary/10 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full ">
                   Limited Time
                 </div>
 
@@ -41,7 +40,7 @@ const SpecialOffers: React.FC<{ offers: Offer[] }> = ({ offers }) => {
                   </p>
                 </div>
 
-                <p className="text-5xl font-black text-primary tracking-tight select-none mt-auto">
+                <p className="text-5xl font-black text-primary tracking-tight  mt-auto">
                   {offer.percentageOff}% Off
                 </p>
               </div>
@@ -55,7 +54,7 @@ const SpecialOffers: React.FC<{ offers: Offer[] }> = ({ offers }) => {
                 >
                   <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors duration-300" />
 
-                  <div className="absolute top-4 right-4 bg-primary/10 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full select-none">
+                  <div className="absolute top-4 right-4 bg-primary/10 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full ">
                     Limited Time
                   </div>
 
@@ -65,7 +64,7 @@ const SpecialOffers: React.FC<{ offers: Offer[] }> = ({ offers }) => {
                     </h3>
                   </div>
 
-                  <p className="text-4xl font-black text-primary tracking-tight select-none mt-auto">
+                  <p className="text-4xl font-black text-primary tracking-tight  mt-auto">
                     {offer.percentageOff}% Off
                   </p>
                 </div>

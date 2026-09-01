@@ -69,15 +69,18 @@ const UpdateOfferForm: React.FC<{
   };
 
   return (
-    <form className="w-full font-inter flex flex-col gap-5 pt-2 text-left" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="w-full font-inter flex flex-col gap-5 pt-2 text-left"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       {/* Offer Info Section */}
       <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none flex items-center gap-1.5 border-b border-border/60 pb-3">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  flex items-center gap-1.5 border-b border-border/60 pb-3">
           <Tag className="h-3.5 w-3.5 text-primary" /> Offer Information
         </p>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Title <span className="text-red-500">*</span>
           </label>
           <Input
@@ -85,33 +88,41 @@ const UpdateOfferForm: React.FC<{
             {...register("name", { required: "Offer title is required" })}
             className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
           />
-          {errors.name && <p className="text-xs text-red-500 font-semibold mt-0.5">{errors.name.message}</p>}
+          {errors.name && (
+            <p className="text-xs text-red-500 font-semibold mt-0.5">
+              {errors.name.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Description <span className="text-red-500">*</span>
           </label>
           <Textarea
             placeholder="Describe what this offer covers"
             rows={3}
-            {...register("description", { required: "Offer description is required" })}
+            {...register("description", {
+              required: "Offer description is required",
+            })}
             className="text-xs bg-muted/30 border-border rounded-xl focus-visible:ring-primary resize-none p-3"
           />
           {errors.description && (
-            <p className="text-xs text-red-500 font-semibold mt-0.5">{errors.description.message}</p>
+            <p className="text-xs text-red-500 font-semibold mt-0.5">
+              {errors.description.message}
+            </p>
           )}
         </div>
       </div>
 
       {/* Discount & Campaign Period Section */}
       <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none flex items-center gap-1.5 border-b border-border/60 pb-3">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  flex items-center gap-1.5 border-b border-border/60 pb-3">
           <Calendar className="h-3.5 w-3.5 text-primary" /> Campaign Settings
         </p>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Percentage Off (%) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -126,17 +137,21 @@ const UpdateOfferForm: React.FC<{
               })}
               className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary pr-8"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-black">%</span>
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-black">
+              %
+            </span>
           </div>
           {errors.percentageOff && (
-            <p className="text-xs text-red-500 font-semibold mt-0.5">{errors.percentageOff.message}</p>
+            <p className="text-xs text-red-500 font-semibold mt-0.5">
+              {errors.percentageOff.message}
+            </p>
           )}
         </div>
 
         {/* Start and End Dates */}
         <div className="grid grid-cols-2 gap-4 pt-1">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
               Start Date
             </label>
             <Input
@@ -146,7 +161,7 @@ const UpdateOfferForm: React.FC<{
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
               End Date
             </label>
             <Input
@@ -160,8 +175,12 @@ const UpdateOfferForm: React.FC<{
         {/* Active Toggle */}
         <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/20 border border-border/80">
           <div>
-            <p className="text-xs font-bold text-foreground">Activate Campaign</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5 font-semibold">Make this offer live on the storefront</p>
+            <p className="text-xs font-bold text-foreground">
+              Activate Campaign
+            </p>
+            <p className="text-[10px] text-muted-foreground mt-0.5 font-semibold">
+              Make this offer live on the storefront
+            </p>
           </div>
           <Controller
             control={control}
@@ -179,7 +198,7 @@ const UpdateOfferForm: React.FC<{
       </div>
 
       {/* Footer Actions */}
-      <div className="flex items-center justify-end gap-2 pt-2 select-none border-t border-border/40">
+      <div className="flex items-center justify-end gap-2 pt-2  border-t border-border/40">
         <Button
           type="button"
           variant="ghost"

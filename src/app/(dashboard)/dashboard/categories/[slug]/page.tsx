@@ -44,8 +44,8 @@ const SingleCatgory = async ({ params }: IProp) => {
 
   return (
     <div className="w-full font-inter space-y-4">
-      <div className="flex items-center justify-between select-none">
-        <Link 
+      <div className="flex items-center justify-between ">
+        <Link
           href="/dashboard/categories"
           className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >

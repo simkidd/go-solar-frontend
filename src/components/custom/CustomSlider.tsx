@@ -43,10 +43,15 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
   const maxPercent = ((visualMaxVal - min) / (max - min)) * 100;
 
   return (
-    <div className={cn("relative w-full flex flex-col items-center justify-center h-5 select-none", className)}>
+    <div
+      className={cn(
+        "relative w-full flex flex-col items-center justify-center h-5 ",
+        className,
+      )}
+    >
       {/* Custom Track */}
       <div className="absolute left-0 right-0 h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full" />
-      
+
       {/* Highlighted range track fill */}
       <div
         className="absolute h-1.5 bg-primary dark:bg-emerald-500 rounded-full"

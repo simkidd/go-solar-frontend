@@ -21,12 +21,13 @@ const cards = [
 
 export default function FinancingSection() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [profileType, setProfileType] = useState<"individual" | "corporate" | "">("");
 
   return (
-    <section className="w-full py-24 bg-zinc-50 dark:bg-zinc-900/10 font-inter">
+    <section id="financing" className="w-full py-24 bg-zinc-50 dark:bg-zinc-900/10 font-inter">
       <div className="container mx-auto px-4 space-y-16">
         {/* Header */}
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3 select-none">
+        <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3 ">
           <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
             Flexible Payments
           </span>
@@ -34,8 +35,9 @@ export default function FinancingSection() {
             Solar Financing Options
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed font-semibold">
-            Break free from grid tariffs and generator noise. Own clean, reliable
-            solar power now and pay at your pace — for both homes and businesses.
+            Break free from grid tariffs and generator noise. Own clean,
+            reliable solar power now and pay at your pace — for both homes and
+            businesses.
           </p>
         </div>
 
@@ -59,29 +61,33 @@ export default function FinancingSection() {
                 </p>
               </div>
 
-              <div className="pt-5 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="pt-5 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
                 <span className="text-[9px] font-extrabold uppercase tracking-widest text-primary/70">
                   {card.requirement}
                 </span>
+                <Button
+                  onClick={() => {
+                    setProfileType(index === 0 ? "individual" : "corporate");
+                    setModalOpen(true);
+                  }}
+                  variant="ghost"
+                  className="text-primary hover:text-primary/80 hover:bg-primary/5 font-extrabold text-[10px] uppercase tracking-wider h-8 px-3 rounded-lg flex items-center gap-1 cursor-pointer transition-colors"
+                >
+                  Learn More
+                  <ArrowRight className="h-3 w-3" />
+                </Button>
               </div>
             </motion.div>
           ))}
         </div>
-
-        {/* CTA */}
-        <div className="flex justify-center pt-4">
-          <Button
-            onClick={() => setModalOpen(true)}
-            className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider h-11 px-8 rounded-full flex items-center gap-1.5"
-          >
-            Apply for Financing
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Button>
-        </div>
       </div>
 
       {/* Modal — controlled locally, no URL params */}
-      <FinancingApplyModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <FinancingApplyModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        initialProfileType={profileType}
+      />
     </section>
   );
 }

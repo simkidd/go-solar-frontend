@@ -14,7 +14,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   link,
 }) => {
   return (
-    <Link href={link} className="group font-inter block select-none">
+    <Link href={link} className="group font-inter block ">
       <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-card border border-border/80 hover:border-primary/20 hover:shadow-md hover:shadow-primary/[0.01] transition-all duration-300">
         <div className="text-xl mb-3 flex items-center justify-center rounded-xl bg-muted group-hover:bg-primary/10 group-hover:text-primary w-11 h-11 transition-all duration-300 text-muted-foreground">
           <Icon className="group-hover:scale-105 transition-transform duration-300" />

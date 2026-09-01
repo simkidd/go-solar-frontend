@@ -10,15 +10,6 @@ export const FINANCING_KEYS = {
     [...FINANCING_KEYS.all, "admin", { page, status }] as const,
 };
 
-export const useMyFinancingRequestsQuery = () => {
-  return useQuery({
-    queryKey: FINANCING_KEYS.my(),
-    queryFn: async () => {
-      const { data } = await axiosInstance.get("/financing/my-requests");
-      return data?.financingRequests || [];
-    },
-  });
-};
 
 export const useSingleFinancingQuery = (id: string, enabled = true) => {
   return useQuery({

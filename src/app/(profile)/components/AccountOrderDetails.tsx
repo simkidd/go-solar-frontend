@@ -281,7 +281,7 @@ const AccountOrderDetails: React.FC<{
                   <span className="font-black text-foreground">
                     {formatCurrency(item?.product?.price, "NGN")}
                   </span>
-                  <div className="flex items-center gap-2 select-none">
+                  <div className="flex items-center gap-2 ">
                     <span className="text-muted-foreground font-extrabold text-[10px] uppercase">
                       Quantity: {item?.qty}
                     </span>
@@ -371,7 +371,9 @@ const AccountOrderDetails: React.FC<{
                   disabled={updateStatusMutation.isPending}
                   onClick={handleConfirmReceipt}
                 >
-                  {updateStatusMutation.isPending ? "Confirming..." : "Yes, Confirm"}
+                  {updateStatusMutation.isPending
+                    ? "Confirming..."
+                    : "Yes, Confirm"}
                 </Button>
               </DialogFooter>
             </DialogContent>

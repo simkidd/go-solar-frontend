@@ -131,7 +131,7 @@ const OrdersTable = () => {
   return (
     <div className="space-y-5 font-inter">
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
         <div>
           <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2 tracking-tight">
             <ShoppingBag className="h-5 w-5 text-primary" />
@@ -167,7 +167,7 @@ const OrdersTable = () => {
             />
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap select-none">
+          <div className="flex items-center gap-2 flex-wrap ">
             {(hasSearchFilter || statusFilter !== "All") && (
               <Button
                 variant="ghost"
@@ -187,21 +187,34 @@ const OrdersTable = () => {
                 >
                   {statusFilter === "All"
                     ? "All Statuses"
-                    : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+                    : statusFilter.charAt(0).toUpperCase() +
+                      statusFilter.slice(1)}
                   <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-40 rounded-xl bg-card border border-border/80">
-                <DropdownMenuItem onClick={() => onStatusFilterChange("All")} className="cursor-pointer text-xs font-bold">
+                <DropdownMenuItem
+                  onClick={() => onStatusFilterChange("All")}
+                  className="cursor-pointer text-xs font-bold"
+                >
                   All Statuses
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onStatusFilterChange("processing")} className="cursor-pointer text-xs font-bold">
+                <DropdownMenuItem
+                  onClick={() => onStatusFilterChange("processing")}
+                  className="cursor-pointer text-xs font-bold"
+                >
                   Processing
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onStatusFilterChange("delivered")} className="cursor-pointer text-xs font-bold">
+                <DropdownMenuItem
+                  onClick={() => onStatusFilterChange("delivered")}
+                  className="cursor-pointer text-xs font-bold"
+                >
                   Delivered
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onStatusFilterChange("received")} className="cursor-pointer text-xs font-bold">
+                <DropdownMenuItem
+                  onClick={() => onStatusFilterChange("received")}
+                  className="cursor-pointer text-xs font-bold"
+                >
                   Received
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -210,7 +223,7 @@ const OrdersTable = () => {
         </div>
 
         {/* Counter and row switcher */}
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 select-none font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
           <span>Total {orders.length} orders listed</span>
         </div>
       </div>
@@ -223,7 +236,7 @@ const OrdersTable = () => {
               {columns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 select-none ${
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  ${
                     col.uid === "actions" ? "text-right" : ""
                   }`}
                 >
@@ -278,7 +291,7 @@ const OrdersTable = () => {
                           </span>
                         )}
                         {columnKey === "dateOrdered" && (
-                          <span className="font-semibold text-muted-foreground select-none">
+                          <span className="font-semibold text-muted-foreground ">
                             {formatDate(order?.createdAt)}
                           </span>
                         )}
@@ -288,7 +301,7 @@ const OrdersTable = () => {
                           </span>
                         )}
                         {columnKey === "trackingStatus" && (
-                          <div className="select-none">
+                          <div className="">
                             <span
                               className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest border ${getChipStyles(order?.trackingStatus)}`}
                             >
@@ -297,7 +310,7 @@ const OrdersTable = () => {
                           </div>
                         )}
                         {columnKey === "actions" && (
-                          <div className="flex justify-end select-none">
+                          <div className="flex justify-end ">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button
@@ -339,7 +352,7 @@ const OrdersTable = () => {
 
       {/* Pagination Controls */}
       {pages > 1 && (
-        <div className="flex items-center justify-between py-3 border-t border-border/60 select-none">
+        <div className="flex items-center justify-between py-3 border-t border-border/60 ">
           <div className="text-xs text-muted-foreground font-bold">
             Page {page} of {pages}
           </div>

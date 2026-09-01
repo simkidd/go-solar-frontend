@@ -62,7 +62,7 @@ const Review = ({ reviews }: { reviews: IReview[] }) => {
 
   return (
     <>
-      <div className="w-full relative py-8 px-2 font-inter select-none">
+      <div className="w-full relative py-8 px-2 font-inter ">
         <Swiper
           spaceBetween={30}
           slidesPerView={1}
@@ -72,6 +72,10 @@ const Review = ({ reviews }: { reviews: IReview[] }) => {
           pagination={{ clickable: true, dynamicBullets: true }}
           breakpoints={{
             640: {
+              slidesPerView: 1.5,
+              centeredSlides: true,
+            },
+            768: {
               slidesPerView: 2,
               centeredSlides: false,
             },
@@ -98,8 +102,8 @@ const Review = ({ reviews }: { reviews: IReview[] }) => {
                     }
                     className={`h-[340px] rounded-3xl p-8 border flex flex-col justify-between transition-all duration-500 cursor-pointer relative overflow-hidden group ${
                       isActive
-                        ? "scale-105 opacity-100 z-10 shadow-xl border-primary"
-                        : "scale-95 opacity-50 blur-[0.4px] border-border/80"
+                        ? "scale-100 lg:scale-105 opacity-100 z-10 shadow-xl border-primary"
+                        : "scale-98 lg:scale-95 opacity-50 blur-[0.4px] border-border/80"
                     } ${
                       isVideo
                         ? "bg-zinc-950 text-white border-zinc-800"
@@ -108,7 +112,7 @@ const Review = ({ reviews }: { reviews: IReview[] }) => {
                   >
                     {/* Background Preview Thumbnail for Video Reviews */}
                     {isVideo && (
-                      <div className="absolute inset-0 w-full h-full z-0 select-none pointer-events-none">
+                      <div className="absolute inset-0 w-full h-full z-0  pointer-events-none">
                         <img
                           src={getVideoThumbnail(rev.videoUrl)}
                           alt="Video Preview"

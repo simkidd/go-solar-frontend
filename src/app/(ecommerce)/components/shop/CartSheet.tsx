@@ -33,7 +33,7 @@ export const CartSheet = () => {
           <div className="relative">
             <ShoppingCart className="h-4 w-4" />
             {cartCount > 0 && (
-              <span className="absolute -top-2.5 -right-2.5 bg-primary text-white rounded-full text-[9px] font-black w-4.5 h-4.5 flex items-center justify-center border-2 border-background select-none">
+              <span className="absolute -top-2.5 -right-2.5 bg-primary text-white rounded-full text-[9px] font-black w-4.5 h-4.5 flex items-center justify-center border-2 border-background ">
                 {cartCount}
               </span>
             )}
@@ -53,7 +53,7 @@ export const CartSheet = () => {
           </SheetHeader>
 
           {cartItems.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center py-20 text-center space-y-3 select-none">
+            <div className="flex-1 flex flex-col items-center justify-center py-20 text-center space-y-3 ">
               <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
                 <ShoppingCart className="h-5 w-5" />
               </div>
@@ -77,22 +77,21 @@ export const CartSheet = () => {
 
         {cartItems.length > 0 && (
           <div className="pt-4 border-t border-border/60 space-y-4">
-            <div className="space-y-2 select-none">
+            <div className="space-y-2 ">
               <div className="flex justify-between items-center text-xs font-semibold">
                 <span className="text-muted-foreground uppercase tracking-wider">
                   Subtotal
                 </span>
                 <span className="font-extrabold text-foreground">
                   {formatCurrency(
-                    cartItems.reduce(
-                      (acc, item) => {
-                        const activePrice = item.product.discountPrice && item.product.discountPrice > 0
+                    cartItems.reduce((acc, item) => {
+                      const activePrice =
+                        item.product.discountPrice &&
+                        item.product.discountPrice > 0
                           ? item.product.discountPrice
                           : item.product.price;
-                        return acc + activePrice * item.qty;
-                      },
-                      0,
-                    ),
+                      return acc + activePrice * item.qty;
+                    }, 0),
                     "NGN",
                   )}
                 </span>

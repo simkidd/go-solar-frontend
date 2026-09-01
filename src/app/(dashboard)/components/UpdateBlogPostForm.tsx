@@ -106,7 +106,7 @@ const UpdateBlogPostForm: React.FC<{
     >
       {/* Card 1: Editorial Information */}
       <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-        <div className="border-b border-border/60 pb-3 select-none">
+        <div className="border-b border-border/60 pb-3 ">
           <h3 className="text-sm font-extrabold text-foreground tracking-tight">
             Editorial Information
           </h3>
@@ -116,7 +116,7 @@ const UpdateBlogPostForm: React.FC<{
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Post Title <span className="text-red-500">*</span>
           </label>
           <Input
@@ -132,8 +132,11 @@ const UpdateBlogPostForm: React.FC<{
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
-            Short Excerpt / Summary <span className="text-[10px] font-normal text-muted-foreground/60">(Optional)</span>
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
+            Short Excerpt / Summary{" "}
+            <span className="text-[10px] font-normal text-muted-foreground/60">
+              (Optional)
+            </span>
           </label>
           <Textarea
             placeholder="Write a brief summary of the post for card listings and SEO..."
@@ -144,7 +147,7 @@ const UpdateBlogPostForm: React.FC<{
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Author <span className="text-red-500">*</span>
           </label>
           <Input
@@ -160,7 +163,7 @@ const UpdateBlogPostForm: React.FC<{
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Category Tags
           </label>
           <Controller
@@ -191,7 +194,7 @@ const UpdateBlogPostForm: React.FC<{
           />
           <label
             htmlFor="isPublished"
-            className="text-xs font-bold text-zinc-700 dark:text-zinc-300 select-none cursor-pointer"
+            className="text-xs font-bold text-zinc-700 dark:text-zinc-300  cursor-pointer"
           >
             Publish Immediately (Visible to users)
           </label>
@@ -200,7 +203,7 @@ const UpdateBlogPostForm: React.FC<{
 
       {/* Card 2: Post Content & Media */}
       <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
-        <div className="border-b border-border/60 pb-3 select-none">
+        <div className="border-b border-border/60 pb-3 ">
           <h3 className="text-sm font-extrabold text-foreground tracking-tight">
             Post Content & Media
           </h3>
@@ -210,7 +213,7 @@ const UpdateBlogPostForm: React.FC<{
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Content Body <span className="text-red-500">*</span>
           </label>
           <Controller
@@ -234,7 +237,7 @@ const UpdateBlogPostForm: React.FC<{
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground select-none block">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground  block">
             Featured Cover Image
           </label>
           <div
@@ -266,7 +269,7 @@ const UpdateBlogPostForm: React.FC<{
                 </button>
               </div>
             ) : post.image ? (
-              <div className="relative w-36 aspect-video rounded-xl overflow-hidden border border-border group select-none">
+              <div className="relative w-36 aspect-video rounded-xl overflow-hidden border border-border group ">
                 <Image
                   src={post.image}
                   alt="Current cover"
