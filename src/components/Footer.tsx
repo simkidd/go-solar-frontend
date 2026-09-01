@@ -1,7 +1,12 @@
 import React from "react";
 import { MapPin, Phone, Mail, CalendarDays } from "lucide-react";
 import Link from "next/link";
-import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaXTwitter,
+  FaTiktok,
+} from "react-icons/fa6";
 import Logo from "@/components/Logo";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
@@ -21,14 +26,28 @@ const Footer = () => {
               in Port Harcourt, Nigeria.
             </p>
             {/* Social Badges with hover fill animations */}
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-2.5 pt-2">
               {[
                 {
-                  href: "https://www.facebook.com/Gosolar.ng",
+                  name: "Facebook",
+                  href: "https://www.facebook.com/gosolar.ng",
                   icon: FaFacebookF,
                 },
-                { href: "https://twitter.com/Gosolarng", icon: FaXTwitter },
-                { href: "#", icon: FaInstagram },
+                {
+                  name: "Instagram",
+                  href: "https://instagram.com/gosolardotng",
+                  icon: FaInstagram,
+                },
+                {
+                  name: "X (Twitter)",
+                  href: "https://x.com/gosolarng",
+                  icon: FaXTwitter,
+                },
+                {
+                  name: "TikTok",
+                  href: "https://www.tiktok.com/@gosolarng",
+                  icon: FaTiktok,
+                },
               ].map((social, idx) => {
                 const Icon = social.icon;
                 return (
@@ -36,6 +55,8 @@ const Footer = () => {
                     key={idx}
                     href={social.href}
                     target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
                     className="h-8 w-8 rounded-full bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:text-white hover:bg-primary dark:hover:bg-primary transition-all duration-300 flex items-center justify-center border border-border shadow-xs"
                   >
                     <Icon className="h-3.5 w-3.5" />
