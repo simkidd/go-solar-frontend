@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import HomeContactCta from "@/components/home/HomeContactCta";
 import PageHeader from "@/components/PageHeader";
+import PartnerMarquee from "@/components/about/PartnerMarquee";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     "Learn more about GoSolar, our mission, vision, and our specialist leadership team dedicating to clean energy sizing across Nigeria.",
 };
 
+/*
 const TEAM_MEMBERS = [
   {
     name: "Adebayo Oladele",
@@ -58,15 +59,16 @@ const TEAM_MEMBERS = [
       "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&auto=format",
   },
 ];
+*/
 
 const AboutUsPage = () => {
   return (
     <div className="w-full font-inter bg-background text-foreground overflow-hidden">
       {/* ── Page Hero ────────────────────────────────────────────────── */}
       <PageHeader
-        badge="About GoSolar"
-        heading="Nigeria's Solar Energy Specialists Since 2009"
-        subtitle="GoSolar was founded with a single purpose: to make reliable, clean energy accessible to every Nigerian home and business. Today we are the country's most trusted solar energy company, with over 500 successful installations."
+        badge="About GoSolar Ng"
+        heading="Nigeria's emerging solar brand"
+        subtitle="GoSolar Ng was founded with a single purpose: to make reliable, clean energy accessible to every Nigerian home and business. Today we are the country's most trusted solar energy company, with over 500 successful installations."
         image="/images/bg/about-us.jpg"
         align="left"
         minHeight="min-h-[380px]"
@@ -79,7 +81,7 @@ const AboutUsPage = () => {
             {[
               { value: "200+", label: "Installations Completed" },
               { value: "5 MW", label: "Total Capacity Installed" },
-              { value: "15+", label: "Years in Business" },
+              { value: "11+", label: "Years in Business" },
               { value: "98%", label: "Customer Satisfaction" },
             ].map((s, idx) => (
               <div
@@ -113,62 +115,38 @@ const AboutUsPage = () => {
               </h2>
               <div className="space-y-4 text-muted-foreground text-sm leading-relaxed max-w-xl font-semibold">
                 <p>
-                  GoSolar was founded in 2009 by Adebayo Oladele, an electrical
-                  engineer who had spent years watching Nigerian homes and
-                  businesses struggle with unreliable grid electricity and
-                  spiralling diesel costs. He knew there was a better way.
+                  GoSolar Ng is a renewable energy brand owned and operated by
+                  Darasat Systems and Technology Ltd, a fully registered
+                  Nigerian company.
                 </p>
                 <p>
-                  Starting with a small team of three engineers in Lagos,
-                  GoSolar began by designing and installing residential solar
-                  systems in Ikoyi and Victoria Island. Word spread quickly.
-                  Within two years, the company had expanded to commercial
-                  installations and was delivering projects across Lagos, Abuja,
-                  and Port Harcourt.
+                  We provide reliable and professionally designed solar energy
+                  solutions for homes, businesses, institutions and commercial
+                  facilities across Nigeria.
                 </p>
                 <p>
-                  Today, GoSolar employs over 40 engineers, technicians, and
-                  support staff. We have completed more than 500 installations
-                  ranging from small residential backup systems to large
-                  commercial solar farms. Our technical team holds
-                  certifications from Victron Energy, SMA, and the Council for
-                  the Regulation of Engineering in Nigeria (COREN).
+                  From solar system design and equipment supply to installation,
+                  battery storage and after-sales support, our goal is simply to
+                  help Nigerians achieve more reliable and affordable
+                  electricity while reducing dependence on generators and the
+                  national grid.
                 </p>
                 <p>
-                  Our mission has not changed since 2009: to provide every
-                  Nigerian with access to clean, reliable, affordable energy.
+                  With experience in solar energy solutions and a growing
+                  portfolio of completed projects, we are committed to
+                  delivering quality equipment, proper system sizing,
+                  professional installation and dependable customer support.
                 </p>
               </div>
             </div>
-            <div className="space-y-8">
-              <div className="relative aspect-[16/10] w-full rounded-3xl overflow-hidden shadow-xs bg-muted ">
-                <Image
-                  src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=700&h=450&fit=crop&auto=format"
-                  alt="GoSolar installation team"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { year: "2009", desc: "Company founded in Lagos" },
-                  { year: "2015", desc: "First commercial installation" },
-                  { year: "2020", desc: "Reached 250 installations" },
-                  { year: "2024", desc: "5 MW total capacity milestone" },
-                ].map((milestone) => (
-                  <div
-                    key={milestone.year}
-                    className="bg-card text-card-foreground border border-border/80 rounded-2xl p-5 shadow-2xs "
-                  >
-                    <div className="font-heading font-black text-2xl text-primary mb-0.5">
-                      {milestone.year}
-                    </div>
-                    <div className="text-xs text-muted-foreground font-semibold">
-                      {milestone.desc}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="relative aspect-[4/3] lg:aspect-[16/11] w-full rounded-3xl overflow-hidden shadow-md border border-border/70 bg-muted">
+              <Image
+                src="/images/about-story.jpg"
+                alt="GoSolar certified engineers and installation team at work"
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
         </div>
@@ -276,7 +254,8 @@ const AboutUsPage = () => {
         </div>
       </section>
 
-      {/* ── Team Section ─────────────────────────────────────────────── */}
+      {/* ── Team Section (Temporarily commented out) ────────────────────── */}
+      {/*
       <section className="py-20 lg:py-28 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 space-y-12">
           <div className="text-center space-y-3 ">
@@ -317,31 +296,24 @@ const AboutUsPage = () => {
           </div>
         </div>
       </section>
+      */}
 
       {/* ── Certifications & Partners ────────────────────────────────── */}
-      <section className="py-14 bg-zinc-50/50 dark:bg-zinc-900/10 border-t border-b border-border/80">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center space-y-8">
-          <span className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground block ">
-            Certifications & Partners
-          </span>
-          <div className="flex flex-wrap justify-center gap-4">
-            {[
-              "COREN Registered",
-              "Victron Energy Dealer",
-              "JinkoSolar Partner",
-              "Canadian Solar Partner",
-              "SMA Certified Installer",
-              "ISO 9001:2015",
-              "NABCEP Member",
-            ].map((c) => (
-              <div
-                key={c}
-                className="bg-card text-card-foreground border border-border/80 px-5 py-2.5 rounded-xl font-mono text-[10px] font-bold uppercase tracking-widest hover:border-primary/25 transition-colors  shadow-3xs"
-              >
-                {c}
-              </div>
-            ))}
+      <section className="py-16 lg:py-20 bg-zinc-50/60 dark:bg-zinc-900/20 border-t border-b border-border/80">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 space-y-10">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary block">
+              Authorized Partners & Certifications
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+              Industry-Leading Brand Partners
+            </h3>
+            <p className="text-xs text-muted-foreground font-semibold">
+              We partner directly with the world&apos;s leading clean-energy and inverter manufacturers to deliver certified systems with authentic warranties.
+            </p>
           </div>
+
+          <PartnerMarquee />
         </div>
       </section>
 

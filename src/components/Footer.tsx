@@ -111,6 +111,10 @@ const Footer = () => {
                   label: "Industrial Systems",
                   href: "/contact-us?subject=Industrial",
                 },
+                {
+                  label: "Solar Financing",
+                  href: "/#financing",
+                },
                 { label: "Sizing Audit", href: "/energy-calculator" },
               ].map((link) => (
                 <li key={link.label}>
