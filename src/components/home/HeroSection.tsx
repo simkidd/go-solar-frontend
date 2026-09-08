@@ -150,7 +150,7 @@ const HeroSection = () => {
                 {/* Single CTA Button */}
                 <div className="pt-2">
                   <Link href={slide.primaryCtaLink} className="inline-block">
-                    <Button className="bg-primary hover:bg-primary/90 text-white font-semibold text-sm h-12 px-7 rounded-xl flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all duration-200">
+                    <Button className="bg-primary hover:bg-primary/90 text-white font-semibold text-sm h-12 px-7 rounded-full flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all duration-200">
                       {slide.primaryCtaText}
                       <ArrowUpRight className="h-4 w-4" />
                     </Button>

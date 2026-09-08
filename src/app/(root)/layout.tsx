@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Navbar from "@/components/Navbar";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { config } from "@/utils/config";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -104,6 +105,7 @@ export default function RootLayout({
           <Suspense fallback={<LoadingSpinner />}>
             <Navbar />
             <main className="min-h-dvh">{children}</main>
+            <FloatingWhatsApp />
             <Footer />
           </Suspense>
         </Providers>
@@ -111,3 +113,4 @@ export default function RootLayout({
     </html>
   );
 }
+
