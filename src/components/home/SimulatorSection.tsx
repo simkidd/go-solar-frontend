@@ -51,19 +51,70 @@ const SimulatorSection = () => {
         }`}
       />
 
-      {/* Self-contained CSS keyframes for flow-dash and pulses */}
+      {/* Self-contained CSS keyframes for arrow movement flow and pulses */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        @keyframes dash-flow {
-          to {
-            stroke-dashoffset: -20;
+        @keyframes arrow-flow-down {
+          0% {
+            transform: translateY(0px);
+            opacity: 0;
+          }
+          20% {
+            opacity: 1;
+          }
+          80% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(32px);
+            opacity: 0;
           }
         }
-        .animate-flow-dash-line {
-          stroke-dasharray: 6, 6;
-          animation: dash-flow 1.2s linear infinite;
+        @keyframes arrow-flow-up {
+          0% {
+            transform: translateY(0px);
+            opacity: 0;
+          }
+          20% {
+            opacity: 1;
+          }
+          80% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(-32px);
+            opacity: 0;
+          }
         }
+        @keyframes arrow-flow-right {
+          0% {
+            transform: translateX(0px);
+            opacity: 0;
+          }
+          20% {
+            opacity: 1;
+          }
+          80% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(54px);
+            opacity: 0;
+          }
+        }
+        .anim-arrow-down-1 { animation: arrow-flow-down 1.4s linear infinite; }
+        .anim-arrow-down-2 { animation: arrow-flow-down 1.4s linear infinite 0.45s; }
+        .anim-arrow-down-3 { animation: arrow-flow-down 1.4s linear infinite 0.9s; }
+
+        .anim-arrow-up-1 { animation: arrow-flow-up 1.4s linear infinite; }
+        .anim-arrow-up-2 { animation: arrow-flow-up 1.4s linear infinite 0.45s; }
+        .anim-arrow-up-3 { animation: arrow-flow-up 1.4s linear infinite 0.9s; }
+
+        .anim-arrow-right-1 { animation: arrow-flow-right 1.4s linear infinite; }
+        .anim-arrow-right-2 { animation: arrow-flow-right 1.4s linear infinite 0.45s; }
+        .anim-arrow-right-3 { animation: arrow-flow-right 1.4s linear infinite 0.9s; }
+
         .pulse-ambient-glow {
           animation: pulse-glow-sim 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
@@ -137,41 +188,178 @@ const SimulatorSection = () => {
                 pointerEvents="none"
               />
 
-              {/* Day Solar Generation Flow Path (Panels -> Inverter) */}
-              <path
-                d="M 130 90 L 130 130"
-                fill="none"
-                stroke={mode === "day" ? "#F59E0B" : "var(--border)"}
-                strokeWidth="2.5"
+              {/* ── 1. Solar Generation Wire (Panels -> Inverter) ── */}
+              <line
+                x1="130"
+                y1="90"
+                x2="130"
+                y2="130"
+                stroke={mode === "day" ? "#F59E0B" : "currentColor"}
+                strokeOpacity={mode === "day" ? 0.35 : 0.15}
+                strokeWidth="3"
                 strokeLinecap="round"
-                className={mode === "day" ? "animate-flow-dash-line" : ""}
-                style={{ strokeDashoffset: mode === "day" ? 0 : undefined }}
               />
+              {mode === "day" && (
+                <g>
+                  {/* Downward moving arrow chevrons */}
+                  <g className="anim-arrow-down-1">
+                    <path
+                      d="M 125 93 L 130 99 L 135 93"
+                      fill="none"
+                      stroke="#F59E0B"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                  <g className="anim-arrow-down-2">
+                    <path
+                      d="M 125 93 L 130 99 L 135 93"
+                      fill="none"
+                      stroke="#F59E0B"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                  <g className="anim-arrow-down-3">
+                    <path
+                      d="M 125 93 L 130 99 L 135 93"
+                      fill="none"
+                      stroke="#F59E0B"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                </g>
+              )}
 
-              {/* Battery Charge/Discharge Path (Battery -> Inverter) */}
-              <path
-                d="M 130 200 L 130 240"
-                fill="none"
-                stroke="var(--primary)"
-                strokeWidth="2.5"
+              {/* ── 2. Battery Storage Wire (Inverter <-> Battery) ── */}
+              <line
+                x1="130"
+                y1="200"
+                x2="130"
+                y2="240"
+                stroke="#10B981"
+                strokeOpacity="0.35"
+                strokeWidth="3"
                 strokeLinecap="round"
-                className="animate-flow-dash-line"
-                style={{
-                  animationDirection: mode === "day" ? "normal" : "reverse",
-                  strokeDashoffset: 0,
-                }}
               />
+              {mode === "day" ? (
+                /* Charging: Inverter -> Battery (Downward Arrows) */
+                <g>
+                  <g className="anim-arrow-down-1">
+                    <path
+                      d="M 125 203 L 130 209 L 135 203"
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                  <g className="anim-arrow-down-2">
+                    <path
+                      d="M 125 203 L 130 209 L 135 203"
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                  <g className="anim-arrow-down-3">
+                    <path
+                      d="M 125 203 L 130 209 L 135 203"
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                </g>
+              ) : (
+                /* Discharging: Battery -> Inverter (Upward Arrows) */
+                <g>
+                  <g className="anim-arrow-up-1">
+                    <path
+                      d="M 125 237 L 130 231 L 135 237"
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                  <g className="anim-arrow-up-2">
+                    <path
+                      d="M 125 237 L 130 231 L 135 237"
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                  <g className="anim-arrow-up-3">
+                    <path
+                      d="M 125 237 L 130 231 L 135 237"
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                </g>
+              )}
 
-              {/* Power To Home Path (Inverter -> Home Node) */}
-              <path
-                d="M 190 165 L 255 165"
-                fill="none"
-                stroke={mode === "day" ? "#F59E0B" : "var(--primary)"}
-                strokeWidth="2.5"
+              {/* ── 3. Power To Home Wire (Inverter -> Home Grid) ── */}
+              <line
+                x1="190"
+                y1="165"
+                x2="255"
+                y2="165"
+                stroke={mode === "day" ? "#F59E0B" : "#10B981"}
+                strokeOpacity="0.35"
+                strokeWidth="3"
                 strokeLinecap="round"
-                className="animate-flow-dash-line"
-                style={{ strokeDashoffset: 0 }}
               />
+              <g>
+                {/* Rightward moving arrow chevrons */}
+                <g className="anim-arrow-right-1">
+                  <path
+                    d="M 193 160 L 199 165 L 193 170"
+                    fill="none"
+                    stroke={mode === "day" ? "#F59E0B" : "#10B981"}
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </g>
+                <g className="anim-arrow-right-2">
+                  <path
+                    d="M 193 160 L 199 165 L 193 170"
+                    fill="none"
+                    stroke={mode === "day" ? "#F59E0B" : "#10B981"}
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </g>
+                <g className="anim-arrow-right-3">
+                  <path
+                    d="M 193 160 L 199 165 L 193 170"
+                    fill="none"
+                    stroke={mode === "day" ? "#F59E0B" : "#10B981"}
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </g>
+              </g>
 
               {/* Glowing Sun or Moon element */}
               <foreignObject x="15" y="15" width="50" height="50">
