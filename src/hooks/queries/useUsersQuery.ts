@@ -66,6 +66,18 @@ export const useAdminUsersQuery = () => {
   });
 };
 
+// Fetch single user/admin details by ID
+export const useUserDetailQuery = (id: string, enabled = true) => {
+  return useQuery<User | null>({
+    queryKey: USER_KEYS.detail(id),
+    queryFn: async () => {
+      const { data } = await axiosInstance.get(`/admin/users/${id}`);
+      return data?.user || null;
+    },
+    enabled: Boolean(id) && enabled,
+  });
+};
+
 // Mutation for creating manual customers or administrator accounts
 export const useCreateAccountMutation = (options?: { onSuccess?: () => void }) => {
   const queryClient = useQueryClient();
