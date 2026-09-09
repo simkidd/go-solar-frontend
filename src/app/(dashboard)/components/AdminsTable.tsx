@@ -72,10 +72,10 @@ export const AdminsTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
 
-  // Dialog & Sheet states
-  const [isInviteOpen, setIsInviteOpen] = useState(false);
+  // Sheet & Dialog states
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [targetRevokeAdmin, setTargetRevokeAdmin] = useState<any | null>(null);
   const [isPromoteOpen, setIsPromoteOpen] = useState(false);
@@ -467,17 +467,21 @@ export const AdminsTable = () => {
                             </span>
                           </DropdownMenuItem>
                         )}
-                        <DropdownMenuSeparator className="border-border/60" />
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setTargetRevokeAdmin(adm);
-                            setIsRevokeOpen(true);
-                          }}
-                          className="cursor-pointer text-xs font-bold text-rose-600 focus:text-rose-600 focus:bg-rose-50/50 dark:focus:bg-rose-950/20"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          <span>Revoke Access</span>
-                        </DropdownMenuItem>
+                        {isSuperAdmin && adm._id !== currentUser?._id && (
+                          <>
+                            <DropdownMenuSeparator className="border-border/60" />
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setTargetRevokeAdmin(adm);
+                                setIsRevokeOpen(true);
+                              }}
+                              className="cursor-pointer text-xs font-bold text-rose-600 focus:text-rose-600 focus:bg-rose-50/50 dark:focus:bg-rose-950/20"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2 text-rose-600" />
+                              <span>Demote to Customer</span>
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -487,22 +491,21 @@ export const AdminsTable = () => {
           </TableBody>
         </Table>
       </div>
-
-      {/* DETAILS SLIDING SIDE SHEET */}
+ 
+      {/* ── DETAILS SLIDING SIDE SHEET ── */}
       <Sheet open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <SheetContent className="sm:max-w-md w-full overflow-y-auto border-border/80 bg-card text-card-foreground p-6">
           <SheetHeader className="border-b border-border/60 pb-4 mb-4">
-            <SheetTitle className="text-lg font-extrabold text-foreground">
+            <SheetTitle className="text-base font-extrabold text-foreground">
               Administrator Profile Details
             </SheetTitle>
-            <SheetDescription className="text-xs text-muted-foreground mt-2">
-              Assigned system role attributes, privileges, and verification
-              audits.
+            <SheetDescription className="text-xs text-muted-foreground mt-1">
+              Assigned system role attributes, privileges, and verification audits.
             </SheetDescription>
           </SheetHeader>
 
           {selectedUserId && (
-            <div className="py-2">
+            <div className="py-1">
               <UserDetails id={selectedUserId} />
             </div>
           )}
@@ -735,19 +738,19 @@ export const AdminsTable = () => {
         </DialogContent>
       </Dialog>
 
-      {/* CONFIRM ACCESS REVOCATION */}
+      {/* CONFIRM ACCESS DEMOTION */}
       <Dialog open={isRevokeOpen} onOpenChange={setIsRevokeOpen}>
         <DialogContent className="max-w-sm bg-card border border-border/80 rounded-2xl ">
           <DialogHeader>
             <DialogTitle className="text-base font-extrabold text-foreground">
-              Confirm Revocation
+              Demote to Customer
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">
-              Are you sure you want to revoke administrative access for{" "}
+              Are you sure you want to demote{" "}
               <strong className="text-foreground">
                 {targetRevokeAdmin?.firstname} {targetRevokeAdmin?.lastname}
-              </strong>
-              ? They will be demoted to a regular customer profile.
+              </strong>{" "}
+              to a regular customer account? This will revoke all administrative dashboard access and permissions.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="pt-2 gap-2">
@@ -764,7 +767,7 @@ export const AdminsTable = () => {
               onClick={handleConfirmRevoke}
               disabled={revokeMutation.isPending}
             >
-              {revokeMutation.isPending ? "Revoking..." : "Revoke Access"}
+              {revokeMutation.isPending ? "Demoting..." : "Yes, Demote to Customer"}
             </Button>
           </DialogFooter>
         </DialogContent>
