@@ -78,8 +78,13 @@ export const useUserDetailQuery = (id: string, enabled = true) => {
   });
 };
 
+interface UserMutationOptions {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+}
+
 // Mutation for creating manual customers or administrator accounts
-export const useCreateAccountMutation = (options?: { onSuccess?: () => void }) => {
+export const useCreateAccountMutation = (options?: UserMutationOptions) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: any) => {
@@ -92,11 +97,16 @@ export const useCreateAccountMutation = (options?: { onSuccess?: () => void }) =
         options.onSuccess();
       }
     },
+    onError: (err: any) => {
+      if (options?.onError) {
+        options.onError(err);
+      }
+    },
   });
 };
 
 // Mutation for updating administrative permissions/roles
-export const useUpdateUserRoleMutation = (options?: { onSuccess?: () => void }) => {
+export const useUpdateUserRoleMutation = (options?: UserMutationOptions) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ userid, payload }: { userid: string; payload: { isAdmin?: boolean; isSuperAdmin?: boolean } }) => {
@@ -107,6 +117,11 @@ export const useUpdateUserRoleMutation = (options?: { onSuccess?: () => void }) 
       queryClient.invalidateQueries({ queryKey: USER_KEYS.all });
       if (options?.onSuccess) {
         options.onSuccess();
+      }
+    },
+    onError: (err: any) => {
+      if (options?.onError) {
+        options.onError(err);
       }
     },
   });
