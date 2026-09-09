@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useTransition, useEffect } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -48,12 +49,16 @@ import {
   CheckCircle2,
   AlertCircle,
   Plus,
-  UserPlus,
+  KeyRound,
+  Shield,
+  ShieldAlert,
 } from "lucide-react";
 import { formatDate } from "@/utils/helpers";
 import {
   useAllUsersQuery,
   useCreateAccountMutation,
+  useUpdateUserRoleMutation,
+  useCurrentUserQuery,
 } from "@/hooks/queries/useUsersQuery";
 import UserDetails from "./UserDetails";
 import { toast } from "sonner";
@@ -71,6 +76,9 @@ const columns = [
 ];
 
 const UsersTable = () => {
+  const { data: currentUser } = useCurrentUserQuery();
+  const isSuperAdmin = currentUser?.isSuperAdmin ?? false;
+
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -80,9 +88,13 @@ const UsersTable = () => {
     setPage(1);
   }, [debouncedSearchTerm]);
 
-  // Detailed sheet state
+  // Sheet state
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  // Promote dialog state
+  const [isPromoteOpen, setIsPromoteOpen] = useState(false);
+  const [targetPromoteUser, setTargetPromoteUser] = useState<any | null>(null);
 
   // Manual create state
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -112,6 +124,17 @@ const UsersTable = () => {
     },
   });
 
+  const updateRoleMutation = useUpdateUserRoleMutation({
+    onSuccess: () => {
+      setIsPromoteOpen(false);
+      setTargetPromoteUser(null);
+      toast.success("Customer promoted to Store Administrator successfully!");
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Failed to promote user.");
+    },
+  });
+
   const { data, isLoading, refetch } = useAllUsersQuery({
     page,
     limit: rowsPerPage,
@@ -124,6 +147,16 @@ const UsersTable = () => {
   const handleOpenDetails = (id: string) => {
     setSelectedUserId(id);
     setIsDetailsOpen(true);
+  };
+
+  const handleConfirmPromote = () => {
+    if (!targetPromoteUser) return;
+    updateRoleMutation.mutate({
+      userid: targetPromoteUser._id,
+      payload: {
+        isAdmin: true,
+      },
+    });
   };
 
   const handleCreateCustomer = (values: any) => {
@@ -209,7 +242,7 @@ const UsersTable = () => {
         </div>
 
         {/* Counter */}
-        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3  font-bold uppercase tracking-wider">
+        <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/60 pt-3 font-bold uppercase tracking-wider">
           <span>Total {pagination.total} registered customers</span>
         </div>
       </div>
@@ -222,7 +255,7 @@ const UsersTable = () => {
               {columns.map((col) => (
                 <TableHead
                   key={col.uid}
-                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12  ${
+                  className={`font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ${
                     col.uid === "actions" ? "text-right px-4" : ""
                   }`}
                 >
@@ -328,7 +361,7 @@ const UsersTable = () => {
                               </DropdownMenuTrigger>
                               <DropdownMenuContent
                                 align="end"
-                                className="w-32 rounded-xl bg-card border border-border/80"
+                                className="w-44 rounded-xl bg-card border border-border/80"
                               >
                                 <DropdownMenuItem
                                   onClick={() =>
@@ -337,8 +370,24 @@ const UsersTable = () => {
                                   className="cursor-pointer text-xs font-bold"
                                 >
                                   <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
-                                  <span>Details</span>
+                                  <span>View Details</span>
                                 </DropdownMenuItem>
+
+                                {isSuperAdmin && (
+                                  <>
+                                    <DropdownMenuSeparator className="border-border/60" />
+                                    <DropdownMenuItem
+                                      onClick={() => {
+                                        setTargetPromoteUser(userItem);
+                                        setIsPromoteOpen(true);
+                                      }}
+                                      className="cursor-pointer text-xs font-bold text-primary focus:text-primary focus:bg-primary/10"
+                                    >
+                                      <KeyRound className="mr-2 h-4 w-4 text-primary" />
+                                      <span>Promote to Admin</span>
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </div>
@@ -384,28 +433,64 @@ const UsersTable = () => {
         </div>
       )}
 
-      {/* DETAILS SLIDING SIDE SHEET */}
+      {/* ── DETAILS SLIDING SIDE SHEET ── */}
       <Sheet open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <SheetContent className="sm:max-w-md w-full overflow-y-auto border-border/80 bg-card text-card-foreground p-6">
           <SheetHeader className="border-b border-border/60 pb-4 mb-4">
-            <SheetTitle className="text-lg font-extrabold text-foreground">
+            <SheetTitle className="text-base font-extrabold text-foreground">
               Customer Profile Details
             </SheetTitle>
-            <SheetDescription className="text-xs text-muted-foreground mt-2">
-              Complete user account security parameters, logs, and
-              registrations.
+            <SheetDescription className="text-xs text-muted-foreground mt-1">
+              Registered account parameters, security status, and contact records.
             </SheetDescription>
           </SheetHeader>
 
           {selectedUserId && (
-            <div className="py-2">
+            <div className="py-1">
               <UserDetails id={selectedUserId} />
             </div>
           )}
         </SheetContent>
       </Sheet>
 
-      {/* ADD CUSTOMER MODAL */}
+      {/* ── PROMOTE CUSTOMER TO ADMIN DIALOG ── */}
+      <Dialog open={isPromoteOpen} onOpenChange={setIsPromoteOpen}>
+        <DialogContent className="sm:max-w-[420px] bg-card border border-border/80 rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-foreground font-extrabold text-base flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              Promote to Administrator
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-2 leading-relaxed font-semibold">
+              Are you sure you want to promote{" "}
+              <span className="font-bold text-foreground">
+                {targetPromoteUser?.firstname} {targetPromoteUser?.lastname}
+              </span>{" "}
+              to <b>Store Administrator</b>? This user will gain access to administrative dashboards and permissions.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4 flex gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setIsPromoteOpen(false)}
+              className="text-xs font-semibold rounded-xl h-10 px-5 cursor-pointer text-muted-foreground hover:text-foreground"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={updateRoleMutation.isPending}
+              onClick={handleConfirmPromote}
+              className="bg-primary hover:bg-primary/90 text-white text-xs font-semibold h-10 px-5 rounded-xl cursor-pointer"
+            >
+              {updateRoleMutation.isPending ? "Promoting..." : "Yes, Promote to Admin"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── ADD CUSTOMER MODAL ── */}
       <AppModal
         isOpen={isCreateOpen}
         onOpenChange={setIsCreateOpen}
@@ -416,7 +501,6 @@ const UsersTable = () => {
           onSubmit={handleSubmit(handleCreateCustomer)}
           className="w-full font-inter flex flex-col gap-6 pt-2"
         >
-          {/* Details Card */}
           <div className="bg-card border border-border/80 p-6 rounded-2xl space-y-4">
             <div className="border-b border-border/60 pb-3 ">
               <h3 className="text-sm font-extrabold text-foreground tracking-tight">
@@ -451,7 +535,7 @@ const UsersTable = () => {
                   Last Name <span className="text-red-500">*</span>
                 </label>
                 <Input
-                  placeholder="e.g. Okeke"
+                  placeholder="e.g. Miller"
                   {...register("lastname", {
                     required: "Last name is required",
                   })}
@@ -465,39 +549,46 @@ const UsersTable = () => {
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
-                Email Address <span className="text-red-500">*</span>
-              </label>
-              <Input
-                type="email"
-                placeholder="customer@domain.com"
-                {...register("email", { required: "Email is required" })}
-                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
-              />
-              {errors.email && (
-                <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
-                  {errors.email.message}
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
-                Phone Number <span className="text-red-500">*</span>
-              </label>
-              <Input
-                placeholder="e.g. +234 803 000 0000"
-                {...register("phoneNumber", {
-                  required: "Phone number is required",
-                })}
-                className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
-              />
-              {errors.phoneNumber && (
-                <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
-                  {errors.phoneNumber.message}
-                </span>
-              )}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
+                  Email Address <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="email"
+                  placeholder="e.g. david@example.com"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Invalid email address",
+                    },
+                  })}
+                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                />
+                {errors.email && (
+                  <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                    {errors.email.message}
+                  </span>
+                )}
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block ">
+                  Phone Number <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  placeholder="e.g. +234 801 234 5678"
+                  {...register("phoneNumber", {
+                    required: "Phone number is required",
+                  })}
+                  className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
+                />
+                {errors.phoneNumber && (
+                  <span className="text-[11px] font-bold text-red-500 mt-0.5 block">
+                    {errors.phoneNumber.message}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="space-y-1">
@@ -506,10 +597,13 @@ const UsersTable = () => {
               </label>
               <Input
                 type="password"
-                placeholder="Minimum 6 characters"
+                placeholder="Initial account password (min 6 characters)"
                 {...register("password", {
                   required: "Password is required",
-                  minLength: { value: 6, message: "Min length is 6" },
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
                 })}
                 className="bg-muted/30 border-border rounded-xl text-xs h-10 focus-visible:ring-primary"
               />
@@ -521,24 +615,23 @@ const UsersTable = () => {
             </div>
           </div>
 
-          {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/60">
+          <div className="flex items-center justify-end gap-3">
             <Button
               type="button"
-              variant="ghost"
-              size="sm"
+              variant="outline"
               onClick={() => setIsCreateOpen(false)}
-              className="text-muted-foreground hover:text-foreground text-xs font-bold h-10 px-4 rounded-xl cursor-pointer"
+              className="border-border rounded-xl text-xs h-10 px-5"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              size="sm"
-              className="bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl h-10 px-6 shadow-sm cursor-pointer"
               disabled={createMutation.isPending}
+              className="bg-primary hover:bg-primary/90 text-white rounded-xl text-xs h-10 px-5 font-bold cursor-pointer"
             >
-              {createMutation.isPending ? "Creating..." : "Save Customer"}
+              {createMutation.isPending
+                ? "Creating Account..."
+                : "Create Customer"}
             </Button>
           </div>
         </form>
