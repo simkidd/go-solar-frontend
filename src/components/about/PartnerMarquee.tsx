@@ -25,8 +25,8 @@ const PartnerMarquee = () => {
   return (
     <div className="w-full relative overflow-hidden py-4">
       {/* Subtle edge fade overlays */}
-      <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-zinc-50/90 dark:from-zinc-900/90 to-transparent z-10 pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-zinc-50/90 dark:from-zinc-900/90 to-transparent z-10 pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-linearo-r from-zinc-50/90 dark:from-zinc-900/90 to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-linearo-l from-zinc-50/90 dark:from-zinc-900/90 to-transparent z-10 pointer-events-none" />
 
       <Marquee
         speed={40}

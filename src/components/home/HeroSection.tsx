@@ -87,7 +87,7 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative w-full min-h-[580px] lg:min-h-[620px] flex items-center overflow-hidden border-b border-zinc-900 select-none bg-zinc-950 text-white"
+      className="relative w-full h-dvh flex items-center overflow-hidden border-b border-zinc-900 select-none bg-zinc-950 text-white"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -115,8 +115,8 @@ const HeroSection = () => {
         </AnimatePresence>
 
         {/* Directional Scrim Overlay (ensures maximum text readability while keeping the image visible on the right) */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/30 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/65 to-black/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
       </div>
 
       {/* ── Foreground Text Content ── */}
