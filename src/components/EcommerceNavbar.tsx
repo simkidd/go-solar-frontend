@@ -95,28 +95,6 @@ const EcommerceNavbar = () => {
       <SearchModal isOpen={isSearchOpen} onOpenChange={setIsSearchOpen} />
 
       <header className="w-full bg-white dark:bg-zinc-950 border-b border-border/80 sticky top-0 z-50 font-inter">
-        {/* ── Top Announcement Bar ── */}
-        {announcementData?.announcement?.isActive && (
-          <div className="w-full bg-primary/10 dark:bg-primary/20 border-b border-primary/10 py-2.5 text-[10.5px] font-black uppercase tracking-wider text-primary  overflow-hidden">
-            <div className="w-full overflow-hidden whitespace-nowrap">
-              <div className="animate-marquee">
-                {announcementData.announcement.link ? (
-                  <Link
-                    href={announcementData.announcement.link}
-                    className="hover:underline flex items-center gap-2"
-                  >
-                    <span>{announcementData.announcement.text}</span>
-                  </Link>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    {announcementData.announcement.text}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* ── Top Utility Header Bar ── */}
         <div className="container mx-auto px-4 lg:px-6 py-4 grid grid-cols-3 items-center lg:flex lg:justify-between lg:gap-8">
           {/* Col 1 (Mobile Left): Animated Hamburger Toggle Button */}
@@ -404,6 +382,28 @@ const EcommerceNavbar = () => {
             </div>
           </div>
         </div>
+
+        {/* ── Bottom Announcement Bar ── */}
+        {announcementData?.announcement?.isActive && (
+          <div className="w-full bg-primary/10 dark:bg-primary/20 border-t border-primary/10 py-2.5 text-[10.5px] font-black uppercase tracking-wider text-primary overflow-hidden">
+            <div className="w-full overflow-hidden whitespace-nowrap">
+              <div className="animate-marquee">
+                {announcementData.announcement.link ? (
+                  <Link
+                    href={announcementData.announcement.link}
+                    className="hover:underline flex items-center gap-2"
+                  >
+                    <span>{announcementData.announcement.text}</span>
+                  </Link>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    {announcementData.announcement.text}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── Mobile Side Drawer panel ── */}
         <AnimatePresence>
