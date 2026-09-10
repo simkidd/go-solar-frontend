@@ -98,7 +98,7 @@ const VisionSection = () => {
             {/* 1. Solar to Inverter */}
             <div className="absolute top-[64px] left-[64px] right-[64px] h-[2px] bg-zinc-800/80 z-0 overflow-hidden">
               <motion.div
-                className="absolute top-0 h-full w-14 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"
+                className="absolute top-0 h-full w-14 bg-linear-to-r from-transparent via-emerald-400 to-transparent"
                 animate={{ left: ["-20%", "120%"] }}
                 transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
               />
@@ -107,7 +107,7 @@ const VisionSection = () => {
             {/* 2. Inverter to Home */}
             <div className="absolute top-[64px] bottom-[136px] right-[64px] w-[2px] bg-zinc-800/80 z-0 overflow-hidden">
               <motion.div
-                className="absolute left-0 w-full h-14 bg-gradient-to-b from-transparent via-emerald-400 to-transparent"
+                className="absolute left-0 w-full h-14 bg-linear-to-b from-transparent via-emerald-400 to-transparent"
                 animate={{ top: ["-20%", "120%"] }}
                 transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
               />
@@ -116,7 +116,7 @@ const VisionSection = () => {
             {/* 3. Battery to Home */}
             <div className="absolute bottom-[136px] left-[64px] right-[64px] h-[2px] bg-zinc-800/80 z-0 overflow-hidden">
               <motion.div
-                className="absolute top-0 h-full w-14 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"
+                className="absolute top-0 h-full w-14 bg-linear-to-r from-transparent via-emerald-400 to-transparent"
                 animate={{ left: ["120%", "-20%"] }}
                 transition={{ repeat: Infinity, duration: 2.8, ease: "linear" }}
               />

@@ -23,9 +23,7 @@ const Banner = () => {
   const [current, setCurrent] = useState(0);
 
   const slides = useMemo(() => {
-    return serverBanners.filter(
-      (b: any) => b.placement === "storefront_hero",
-    );
+    return serverBanners.filter((b: any) => b.placement === "storefront_hero");
   }, [serverBanners]);
 
   useEffect(() => {
@@ -70,7 +68,7 @@ const Banner = () => {
             return (
               <CarouselItem
                 key={slide._id || idx}
-                className="relative w-full min-h-[280px] sm:min-h-[380px] md:min-h-[480px] lg:min-h-[540px] xl:min-h-[580px] flex items-center overflow-hidden"
+                className="relative w-full min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[340px] xl:min-h-[380px] flex items-center overflow-hidden"
               >
                 {slide.ctaLink ? (
                   <Link

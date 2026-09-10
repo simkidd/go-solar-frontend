@@ -148,7 +148,14 @@ export default function FinancingApplyModal(props?: {
         setValue("email", user.email || "");
       }
     }
-  }, [isOpen, reset, packageIdParam, setValue, user, props?.initialProfileType]);
+  }, [
+    isOpen,
+    reset,
+    packageIdParam,
+    setValue,
+    user,
+    props?.initialProfileType,
+  ]);
 
   const handleClose = () => {
     if (isControlled) {
@@ -219,11 +226,12 @@ export default function FinancingApplyModal(props?: {
                 Apply for Solar Financing
               </DialogTitle>
               <DialogDescription className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider block">
-                Submit Required Application Documents ({watchRequestType === "corporate" ? "Corporate" : "Individual"})
+                Submit Required Application Documents (
+                {watchRequestType === "corporate" ? "Corporate" : "Individual"})
               </DialogDescription>
             </div>
           </div>
-
+          bg-linear
           <ScrollArea className="flex-1 overflow-y-auto">
             <form
               onSubmit={handleSubmit(onSubmit)}
@@ -231,7 +239,7 @@ export default function FinancingApplyModal(props?: {
             >
               {/* Selected Package Display */}
               {watchPackageId && (
-                <div className="p-4 bg-gradient-to-r from-[#08AA08]/5 to-transparent border border-[#08AA08]/10 dark:border-[#08AA08]/20 rounded-2xl text-left flex justify-between items-center relative overflow-hidden">
+                <div className="p-4 bg-linear-to-r from-[#08AA08]/5 to-transparent border border-[#08AA08]/10 dark:border-[#08AA08]/20 rounded-2xl text-left flex justify-between items-center relative overflow-hidden">
                   <div className="absolute top-0 right-0 h-16 w-16 bg-[#08AA08]/5 rounded-bl-full pointer-events-none" />
                   <div className="space-y-0.5">
                     <span className="text-[9px] text-[#08AA08] uppercase tracking-widest block font-black">
@@ -314,324 +322,319 @@ export default function FinancingApplyModal(props?: {
                 )}
               </div>
 
-                  {/* Shared text inputs */}
+              {/* Shared text inputs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
+                    Contact Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    placeholder="e.g. +234 803 111 2222"
+                    {...register("phoneNumber", { required: "Required" })}
+                    className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
+                  />
+                  {errors.phoneNumber && (
+                    <p className="text-[10px] text-red-500 font-semibold mt-1">
+                      {errors.phoneNumber.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
+                    NIN Number (11 Digits){" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    placeholder="e.g. 12345678901"
+                    maxLength={11}
+                    {...register("nin", {
+                      required: "Required",
+                      minLength: {
+                        value: 11,
+                        message: "Must be 11 digits",
+                      },
+                    })}
+                    className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
+                  />
+                  {errors.nin && (
+                    <p className="text-[10px] text-red-500 font-semibold mt-1">
+                      {errors.nin.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Individual Conditional Fields */}
+              {watchRequestType === "individual" && (
+                <div className="space-y-4">
+                  {/* First & Last Name */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5 text-left">
                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
-                        Contact Phone Number{" "}
-                        <span className="text-red-500">*</span>
+                        First Name <span className="text-red-500">*</span>
                       </label>
                       <Input
-                        placeholder="e.g. +234 803 111 2222"
-                        {...register("phoneNumber", { required: "Required" })}
+                        placeholder="e.g. John"
+                        {...register("firstName", { required: "Required" })}
                         className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
                       />
-                      {errors.phoneNumber && (
+                      {errors.firstName && (
                         <p className="text-[10px] text-red-500 font-semibold mt-1">
-                          {errors.phoneNumber.message}
+                          {errors.firstName.message}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-1.5 text-left">
                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
-                        NIN Number (11 Digits){" "}
-                        <span className="text-red-500">*</span>
+                        Last Name <span className="text-red-500">*</span>
                       </label>
                       <Input
-                        placeholder="e.g. 12345678901"
-                        maxLength={11}
-                        {...register("nin", {
-                          required: "Required",
-                          minLength: {
-                            value: 11,
-                            message: "Must be 11 digits",
-                          },
-                        })}
+                        placeholder="e.g. Doe"
+                        {...register("lastName", { required: "Required" })}
                         className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
                       />
-                      {errors.nin && (
+                      {errors.lastName && (
                         <p className="text-[10px] text-red-500 font-semibold mt-1">
-                          {errors.nin.message}
+                          {errors.lastName.message}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Individual Conditional Fields */}
-                  {watchRequestType === "individual" && (
-                    <div className="space-y-4">
-                      {/* First & Last Name */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1.5 text-left">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
-                            First Name <span className="text-red-500">*</span>
-                          </label>
-                          <Input
-                            placeholder="e.g. John"
-                            {...register("firstName", { required: "Required" })}
-                            className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
-                          />
-                          {errors.firstName && (
-                            <p className="text-[10px] text-red-500 font-semibold mt-1">
-                              {errors.firstName.message}
-                            </p>
-                          )}
-                        </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5 text-left">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
+                        Office Address <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        placeholder="e.g. 12 Trans-Amadi, Port Harcourt"
+                        {...register("officeAddress", {
+                          required: "Required",
+                        })}
+                        className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
+                      />
+                      {errors.officeAddress && (
+                        <p className="text-[10px] text-red-500 font-semibold mt-1">
+                          {errors.officeAddress.message}
+                        </p>
+                      )}
+                    </div>
 
-                        <div className="space-y-1.5 text-left">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
-                            Last Name <span className="text-red-500">*</span>
-                          </label>
-                          <Input
-                            placeholder="e.g. Doe"
-                            {...register("lastName", { required: "Required" })}
-                            className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
-                          />
-                          {errors.lastName && (
-                            <p className="text-[10px] text-red-500 font-semibold mt-1">
-                              {errors.lastName.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
+                    <div className="space-y-1.5 text-left">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
+                        Job Role <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        placeholder="e.g. Lead Engineer"
+                        {...register("jobRole", { required: "Required" })}
+                        className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
+                      />
+                      {errors.jobRole && (
+                        <p className="text-[10px] text-red-500 font-semibold mt-1">
+                          {errors.jobRole.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1.5 text-left">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
-                            Office Address{" "}
-                            <span className="text-red-500">*</span>
-                          </label>
-                          <Input
-                            placeholder="e.g. 12 Trans-Amadi, Port Harcourt"
-                            {...register("officeAddress", {
+                  {/* Documents uploads */}
+                  <div className="space-y-3.5 pt-4 border-t border-border/40">
+                    <h5 className="font-extrabold text-[9px] text-[#08AA08] uppercase tracking-wider block text-left">
+                      Required Documents (Images Only)
+                    </h5>
+                    <div className="grid grid-cols-1 gap-4">
+                      {/* Passport Photo */}
+                      <div className="space-y-1.5 text-left">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
+                          Passport Photograph{" "}
+                          <span className="text-red-500">*</span>
+                        </span>
+                        <div className="relative group cursor-pointer border-2 border-dashed border-border/85 hover:border-[#08AA08]/60 rounded-2xl p-6 bg-muted/5 hover:bg-muted/15 flex flex-col items-center justify-center text-center transition-all duration-300">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            {...register("passportPhoto", {
                               required: "Required",
                             })}
-                            className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
+                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                           />
-                          {errors.officeAddress && (
-                            <p className="text-[10px] text-red-500 font-semibold mt-1">
-                              {errors.officeAddress.message}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="space-y-1.5 text-left">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
-                            Job Role <span className="text-red-500">*</span>
-                          </label>
-                          <Input
-                            placeholder="e.g. Lead Engineer"
-                            {...register("jobRole", { required: "Required" })}
-                            className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
-                          />
-                          {errors.jobRole && (
-                            <p className="text-[10px] text-red-500 font-semibold mt-1">
-                              {errors.jobRole.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Documents uploads */}
-                      <div className="space-y-3.5 pt-4 border-t border-border/40">
-                        <h5 className="font-extrabold text-[9px] text-[#08AA08] uppercase tracking-wider block text-left">
-                          Required Documents (Images Only)
-                        </h5>
-                        <div className="grid grid-cols-1 gap-4">
-                          {/* Passport Photo */}
-                          <div className="space-y-1.5 text-left">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
-                              Passport Photograph{" "}
-                              <span className="text-red-500">*</span>
-                            </span>
-                            <div className="relative group cursor-pointer border-2 border-dashed border-border/85 hover:border-[#08AA08]/60 rounded-2xl p-6 bg-muted/5 hover:bg-muted/15 flex flex-col items-center justify-center text-center transition-all duration-300">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                {...register("passportPhoto", {
-                                  required: "Required",
-                                })}
-                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                              />
-                              <div className="h-10 w-10 bg-[#08AA08]/10 text-[#08AA08] rounded-full flex items-center justify-center mb-2 transition-transform duration-350 group-hover:scale-110">
-                                <UploadCloud className="h-5 w-5 shrink-0" />
-                              </div>
-                              <span className="text-[10px] font-bold text-zinc-650 truncate max-w-[220px]">
-                                {getFileName(watchPassport) ||
-                                  "Upload passport photograph"}
-                              </span>
-                              <span className="text-[8px] text-zinc-400 font-semibold mt-0.5">
-                                PNG, JPG or WEBP (Max 5MB)
-                              </span>
-                            </div>
-                            {errors.passportPhoto && (
-                              <p className="text-[9px] text-red-500 font-bold mt-1">
-                                {errors.passportPhoto.message}
-                              </p>
-                            )}
+                          <div className="h-10 w-10 bg-[#08AA08]/10 text-[#08AA08] rounded-full flex items-center justify-center mb-2 transition-transform duration-350 group-hover:scale-110">
+                            <UploadCloud className="h-5 w-5 shrink-0" />
                           </div>
+                          <span className="text-[10px] font-bold text-zinc-650 truncate max-w-[220px]">
+                            {getFileName(watchPassport) ||
+                              "Upload passport photograph"}
+                          </span>
+                          <span className="text-[8px] text-zinc-400 font-semibold mt-0.5">
+                            PNG, JPG or WEBP (Max 5MB)
+                          </span>
                         </div>
+                        {errors.passportPhoto && (
+                          <p className="text-[9px] text-red-500 font-bold mt-1">
+                            {errors.passportPhoto.message}
+                          </p>
+                        )}
                       </div>
                     </div>
-                  )}
+                  </div>
+                </div>
+              )}
 
-                  {/* Corporate Conditional Fields */}
-                  {watchRequestType === "corporate" && (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1.5 text-left">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
-                            Business Address{" "}
-                            <span className="text-red-500">*</span>
-                          </label>
-                          <Input
-                            placeholder="e.g. 5 Marina, Lagos Island, Lagos"
-                            {...register("businessAddress", {
-                              required: "Required",
-                            })}
-                            className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
-                          />
-                          {errors.businessAddress && (
-                            <p className="text-[10px] text-red-550 font-semibold mt-1">
-                              {errors.businessAddress.message}
-                            </p>
-                          )}
-                        </div>
+              {/* Corporate Conditional Fields */}
+              {watchRequestType === "corporate" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5 text-left">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
+                        Business Address <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        placeholder="e.g. 5 Marina, Lagos Island, Lagos"
+                        {...register("businessAddress", {
+                          required: "Required",
+                        })}
+                        className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
+                      />
+                      {errors.businessAddress && (
+                        <p className="text-[10px] text-red-550 font-semibold mt-1">
+                          {errors.businessAddress.message}
+                        </p>
+                      )}
+                    </div>
 
-                        <div className="space-y-1.5 text-left">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
-                            Nature of Business{" "}
-                            <span className="text-red-500">*</span>
-                          </label>
-                          <Input
-                            placeholder="e.g. Logistics & Supply Chain"
-                            {...register("natureOfBusiness", {
-                              required: "Required",
-                            })}
-                            className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
-                          />
-                          {errors.natureOfBusiness && (
-                            <p className="text-[10px] text-red-500 font-semibold mt-1">
-                              {errors.natureOfBusiness.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
+                    <div className="space-y-1.5 text-left">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
+                        Nature of Business{" "}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        placeholder="e.g. Logistics & Supply Chain"
+                        {...register("natureOfBusiness", {
+                          required: "Required",
+                        })}
+                        className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
+                      />
+                      {errors.natureOfBusiness && (
+                        <p className="text-[10px] text-red-500 font-semibold mt-1">
+                          {errors.natureOfBusiness.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
+                  <div className="space-y-1.5 text-left">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
+                      Years in Business <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="e.g. 5"
+                      {...register("yearsInBusiness", {
+                        required: "Required",
+                      })}
+                      className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
+                    />
+                    {errors.yearsInBusiness && (
+                      <p className="text-[10px] text-red-500 font-semibold mt-1">
+                        {errors.yearsInBusiness.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Documents uploads */}
+                  <div className="space-y-3.5 pt-4 border-t border-border/40">
+                    <h5 className="font-extrabold text-[9px] text-[#08AA08] uppercase tracking-wider block text-left">
+                      Required Documents (Images Only)
+                    </h5>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Passport Photo */}
                       <div className="space-y-1.5 text-left">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-455 block">
-                          Years in Business{" "}
+                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
+                          Passport Photograph{" "}
                           <span className="text-red-500">*</span>
-                        </label>
-                        <Input
-                          type="number"
-                          placeholder="e.g. 5"
-                          {...register("yearsInBusiness", {
-                            required: "Required",
-                          })}
-                          className="bg-muted/10 border-border rounded-xl text-xs h-11 font-semibold focus-visible:ring-2 focus-visible:ring-[#08AA08]/20 focus-visible:border-[#08AA08] transition-all"
-                        />
-                        {errors.yearsInBusiness && (
-                          <p className="text-[10px] text-red-500 font-semibold mt-1">
-                            {errors.yearsInBusiness.message}
+                        </span>
+                        <div className="relative group cursor-pointer border-2 border-dashed border-border/85 hover:border-[#08AA08]/60 rounded-2xl p-5 bg-muted/5 hover:bg-muted/15 flex flex-col items-center justify-center text-center transition-all duration-300">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            {...register("passportPhoto", {
+                              required: "Required",
+                            })}
+                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                          />
+                          <div className="h-9 w-9 bg-[#08AA08]/10 text-[#08AA08] rounded-full flex items-center justify-center mb-2 transition-transform duration-350 group-hover:scale-110">
+                            <UploadCloud className="h-4.5 w-4.5 shrink-0" />
+                          </div>
+                          <span className="text-[10px] font-bold text-zinc-650 truncate max-w-[220px]">
+                            {getFileName(watchPassport) ||
+                              "Upload passport image"}
+                          </span>
+                          <span className="text-[8px] text-zinc-400 font-semibold mt-0.5">
+                            PNG, JPG or WEBP (Max 5MB)
+                          </span>
+                        </div>
+                        {errors.passportPhoto && (
+                          <p className="text-[9px] text-red-500 font-bold mt-1">
+                            {errors.passportPhoto.message}
                           </p>
                         )}
                       </div>
 
-                      {/* Documents uploads */}
-                      <div className="space-y-3.5 pt-4 border-t border-border/40">
-                        <h5 className="font-extrabold text-[9px] text-[#08AA08] uppercase tracking-wider block text-left">
-                          Required Documents (Images Only)
-                        </h5>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          {/* Passport Photo */}
-                          <div className="space-y-1.5 text-left">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
-                              Passport Photograph{" "}
-                              <span className="text-red-500">*</span>
-                            </span>
-                            <div className="relative group cursor-pointer border-2 border-dashed border-border/85 hover:border-[#08AA08]/60 rounded-2xl p-5 bg-muted/5 hover:bg-muted/15 flex flex-col items-center justify-center text-center transition-all duration-300">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                {...register("passportPhoto", {
-                                  required: "Required",
-                                })}
-                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                              />
-                              <div className="h-9 w-9 bg-[#08AA08]/10 text-[#08AA08] rounded-full flex items-center justify-center mb-2 transition-transform duration-350 group-hover:scale-110">
-                                <UploadCloud className="h-4.5 w-4.5 shrink-0" />
-                              </div>
-                              <span className="text-[10px] font-bold text-zinc-650 truncate max-w-[220px]">
-                                {getFileName(watchPassport) ||
-                                  "Upload passport image"}
-                              </span>
-                              <span className="text-[8px] text-zinc-400 font-semibold mt-0.5">
-                                PNG, JPG or WEBP (Max 5MB)
-                              </span>
-                            </div>
-                            {errors.passportPhoto && (
-                              <p className="text-[9px] text-red-500 font-bold mt-1">
-                                {errors.passportPhoto.message}
-                              </p>
-                            )}
+                      {/* CAC Copy */}
+                      <div className="space-y-1.5 text-left">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
+                          Copy of CAC Certificate{" "}
+                          <span className="text-red-500">*</span>
+                        </span>
+                        <div className="relative group cursor-pointer border-2 border-dashed border-border/85 hover:border-[#08AA08]/60 rounded-2xl p-5 bg-muted/5 hover:bg-muted/15 flex flex-col items-center justify-center text-center transition-all duration-300">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            {...register("cacDocument", {
+                              required: "Required",
+                            })}
+                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                          />
+                          <div className="h-9 w-9 bg-[#08AA08]/10 text-[#08AA08] rounded-full flex items-center justify-center mb-2 transition-transform duration-350 group-hover:scale-110">
+                            <UploadCloud className="h-4.5 w-4.5 shrink-0" />
                           </div>
-
-                          {/* CAC Copy */}
-                          <div className="space-y-1.5 text-left">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
-                              Copy of CAC Certificate{" "}
-                              <span className="text-red-500">*</span>
-                            </span>
-                            <div className="relative group cursor-pointer border-2 border-dashed border-border/85 hover:border-[#08AA08]/60 rounded-2xl p-5 bg-muted/5 hover:bg-muted/15 flex flex-col items-center justify-center text-center transition-all duration-300">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                {...register("cacDocument", {
-                                  required: "Required",
-                                })}
-                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                              />
-                              <div className="h-9 w-9 bg-[#08AA08]/10 text-[#08AA08] rounded-full flex items-center justify-center mb-2 transition-transform duration-350 group-hover:scale-110">
-                                <UploadCloud className="h-4.5 w-4.5 shrink-0" />
-                              </div>
-                              <span className="text-[10px] font-bold text-zinc-650 truncate max-w-[220px]">
-                                {getFileName(watchCac) ||
-                                  "Upload CAC certificate"}
-                              </span>
-                              <span className="text-[8px] text-zinc-400 font-semibold mt-0.5">
-                                PNG, JPG or WEBP (Max 5MB)
-                              </span>
-                            </div>
-                            {errors.cacDocument && (
-                              <p className="text-[9px] text-red-500 font-bold mt-1">
-                                {errors.cacDocument.message}
-                              </p>
-                            )}
-                          </div>
+                          <span className="text-[10px] font-bold text-zinc-650 truncate max-w-[220px]">
+                            {getFileName(watchCac) || "Upload CAC certificate"}
+                          </span>
+                          <span className="text-[8px] text-zinc-400 font-semibold mt-0.5">
+                            PNG, JPG or WEBP (Max 5MB)
+                          </span>
                         </div>
+                        {errors.cacDocument && (
+                          <p className="text-[9px] text-red-500 font-bold mt-1">
+                            {errors.cacDocument.message}
+                          </p>
+                        )}
                       </div>
                     </div>
-                  )}
-
-                  {/* Submit navigation */}
-                  <div className="pt-4 border-t border-border/40 text-right">
-                    <Button
-                      type="submit"
-                      disabled={createFinancingMutation.isPending}
-                      className="bg-gradient-to-r from-[#08AA08] to-[#079907] hover:brightness-105 active:scale-[0.98] text-[#ffffff] font-extrabold text-[10px] uppercase tracking-wider rounded-xl h-11 px-8 flex items-center gap-1.5 cursor-pointer shadow-md hover:shadow-lg transition-all ml-auto"
-                    >
-                      {createFinancingMutation.isPending ? (
-                        <>
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          Submitting...
-                        </>
-                      ) : (
-                        "Submit Application"
-                      )}
-                    </Button>
                   </div>
+                </div>
+              )}
+
+              {/* Submit navigation */}
+              <div className="pt-4 border-t border-border/40 text-right">
+                <Button
+                  type="submit"
+                  disabled={createFinancingMutation.isPending}
+                  className="text-[#ffffff] font-extrabold text-[10px] uppercase tracking-wider rounded-xl h-11 px-8 flex items-center gap-1.5 cursor-pointer shadow-md hover:shadow-lg transition-all ml-auto"
+                >
+                  {createFinancingMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit Application"
+                  )}
+                </Button>
+              </div>
             </form>
           </ScrollArea>
         </DialogContent>
