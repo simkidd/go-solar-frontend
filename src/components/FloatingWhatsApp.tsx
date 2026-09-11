@@ -11,7 +11,7 @@ interface FloatingWhatsAppProps {
 }
 
 const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({
-  phoneNumber = "2348027082120",
+  phoneNumber = "2347062762879",
   message = "Hello GoSolar Ng! I'm interested in getting clean solar power for my home/business.",
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
