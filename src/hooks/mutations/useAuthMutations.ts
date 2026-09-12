@@ -7,7 +7,11 @@ import {
   VerifyAccountInput,
 } from "@/interfaces/auth.interface";
 import { axiosInstance } from "@/lib/axios";
-import { REFRESH_TOKEN_NAME, TOKEN_NAME, USER_DETAILS } from "@/utils/constants";
+import {
+  REFRESH_TOKEN_NAME,
+  TOKEN_NAME,
+  USER_DETAILS,
+} from "@/utils/constants";
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -15,7 +19,7 @@ import { toast } from "sonner";
 
 export const useLoginMutation = (
   redirectUrl?: string,
-  onUnverified?: (email: string) => void
+  onUnverified?: (email: string) => void,
 ) => {
   const router = useRouter();
 
@@ -31,8 +35,10 @@ export const useLoginMutation = (
       const user = data?.data?.user || data?.user;
 
       if (token) Cookies.set(TOKEN_NAME, token, { expires: 1 });
-      if (refreshToken) Cookies.set(REFRESH_TOKEN_NAME, refreshToken, { expires: 30 });
-      if (user) Cookies.set(USER_DETAILS, JSON.stringify(user), { expires: 30 });
+      if (refreshToken)
+        Cookies.set(REFRESH_TOKEN_NAME, refreshToken, { expires: 30 });
+      if (user)
+        Cookies.set(USER_DETAILS, JSON.stringify(user), { expires: 30 });
 
       if (redirectUrl) {
         router.push(redirectUrl);
@@ -58,8 +64,9 @@ export const useLoginMutation = (
   });
 };
 
-
-export const useSignUpMutation = (onSuccessCallback?: (email: string) => void) => {
+export const useSignUpMutation = (
+  onSuccessCallback?: (email: string) => void,
+) => {
   return useMutation({
     mutationFn: async (input: SignUpInput) => {
       const { data } = await axiosInstance.post("/auth/signup", input);
@@ -78,14 +85,15 @@ export const useSignUpMutation = (onSuccessCallback?: (email: string) => void) =
 export const useForgotPasswordMutation = () => {
   return useMutation({
     mutationFn: async (input: ForgetPasswordInput) => {
-      const { data } = await axiosInstance.post("/auth/forgot-password", input);
+      const { data } = await axiosInstance.post("/auth/forgotpassword", input);
       return data;
     },
     onSuccess: (data) => {
       toast.success(data?.message || "Reset link sent to your email!");
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to send reset link";
+      const message =
+        error.response?.data?.message || "Failed to send reset link";
       toast.error(message);
     },
   });
@@ -96,7 +104,10 @@ export const useResetPasswordMutation = () => {
 
   return useMutation({
     mutationFn: async (input: ResetPasswordInput) => {
-      const { data } = await axiosInstance.post("/auth/reset-password", input);
+      const { data } = await axiosInstance.put(
+        `/auth/resetpassword/${input.token}`,
+        { password: input.password },
+      );
       return data;
     },
     onSuccess: (data) => {
@@ -115,7 +126,9 @@ export const useVerifyAccountMutation = () => {
 
   return useMutation({
     mutationFn: async (input: VerifyAccountInput) => {
-      const { data } = await axiosInstance.post("/auth/verify-email", input);
+      const { data } = await axiosInstance.post(
+        `/auth/verify-user/${input.token}`,
+      );
       return data;
     },
     onSuccess: (data) => {
@@ -133,7 +146,7 @@ export const useResendVerificationMutation = () => {
   return useMutation({
     mutationFn: async (input: EmailInput) => {
       const { data } = await axiosInstance.post(
-        `/auth/request-verification/${encodeURIComponent(input.email)}`
+        `/auth/request-verification/${encodeURIComponent(input.email)}`,
       );
       return data;
     },
@@ -141,15 +154,22 @@ export const useResendVerificationMutation = () => {
       toast.success(data?.message || "Verification email sent!");
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to resend verification";
+      const message =
+        error.response?.data?.message || "Failed to resend verification";
       toast.error(message);
     },
   });
 };
 
-export const useUpdateProfileMutation = (options?: { onSuccess?: (data: any) => void }) => {
+export const useUpdateProfileMutation = (options?: {
+  onSuccess?: (data: any) => void;
+}) => {
   return useMutation({
-    mutationFn: async (payload: { firstname: string; lastname: string; phoneNumber?: string }) => {
+    mutationFn: async (payload: {
+      firstname: string;
+      lastname: string;
+      phoneNumber?: string;
+    }) => {
       const { data } = await axiosInstance.put("/auth/update-profile", payload);
       return data;
     },
@@ -158,16 +178,22 @@ export const useUpdateProfileMutation = (options?: { onSuccess?: (data: any) => 
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to update profile";
+      const message =
+        error.response?.data?.message || "Failed to update profile";
       toast.error(message);
     },
   });
 };
 
-export const useChangePasswordMutation = (options?: { onSuccess?: () => void }) => {
+export const useChangePasswordMutation = (options?: {
+  onSuccess?: () => void;
+}) => {
   return useMutation({
     mutationFn: async (payload: any) => {
-      const { data } = await axiosInstance.put("/auth/change-password", payload);
+      const { data } = await axiosInstance.put(
+        "/auth/change-password",
+        payload,
+      );
       return data;
     },
     onSuccess: (data) => {
@@ -175,7 +201,8 @@ export const useChangePasswordMutation = (options?: { onSuccess?: () => void }) 
       options?.onSuccess?.();
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to change password";
+      const message =
+        error.response?.data?.message || "Failed to change password";
       toast.error(message);
     },
   });
