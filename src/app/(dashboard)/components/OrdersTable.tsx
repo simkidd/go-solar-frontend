@@ -1,7 +1,7 @@
 "use client";
 import { useAllOrdersQuery } from "@/hooks/queries/useOrdersQuery";
 import { Order, TrackingStatus } from "@/interfaces/order.interface";
-import { formatCurrency, formatDate } from "@/utils/helpers";
+import { formatCurrency, formatNumericDate } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -292,7 +292,7 @@ const OrdersTable = () => {
                         )}
                         {columnKey === "dateOrdered" && (
                           <span className="font-semibold text-muted-foreground ">
-                            {formatDate(order?.createdAt)}
+                            {formatNumericDate(order?.createdAt)}
                           </span>
                         )}
                         {columnKey === "total" && (

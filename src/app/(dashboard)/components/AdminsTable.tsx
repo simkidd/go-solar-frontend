@@ -52,7 +52,7 @@ import {
   Eye,
   ChevronDown,
 } from "lucide-react";
-import { formatDate } from "@/utils/helpers";
+import { formatNumericDate } from "@/utils/helpers";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import AppModal from "@/components/AppModal";
@@ -413,13 +413,13 @@ export const AdminsTable = () => {
 
                   {/* Date Appointed */}
                   <TableCell className="text-xs text-zinc-500 font-medium">
-                    {formatDate(adm.createdAt)}
+                    {formatNumericDate(adm.createdAt)}
                   </TableCell>
 
                   {/* Last Login */}
                   <TableCell className="text-xs text-zinc-500 font-medium">
                     {adm.lastLogin
-                      ? formatDate(adm.lastLogin)
+                      ? formatNumericDate(adm.lastLogin)
                       : "Never logged in"}
                   </TableCell>
 

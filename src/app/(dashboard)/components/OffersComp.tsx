@@ -32,7 +32,7 @@ import {
   Percent,
 } from "lucide-react";
 import Link from "next/link";
-import { formatDate } from "@/utils/helpers";
+import { formatNumericDate } from "@/utils/helpers";
 import UpdateOfferForm from "./UpdateOfferForm";
 import CreateOfferButton from "./CreateOfferButton";
 
@@ -334,8 +334,8 @@ const OffersComp = () => {
                       />
                     </div>
                     <div className="flex justify-between text-[9px] font-semibold text-muted-foreground/60">
-                      <span>{formatDate(offer.startDate)}</span>
-                      <span>{formatDate(offer.endDate)}</span>
+                      <span>{formatNumericDate(offer.startDate)}</span>
+                      <span>{formatNumericDate(offer.endDate)}</span>
                     </div>
                   </div>
                 )}

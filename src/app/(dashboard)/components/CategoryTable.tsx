@@ -2,7 +2,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import AppModal from "@/components/AppModal";
 import { Category } from "@/interfaces/product.interface";
-import { formatDate } from "@/utils/helpers";
+import { formatNumericDate } from "@/utils/helpers";
 import { useCategoriesQuery } from "@/hooks/queries/useCategoriesQuery";
 import { useDebounce } from "@/hooks";
 import { useDeleteCategoryMutation } from "@/hooks/mutations/useCategoryMutations";
@@ -403,7 +403,7 @@ const CategoryTable = () => {
                         )}
                         {columnKey === "dateAdded" && (
                           <span className="font-semibold text-muted-foreground ">
-                            {formatDate(cat?.createdAt)}
+                            {formatNumericDate(cat?.createdAt)}
                           </span>
                         )}
                         {columnKey === "actions" && (

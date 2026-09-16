@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Offer, Product } from "@/interfaces/product.interface";
+import { formatDate } from "@/utils/helpers";
 import { getOffer } from "@/lib/api/offers.api";
 import {
   useDeleteOfferMutation,
@@ -122,15 +123,6 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
   }
 
   const typedOffer = offer as Offer;
-
-  const formattedDate = (dateStr?: string) => {
-    if (!dateStr) return "Not Scheduled";
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
 
   // Determine campaign status
   const now = new Date();
@@ -515,7 +507,9 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
                   Start Date:
                 </span>
                 <span className="font-bold text-foreground">
-                  {formattedDate(typedOffer.startDate)}
+                  {typedOffer.startDate
+                    ? formatDate(typedOffer.startDate, "MMM D, YYYY")
+                    : "Not Scheduled"}
                 </span>
               </div>
               <div className="flex justify-between items-center py-0.5">
@@ -524,7 +518,7 @@ const SingleOfferComp: React.FC<{ id: string }> = ({ id }) => {
                 </span>
                 <span className="font-bold text-foreground">
                   {typedOffer.endDate
-                    ? formattedDate(typedOffer.endDate)
+                    ? formatDate(typedOffer.endDate, "MMM D, YYYY")
                     : "Indefinite"}
                 </span>
               </div>

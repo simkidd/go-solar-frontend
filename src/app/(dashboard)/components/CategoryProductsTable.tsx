@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import { Product } from "@/interfaces/product.interface";
-import { formatCurrency, formatDate } from "@/utils/helpers";
+import { formatCurrency, formatNumericDate } from "@/utils/helpers";
 import { useCategoryProductsQuery } from "@/hooks/queries/useProductsQuery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -314,7 +314,7 @@ const CategoryProductsTable: React.FC<{ categoryId: string }> = ({
                           )}
                           {columnKey === "dateAdded" && (
                             <span className="font-semibold text-muted-foreground ">
-                              {formatDate(product?.createdAt)}
+                              {formatNumericDate(product?.createdAt)}
                             </span>
                           )}
                           {columnKey === "actions" && (

@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Post } from "@/interfaces/post.interface";
+import { formatDate } from "@/utils/helpers";
 
 const BlogSection = ({ posts: initialPosts }: { posts?: Post[] }) => {
   const { data } = useBlogPostsQuery();
@@ -54,14 +55,7 @@ const BlogSection = ({ posts: initialPosts }: { posts?: Post[] }) => {
         {/* 1px Gap Border Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border rounded-3xl overflow-hidden border border-border shadow-xs">
           {activePosts.slice(0, 3).map((post, index) => {
-            const dateStr = new Date(post.createdAt).toLocaleDateString(
-              "en-US",
-              {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              },
-            );
+            const dateStr = formatDate(post.createdAt);
             return (
               <motion.div
                 key={post._id}

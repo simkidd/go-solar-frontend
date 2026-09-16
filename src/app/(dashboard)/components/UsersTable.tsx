@@ -53,7 +53,7 @@ import {
   Shield,
   ShieldAlert,
 } from "lucide-react";
-import { formatDate } from "@/utils/helpers";
+import { formatNumericDate } from "@/utils/helpers";
 import {
   useAllUsersQuery,
   useCreateAccountMutation,
@@ -325,7 +325,7 @@ const UsersTable = () => {
                           </div>
                         )}
                         {columnKey === "dateJoined" && (
-                          <span>{formatDate(userItem?.createdAt)}</span>
+                          <span>{formatNumericDate(userItem?.createdAt)}</span>
                         )}
                         {columnKey === "verified" && (
                           <span
@@ -343,7 +343,7 @@ const UsersTable = () => {
                         {columnKey === "lastLogin" && (
                           <span className="text-xs font-semibold text-zinc-500">
                             {userItem?.lastLogin
-                              ? formatDate(userItem.lastLogin)
+                              ? formatNumericDate(userItem.lastLogin)
                               : "Never logged in"}
                           </span>
                         )}
