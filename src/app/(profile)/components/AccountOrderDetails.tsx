@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
 import { useUserOrdersQuery } from "@/hooks/queries/useOrdersQuery";
 import { useUpdateOrderStatusMutation } from "@/hooks/mutations/useOrderMutations";
-import { formatCurrency, formatDate } from "@/utils/helpers";
+import { formatCurrency, formatNumericDate } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/custom/Chip";
 import {
@@ -121,7 +121,7 @@ const AccountOrderDetails: React.FC<{
               Order Date
             </span>
             <span className="font-extrabold text-foreground">
-              {formatDate(order?.createdAt)}
+              {formatNumericDate(order?.createdAt)}
             </span>
           </li>
           <li className="flex justify-between py-3.5">

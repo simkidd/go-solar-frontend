@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { Offer, Product } from "@/interfaces/product.interface";
 import { useAllProductsQuery } from "@/hooks/queries/useProductsQuery";
-import { formatCurrency } from "@/utils/helpers";
+import { formatCurrency, formatDate } from "@/utils/helpers";
 import {
   Table,
   TableBody,
@@ -42,15 +42,6 @@ const OfferProducts: React.FC<{
       return prodOfferId === offer._id;
     });
   }, [products, offer._id]);
-
-  const formattedDate = (dateStr?: string) => {
-    if (!dateStr) return "Not Scheduled";
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
 
   return (
     <div className="w-full space-y-8 font-inter  animate-fadeIn">
@@ -117,7 +108,7 @@ const OfferProducts: React.FC<{
                 Campaign Starts
               </span>
               <span className="text-xs font-extrabold text-foreground leading-none">
-                {formattedDate(offer?.startDate)}
+                {offer?.startDate ? formatDate(offer.startDate, "MMM D, YYYY") : "Not Scheduled"}
               </span>
             </div>
           </CardContent>
@@ -134,7 +125,7 @@ const OfferProducts: React.FC<{
               </span>
               <span className="text-xs font-extrabold text-foreground leading-none">
                 {offer?.endDate
-                  ? formattedDate(offer?.endDate)
+                  ? formatDate(offer?.endDate, "MMM D, YYYY")
                   : "Never Expires"}
               </span>
             </div>

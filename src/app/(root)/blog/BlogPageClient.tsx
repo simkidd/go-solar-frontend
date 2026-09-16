@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Post } from "@/interfaces/post.interface";
+import { formatDate } from "@/utils/helpers";
 import { Search, ArrowUpRight, Clock, User, BookOpen } from "lucide-react";
 
 interface BlogPageClientProps {
@@ -46,19 +47,6 @@ const BlogPageClient: React.FC<BlogPageClientProps> = ({ initialPosts }) => {
   const rest = filtered.filter(
     (p) => p._id !== featured?._id || search !== "" || activeCategory !== "All"
   );
-
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return "Recent";
-    try {
-      return new Date(dateStr).toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-    } catch {
-      return "Recent";
-    }
-  };
 
   const getExcerpt = (content: string) => {
     if (!content) return "";

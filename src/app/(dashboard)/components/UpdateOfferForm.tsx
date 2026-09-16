@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useUpdateOfferMutation } from "@/hooks/mutations/useOfferMutations";
 import { Tag, Calendar } from "lucide-react";
+import { formatDate } from "@/utils/helpers";
 
 interface FormValues {
   name: string;
@@ -19,15 +20,6 @@ interface FormValues {
   startDate?: string;
   endDate?: string;
 }
-
-const formatDateForInput = (dateStr?: string) => {
-  if (!dateStr) return "";
-  try {
-    return new Date(dateStr).toISOString().split("T")[0];
-  } catch (e) {
-    return "";
-  }
-};
 
 const UpdateOfferForm: React.FC<{
   onClose: () => void;
@@ -47,8 +39,12 @@ const UpdateOfferForm: React.FC<{
       type: (existingOffer?.type as OfferType) || OfferType.PercentageOff,
       percentageOff: existingOffer?.percentageOff || 0,
       isActive: existingOffer?.isActive ?? true,
-      startDate: formatDateForInput(existingOffer?.startDate),
-      endDate: formatDateForInput(existingOffer?.endDate),
+      startDate: existingOffer?.startDate
+        ? formatDate(existingOffer.startDate, "YYYY-MM-DD")
+        : "",
+      endDate: existingOffer?.endDate
+        ? formatDate(existingOffer.endDate, "YYYY-MM-DD")
+        : "",
     },
   });
 

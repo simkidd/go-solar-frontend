@@ -2,7 +2,7 @@
 
 import useCategories from "@/hooks/useCategories";
 import { Product } from "@/interfaces/product.interface";
-import { formatCurrency, formatDate } from "@/utils/helpers";
+import { formatCurrency, formatNumericDate } from "@/utils/helpers";
 import { useDeleteProductMutation } from "@/hooks/mutations/useProductMutations";
 import { useAllOffersQuery } from "@/hooks/queries/useOffersQuery";
 import { useAllProductsQuery } from "@/hooks/queries/useProductsQuery";
@@ -471,24 +471,11 @@ const ProductsTable = () => {
                             </div>
                           )}
                         </div>
-                        <div className="space-y-1">
-                          <Link href={`/dashboard/products/${product?._id}`}>
-                            <span className="font-extrabold text-foreground line-clamp-1 select-all">
-                              {product?.name}
-                            </span>
-                          </Link>
-                          <div className="flex items-center gap-2 text-[9px] uppercase tracking-wider font-extrabold text-muted-foreground ">
-                            <span>{product?.brand || "GoSolar"}</span>
-                            {product?.category?.name && (
-                              <>
-                                <span className="text-border/80">•</span>
-                                <span className="text-primary">
-                                  {product.category.name}
-                                </span>
-                              </>
-                            )}
-                          </div>
-                        </div>
+                        <Link href={`/dashboard/products/${product?._id}`}>
+                          <span className="font-extrabold text-foreground line-clamp-1 select-all">
+                            {product?.name}
+                          </span>
+                        </Link>
                       </div>
                     </TableCell>
 
@@ -547,7 +534,7 @@ const ProductsTable = () => {
 
                     {/* 7. Date Added */}
                     <TableCell className="py-3.5 text-xs text-muted-foreground font-semibold ">
-                      {formatDate(product?.createdAt)}
+                      {formatNumericDate(product?.createdAt)}
                     </TableCell>
 
                     {/* 8. Actions Dropdown */}

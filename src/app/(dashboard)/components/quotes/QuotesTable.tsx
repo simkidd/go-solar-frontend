@@ -1,5 +1,5 @@
 "use client";
-import { formatCurrency, formatDate } from "@/utils/helpers";
+import { formatCurrency, formatNumericDate } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -648,7 +648,7 @@ export const QuotesTable = () => {
                   Submission Date:
                 </span>
                 <p className="font-bold text-foreground mt-0.5">
-                  {formatDate(activeQuote.createdAt)}
+                  {formatNumericDate(activeQuote.createdAt)}
                 </p>
               </div>
             </div>
