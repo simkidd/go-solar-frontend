@@ -16,6 +16,7 @@ import { useSession } from "@/context/SessionContext";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
+import { formatDate } from "@/utils/helpers";
 
 const AdminHeader = () => {
   const { user, logout, loading } = useSession();
@@ -32,26 +33,6 @@ const AdminHeader = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    });
-  };
-
-  const formatDateLabel = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
-  const paths = pathname.split("/").filter((path) => path !== "");
-
   return (
     <header className="h-16 w-full flex bg-white/90 dark:bg-[#1a1b1e]/90 backdrop-blur-md sticky top-0 z-20 border-b border-zinc-100 dark:border-zinc-800 transition-all">
       <div className="w-full px-4 md:px-6 flex items-center justify-between gap-4">
@@ -63,10 +44,10 @@ const AdminHeader = () => {
             <div className="hidden md:flex items-center gap-2 text-xs font-bold text-zinc-400 dark:text-zinc-500  bg-zinc-50 dark:bg-zinc-900 border border-zinc-150/40 dark:border-zinc-800/50 rounded-xl px-3 py-1.5 shadow-2xs">
               <Clock className="h-3.5 w-3.5 text-primary animate-pulse" />
               <span className="text-zinc-800 dark:text-zinc-200 tabular-nums">
-                {formatTime(time)}
+                {formatDate(time, "hh:mm:ss A")}
               </span>
               <span className="text-zinc-300 dark:text-zinc-800">•</span>
-              <span>{formatDateLabel(time)}</span>
+              <span>{formatDate(time, "ddd, MMM D, YYYY")}</span>
             </div>
           )}
         </div>

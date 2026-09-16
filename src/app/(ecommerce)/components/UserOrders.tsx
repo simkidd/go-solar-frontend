@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { getChipColor } from "@/app/(dashboard)/components/OrdersTable";
 import { useUserOrdersQuery } from "@/hooks/queries/useOrdersQuery";
-import { formatCurrency, formatDate } from "@/utils/helpers";
+import { formatCurrency, formatNumericDate } from "@/utils/helpers";
 import { Card, CardContent } from "@/components/ui/card";
 import { Chip } from "@/components/custom/Chip";
 import { Spinner } from "@/components/custom/Spinner";
@@ -105,7 +105,7 @@ const UserOrders = () => {
                   <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground font-bold">
                     <span className="flex items-center gap-1.5 text-foreground">
                       <Calendar className="h-3.5 w-3.5 text-primary" />
-                      {formatDate(order?.trackingId?.createdAt)}
+                      {formatNumericDate(order?.trackingId?.createdAt)}
                     </span>
                     <span className="hidden sm:inline text-border">|</span>
                     <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-black">

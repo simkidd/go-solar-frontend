@@ -35,7 +35,7 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CreatePostButton from "./CreatePostButton";
-import { formatDate } from "@/utils/helpers";
+import { formatNumericDate } from "@/utils/helpers";
 import { Post } from "@/interfaces/post.interface";
 import Image from "next/image";
 import Link from "next/link";
@@ -245,7 +245,7 @@ const BlogList = () => {
 
                     {/* Creation Date */}
                     <TableCell className="py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 ">
-                      {formatDate(post?.createdAt)}
+                      {formatNumericDate(post?.createdAt)}
                     </TableCell>
 
                     {/* Dropdown Actions */}

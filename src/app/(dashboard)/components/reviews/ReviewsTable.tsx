@@ -319,7 +319,7 @@ export const ReviewsTable = () => {
 
                   {/* Content snippet */}
                   <TableCell className="max-w-md">
-                    <p className="text-xs text-zinc-600 dark:text-zinc-300 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-zinc-600 dark:text-zinc-300 truncate leading-relaxed">
                       "{rev.content}"
                     </p>
                   </TableCell>

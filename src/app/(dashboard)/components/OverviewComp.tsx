@@ -56,7 +56,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { formatCurrency, formatDate } from "@/utils/helpers";
+import { formatCurrency, formatNumericDate } from "@/utils/helpers";
 import Link from "next/link";
 
 Chart.register(
@@ -544,7 +544,7 @@ const OverviewComp = () => {
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right text-zinc-500 text-xs px-4">
-                            {formatDate(quote.createdAt)}
+                            {formatNumericDate(quote.createdAt)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -626,7 +626,7 @@ const OverviewComp = () => {
                               : "Guest Customer"}
                           </TableCell>
                           <TableCell className="text-zinc-500 text-xs">
-                            {formatDate(order.createdAt)}
+                            {formatNumericDate(order.createdAt)}
                           </TableCell>
                           <TableCell className="text-right text-xs font-semibold text-zinc-900 dark:text-zinc-100">
                             {formatCurrency(order.totalPricePaid, "NGN")}
