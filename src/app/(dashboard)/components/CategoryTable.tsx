@@ -397,7 +397,7 @@ const CategoryTable = () => {
                           </div>
                         )}
                         {columnKey === "description" && (
-                          <span className="text-muted-foreground line-clamp-2 max-w-[280px] font-medium">
+                          <span className="text-muted-foreground truncate max-w-[280px] font-medium block">
                             {cat?.description || "-"}
                           </span>
                         )}

@@ -68,7 +68,8 @@ import { useDebounce } from "@/hooks";
 
 const columns = [
   { name: "Customer Name", uid: "name" },
-  { name: "Contact Info", uid: "contact" },
+  { name: "Email", uid: "email" },
+  { name: "Phone Number", uid: "phoneNumber" },
   { name: "Date Joined", uid: "dateJoined" },
   { name: "Verification Status", uid: "verified" },
   { name: "Last Login", uid: "lastLogin" },
@@ -312,16 +313,16 @@ const UsersTable = () => {
                             </span>
                           </div>
                         )}
-                        {columnKey === "contact" && (
-                          <div className="space-y-0.5 text-xs">
-                            <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-300">
-                              <Mail className="h-3 w-3 text-zinc-400" />
-                              <span>{userItem?.email}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 text-zinc-400">
-                              <Phone className="h-3 w-3 text-zinc-400" />
-                              <span>{userItem?.phoneNumber || "-"}</span>
-                            </div>
+                        {columnKey === "email" && (
+                          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+                            <Mail className="h-3.5 w-3.5 text-zinc-400" />
+                            <span>{userItem?.email}</span>
+                          </div>
+                        )}
+                        {columnKey === "phoneNumber" && (
+                          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+                            <Phone className="h-3.5 w-3.5 text-zinc-400" />
+                            <span>{userItem?.phoneNumber || "-"}</span>
                           </div>
                         )}
                         {columnKey === "dateJoined" && (

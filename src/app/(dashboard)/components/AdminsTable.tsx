@@ -304,7 +304,10 @@ export const AdminsTable = () => {
                 Administrator
               </TableHead>
               <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
-                Contact
+                Email
+              </TableHead>
+              <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
+                Phone Number
               </TableHead>
               <TableHead className="font-black text-[9px] uppercase tracking-widest text-muted-foreground h-12 ">
                 Assigned Privilege
@@ -326,7 +329,7 @@ export const AdminsTable = () => {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-32">
+                <TableCell colSpan={8} className="h-32">
                   <div className="space-y-2 flex flex-col justify-center items-center py-8">
                     <Skeleton className="h-5 w-4/5" />
                     <Skeleton className="h-5 w-3/5" />
@@ -336,7 +339,7 @@ export const AdminsTable = () => {
             ) : filteredAdmins.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   className="text-center py-12 text-sm text-zinc-400"
                 >
                   No administrators found.
@@ -364,24 +367,23 @@ export const AdminsTable = () => {
                         >
                           {adm.firstname} {adm.lastname}
                         </span>
-                        <p className="text-xs text-zinc-400">
-                          {adm.roleTitle || "Store Admin"}
-                        </p>
                       </div>
                     </div>
                   </TableCell>
 
-                  {/* Contact */}
-                  <TableCell>
-                    <div className="space-y-0.5 text-xs text-zinc-600 dark:text-zinc-300">
-                      <div className="flex items-center gap-1.5">
-                        <Mail className="h-3 w-3 text-zinc-400" />
-                        <span>{adm.email}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-zinc-400">
-                        <Phone className="h-3 w-3 text-zinc-400" />
-                        <span>{adm.phoneNumber || "-"}</span>
-                      </div>
+                  {/* Email */}
+                  <TableCell className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+                    <div className="flex items-center gap-1.5">
+                      <Mail className="h-3.5 w-3.5 text-zinc-400" />
+                      <span>{adm.email}</span>
+                    </div>
+                  </TableCell>
+
+                  {/* Phone Number */}
+                  <TableCell className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+                    <div className="flex items-center gap-1.5 text-zinc-400">
+                      <Phone className="h-3.5 w-3.5 text-zinc-400" />
+                      <span>{adm.phoneNumber || "-"}</span>
                     </div>
                   </TableCell>
 
