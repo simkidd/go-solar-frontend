@@ -67,8 +67,8 @@ const AboutUsPage = () => {
       {/* ── Page Hero ────────────────────────────────────────────────── */}
       <PageHeader
         badge="About GoSolar Ng"
-        heading="Nigeria's emerging solar brand"
-        subtitle="GoSolar Ng was founded with a single purpose: to make reliable, clean energy accessible to every Nigerian home and business. Today we are the country's most trusted solar energy company, with over 500 successful installations."
+        heading="Nigeria's Reliable Solar Energy Partner"
+        subtitle="GoSolar Ng was founded with a single purpose: to make reliable, clean energy accessible to every Nigerian home and business. As a growing Nigeria solar brand, we are committed to delivering practical energy solutions to customers and support a more reliable and sustainable future."
         image="/images/bg/about-us.jpg"
         align="left"
         minHeight="min-h-[380px]"
@@ -309,7 +309,9 @@ const AboutUsPage = () => {
               Industry-Leading Brand Partners
             </h3>
             <p className="text-xs text-muted-foreground font-semibold">
-              We partner directly with the world&apos;s leading clean-energy and inverter manufacturers to deliver certified systems with authentic warranties.
+              We partner directly with the world&apos;s leading clean-energy and
+              inverter manufacturers to deliver certified systems with authentic
+              warranties.
             </p>
           </div>
 
