@@ -14,10 +14,8 @@ const PARTNERS: Partner[] = [
   { name: "Felicity Solar", logo: "/images/partners/felicity-solar.png" },
   { name: "Deye", logo: "/images/partners/deye.png" },
   { name: "Cworth Energy", logo: "/images/partners/cworth-energy.png" },
-  { name: "Victron Energy", logo: "/images/partners/victron-energy.png" },
   { name: "JinkoSolar", logo: "/images/partners/jinko-solar.png" },
   { name: "Canadian Solar", logo: "/images/partners/canadian-solar.png" },
-  { name: "SMA", logo: "/images/partners/sma.png" },
   { name: "COREN", logo: "/images/partners/coren.png" },
 ];
 
